@@ -8,7 +8,7 @@
 * 4 absolute encoders (for steer)
 
 ### Operations
-**Drive**
+`drive`
 
-**Drive to coordinate**
+`driveToCoordinate`
 * Should this avoid obstacles?
