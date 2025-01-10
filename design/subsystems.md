@@ -9,6 +9,8 @@
 
 ### Operations
 `drive`
+* Move around based on input distance
+* Takes parameter for distance
 
 `driveToCoordinate`
 * Should this avoid obstacles?
@@ -19,13 +21,13 @@
 * Physically capable of intaking algae
 
 ### Operations
-`Intake`
+`AlgaeIntake` - Get algae into the robot
 
-`Eject` - Regardless of whether intake is the same as output, must be capable of eject to prevent a jam
+`Eject` - Regardless of whether intake is the same as output, must be capable of eject to prevent a jam - Gets algae out of intake.
 
-`AutoIntake` - Moves forward when camera detects proper alignment on own
+`AutoIntake` - Moves forward when camera detects proper alignment on own, then uses Intake command to get the algae into the robot
 
-`Hold` - Touch it, own it. Keep holding gamepiece once intaked/intook/intaken/took in/taken in
+`Hold` - Touch it, own it. Keep holding gamepiece once intaked/intook/intaken/took in/taken in (Don't know the word)
 
 ## Algae Output
 
@@ -42,11 +44,11 @@
 * Physically capable of intaking coral
 
 ### Operations
-`Intake`
+`CoralIntake` - Get coral into the robot
 
-`Eject` - Regardless of whether intake is the same as output, must be capable of eject to prevent a jam
+`Eject` - Regardless of whether intake is the same as output, must be capable of eject to prevent a jam. Gets coral out of intake.
 
-`AutoIntake` - Moves forward when camera detects proper alignment on own
+`AutoIntake` - Moves forward when camera detects proper alignment on own, then uses CoralIntake to get coral into the robot
 
 `Hold` - Touch it, own it. Keep holding gamepiece once intaked/intook/intaken/took in/taken in
 
@@ -56,7 +58,7 @@
 * Physically capable of depositing coral on all levels
 
 ### Operations
-`Out` - Eject coral into goal levels
+`Out(goalNum)` - Eject coral into goal level. Takes parameter of desired level.
 
 ## Camera
 
@@ -64,10 +66,10 @@
 * Camera capable of taking good enough pictures to identify coral, AprilTags, algae
 
 ### Operations
-`FindCoral`
+`FindCoral` - Locates PVC gamepeice
 
-`FindAlgae`
+`FindAlgae` - Locates teal rubber ball gamepeice
 
-`FindCoralPos`
+`FindCoralPos` - Checks what PVC gamepeices have already been scored on reef
 
-`AprilTagPos`
+`AprilTagPos` - Uses data generated from AprilTags in order to ascertain robot's location on the field
