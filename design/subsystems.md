@@ -41,4 +41,6 @@
 ### Operations
 `FindCoral`
 
+`FindCoralPos`
+
 `AprilTagPos`
