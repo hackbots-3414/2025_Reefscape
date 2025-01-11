@@ -30,9 +30,12 @@ Heidi, Willow
 1. Unflip other robot (1)
 1. Buddy climb (2)
 
-# Second List
+# To do
 
+1. Move Pigeon off center and see what happens
+1. Number of cameras/orange pi
+1. Characterize swerve (PID constants)
 1. April tag localization
 1. Simulation
-1. Camera stacking
+1. Camera stacking (Learn nerdspark code)
 1. 
