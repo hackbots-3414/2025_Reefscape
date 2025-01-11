@@ -14,16 +14,14 @@ import org.slf4j.LoggerFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -82,20 +80,32 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // // Run SysId routines when holding back/start and X/Y.
+        // // Note that each routine should be run exactly once in a single log.
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.button(1).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.LOWERHP.value)));
-        joystick.button(2).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.UPPERHP.value)));
+        joystick.button(1).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.A.value)));
+        joystick.button(2).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.B.value)));
+        joystick.button(3).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.C.value)));
+        joystick.button(4).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.D.value)));
+        joystick.button(5).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.E.value)));
+        joystick.button(6).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.F.value)));
+        joystick.button(7).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.G.value)));
+        joystick.button(8).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.H.value)));
+        joystick.button(9).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.I.value)));
+        joystick.button(10).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.J.value)));
+        joystick.button(11).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.K.value)));
+        joystick.button(12).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.L.value)));
+        joystick.button(13).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.LOWERHP.value)));
+        joystick.button(14).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.UPPERHP.value)));
 
         joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> drivetrain.resetOnTheFly()));
 
@@ -105,7 +115,7 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
-    public enum ScoringLocations {
+    public enum ScoringPaths {
         A("ALineup"),
         B("BLineup"),
         C("CLineup"),
@@ -114,13 +124,40 @@ public class RobotContainer {
         F("FLineup"),
         G("GLineup"),
         H("HLineup"),
+        I("ILineup"),
+        J("JLineup"),
+        K("KLineup"),
+        L("LLineup"),
         LOWERHP("LowerHPLineup"),
         UPPERHP("UpperHPLineup"),
         MIDDLE("MiddleLineup");
 
         private String value;
 
-        private ScoringLocations(String value) {
+        private ScoringPaths(String value) {
+            this.value = value;
+        }
+    }
+
+    public enum ScoringLocations {
+        A(new Pose2d(3.16, 4.19, new Rotation2d(0))),
+        B(new Pose2d(3.16, 3.875, new Rotation2d(0))),
+        C(new Pose2d(3.675, 3, new Rotation2d(60))),
+        D(new Pose2d(4, 2.78, new Rotation2d(60))),
+        E(new Pose2d(5, 2.8, new Rotation2d(120))),
+        F(new Pose2d(5.3, 3, new Rotation2d(120))),
+        G(new Pose2d(5.8, 3.85, new Rotation2d(180))),
+        H(new Pose2d(5.8, 4.2, new Rotation2d(180))),
+        I(new Pose2d(5.3, 5.1, new Rotation2d(-120))),
+        J(new Pose2d(5, 5.25, new Rotation2d(-120))),
+        K(new Pose2d(4, 5.25, new Rotation2d(-60))),
+        L(new Pose2d(3.675, 5.1, new Rotation2d(-60))),
+        LOWERHP(new Pose2d(1.194, 1.026, new Rotation2d(-125))),
+        UPPERHP(new Pose2d(1.217, 7.012, new Rotation2d(-125)));
+        
+        private Pose2d value;
+
+        private ScoringLocations(Pose2d value) {
             this.value = value;
         }
     }
