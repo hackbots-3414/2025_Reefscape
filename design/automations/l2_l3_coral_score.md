@@ -2,7 +2,7 @@
 
 ## Subsystems
 * Drivetrain
-* Arm
+* Elevator
 * Hand
 
 ## Assumptions
@@ -16,7 +16,7 @@
 This should be relatively close to the robot's current position, because the driver
 should have driven close enough.
 The robot drives to the correct position and orientation.
-The arm raises to the correct position as well.
+The Elevator raises to the correct position as well.
 Then, rotate wrist to the correct angle (get exact number from CAD)
 As we do that, ensure that the hand is rotated so the coral is perpendicular.
 Until all finish, wait.
