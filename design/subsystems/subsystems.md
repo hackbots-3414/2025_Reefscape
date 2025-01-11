@@ -62,7 +62,7 @@
 
 ## Camera
 
-## Assumptions
+### Assumptions
 * Camera capable of taking good enough pictures to identify coral, AprilTags, algae
 
 ### Operations
