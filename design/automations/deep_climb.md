@@ -13,10 +13,10 @@ interfere with our robot's climb.
 compatible with such an event.
 * The funnel/intake can be positioned such that it does not interfere
 with our climb.
+* The climb is user-triggered.
 
 ## Operations
 `deepClimb`
 * The robot (in its ready state) finds and drives towards
-the nearest climb spot. (If not in ready state, set elevator position and funnel
-position to that.)
+the nearest climb spot. (If not in ready state, set elevator position and funnel position to that.)
 * The climb mechanism will be started with the climber's `climbDeep` operation.

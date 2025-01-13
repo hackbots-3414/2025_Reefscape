@@ -3,12 +3,12 @@
 ## Subystems:
 1. Drivetrain
 1. Photonvision
-1. Intake
+1. Funnel
 
 ## Assumptions
 * A valid alliance is selected in Driver Station.
 * Coral does not get stuck in the funnel/intake.
-* The robot comes in at a valid angle
+* The funnel is raised at the correct position for intaking.
 
 ## Operations
 `retrieveCoralFromHumanPlayer`

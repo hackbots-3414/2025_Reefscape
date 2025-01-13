@@ -5,8 +5,7 @@
 * Photon Vision
 
 ## Assumptions
-* We can see an April tag, or we have a predefined starting
-state that aligns with the robot's real position.
+* We can see an April tag, or we have a predefined starting state that aligns with the robot's real position.
 * Chosen auton involves leaving the home.
 * The motors aren't blocked
 

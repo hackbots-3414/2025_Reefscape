@@ -2,11 +2,12 @@
 
 ## Subsystems
 * Drivetrain
-* Intake
+* Algae Intake
 * Photonvision
 
 ## Assumptions
 * There is a stack that has an available algae.
+* This is available in auton, maybe user triggered?
 
 ## Operations
 `getAlgaeFromStack(stackId)`
