@@ -7,6 +7,7 @@
 * Camera
 * Algae Intake
 ## Automations
-* AutoIntake - Automatically intake algae once aligned
-* FindAlgae - Find ground algae
-* DriveToPos - Drive to algae
+`intakeAlgae`
+- Drops pivot
+- Starts intake motors
+- Change LED flag
