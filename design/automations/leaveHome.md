@@ -1,16 +1,16 @@
 #  Leave Home 
 
 ## Subsystems
+* Drivetrain
+* Photon Vision
 
-1. Drivetrain
-1. Photon Vision
+## Assumptions
+* We can see an April tag, or we have a predefined starting
+state that aligns with the robot's real position.
+* Chosen auton involves leaving the home.
+* The motors aren't blocked
 
-## Steps
-
-1. Move out of the Home 
-1. Park near the Reef 
-
-## Automations: 
-
-1. Drivetrain: To allow Robot to get out
-1. Locate the Reef : PhotonVision
+## Operations
+`leaveHome`
+* Uses the pose estimator of the drivetrain, paired with photonvision, to estimate the robot's position.
+* Follows the current auton using PathPlanner.

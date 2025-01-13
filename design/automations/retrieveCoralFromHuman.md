@@ -1,17 +1,16 @@
 # Retrieve Coral 
 
-## Subystems Needed:
+## Subystems:
 1. Drivetrain
 1. Photonvision
 1. Intake
 
-## Steps
-1. Locate Apriltag to determine current location
-1. Automatically align with the chute
-1. Maneuver intake (whatever it is) to receive the coral
-1. Use IR Camera to detect if coral is in intake
+## Assumptions
+* A valid alliance is selected in Driver Station.
+* Coral does not get stuck in the funnel/intake.
+* The robot comes in at a valid angle
 
-## Automations
-1. Vision Cameras: Locate the April Tags
-1. Path Planner: Help Create a Faster cleaner path  
-1. IR sensor: determines if coral has been successfully acquired
+## Operations
+`retrieveCoralFromHumanPlayer`
+* Drive to the correct human player station
+* Ensure that the roller for the intake is *stopped*.
