@@ -3,7 +3,8 @@
 ## Subsystems
 * Drivetrain
 * Elevator
-* Hand
+* Roller
+* Camera
 
 ## Assumptions
 * Assumptions from each subsystem are still valid.

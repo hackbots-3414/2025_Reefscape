@@ -3,18 +3,25 @@
 ## Subsystems
 1. Drivetrain
 1. Intake
-1. Photonvision
+1. Camera
+1. Elevator
 
-## Steps
-1. Determine if coral is present in intake (prevents accidental triggering)
-1. Determine position on field
-1. Maneuver to reef
-1. Align with base of reef
-1. Deposit coral (horizontally) 
+## Assumptions 
 
-## Automation 
-1. IR Camera: determines if coral is present at beginning of automation, and if it is no longer present at the end of the process
-1. Photonvision: determines position on field
-1. Pathplanner: Used to move from position to reef automatically
-1. ????: Used to align with base of reef
-1. Command: command to deposit coral
+1. The angle at which the coral is ejected can't be rotated
+1. The height at which the coral is ejected can be adjusted
+
+## Operations
+
+`scoreCoralL1`
+* Detects nearest scoring postition on the field.
+This should be relatively close to the robot's current position, because the driver
+should have driven close enough.
+The robot drives to the correct position and orientation.
+The Elevator raises to the correct position as well.
+Then, rotate wrist to the correct angle (get exact number from CAD)
+As we do that, ensure that the hand is rotated so the coral is perpendicular.
+Until all finish, wait.
+Then, open hand.
+
+This code will return instantly if there is no coral present.

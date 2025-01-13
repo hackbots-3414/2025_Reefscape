@@ -3,7 +3,7 @@
 ## Subsystems
 * Elevator
 * Drivetrain
-* Hand
+* Rollers
 
 ## Assumptions
 * "hand" has ability to grab vertical coral
