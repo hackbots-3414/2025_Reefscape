@@ -1,11 +1,17 @@
 # Pick Up Algae From Ground
+
+## Assumptions
+* 
+
 * Locate Algae on ground
 * Drive to Algae
 * Intake Algae
+
 ## Subsystems
 * Drivetrain
 * Camera
-* Algae Intake
+* Algae Roller
+
 ## Automations
 `intakeAlgae`
 - Drops pivot
