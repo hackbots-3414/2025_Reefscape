@@ -1,4 +1,4 @@
-# Hand
+# Coral Roller
 
 ## Assumptions
 * can be rotated continuously
