@@ -8,15 +8,16 @@
 * Back away
 ## Subsystems:
 * Drivetrain
-* Intake
-* Output
+* Coral Intake
+* Rollers
 * Camera
 * Elevator
 
 ## Assumptions: 
 
-* The angle at which the coral is ejected can't be rotated
 * The height at which the coral is ejected can be adjusted
+* Ejection angle of the coral is fixed
+* Elevator subsystem should implement turtle mode when elevator is raised
 
 ## Operations 
 
@@ -24,11 +25,10 @@
 * Detects nearest scoring postition on the field.
 This should be relatively close to the robot's current position, because the driver
 should have driven close enough.
-The robot drives to the correct position and orientation.
-The Elevator raises to the correct position as well.
-Then, rotate wrist to the correct angle (get exact number from CAD)
-As we do that, ensure that the hand is rotated so the coral is perpendicular.
-Until all finish, wait.
-Then, open hand.
+* The robot drives to the correct position and orientation.
+* The Elevator raises to the correct position as well.
+* Until all finish, wait.
+* Eject coral from rollers
+* Lower elevator
 
 This code will return instantly if there is no coral present.reef

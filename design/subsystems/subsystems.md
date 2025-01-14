@@ -15,7 +15,7 @@
 `driveToCoordinate`
 * Should this avoid obstacles?
 
-## Algae Intake
+## Algae Roller
 
 ### Assumptions
 * Physically capable of intaking algae
@@ -73,3 +73,9 @@
 `FindCoralPos` - Checks what PVC gamepeices have already been scored on reef
 
 `AprilTagPos` - Uses data generated from AprilTags in order to ascertain robot's location on the field
+
+## Driver Camera
+
+### Assumptions
+* Mounted in a location that allows visibility for scoring Algae or coral
+* Uses a black and white camera to allow for faster framerate and/or higher resolution image

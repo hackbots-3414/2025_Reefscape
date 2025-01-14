@@ -5,7 +5,7 @@
 ## Subsystems
 * Drivetrain
 * Camera
-* Algae Intake
+* Algae Roller
 ## Automations
 * AutoIntake - Automatically intake algae once aligned
 * FindAlgae - Find ground algae

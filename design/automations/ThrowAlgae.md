@@ -6,7 +6,7 @@
 ## Subsystems
 * Drivetrain
 * Camera or encoders
-* Algae Intake
+* Algae Roller
 * Algae Output
 ## Automations
 * IntakeAlgae
