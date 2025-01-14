@@ -23,7 +23,7 @@
 ### Operations
 `AlgaeIntake` - Get algae into the robot
 
-`Eject` - Regardless of whether intake is the same as output, must be capable of eject to prevent a jam - Gets algae out of intake.
+`Eject` - Gets algae out of intake.
 
 `AutoIntake` - Moves forward when camera detects proper alignment on own, then uses Intake command to get the algae into the robot
 
@@ -64,6 +64,11 @@
 
 ### Assumptions
 * Camera capable of taking good enough pictures to identify coral, AprilTags, algae
+
+* PhotonVision is reliable enough to consistently provide an accurate pose
+estimation.
+
+* We cannot update our location when moving at sufficiently high speeds.
 
 ### Operations
 `FindCoral` - Locates PVC gamepeice

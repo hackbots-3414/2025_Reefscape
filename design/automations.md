@@ -13,8 +13,8 @@
 1. Remove algae from reef (2)
 1. Pick up algae from ground (3)
 1. Pick up algae from stack (1)
-1. Pick up Coral from stack (2) 
 1. Corral algae (3)
+1. Pick up Coral from stack (2)
 
 ## Teams 
 
@@ -27,4 +27,3 @@
 1. April tag localization
 1. Simulation
 1. Camera stacking
-1. 
