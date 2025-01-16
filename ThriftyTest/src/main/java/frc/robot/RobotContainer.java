@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,8 +20,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.Score;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Coral;
+import frc.robot.subsystems.Elevator;
 
 public class RobotContainer {
     // private static final Logger log = LoggerFactory.getLogger(RobotContainer.class);
@@ -42,16 +44,23 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final SendableChooser<Command> autoChooser;
+    // private final SendableChooser<Command> autoChooser;
 
     private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
+    private final ArrayList<SendableChooser<Command>> scoringHeightsChooser = new ArrayList<>();
 
     private final int numAutonWaypoints = 5;
+
+    private Elevator elevator;
+    private Coral coral;
     
 
     public RobotContainer() {
         configureBindings();
+
+        this.elevator = new Elevator();
+        this.coral = new Coral();
 
         // boolean isCompetition = true;
 
@@ -62,23 +71,28 @@ public class RobotContainer {
         //     : stream
         // );
 
-        autoChooser = AutoBuilder.buildAutoChooser();
+        // autoChooser = AutoBuilder.buildAutoChooser();
         
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+        // SmartDashboard.putData("Auto Chooser", autoChooser);
 
         for (int i = 0; i < numAutonWaypoints; i++) {
-            SendableChooser<Pose2d> currChooser = new SendableChooser<>();
-            configureSendableChooser(currChooser);
-            scoringLocationsChooser.add(currChooser);
-            SmartDashboard.putData("Piece to Score #" + (i), currChooser);
+            SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
+            configurePlaceChooser(placeChooser);
+            scoringLocationsChooser.add(placeChooser);
+            SmartDashboard.putData("Place to Score #" + (i), placeChooser);
+
+            SendableChooser<Command> heightChooser = new SendableChooser<>();
+            configureHeightChooser(heightChooser);
+            scoringHeightsChooser.add(heightChooser);
+            SmartDashboard.putData("Height to Score #" + (i), heightChooser);
         }        
 
-        pickupLocation.addOption("UPPER", ScoringLocations.UPPERHP.value);
-        pickupLocation.addOption("LOWER", ScoringLocations.LOWERHP.value);
+        pickupLocation.addOption("CLOSE", ScoringLocations.CLOSEHP.value);
+        pickupLocation.addOption("FAR", ScoringLocations.FARHP.value);
         SmartDashboard.putData(pickupLocation);
     }
 
-    private void configureSendableChooser(SendableChooser<Pose2d> chooser) {
+    private void configurePlaceChooser(SendableChooser<Pose2d> chooser) {
         chooser.addOption("A", ScoringLocations.A.value);
         chooser.addOption("B", ScoringLocations.B.value);
         chooser.addOption("C", ScoringLocations.C.value);
@@ -93,12 +107,25 @@ public class RobotContainer {
         chooser.addOption("L", ScoringLocations.L.value);
     }
 
+    private void configureHeightChooser(SendableChooser<Command> chooser) {
+        chooser.addOption("L1", new Score(1, elevator, coral));
+        chooser.addOption("L2", new Score(2, elevator, coral));
+        chooser.addOption("L3", new Score(3, elevator, coral));
+        chooser.addOption("L4", new Score(4, elevator, coral));
+    }
+
     public Command getAutonomousCommand() {
         Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
         for (int i = 0; i < scoringLocationsChooser.size(); i++) {
             locations[i] = scoringLocationsChooser.get(i).getSelected();
         }
-        return drivetrain.generateAutonomousRoutineFromPoses(pickupLocation.getSelected(), locations);
+
+        Command[] heights = new Command[scoringHeightsChooser.size()];
+        for (int i = 0; i < scoringHeightsChooser.size(); i++) {
+            heights[i] = scoringHeightsChooser.get(i).getSelected();
+        }
+
+        return drivetrain.generateAutonomousRoutineFromPosesWithScoring(pickupLocation.getSelected(), locations, heights);
     }
 
     private void configureBindings() {
@@ -142,8 +169,8 @@ public class RobotContainer {
         joystick.button(10).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.J.value)));
         joystick.button(11).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.K.value)));
         joystick.button(12).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.L.value)));
-        joystick.button(13).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.LOWERHP.value)));
-        joystick.button(14).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.UPPERHP.value)));
+        joystick.button(13).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.FARHP.value)));
+        joystick.button(14).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.CLOSEHP.value)));
 
         joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> drivetrain.resetOnTheFly()));
     }
@@ -161,8 +188,8 @@ public class RobotContainer {
         J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))),
         K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
         L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
-        LOWERHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        UPPERHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
+        FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
+        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
         
         private Pose2d value;
 

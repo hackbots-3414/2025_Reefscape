@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
@@ -22,13 +23,14 @@ public class Score extends Command {
   @Override
   public void initialize() {
     elevator.setLevel(level);
+    SmartDashboard.putString("SCORE LOCATION", "L" + level);
   }
 
   @Override
   public void execute() {
     if (elevator.atSetpoint()) {
       coral.score();
-    } 
+    }
   }
 
   @Override

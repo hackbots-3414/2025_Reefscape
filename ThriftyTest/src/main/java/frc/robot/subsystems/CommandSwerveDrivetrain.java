@@ -126,6 +126,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return routine;
     }
 
+    public Command generateAutonomousRoutineFromPosesWithScoring(Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands) {
+        SequentialCommandGroup routine = new SequentialCommandGroup();
+        for (int i = 0; i < poses.length; i++) {
+            if (i==0) { 
+                routine.addCommands(getPathFindToPose(poses[i]));
+            } else {
+                routine.addCommands(getPathFindToPose(desiredPickupLocation));
+                routine.addCommands(getPathFindToPose(poses[i]));
+            }
+            routine.addCommands(scoringCommands[i]);
+        }
+        return routine;
+    }
+
     public void sequenceOnTheFlyPaths(String pathName) {
         try {
             onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(PathPlannerPath.fromPathFile(pathName).getStartingDifferentialPose(), PathConstraints.unlimitedConstraints(12.0), 1));
