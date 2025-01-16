@@ -16,12 +16,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.RobotContainer.ScoringLocations;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -45,9 +47,11 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-    private final SendableChooser<ScoringLocations> scoringFirst;
-    private final SendableChooser<ScoringLocations> scoringSecond;
-    private final SendableChooser<ScoringLocations> scoringThird;
+    private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
+    private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
+
+    private final int numAutonWaypoints = 5;
+    
 
     public RobotContainer() {
         configureBindings();
@@ -65,48 +69,39 @@ public class RobotContainer {
         
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        scoringFirst = new SendableChooser<>();
-        scoringFirst.addOption("A", ScoringLocations.A);
-        scoringFirst.addOption("B", ScoringLocations.B);
-        scoringFirst.addOption("C", ScoringLocations.C);
-        scoringFirst.addOption("D", ScoringLocations.D);
-        scoringFirst.addOption("E", ScoringLocations.E);
-        scoringFirst.addOption("F", ScoringLocations.F);
-        scoringFirst.addOption("G", ScoringLocations.G);
-        scoringFirst.addOption("H", ScoringLocations.H);
-        scoringFirst.addOption("I", ScoringLocations.I);
-        scoringFirst.addOption("J", ScoringLocations.J);
-        scoringFirst.addOption("K", ScoringLocations.K);
-        scoringFirst.addOption("L", ScoringLocations.L);
+        for (int i = 0; i < numAutonWaypoints; i++) {
+            SendableChooser<Pose2d> currChooser = new SendableChooser<>();
+            configureSendableChooser(currChooser);
+            scoringLocationsChooser.add(currChooser);
+            SmartDashboard.putData("Piece to Score #" + (i), currChooser);
+        }        
 
-        scoringSecond = new SendableChooser<>();
-        scoringSecond.addOption("A", ScoringLocations.A);
-        scoringSecond.addOption("B", ScoringLocations.B);
-        scoringSecond.addOption("C", ScoringLocations.C);
-        scoringSecond.addOption("D", ScoringLocations.D);
-        scoringSecond.addOption("E", ScoringLocations.E);
-        scoringSecond.addOption("F", ScoringLocations.F);
-        scoringSecond.addOption("G", ScoringLocations.G);
-        scoringSecond.addOption("H", ScoringLocations.H);
-        scoringSecond.addOption("I", ScoringLocations.I);
-        scoringSecond.addOption("J", ScoringLocations.J);
-        scoringSecond.addOption("K", ScoringLocations.K);
-        scoringSecond.addOption("L", ScoringLocations.L);
+        pickupLocation.addOption("UPPER", ScoringLocations.UPPERHP.value);
+        pickupLocation.addOption("LOWER", ScoringLocations.LOWERHP.value);
+        SmartDashboard.putData(pickupLocation);
+    }
 
-        scoringThird = new SendableChooser<>();
-        scoringThird.addOption("A", ScoringLocations.A);
-        scoringThird.addOption("B", ScoringLocations.B);
-        scoringThird.addOption("C", ScoringLocations.C);
-        scoringThird.addOption("D", ScoringLocations.D);
-        scoringThird.addOption("E", ScoringLocations.E);
-        scoringThird.addOption("F", ScoringLocations.F);
-        scoringThird.addOption("G", ScoringLocations.G);
-        scoringThird.addOption("H", ScoringLocations.H);
-        scoringThird.addOption("I", ScoringLocations.I);
-        scoringThird.addOption("J", ScoringLocations.J);
-        scoringThird.addOption("K", ScoringLocations.K);
-        scoringThird.addOption("L", ScoringLocations.L);
+    private void configureSendableChooser(SendableChooser<Pose2d> chooser) {
+        chooser.addOption("A", ScoringLocations.A.value);
+        chooser.addOption("B", ScoringLocations.B.value);
+        chooser.addOption("C", ScoringLocations.C.value);
+        chooser.addOption("D", ScoringLocations.D.value);
+        chooser.addOption("E", ScoringLocations.E.value);
+        chooser.addOption("F", ScoringLocations.F.value);
+        chooser.addOption("G", ScoringLocations.G.value);
+        chooser.addOption("H", ScoringLocations.H.value);
+        chooser.addOption("I", ScoringLocations.I.value);
+        chooser.addOption("J", ScoringLocations.J.value);
+        chooser.addOption("K", ScoringLocations.K.value);
+        chooser.addOption("L", ScoringLocations.L.value);
+    }
 
+    public Command getAutonomousCommand() {
+        Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
+        for (int i = 0; i < scoringLocationsChooser.size(); i++) {
+            locations[i] = scoringLocationsChooser.get(i).getSelected();
+        }
+        return drivetrain.generateAutonomousRoutineFromPoses(pickupLocation.getSelected(), locations);
     }
 
     private void configureBindings() {
@@ -154,10 +149,6 @@ public class RobotContainer {
         joystick.button(14).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.UPPERHP.value)));
 
         joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> drivetrain.resetOnTheFly()));
-    }
-
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
     }
 
     public enum ScoringLocations {

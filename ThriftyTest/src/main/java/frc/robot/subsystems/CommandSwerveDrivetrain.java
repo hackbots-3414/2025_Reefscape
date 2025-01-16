@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
@@ -83,7 +84,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             (speeds, feedforwards) -> setControl(autoRequest.withSpeeds(speeds)), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(15.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(15.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -108,10 +109,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
+    private Command getPathFindToPose(Pose2d pose) {
+        return AutoBuilder.pathfindToPoseFlipped(pose, PathConstraints.unlimitedConstraints(12.0), 1);
+    }
+
+    public Command generateAutonomousRoutineFromPoses(Pose2d desiredPickupLocation, Pose2d[] poses) {
+        SequentialCommandGroup routine = new SequentialCommandGroup();
+        for (int i = 0; i < poses.length; i++) {
+            if (i==0) { 
+                routine.addCommands(getPathFindToPose(poses[i]));
+            } else {
+                routine.addCommands(getPathFindToPose(desiredPickupLocation));
+                routine.addCommands(getPathFindToPose(poses[i]));
+            }
+        }
+        return routine;
+    }
+
     public void sequenceOnTheFlyPaths(String pathName) {
         try {
             onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(PathPlannerPath.fromPathFile(pathName).getStartingDifferentialPose(), PathConstraints.unlimitedConstraints(12.0), 1));
-            // onTheFlyCommands.add(Commands.defer(() -> getFollowPathCommandFromName(pathName), Set.of(this)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,8 +137,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @SuppressWarnings("CallToPrintStackTrace")
     public void sequenceOnTheFlyPaths(Pose2d pose) {
         try {
-            onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(pose, PathConstraints.unlimitedConstraints(12.0), 1));
-            // onTheFlyCommands.add(Commands.defer(() -> getFollowPathCommandFromName(pathName), Set.of(this)));
+            onTheFlyCommands.add(getPathFindToPose(pose));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,10 +168,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 onTheFlyCommands.get(0).schedule();
                 ranCommand = true;
             }
-            // for (Command command : onTheFlyCommands) {
-            //     System.out.print(command.getName() + ", ");
-            // }
-            // System.out.println(ranCommand);
             if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
                 onTheFlyCommands.get(0).cancel();
                 onTheFlyCommands.remove(0);
