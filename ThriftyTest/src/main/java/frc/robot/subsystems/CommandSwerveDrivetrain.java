@@ -1,13 +1,11 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.SignalLogger;
+import org.json.simple.parser.ParseException;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
@@ -32,9 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -87,7 +83,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             (speeds, feedforwards) -> setControl(autoRequest.withSpeeds(speeds)), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(15.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(4.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(15.0, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -98,7 +94,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               return false;
             },
             this); // Reference to this subsystem to set requirements
-        } catch (Exception e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }
@@ -121,6 +117,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public void sequenceOnTheFlyPaths(Pose2d pose) {
         try {
             onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(pose, PathConstraints.unlimitedConstraints(12.0), 1));
@@ -133,7 +130,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Command getFollowPathCommandFromName(String pathName) {
         System.out.println("CONSTRUCTED PATH WQITH NAME:" + pathName);
         try {
-            return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
+            return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName)).andThen();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

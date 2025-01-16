@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +13,10 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -109,51 +109,29 @@ public class RobotContainer {
 
         joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> drivetrain.resetOnTheFly()));
 
+        Field2d field = new Field2d();
+
     }
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
 
-    public enum ScoringPaths {
-        A("ALineup"),
-        B("BLineup"),
-        C("CLineup"),
-        D("DLineup"),
-        E("ELineup"),
-        F("FLineup"),
-        G("GLineup"),
-        H("HLineup"),
-        I("ILineup"),
-        J("JLineup"),
-        K("KLineup"),
-        L("LLineup"),
-        LOWERHP("LowerHPLineup"),
-        UPPERHP("UpperHPLineup"),
-        MIDDLE("MiddleLineup");
-
-        private String value;
-
-        private ScoringPaths(String value) {
-            this.value = value;
-        }
-    }
-
     public enum ScoringLocations {
-        A(new Pose2d(3.16, 4.19, new Rotation2d(0))),
-        B(new Pose2d(3.16, 3.875, new Rotation2d(0))),
-        C(new Pose2d(3.675, 3, new Rotation2d(60))),
-        D(new Pose2d(4, 2.78, new Rotation2d(60))),
-        E(new Pose2d(5, 2.8, new Rotation2d(120))),
-        F(new Pose2d(5.3, 3, new Rotation2d(120))),
-        G(new Pose2d(5.8, 3.85, new Rotation2d(180))),
-        H(new Pose2d(5.8, 4.2, new Rotation2d(180))),
-        I(new Pose2d(5.3, 5.1, new Rotation2d(-120))),
-        J(new Pose2d(5, 5.25, new Rotation2d(-120))),
-        K(new Pose2d(4, 5.25, new Rotation2d(-60))),
-        L(new Pose2d(3.675, 5.1, new Rotation2d(-60))),
-        LOWERHP(new Pose2d(1.194, 1.026, new Rotation2d(-125))),
-        UPPERHP(new Pose2d(1.217, 7.012, new Rotation2d(-125)));
+        A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
+        B(new Pose2d(3.16, 3.875, Rotation2d.fromDegrees(0))),
+        C(new Pose2d(3.675, 3, Rotation2d.fromDegrees(60))),
+        D(new Pose2d(4, 2.78, Rotation2d.fromDegrees(60))),
+        E(new Pose2d(5, 2.8, Rotation2d.fromDegrees(120))),
+        F(new Pose2d(5.3, 3, Rotation2d.fromDegrees(120))),
+        G(new Pose2d(5.8, 3.85, Rotation2d.fromDegrees(180))),
+        H(new Pose2d(5.8, 4.2, Rotation2d.fromDegrees(180))),
+        I(new Pose2d(5.3, 5.1, Rotation2d.fromDegrees(-120))),
+        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))),
+        K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
+        L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
+        LOWERHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
+        UPPERHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
         
         private Pose2d value;
 
