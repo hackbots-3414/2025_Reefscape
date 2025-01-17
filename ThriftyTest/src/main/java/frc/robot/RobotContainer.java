@@ -25,6 +25,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
+import frc.robot.utils.AutonomousUtil;
 
 public class RobotContainer {
     // private static final Logger log = LoggerFactory.getLogger(RobotContainer.class);
@@ -125,7 +126,7 @@ public class RobotContainer {
             heights[i] = scoringHeightsChooser.get(i).getSelected();
         }
 
-        return drivetrain.generateAutonomousRoutineFromPosesWithScoring(pickupLocation.getSelected(), locations, heights);
+        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
     }
 
     private void configureBindings() {
@@ -157,22 +158,22 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.button(1).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.A.value)));
-        joystick.button(2).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.B.value)));
-        joystick.button(3).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.C.value)));
-        joystick.button(4).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.D.value)));
-        joystick.button(5).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.E.value)));
-        joystick.button(6).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.F.value)));
-        joystick.button(7).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.G.value)));
-        joystick.button(8).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.H.value)));
-        joystick.button(9).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.I.value)));
-        joystick.button(10).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.J.value)));
-        joystick.button(11).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.K.value)));
-        joystick.button(12).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.L.value)));
-        joystick.button(13).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.FARHP.value)));
-        joystick.button(14).onTrue(new InstantCommand(() -> drivetrain.sequenceOnTheFlyPaths(ScoringLocations.CLOSEHP.value)));
+        joystick.button(1).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
+        joystick.button(2).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
+        joystick.button(3).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
+        joystick.button(4).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
+        joystick.button(5).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
+        joystick.button(6).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
+        joystick.button(7).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
+        joystick.button(8).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
+        joystick.button(9).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
+        joystick.button(10).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
+        joystick.button(11).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
+        joystick.button(12).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
+        joystick.button(13).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
+        joystick.button(14).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
 
-        joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> drivetrain.resetOnTheFly()));
+        joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
     public enum ScoringLocations {

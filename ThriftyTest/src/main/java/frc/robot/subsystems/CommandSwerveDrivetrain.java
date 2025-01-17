@@ -1,23 +1,11 @@
 package frc.robot.subsystems;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.function.Supplier;
-
-import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -27,14 +15,14 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.utils.AutonomousUtil;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -53,55 +41,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean m_hasAppliedOperatorPerspective = false;
 
     private Pose2d estimatedPose = new Pose2d();
-    private ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
     private Field2d field = new Field2d();
     
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {startSimThread();}
-        initializePathPlanner();
+        AutonomousUtil.initializePathPlanner(this);
     }
 
     
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,double odometryUpdateFrequency,SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         if (Utils.isSimulation()) {startSimThread();}
-        initializePathPlanner();
+        AutonomousUtil.initializePathPlanner(this);
     }
 
     
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,double odometryUpdateFrequency,Matrix<N3, N1> odometryStandardDeviation,Matrix<N3, N1> visionStandardDeviation,SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
         if (Utils.isSimulation()) {startSimThread();}
-        initializePathPlanner();
-    }
-
-    public void initializePathPlanner() {
-        RobotConfig config;
-        try{
-            config = RobotConfig.fromGUISettings();
-            AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> setControl(autoRequest.withSpeeds(speeds)), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(15.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this); // Reference to this subsystem to set requirements
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
+        AutonomousUtil.initializePathPlanner(this);
     }
 
     public Pose2d getPose() {return estimatedPose;}
@@ -110,91 +70,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public ChassisSpeeds getRobotRelativeSpeeds() {return super.getState().Speeds;}
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {return run(() -> this.setControl(requestSupplier.get()));}
 
-
-    private ArrayList<Command> onTheFlyCommands = new ArrayList<>();
-
-    private Command getPathFindToPose(Pose2d pose) {
-        return AutoBuilder.pathfindToPoseFlipped(pose, PathConstraints.unlimitedConstraints(12.0), 1);
-    }
-
-    public Command generateAutonomousRoutineFromPoses(Pose2d desiredPickupLocation, Pose2d[] poses) {
-        SequentialCommandGroup routine = new SequentialCommandGroup();
-        for (int i = 0; i < poses.length; i++) {
-            if (i==0) { 
-                routine.addCommands(getPathFindToPose(poses[i]));
-            } else {
-                routine.addCommands(getPathFindToPose(desiredPickupLocation));
-                routine.addCommands(getPathFindToPose(poses[i]));
-            }
-        }
-        return routine;
-    }
-
-    public Command generateAutonomousRoutineFromPosesWithScoring(Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands) {
-        SequentialCommandGroup routine = new SequentialCommandGroup();
-        for (int i = 0; i < poses.length; i++) {
-            if (i==0) { 
-                routine.addCommands(getPathFindToPose(poses[i]));
-            } else {
-                routine.addCommands(getPathFindToPose(desiredPickupLocation));
-                routine.addCommands(getPathFindToPose(poses[i]));
-            }
-            routine.addCommands(scoringCommands[i]);
-        }
-        return routine;
-    }
-
-    public void sequenceOnTheFlyPaths(String pathName) {
-        try {
-            onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(PathPlannerPath.fromPathFile(pathName).getStartingDifferentialPose(), PathConstraints.unlimitedConstraints(12.0), 1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @SuppressWarnings("CallToPrintStackTrace")
-    public void sequenceOnTheFlyPaths(Pose2d pose) {
-        try {
-            onTheFlyCommands.add(getPathFindToPose(pose));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Command getFollowPathCommandFromName(String pathName) {
-        System.out.println("CONSTRUCTED PATH WQITH NAME:" + pathName);
-        try {
-            return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName)).andThen();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void resetOnTheFly() {
-        for (Command command : onTheFlyCommands) {
-            command.cancel();
-        }
-        onTheFlyCommands = new ArrayList<>();
-    }
-
-    private boolean ranCommand = false;
-
-    public void handleOnTheFly() {
-        if (onTheFlyCommands.size() > 0) {
-            if (!ranCommand) {
-                onTheFlyCommands.get(0).schedule();
-                ranCommand = true;
-            }
-            if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
-                onTheFlyCommands.get(0).cancel();
-                onTheFlyCommands.remove(0);
-                ranCommand = false;
-            }
-        } else {
-            ranCommand = false;
-        }
-    }
 
     @Override
     public void periodic() {
@@ -217,9 +92,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        handleOnTheFly();
         field.setRobotPose(estimatedPose);
         SmartDashboard.putData(field);
+        
+        AutonomousUtil.handleQueue();
     }
 
     private void startSimThread() {
