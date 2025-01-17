@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -49,7 +50,7 @@ public class RobotContainer {
 
     private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
-    private final ArrayList<SendableChooser<Command>> scoringHeightsChooser = new ArrayList<>();
+    private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
 
     private final int numAutonWaypoints = 5;
 
@@ -82,7 +83,7 @@ public class RobotContainer {
             scoringLocationsChooser.add(placeChooser);
             SmartDashboard.putData("Place to Score #" + (i), placeChooser);
 
-            SendableChooser<Command> heightChooser = new SendableChooser<>();
+            SendableChooser<Supplier<Command>> heightChooser = new SendableChooser<>();
             configureHeightChooser(heightChooser);
             scoringHeightsChooser.add(heightChooser);
             SmartDashboard.putData("Height to Score #" + (i), heightChooser);
@@ -94,7 +95,7 @@ public class RobotContainer {
     }
 
     private void configurePlaceChooser(SendableChooser<Pose2d> chooser) {
-        chooser.addOption("A", ScoringLocations.A.value);
+        chooser.setDefaultOption("A", ScoringLocations.A.value);
         chooser.addOption("B", ScoringLocations.B.value);
         chooser.addOption("C", ScoringLocations.C.value);
         chooser.addOption("D", ScoringLocations.D.value);
@@ -108,12 +109,19 @@ public class RobotContainer {
         chooser.addOption("L", ScoringLocations.L.value);
     }
 
-    private void configureHeightChooser(SendableChooser<Command> chooser) {
-        chooser.addOption("L1", new Score(1, elevator, coral));
-        chooser.addOption("L2", new Score(2, elevator, coral));
-        chooser.addOption("L3", new Score(3, elevator, coral));
-        chooser.addOption("L4", new Score(4, elevator, coral));
+    private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
+        chooser.addOption("L1", this::scoreL1);
+        chooser.addOption("L2", this::scoreL2);
+        chooser.addOption("L3", this::scoreL3);
+        chooser.setDefaultOption("L4", this::scoreL4);
     }
+
+
+    private Command scoreL1() {return makeScoreCommand(1);};
+    private Command scoreL2() {return makeScoreCommand(2);};
+    private Command scoreL3() {return makeScoreCommand(3);};
+    private Command scoreL4() {return makeScoreCommand(4);};
+    private Command makeScoreCommand(int level) {return new Score(level, elevator, coral);}
 
     public Command getAutonomousCommand() {
         Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
@@ -123,7 +131,7 @@ public class RobotContainer {
 
         Command[] heights = new Command[scoringHeightsChooser.size()];
         for (int i = 0; i < scoringHeightsChooser.size(); i++) {
-            heights[i] = scoringHeightsChooser.get(i).getSelected();
+            heights[i] = scoringHeightsChooser.get(i).getSelected().get();
         }
 
         return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);

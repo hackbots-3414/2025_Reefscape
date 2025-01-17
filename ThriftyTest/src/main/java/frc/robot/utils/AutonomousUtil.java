@@ -88,6 +88,7 @@ public class AutonomousUtil {
             }
             routine.addCommands(scoringCommands[i]);
         }
+        
         return routine;
     }
 
