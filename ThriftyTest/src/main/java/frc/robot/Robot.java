@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -21,7 +23,7 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   private Field2d field = new Field2d();
-  private Rotation2d offset = new Rotation2d();
+  private Rotation2d rotate = new Rotation2d();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -31,7 +33,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
     SmartDashboard.putData("Pose", field);
-    field.setRobotPose(new Pose2d(50, 50, offset));
+    // field.setRobotPose(new Pose2d(50, 50, rotate));
   }
 
   @Override
@@ -63,6 +65,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    field.setRobotPose(field.getRobotPose().plus(Transform2d(/*TODO: Figure out what goes here */, rotate)));
   }
 
   @Override
