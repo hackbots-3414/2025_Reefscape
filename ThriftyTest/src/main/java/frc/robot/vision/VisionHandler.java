@@ -14,8 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -29,6 +32,8 @@ public class VisionHandler implements AutoCloseable {
     private VisionSystemSim m_visionSim = new VisionSystemSim("main");
     private SimCameraProperties m_simProps = new SimCameraProperties();
 
+    private Field2d m_field;
+
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
         try {
@@ -37,6 +42,7 @@ public class VisionHandler implements AutoCloseable {
             m_logger.error("could not load april tag resource file");
             System.exit(1);
         }
+        
         setupCameras();
         m_notifier = new Notifier(() -> {
             for (Runnable estimator : m_estimators) {
@@ -44,12 +50,12 @@ public class VisionHandler implements AutoCloseable {
             }
             m_visionSim.update(drivetrain.getPose());
         });
+        m_field = m_visionSim.getDebugField();
+        SmartDashboard.putData("April Tag Debug Field", m_field);
     }
 
     public void startThread() {
         m_notifier.startPeriodic(VisionConstants.k_periodic);
-        // this feels like a good spot to add the smart dashboard stuff
-        SmartDashboard.putData("April Tag Debug Field", m_visionSim.getDebugField());
     }
 
     private void setupCameras() {
@@ -66,7 +72,10 @@ public class VisionHandler implements AutoCloseable {
             Runnable estimator = new SingleInputPoseEstimator(
                 realCamera,
                 robotToCamera,
-                m_drivetrain
+                (TimestampedPoseEstimate estimate) -> {
+                    m_field.getObject(cameraName).setPose(estimate.pose());
+                    m_drivetrain.addPoseEstimate(estimate);
+                }
             );
             m_estimators.add(estimator);
         }

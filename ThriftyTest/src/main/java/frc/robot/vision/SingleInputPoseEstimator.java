@@ -1,17 +1,27 @@
 package frc.robot.vision;
 
+import static edu.wpi.first.units.Units.Seconds;
+
+import java.io.IOException;
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.PnpResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.Utils;
-
+import ch.qos.logback.core.Layout;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,93 +29,93 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class SingleInputPoseEstimator implements Runnable {
+    private Logger m_logger = LoggerFactory.getLogger(SingleInputPoseEstimator.class);
+
     private PhotonCamera m_camera;
-    // this should be defined such that this is FROM camera TO robot.
-    // i.e. m_transform = robot - camera
-    // so  robot = camera + transform
-    // and camera = robot - transform
-    private Transform3d m_transform;
+    private PhotonPoseEstimator m_estimator;
     private Consumer<TimestampedPoseEstimate> m_reporter;
+
+    public SingleInputPoseEstimator(
+        PhotonCamera camera,
+        Transform3d robotToCamera,
+        Consumer<TimestampedPoseEstimate> callback
+    ) {
+        m_camera = camera;
+        m_reporter = callback;
+        AprilTagFieldLayout layout = null;
+        try {
+            layout = AprilTagFieldLayout.loadFromResource(
+                AprilTagFields.k2025Reefscape.m_resourceFile
+            );
+        } catch (IOException e) {
+            m_logger.error("failed to load resource file: {}", e);
+            System.exit(1);
+            // no need to worry about null exceptions if we just terminate now!
+        }
+        m_estimator = new PhotonPoseEstimator(
+            layout,
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+            robotToCamera
+        );
+        m_estimator.setMultiTagFallbackStrategy(
+            PoseStrategy.LOWEST_AMBIGUITY
+        );
+    }
     
     public SingleInputPoseEstimator(
         PhotonCamera camera,
         Transform3d robotToCamera,
         CommandSwerveDrivetrain drivetrain
     ) {
-        m_camera = camera;
-        m_reporter = drivetrain::addPoseEstimate;
-        m_transform = robotToCamera.inverse();
-        // robotToCamera is  camera - robot
-        // so its inverse is robot - camera
-        // which is cameraToRobot.
+        this(camera, robotToCamera, drivetrain::addPoseEstimate);
     }
 
     public void run() {
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
         for (PhotonPipelineResult result : results) {
-            Optional<TimestampedPoseEstimate> processed = process(result);
-            processed.ifPresent((estimate) -> {
-                // report the valid estimate
-                m_reporter.accept(estimate);
-            });
+            boolean isValid = checkValidity(
+                result,
+                result.metadata.getLatencyMillis() / 1.0e3
+            );
+            if (isValid) {
+                // report the valid estimate to our estimator
+                m_estimator.update(result).ifPresent((EstimatedRobotPose estimation) -> {
+                    process(result, estimation);
+                });
+            };
         }
     }
 
-    private Optional<TimestampedPoseEstimate> process(
-        PhotonPipelineResult result
+    private void process(
+        PhotonPipelineResult result,
+        EstimatedRobotPose estimation
     ) {
-        /*
-        SUPER IMPORTANT:
-        The following logic makes the assumption that this runnable is running
-        fast enough such that results don't pile up in the queue.
-        This is important, because it allows us to make the assumption that
-        the time that we read the result minus the latency to post it is equal
-        to the time that the result was sent.
-         */
-        double latency = result.metadata.getLatencyMillis() / 1e3;
-        double timestamp = Utils.getCurrentTimeSeconds()
-            - latency;
-        if (!checkValidity(result, timestamp)) {
-            return Optional.empty();
-        }
-        Transform3d cameraPosition = result
-            .getMultiTagResult()
-            .get()
-            .estimatedPose
-            .best;
-        Pose2d robotPosition = new Pose3d()
-            .plus(cameraPosition)
-            .plus(m_transform)
-            .toPose2d();
-        Matrix<N3, N1> stdDevs = calculateStdDevs(result, latency);
-        TimestampedPoseEstimate estimate = new TimestampedPoseEstimate(
-            robotPosition,
-            timestamp,
-            stdDevs);
-        return Optional.of(estimate);
+        double timestamp = result.timestampSeconds;
+        // please be reasonable values.
+        m_logger.info("timestamp is {}", timestamp);
     }
-
+    
     private boolean checkValidity(PhotonPipelineResult result, double latency) {
         // too old -> don't count it
-        if (latency > VisionConstants.k_latencyThreshold) return false;
-        // no targets -> no pose
-        if (!result.hasTargets()) return false;
-        // If for some reason we can't do this
-        Optional<MultiTargetPNPResult> multitag = result.getMultiTagResult();
-        if (multitag.isEmpty()) return false;
-        // get the result
-        PnpResult estimation = multitag.get().estimatedPose;
-        if (estimation.ambiguity > VisionConstants.k_AmbiguityThreshold) {
-            // pose ambiguity is too high.
+        if (latency > VisionConstants.k_latencyThreshold) {
+            // this is interesting, so let's report it
+            m_logger.warn("Refused old vision data, latency of {}", latency);
             return false;
         }
-        Pose3d pose = new Pose3d().plus(estimation.best).plus(m_transform);
+        // no targets -> no pose
+        if (!result.hasTargets()) return false;
+        // pull the data from the result
+        Pose3d pose = getPose(result);
+        double ambiguity = getAmbiguity(result);
+        // check for ambiguity
+        if (ambiguity > VisionConstants.k_AmbiguityThreshold) return false;
         if (isOutsideField(pose)) return false;
         return true;
     }
@@ -156,11 +166,7 @@ public class SingleInputPoseEstimator implements Runnable {
                 * (averageTagDistance - VisionConstants.k_noisyDistance)
         );
         // ambiguity factor
-        double ambiguity = result
-            .getMultiTagResult()
-            .get()
-            .estimatedPose
-            .ambiguity;
+        double ambiguity = getAmbiguity(result);
         double ambiguityFactor = Math.max(1,
             VisionConstants.k_ambiguityMultiplier * ambiguity
                 + VisionConstants.k_ambiguityShifter

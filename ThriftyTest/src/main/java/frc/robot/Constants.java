@@ -27,7 +27,7 @@ public class Constants {
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum tolerated latency, in seconds.
-        public static final double k_latencyThreshold = 2.0;
+        public static final double k_latencyThreshold = 0.75;
         // The maximum tolerated ambiguity value.
         public static final double k_AmbiguityThreshold = 0.2;
         // The farthest out off a field a pose estimate can say we are
