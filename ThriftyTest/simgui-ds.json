@@ -4,11 +4,6 @@
       "visible": false
     }
   },
-  "Keyboard 0 Settings": {
-    "window": {
-      "visible": true
-    }
-  },
   "System Joysticks": {
     "window": {
       "visible": false
@@ -27,7 +22,8 @@
         },
         {
           "decKey": 91,
-          "incKey": 93
+          "incKey": 93,
+          "keyRate": 0.009999999776482582
         }
       ],
       "axisCount": 3,

@@ -8,9 +8,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -22,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -40,10 +38,13 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
+    private VisionHandler m_vision = new VisionHandler(drivetrain);
+
     public RobotContainer() {
         configureBindings();
         autoChooser = AutoBuilder.buildAutoChooser("A1");
         SmartDashboard.putData("Auto Chooser", autoChooser);
+        m_vision.startThread();
     }
 
     private void configureBindings() {

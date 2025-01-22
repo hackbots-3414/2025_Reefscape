@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -181,20 +182,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Java doesn't recognzie the fact that this WILL get a value, so it gets initialized to null.
         // Typically a really bad idea, but here it's probably OK because failing to set it is really bad.
         RobotConfig robotConfig = null;
-        boolean set = false;
         try {
             robotConfig = RobotConfig.fromGUISettings();
-            set = true;
         } catch (IOException e) {
             logger.error("I/O exception triggered: {}", e);
             System.exit(1);
         } catch (ParseException e) {
             logger.error("Parse exception: {}", e);
-            System.exit(1);
-        }
-        // some checking here (TODO: remove)
-        if (!set) {
-            logger.error("not set?!");
             System.exit(1);
         }
         if (Robot.isSimulation()) {
@@ -240,5 +234,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public void driveRobotRelative(ChassisSpeeds speeds) {
         setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds));
+    }
+
+    public void addPoseEstimate(TimestampedPoseEstimate estimate) {
+        // This should NOT run in simulation!
+        if (Robot.isSimulation()) return;
+        // Depending on our configs, we should use or not use the std devs
+        if (Constants.VisionConstants.k_useStdDevs) {
+            addVisionMeasurement(
+                estimate.pose(),
+                estimate.timestamp(),
+                estimate.stdDevs()
+            );
+        } else {
+            addVisionMeasurement(
+                estimate.pose(),
+                estimate.timestamp()
+            );
+        }
     }
 }
