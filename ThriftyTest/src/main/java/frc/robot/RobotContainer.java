@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
@@ -16,18 +12,18 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Score;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Coral;
-import frc.robot.subsystems.Elevator;
 import frc.robot.utils.AutonomousUtil;
 
 public class RobotContainer {
@@ -54,15 +50,15 @@ public class RobotContainer {
 
     private final int numAutonWaypoints = 5;
 
-    private Elevator elevator;
-    private Coral coral;
+    // private Elevator elevator;
+    // private Coral coral;
     
 
     public RobotContainer() {
         configureBindings();
 
-        this.elevator = new Elevator();
-        this.coral = new Coral();
+        // this.elevator = new Elevator();
+        // this.coral = new Coral();
 
         // boolean isCompetition = true;
 
@@ -106,33 +102,33 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.button(4).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.button(1).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
-        joystick.button(2).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
-        joystick.button(3).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
-        joystick.button(4).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
-        joystick.button(5).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
-        joystick.button(6).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
-        joystick.button(7).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
-        joystick.button(8).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
-        joystick.button(9).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
-        joystick.button(10).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
-        joystick.button(11).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
-        joystick.button(12).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
-        joystick.button(13).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
-        joystick.button(14).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
+        // joystick.button(1).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
+        // joystick.button(2).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
+        // joystick.button(3).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
+        // joystick.button(4).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
+        // joystick.button(5).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
+        // joystick.button(6).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
+        // joystick.button(7).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
+        // joystick.button(8).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
+        // joystick.button(9).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
+        // joystick.button(10).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
+        // joystick.button(11).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
+        // joystick.button(12).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
+        // joystick.button(13).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
+        // joystick.button(14).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
 
-        joystick.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only ever queue paths while button is held, and when let go, queue will clear
-        joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no joystick input is there
+        // joystick.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only ever queue paths while button is held, and when let go, queue will clear
+        // joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no joystick input is there
     }
 
-    private double getX() {return -joystick.getLeftY();}
+    private double getX() {return joystick.getLeftY();}
     private double getY() {return -joystick.getLeftX();}
-    private double getRot() {return -joystick.getRightX();}
-    private boolean getClosedLoopEnableButton() {return joystick.povUp().getAsBoolean();}
+    private double getRot() {return joystick.getLeftTriggerAxis();}
+    private boolean getClosedLoopEnableButton() {return joystick.button(3).getAsBoolean();}
 
     public enum ScoringLocations {
         A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
@@ -201,11 +197,11 @@ public class RobotContainer {
     }
 
 
-    private Command scoreL1() {return makeScoreCommand(1);};
-    private Command scoreL2() {return makeScoreCommand(2);};
-    private Command scoreL3() {return makeScoreCommand(3);};
-    private Command scoreL4() {return makeScoreCommand(4);};
-    private Command makeScoreCommand(int level) {return new Score(level, elevator, coral);}
+    private Command scoreL1() {return makeScoreCommand(1);}
+    private Command scoreL2() {return makeScoreCommand(2);}
+    private Command scoreL3() {return makeScoreCommand(3);}
+    private Command scoreL4() {return makeScoreCommand(4);}
+    private Command makeScoreCommand(int level) {return new Score(level);}
 
     public Command getAutonomousCommand() {
         Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];

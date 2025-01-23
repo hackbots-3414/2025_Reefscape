@@ -121,7 +121,7 @@ public class AutonomousUtil {
     private static boolean ranCommand = false;
 
     public static void handleQueue() {
-        if (onTheFlyCommands.size() > 0) {
+        if (!onTheFlyCommands.isEmpty()) {
             if (!ranCommand) {
                 onTheFlyCommands.get(0).schedule();
                 ranCommand = true;

@@ -6,35 +6,33 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Coral;
-import frc.robot.subsystems.Elevator;
 
 public class Score extends Command {
   private final int level;
-  private final Elevator elevator;
-  private final Coral coral;
+  // private final Elevator elevator;
+  // private final Coral coral;
   
-  public Score(int level, Elevator elevator, Coral coral) {
+  public Score(int level) {
     this.level = level;
-    this.elevator = elevator;
-    this.coral = coral;
+    // this.elevator = elevator;
+    // this.coral = coral;
   }
 
   @Override
   public void initialize() {
-    elevator.setLevel(level);
+    // elevator.setLevel(level);
     SmartDashboard.putString("SCORE LOCATION", "L" + level);
   }
 
   @Override
   public void execute() {
-    if (elevator.atSetpoint()) {
-      coral.score();
-    }
+    // if (elevator.atSetpoint()) {
+      // coral.score();
+    // }
   }
 
-  @Override
-  public boolean isFinished() {
-    return !coral.hasCoral();
-  }
+  // @Override
+  // public boolean isFinished() {
+  //   // return !coral.hasCoral();
+  // }
 }
