@@ -24,6 +24,10 @@
           "decKey": 91,
           "incKey": 93,
           "keyRate": 0.009999999776482582
+        },
+        {
+          "decKey": 264,
+          "incKey": 265
         }
       ],
       "axisCount": 3,
@@ -104,9 +108,6 @@
         {
           "decKey": 263,
           "incKey": 262
-        },
-        {
-          "incKey": 264
         }
       ],
       "axisCount": 2,

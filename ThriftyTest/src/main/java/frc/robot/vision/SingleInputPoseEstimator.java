@@ -1,9 +1,6 @@
 package frc.robot.vision;
 
-import static edu.wpi.first.units.Units.Seconds;
-
 import java.io.IOException;
-import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -12,24 +9,21 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-import org.photonvision.targeting.PnpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.core.Layout;
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -79,30 +73,24 @@ public class SingleInputPoseEstimator implements Runnable {
     public void run() {
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
+        if (results.size() > VisionConstants.k_maxResults) {
+            m_logger.warn("Possibly too many result: {}", results.size());
+        }
         for (PhotonPipelineResult result : results) {
-            boolean isValid = checkValidity(
-                result,
-                result.metadata.getLatencyMillis() / 1.0e3
-            );
+            boolean isValid = precheckValidity(result);
             if (isValid) {
                 // report the valid estimate to our estimator
                 m_estimator.update(result).ifPresent((EstimatedRobotPose estimation) -> {
-                    process(result, estimation);
+                    process(result, estimation).ifPresent((tEstimation) -> {
+                        m_reporter.accept(tEstimation);
+                    });
                 });
             };
         }
     }
 
-    private void process(
-        PhotonPipelineResult result,
-        EstimatedRobotPose estimation
-    ) {
-        double timestamp = result.timestampSeconds;
-        // please be reasonable values.
-        m_logger.info("timestamp is {}", timestamp);
-    }
-    
-    private boolean checkValidity(PhotonPipelineResult result, double latency) {
+    private boolean precheckValidity(PhotonPipelineResult result) {
+        double latency = result.metadata.getLatencyMillis() / 1.0e+3;
         // too old -> don't count it
         if (latency > VisionConstants.k_latencyThreshold) {
             // this is interesting, so let's report it
@@ -110,16 +98,34 @@ public class SingleInputPoseEstimator implements Runnable {
             return false;
         }
         // no targets -> no pose
-        if (!result.hasTargets()) return false;
-        // pull the data from the result
-        Pose3d pose = getPose(result);
+        return result.hasTargets();
+    }
+    
+    private Optional<TimestampedPoseEstimate> process(
+        PhotonPipelineResult result,
+        EstimatedRobotPose estimation
+    ) {
+        double timestamp = Utils.getCurrentTimeSeconds()
+            - result.metadata.getLatencyMillis() / 1.0e+3;
+        Pose3d pose = estimation.estimatedPose;
         double ambiguity = getAmbiguity(result);
-        // check for ambiguity
-        if (ambiguity > VisionConstants.k_AmbiguityThreshold) return false;
-        if (isOutsideField(pose)) return false;
-        return true;
+        Matrix<N3, N1> stdDevs = calculateStdDevs(result, timestamp);
+        if (!checkValidity(pose, ambiguity)) {
+            return Optional.empty();
+        }
+        return Optional.of(
+            new TimestampedPoseEstimate(pose.toPose2d(), timestamp, stdDevs)
+        );
     }
 
+    private boolean checkValidity(
+        Pose3d pose,
+        double ambiguity
+    ) {
+        if (ambiguity >= VisionConstants.k_AmbiguityThreshold) return false;
+        return !isOutsideField(pose);
+    }
+    
     private boolean isOutsideField(Pose3d pose) {
         double x = pose.getX();
         double y = pose.getY();
@@ -165,8 +171,9 @@ public class SingleInputPoseEstimator implements Runnable {
             VisionConstants.k_distanceMultiplier
                 * (averageTagDistance - VisionConstants.k_noisyDistance)
         );
-        // ambiguity factor
+        // calculate an (average) ambiguity real quick:
         double ambiguity = getAmbiguity(result);
+        // ambiguity factor
         double ambiguityFactor = Math.max(1,
             VisionConstants.k_ambiguityMultiplier * ambiguity
                 + VisionConstants.k_ambiguityShifter
@@ -177,5 +184,9 @@ public class SingleInputPoseEstimator implements Runnable {
         // final calculation
         double stdDevMultiplier = ambiguityFactor * distanceFactor / tagDivisor;
         return stdDevMultiplier;
+    }
+
+    private double getAmbiguity(PhotonPipelineResult result) {
+        return result.getBestTarget().getPoseAmbiguity();
     }
 }

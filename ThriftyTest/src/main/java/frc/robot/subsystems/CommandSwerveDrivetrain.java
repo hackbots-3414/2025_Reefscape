@@ -41,7 +41,7 @@ import frc.robot.vision.TimestampedPoseEstimate;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-    private Logger logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
+    private Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -185,10 +185,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         try {
             robotConfig = RobotConfig.fromGUISettings();
         } catch (IOException e) {
-            logger.error("I/O exception triggered: {}", e);
+            m_logger.error("I/O exception triggered: {}", e);
             System.exit(1);
         } catch (ParseException e) {
-            logger.error("Parse exception: {}", e);
+            m_logger.error("Parse exception: {}", e);
             System.exit(1);
         }
         if (Robot.isSimulation()) {
