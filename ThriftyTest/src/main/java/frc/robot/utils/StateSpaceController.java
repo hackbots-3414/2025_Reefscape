@@ -68,4 +68,8 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
   public void setReference(Vector<States> ref) {
     m_loop.setNextR(ref);
   }
+
+  public double getReference() {
+    return m_loop.getNextR(0);
+  }
 }

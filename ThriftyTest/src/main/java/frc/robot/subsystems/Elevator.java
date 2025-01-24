@@ -24,6 +24,7 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.utils.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
@@ -33,7 +34,7 @@ public class Elevator extends SubsystemBase {
   private DigitalInput forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
   private DigitalInput reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
 
-  private StateSpaceController<N2, N1, N2> elevatorController;
+  private StateSpaceController<N2, N1, N2> controller;
 
   private double position;
 
@@ -44,7 +45,7 @@ public class Elevator extends SubsystemBase {
     configEncoder();
     configMotor();
     Vector<N2> initialState = getOutput();
-    elevatorController = new StateSpaceController<N2, N1, N2>(ElevatorConstants.k_config, this::getOutput, this::applyInput, initialState);
+    controller = new StateSpaceController<N2, N1, N2>(ElevatorConstants.k_config, this::getOutput, this::applyInput, initialState);
   }
 
   public void configEncoder() {
@@ -105,17 +106,10 @@ public class Elevator extends SubsystemBase {
     elevator.setControl(config.withOutput(volts));
   }
 
-  public void setPosition(double goal) {
-    elevatorController.setReference(VecBuilder.fill(goal, 0.0));
-  }
+  public void setPosition(double goal) {controller.setReference(VecBuilder.fill(goal, 0.0));}
 
-  public void stop() {
-    elevatorController.setReference(VecBuilder.fill(position, 0.0));
-  }
-
-  public double getPosition() {
-    return position;
-  }
+  public void stop() {setPosition(position);}
+  public double getPosition() {return position;}
 
   public void setLevel(int level) {
     switch (level) {
@@ -128,15 +122,15 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  public void setStow() {}
-  public void setL1() {}
-  public void setL2() {}
-  public void setL3() {}
-  public void setL4() {}
+  public void setStow() {controller.setReference(VecBuilder.fill(ElevatorConstants.stow, 0.0));}
+  public void setProcessor() {controller.setReference(VecBuilder.fill(ElevatorConstants.processor, 0.0));}
+  public void setL1() {controller.setReference(VecBuilder.fill(ElevatorConstants.L1, 0.0));}
+  public void setL2() {controller.setReference(VecBuilder.fill(ElevatorConstants.L2, 0.0));}
+  public void setL3() {controller.setReference(VecBuilder.fill(ElevatorConstants.L3, 0.0));}
+  public void setL4() {controller.setReference(VecBuilder.fill(ElevatorConstants.L4, 0.0));}
+  public void setNet() {controller.setReference(VecBuilder.fill(ElevatorConstants.net, 0.0));}
 
-  public boolean atSetpoint() {
-    return true;
-  }
+  public boolean atSetpoint() {return position - controller.getReference() < PivotConstants.atSetpointTolerance;}
 
   @Override
   public void periodic() {

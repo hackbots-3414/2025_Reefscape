@@ -51,6 +51,8 @@ public final class Constants {
     public static final double k_momentInertia = 0.2188; // SI units
     public static final double k_gearRatio = 125.0;
 
+    public static final double maxHeight = 4;
+
     private static final Vector<N2> k_stateSpaceStdDevs = VecBuilder.fill(0.1, 0.3);
 
     private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
@@ -72,7 +74,47 @@ public final class Constants {
     public static final double k_absoluteSensorRange = 0.5;
     public static final SensorDirectionValue k_cancoderInvert = SensorDirectionValue.CounterClockwise_Positive;
     public static final double k_encoderOffset = 0.324707;
+
+    public static final double atSetpointTolerance = maxHeight * 0.01; // 1% tolerance
+    
+    public static final double stow = 0;
+    public static final double processor = 0.25;
+    public static final double L1 = 0.5;
+    public static final double L2 = 1.5;
+    public static final double L3 = 2.5;
+    public static final double L4 = 3.5;
+    public static final double net = 4;
   }
+
+  public static final class PivotConstants {
+    public static final int pivotMotorID = 59;
+    public static final int EncoderID = 51;
+    public static final double encoderOffset = 0.324707;
+
+    public static final double rotorToSensorRatio = 125;
+    public static final double sensorToMechanismRatio = 1.0;
+
+    public static final InvertedValue motorInvert = InvertedValue.Clockwise_Positive;
+    public static final SensorDirectionValue cancoderInvert = SensorDirectionValue.CounterClockwise_Positive;
+
+    public static final double forwardSoftLimitThreshold = 0.085693;
+    public static final double reverseSoftLimitThreshold = 0;
+
+    public static final double radiansAtZero = Math.toRadians(30);
+    public static final double radiansAtMax = Math.toRadians(58);
+
+    public static final double pivotManualUpSpeed = 0.3;
+    public static final double pivotManualDownSpeed = -0.1;
+
+    public static final double absoluteSensorRange = 0.5;
+
+    public static final double atSetpointTolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
+    
+    public static final double groundPickup = 0.5;
+    public static final double processor = 0.25;
+    public static final double reefPickup = 0.5;
+    public static final double net = 0.0;
+}
 
   public static final class TalonFXConstants {
         public final static double nominalVoltageVolts = 12.0; // DC Volts
