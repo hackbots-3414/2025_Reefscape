@@ -53,6 +53,7 @@ public class Constants {
         public static final double k_cameraOffsetY = k_robotY / 2.0;
         
         public static final double k_cameraHeight = Units.inchesToMeters(9.0);
+        public static final double k_cameraPitch = -Math.PI / 12.0;
     }
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);
@@ -63,40 +64,41 @@ public class Constants {
         private static final double x = RobotConstants.k_cameraOffsetX;
         private static final double y = RobotConstants.k_cameraOffsetY;
         private static final double z = RobotConstants.k_cameraHeight;
+        private static final double pitch = RobotConstants.k_cameraPitch;
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("0", new Transform3d(
                 new Translation3d(x, y, z),
-                new Rotation3d(0, 0, Math.PI/6 /* 30 degrees */)
+                new Rotation3d(0, pitch, Math.PI/6 /* 30 degrees */)
             )),
             Map.entry("1", new Transform3d(
                 new Translation3d(x, y, z),
-                new Rotation3d(0, 0, Math.PI / 3 /* 60 degrees */)
+                new Rotation3d(0, pitch, Math.PI / 3 /* 60 degrees */)
             )),
             Map.entry("2", new Transform3d(
                 new Translation3d(-x, y, z),
-                new Rotation3d(0, 0, 2.0 * Math.PI / 3.0)
+                new Rotation3d(0, pitch, 2.0 * Math.PI / 3.0)
             )),
             Map.entry("3", new Transform3d(
                 new Translation3d(-x, y, z),
-                new Rotation3d(0, 0, 5.0 * Math.PI / 6.0)
+                new Rotation3d(0, pitch, 5.0 * Math.PI / 6.0)
             )),
             Map.entry("4", new Transform3d(
                 new Translation3d(-x, -y, z),
-                new Rotation3d(0, 0, -5.0 * Math.PI / 6.0)
+                new Rotation3d(0, pitch, -5.0 * Math.PI / 6.0)
             )),
             Map.entry("5", new Transform3d(
                 new Translation3d(-x, -y, z),
-                new Rotation3d(0, 0, -2.0 * Math.PI / 3.0)
+                new Rotation3d(0, pitch, -2.0 * Math.PI / 3.0)
             )),
             Map.entry("6", new Transform3d(
                 new Translation3d(x, -y, z),
-                new Rotation3d(0, 0, -Math.PI / 3.0)
+                new Rotation3d(0, pitch, -Math.PI / 3.0)
             )),
             Map.entry("7", new Transform3d(
                 new Translation3d(x, -y, z),
-                new Rotation3d(0, 0, -Math.PI / 6.0)
+                new Rotation3d(0, pitch, -Math.PI / 6.0)
             ))
         );
         // The tick time for each pose estimator to run
