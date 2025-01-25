@@ -1,12 +1,12 @@
 ##Key:
-- <span style="color:purple">Already decided by mechanical/electrical</span>
+- <span style="color:magenta">Already decided by mechanical/electrical</span>
 - <span style="color:red">Must be asked for in order to get</span>
 - <span style="color:green">No more action needed</span>
-- <span style="color:blue">Must wait for outside testing to be done</span>
+- <span style="color:orange">Must wait for outside testing to be done</span>
 - <span style="color:yellow">Unclear/uncertain</span>
 
 ### Elevator:
-- <span style="color:purple">CANcoder</span> & <span style="color:red">Lidar sensor</span> (facing up to detect when elevator is at zero and at top) OR <span style="color:red">Lower and Upper Limit Switch</span> - Necessary because the CANcoders will loop and have multiple zeros.
+- <span style="color:magenta">CANcoder</span> & <span style="color:red">Lidar sensor</span> (facing up to detect when elevator is at zero and at top) OR <span style="color:red">Lower and Upper Limit Switch</span> - Necessary because the CANcoders will loop and have multiple zeros.
 
 ### Algae:
 - <span style="color:green">Motor Current</span>
@@ -20,5 +20,5 @@
 - <span style="color:red">Switch</span> to confirm contact
 
 ### Navigation:
-- AprilTags when possible - <span style="color:blue">Camera sensors</span>. Nolan says eight so far. Confirm and ask for more details like position after he finishes testing.
+- AprilTags when possible - <span style="color:orange">Camera sensors</span>. Nolan says eight so far. Confirm and ask for more details like position after he finishes testing.
 - <span style="color:green">Drivetrain CANCoders</span> when not possible to detect tags accurately
