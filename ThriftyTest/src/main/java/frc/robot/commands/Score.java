@@ -27,12 +27,13 @@ public class Score extends Command {
   @Override
   public void execute() {
     // if (elevator.atSetpoint()) {
-      // coral.score();
+    //   coral.score();
     // }
   }
 
-  // @Override
-  // public boolean isFinished() {
-  //   // return !coral.hasCoral();
-  // }
+  @Override
+  public boolean isFinished() {
+    // return !coral.hasCoral();
+    return true;
+  }
 }

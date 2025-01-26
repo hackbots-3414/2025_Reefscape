@@ -63,7 +63,7 @@ public class TeleopCommand extends Command {
 
     @Override
     public void execute() {
-        if (!useOpenLoop.get()) { // open loop code
+        if (useOpenLoop.get()) { // open loop code
             drivetrain.setControl(drive.withVelocityX(-xSupplier.get() * MaxSpeed).withVelocityY(-ySupplier.get() * MaxSpeed).withRotationalRate(-rotSupplier.get() * MaxAngularRate));
             alreadyClosedLoop = false;
         } else { // closed loop code

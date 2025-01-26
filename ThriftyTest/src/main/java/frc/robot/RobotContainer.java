@@ -4,17 +4,15 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,16 +25,10 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.03) // Add a 3% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -81,7 +73,7 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
-            new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getClosedLoopEnableButton)
+            new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton)
             // drivetrain.applyRequest(() ->
             //     drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
             //         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
@@ -128,7 +120,7 @@ public class RobotContainer {
     private double getX() {return joystick.getLeftY();}
     private double getY() {return -joystick.getLeftX();}
     private double getRot() {return joystick.getLeftTriggerAxis();}
-    private boolean getClosedLoopEnableButton() {return joystick.button(3).getAsBoolean();}
+    private boolean getUseOpenLoopButton() {return joystick.button(3).getAsBoolean();}
 
     public enum ScoringLocations {
         A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
