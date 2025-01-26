@@ -83,17 +83,9 @@ public class TeleopCommand extends Command {
                 goalRot = -goalRot;
             }
 
-            SmartDashboard.putNumber("GOAL X", goalX);
-            SmartDashboard.putNumber("GOAL Y", goalY);
-            SmartDashboard.putNumber("GOAL ROT", goalRot);
-
             xVelo = -xPIDController.calculate(currPose.getX(), goalX);
             yVelo = -yPIDController.calculate(currPose.getY(), goalY);
             rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
-
-            SmartDashboard.putNumber("X VELO", xVelo);
-            SmartDashboard.putNumber("Y VELO", yVelo);
-            SmartDashboard.putNumber("ROT VELO", rotVelo);
 
             drivetrain.setControl(drive.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
         }
