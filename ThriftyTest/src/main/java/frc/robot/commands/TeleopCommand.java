@@ -1,5 +1,9 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -7,9 +11,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.generated.TunerConstants;
@@ -45,6 +46,8 @@ public class TeleopCommand extends Command {
 
     private final double dt = 0.02;
 
+    
+
     public TeleopCommand(CommandSwerveDrivetrain drivetrain, Supplier<Double> xSupplier, Supplier<Double> ySupplier, Supplier<Double> rotSupplier, Supplier<Boolean> useOpenLoop) {
         this.drivetrain = drivetrain;
         this.xSupplier = xSupplier;
@@ -55,10 +58,11 @@ public class TeleopCommand extends Command {
         addRequirements(drivetrain);
 
         rotPIDController.enableContinuousInput(-Math.PI, Math.PI);
+    }
 
-        SmartDashboard.putData("X PID", xPIDController);
-        SmartDashboard.putData("Y PID", yPIDController);
-        SmartDashboard.putData("ROT PID", rotPIDController);
+    @Override
+    public void initialize() {
+        alreadyClosedLoop = false;
     }
 
     @Override
@@ -86,6 +90,10 @@ public class TeleopCommand extends Command {
             xVelo = -xPIDController.calculate(currPose.getX(), goalX);
             yVelo = -yPIDController.calculate(currPose.getY(), goalY);
             rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
+
+            SmartDashboard.putNumber("goalX", goalX);
+            SmartDashboard.putNumber("goalY", goalY);
+            SmartDashboard.putNumber("rotVelo", rotVelo);
 
             drivetrain.setControl(drive.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
         }

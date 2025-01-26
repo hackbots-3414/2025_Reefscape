@@ -79,13 +79,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void periodic() {
         estimatedPose = this.getState().Pose;
 
-        /*
-         * Periodically try to apply the operator perspective.
-         * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
-         * This allows us to correct the perspective in case the robot code restarts mid-match.
-         * Otherwise, only check and apply the operator perspective if the DS is disabled.
-         * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
-         */
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -100,8 +93,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putData(field);
         
         AutonomousUtil.handleQueue();
-
-        SmartDashboard.putNumber("ROTATION", estimatedPose.getRotation().getRadians());
     }
 
     private void startSimThread() {
@@ -176,8 +167,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         )
     );
 
-    private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
-
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {return m_sysIdRoutineToApply.quasistatic(direction);}
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {return m_sysIdRoutineToApply.dynamic(direction);}
+    public Command sysIdQuasistaticTranslation(SysIdRoutine.Direction direction) {return m_sysIdRoutineTranslation.quasistatic(direction);}
+    public Command sysIdDynamicTranslation(SysIdRoutine.Direction direction) {return m_sysIdRoutineTranslation.dynamic(direction);}
+    public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {return m_sysIdRoutineSteer.quasistatic(direction);}
+    public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {return m_sysIdRoutineSteer.dynamic(direction);}
+    public Command sysIdQuasistaticRotation(SysIdRoutine.Direction direction) {return m_sysIdRoutineRotation.quasistatic(direction);}
+    public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {return m_sysIdRoutineRotation.dynamic(direction);}
 }

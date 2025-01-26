@@ -16,8 +16,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Score;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -71,56 +71,53 @@ public class RobotContainer {
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton)
-            // drivetrain.applyRequest(() ->
-            //     drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-            //         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            //         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            // )
-        );
+        drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
 
-        // // Run SysId routines when holding back/start and X/Y.
-        // // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // Run SysId routines when holding back/start and X/Y.
+        // Note that each routine should be run exactly once in a single log.
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.button(4).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // joystick.button(4).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        // joystick.button(1).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
-        // joystick.button(2).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
-        // joystick.button(3).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
-        // joystick.button(4).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
-        // joystick.button(5).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
-        // joystick.button(6).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
-        // joystick.button(7).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
-        // joystick.button(8).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
-        // joystick.button(9).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
-        // joystick.button(10).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
-        // joystick.button(11).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
-        // joystick.button(12).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
-        // joystick.button(13).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
-        // joystick.button(14).and(joystick.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
+        bindButtonBoard(joystick);
 
-        // joystick.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only ever queue paths while button is held, and when let go, queue will clear
-        // joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no joystick input is there
+        joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no joystick input is there
     }
 
     private double getX() {return joystick.getLeftY();}
     private double getY() {return -joystick.getLeftX();}
     private double getRot() {return joystick.getLeftTriggerAxis();}
     private boolean getUseOpenLoopButton() {return joystick.button(3).getAsBoolean();}
+
+    private void bindButtonBoard(CommandXboxController controller) {
+        controller.button(1).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
+        controller.button(2).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
+        controller.button(3).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
+        controller.button(4).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
+        controller.button(5).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
+        controller.button(6).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
+        controller.button(7).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
+        controller.button(8).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
+        controller.button(9).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
+        controller.button(10).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
+        controller.button(11).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
+        controller.button(12).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
+        controller.button(13).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
+        controller.button(14).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
+
+        controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only ever queue paths while button is held, and when let go, queue will clear
+    }
 
     public enum ScoringLocations {
         A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
@@ -145,9 +142,6 @@ public class RobotContainer {
         }
     }
 
-
-
-
     private void configureAutonChooser() {
         for (int i = 0; i < numAutonWaypoints; i++) {
             SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
@@ -161,7 +155,7 @@ public class RobotContainer {
             SmartDashboard.putData("Height to Score #" + (i), heightChooser);
         }        
 
-        pickupLocation.addOption("CLOSE", ScoringLocations.CLOSEHP.value);
+        pickupLocation.setDefaultOption("CLOSE", ScoringLocations.CLOSEHP.value);
         pickupLocation.addOption("FAR", ScoringLocations.FARHP.value);
         SmartDashboard.putData(pickupLocation);
     }
