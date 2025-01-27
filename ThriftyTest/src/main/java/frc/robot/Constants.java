@@ -46,29 +46,17 @@ And +Z is upwards, so it wouldn't show here.
 
 public class Constants {
     public static class RobotConstants {
-        public static final double k_robotX = Units.inchesToMeters(20.0);
-        public static final double k_robotY = Units.inchesToMeters(20.0);
+        public static final double k_robotX = Units.inchesToMeters(30.0);
+        public static final double k_robotY = Units.inchesToMeters(30.0);
 
-        
-        public static class OnSwerveMotors {
-            public static final double k_cameraOffsetX = k_robotX / 2.0;    
-            public static final double k_cameraOffsetY = k_robotY / 2.0;
-            public static final double k_cameraHeight = Units.inchesToMeters(9.0);
-            public static final double k_cameraBackHeight = Units.inchesToMeters(9.0);
-            public static final double k_cameraPitch = -Units.degreesToRadians(22.5);
-            public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
-            public static final double k_cameraYaw = Units.degreesToRadians(45.0);
-        }
-
-        public static class OnElevatorClusters {
-            public static final double k_cameraOffsetX = 0.2 * k_robotX / 2.0;    
-            public static final double k_cameraOffsetY = 0.8 * k_robotY / 2.0;
-            public static final double k_cameraHeight = Units.inchesToMeters(20.0);
-            public static final double k_cameraBackHeight = Units.inchesToMeters(30.0);
-            public static final double k_cameraPitch = -Units.degreesToRadians(-6);
-            public static final double k_backCameraPitch = -Units.degreesToRadians(41.0);
-            public static final double k_cameraYaw = Units.degreesToRadians(25.0);
-        }
+        public static final double k_cameraOffsetX = 0.75 * k_robotX / 2.0;    
+        public static final double k_cameraOffsetY = 0.75 * k_robotY / 2.0;
+        public static final double k_cameraHeight = Units.inchesToMeters(6.0);
+        public static final double k_cameraBackHeight = Units.inchesToMeters(12.0);
+        public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
+        public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
+        public static final double k_cameraYaw = Units.degreesToRadians(35.0);
+        public static final double k_cameraBackYaw = Units.degreesToRadians(45.0);
     }
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);
@@ -76,14 +64,15 @@ public class Constants {
     }
     public static class VisionConstants {
         // aliases
-        private static final double x = RobotConstants.OnSwerveMotors.k_cameraOffsetX;
-        private static final double y = RobotConstants.OnSwerveMotors.k_cameraOffsetY;
-        private static final double z = RobotConstants.OnSwerveMotors.k_cameraHeight;
-        private static final double zBack = RobotConstants.OnSwerveMotors.k_cameraBackHeight;
-        private static final double pitch = RobotConstants.OnSwerveMotors.k_cameraPitch;
-        private static final double backPitch = RobotConstants.OnSwerveMotors.k_backCameraPitch;
+        private static final double x = RobotConstants.k_cameraOffsetX;
+        private static final double y = RobotConstants.k_cameraOffsetY;
+        private static final double z = RobotConstants.k_cameraHeight;
+        private static final double zBack = RobotConstants.k_cameraBackHeight;
+        private static final double pitch = RobotConstants.k_cameraPitch;
+        private static final double backPitch = RobotConstants.k_backCameraPitch;
 
-        private static final double yaw = RobotConstants.OnSwerveMotors.k_cameraYaw;
+        private static final double yaw = RobotConstants.k_cameraYaw;
+        private static final double backYaw = RobotConstants.k_cameraBackYaw;
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
@@ -96,19 +85,19 @@ public class Constants {
                 new Rotation3d(0, pitch, Math.PI - yaw)
             )),
             Map.entry("2", new Transform3d(
-                new Translation3d(-x, y, z),
+                new Translation3d(-x, y, zBack),
                 new Rotation3d(0, pitch, yaw)
             )),
             Map.entry("3", new Transform3d(
                 new Translation3d(-x, y, zBack),
-                new Rotation3d(0, backPitch, yaw - Math.PI)
+                new Rotation3d(0, backPitch, backYaw - Math.PI)
             )),
             Map.entry("4", new Transform3d(
                 new Translation3d(-x, -y, zBack),
-                new Rotation3d(0, backPitch, Math.PI - yaw)
+                new Rotation3d(0, backPitch, Math.PI - backYaw)
             )),
             Map.entry("5", new Transform3d(
-                new Translation3d(-x, -y, z),
+                new Translation3d(-x, -y, zBack),
                 new Rotation3d(0, pitch, -yaw)
             )),
             Map.entry("6", new Transform3d(
