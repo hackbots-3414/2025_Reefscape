@@ -28,16 +28,16 @@ import frc.robot.Constants.PivotConstants;
 import frc.robot.utils.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
-  private TalonFX elevator = new TalonFX(ElevatorConstants.motorID);
-  private CANcoder cancoder = new CANcoder(ElevatorConstants.cancoderPort);
+  private final TalonFX elevator = new TalonFX(ElevatorConstants.motorID);
+  private final CANcoder cancoder = new CANcoder(ElevatorConstants.cancoderPort);
 
-  private DigitalInput forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
-  private DigitalInput reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
+  private final DigitalInput forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
+  private final DigitalInput reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
 
-  private StateSpaceController<N2, N1, N2> controller;
+  private final StateSpaceController<N2, N1, N2> controller;
 
   private double position;
-
+  private double velocity;
   private boolean reverseLimit;
   private boolean forwardLimit;
   
@@ -45,7 +45,7 @@ public class Elevator extends SubsystemBase {
     configEncoder();
     configMotor();
     Vector<N2> initialState = getOutput();
-    controller = new StateSpaceController<N2, N1, N2>(ElevatorConstants.k_config, this::getOutput, this::applyInput, initialState);
+    controller = new StateSpaceController<>(ElevatorConstants.k_config, this::getOutput, this::applyInput, initialState);
   }
 
   public void configEncoder() {
@@ -88,11 +88,7 @@ public class Elevator extends SubsystemBase {
     elevator.getConfigurator().apply(config, 0.2);
   }
 
-  private Vector<N2> getOutput() {
-    double position = cancoder.getAbsolutePosition().getValueAsDouble(); // position is in mechanism rotations
-    double velocity = cancoder.getVelocity().getValueAsDouble();
-    return VecBuilder.fill(position, velocity);
-  }
+  private Vector<N2> getOutput() {return VecBuilder.fill(position, velocity);}
 
   private void applyInput(Vector<N1> inputs) {
     VoltageOut config = new VoltageOut(0);
@@ -107,6 +103,13 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPosition(double goal) {controller.setReference(VecBuilder.fill(goal, 0.0));}
+  public void setStow() {setPosition(ElevatorConstants.stow);}
+  public void setProcessor() {setPosition(ElevatorConstants.processor);}
+  public void setL1() {setPosition(ElevatorConstants.L1);}
+  public void setL2() {setPosition(ElevatorConstants.L2);}
+  public void setL3() {setPosition(ElevatorConstants.L3);}
+  public void setL4() {setPosition(ElevatorConstants.L4);}
+  public void setNet() {setPosition(ElevatorConstants.net);}
 
   public void stop() {setPosition(position);}
   public double getPosition() {return position;}
@@ -122,19 +125,12 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  public void setStow() {controller.setReference(VecBuilder.fill(ElevatorConstants.stow, 0.0));}
-  public void setProcessor() {controller.setReference(VecBuilder.fill(ElevatorConstants.processor, 0.0));}
-  public void setL1() {controller.setReference(VecBuilder.fill(ElevatorConstants.L1, 0.0));}
-  public void setL2() {controller.setReference(VecBuilder.fill(ElevatorConstants.L2, 0.0));}
-  public void setL3() {controller.setReference(VecBuilder.fill(ElevatorConstants.L3, 0.0));}
-  public void setL4() {controller.setReference(VecBuilder.fill(ElevatorConstants.L4, 0.0));}
-  public void setNet() {controller.setReference(VecBuilder.fill(ElevatorConstants.net, 0.0));}
-
   public boolean atSetpoint() {return position - controller.getReference() < PivotConstants.atSetpointTolerance;}
 
   @Override
   public void periodic() {
-    position = elevator.getPosition().getValueAsDouble();
+    position = cancoder.getPosition().getValueAsDouble();
+    velocity = cancoder.getVelocity().getValueAsDouble();
 
     reverseLimit = !reverseLimiter.get();
     forwardLimit = !forwardLimiter.get();
