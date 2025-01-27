@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
@@ -13,10 +11,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Score;
 import frc.robot.commands.TeleopCommand;
@@ -30,7 +30,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -73,32 +73,32 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
-        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // dragonReins.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // dragonReins.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-dragonReins.getLeftY(), -dragonReins.getLeftX()))
         // ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        // dragonReins.back().and(dragonReins.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        // dragonReins.back().and(dragonReins.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        // dragonReins.start().and(dragonReins.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        // dragonReins.start().and(dragonReins.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        // joystick.button(4).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // dragonReins.button(4).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        bindButtonBoard(joystick);
+        //bindButtonBoard(dragonReins);
 
-        joystick.axisMagnitudeGreaterThan(0, 0.0).or(() -> joystick.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no joystick input is there
+        dragonReins.axisMagnitudeGreaterThan(0, 0.0).or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no dragonReins input is there
     }
 
-    private double getX() {return joystick.getLeftY();}
-    private double getY() {return -joystick.getLeftX();}
-    private double getRot() {return joystick.getLeftTriggerAxis();}
-    private boolean getUseOpenLoopButton() {return joystick.button(3).getAsBoolean();}
+    private double getX() {return -dragonReins.getLeftY();}
+    private double getY() {return dragonReins.getLeftX();}
+    private double getRot() {return -dragonReins.getRightX();}
+    private boolean getUseOpenLoopButton() {return dragonReins.button(3).getAsBoolean();}
 
     private void bindButtonBoard(CommandXboxController controller) {
         controller.button(1).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));

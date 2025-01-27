@@ -4,9 +4,9 @@
       "visible": false
     }
   },
-  "Keyboard 0 Settings": {
+  "System Joysticks": {
     "window": {
-      "visible": true
+      "enabled": false
     }
   },
   "keyboardJoysticks": [
