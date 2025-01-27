@@ -20,8 +20,6 @@
 - <span style="color:green">Motor Current</span>
 - <span style="color:yellow">Switch</span> to confirm contact
     - What sort of switch? Limit Switch.
-    - Design doesn't really like the idea of mounting a switch into the hook thing (Complicated mounting/wiring)
-
-### Navigation:
+    - Design doesn't really like the idea of mounting a switch into the hook thing (Complicated mounting/wiring), but it would be very useful for programming to be able to tell if contact has been made because that hook doesn't look like it'll have good driver/operator visibility especially from the station farthest away from the Barge. Navigation:
 - AprilTags when possible - <span style="color:orange">Camera sensors</span>. Nolan says eight so far. Confirm and ask him for more details like position of cameras after he finishes testing.
 - <span style="color:green">Drivetrain CANCoders</span> when not possible to detect tags accurately
