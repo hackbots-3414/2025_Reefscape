@@ -20,7 +20,11 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
   private Supplier<Vector<Outputs>> m_outputSupplier;
   private Consumer<Vector<Inputs>> m_inputConsumer;
 
+  private double m_tolerance;
+
   private String m_name;
+
+  private boolean isAtSetpoint = false;
 
   /** Creates a new StateSpaceController. */
   public StateSpaceController(
@@ -32,6 +36,8 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
 
     m_outputSupplier = outputSupplier;
     m_inputConsumer = inputConsumer;
+
+    m_tolerance = config.getTolerance();
 
     m_name = config.getName();
 
@@ -59,6 +65,7 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
       SmartDashboard.putNumber(m_name + " (" + row + ")", measurement);
     }
 
+    isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) > m_tolerance;
   }
 
   /**
@@ -71,5 +78,9 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
 
   public double getReference() {
     return m_loop.getNextR(0);
+  }
+
+  public boolean isAtSetpoint() {
+    return isAtSetpoint;
   }
 }

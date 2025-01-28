@@ -28,7 +28,7 @@ public class Pivot extends SubsystemBase {
   private final TalonFX pivot = new TalonFX(PivotConstants.pivotMotorID);
   private final CANcoder cancoder = new CANcoder(PivotConstants.EncoderID);
 
-  private final StateSpaceController<N2, N1, N2> pivotController;
+  private final StateSpaceController<N2, N1, N2> controller;
 
   private double position;
   private double velocity;
@@ -37,7 +37,7 @@ public class Pivot extends SubsystemBase {
     configEncoder();
     configMotor();
     Vector<N2> initialState = getOutput();
-    pivotController = new StateSpaceController<>(PivotConstants.k_config, this::getOutput, this::applyInput,
+    controller = new StateSpaceController<>(PivotConstants.k_config, this::getOutput, this::applyInput,
         initialState);
   }
 
@@ -98,7 +98,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public void setPosition(double goal) {
-    pivotController.setReference(VecBuilder.fill(goal, 0.0));
+    controller.setReference(VecBuilder.fill(goal, 0.0));
   }
 
   public void setStow() {
@@ -130,7 +130,7 @@ public class Pivot extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return position - pivotController.getReference() < PivotConstants.atSetpointTolerance;
+    return controller.isAtSetpoint();
   }
 
   @Override

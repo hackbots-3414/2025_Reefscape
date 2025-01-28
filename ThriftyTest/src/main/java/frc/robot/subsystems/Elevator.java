@@ -125,7 +125,7 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  public boolean atSetpoint() {return position - controller.getReference() < PivotConstants.atSetpointTolerance;}
+  public boolean atSetpoint() {return controller.isAtSetpoint();}
 
   @Override
   public void periodic() {

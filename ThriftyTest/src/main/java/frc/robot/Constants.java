@@ -57,6 +57,8 @@ public final class Constants {
 
         public static final double maxHeight = 4;
 
+        public static final double tolerance = maxHeight * 0.01; // 1% tolerance
+
         private static final Vector<N2> k_stateSpaceStdDevs = VecBuilder.fill(0.1, 0.3);
 
         private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
@@ -73,13 +75,12 @@ public final class Constants {
                 relms,
                 Nat.N2(),
                 Nat.N2(),
+                tolerance,
                 "Elevator");
 
         public static final double k_absoluteSensorRange = 0.5;
         public static final SensorDirectionValue k_cancoderInvert = SensorDirectionValue.CounterClockwise_Positive;
         public static final double k_encoderOffset = 0.324707;
-
-        public static final double atSetpointTolerance = maxHeight * 0.01; // 1% tolerance
 
         public static final double stow = 0;
         public static final double processor = 0.25;
@@ -115,7 +116,7 @@ public final class Constants {
 
         public static final double absoluteSensorRange = 0.5;
 
-        public static final double atSetpointTolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
+        public static final double tolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
 
         public static final double groundPickup = 0.5;
         public static final double processor = 0.25;
@@ -143,6 +144,7 @@ public final class Constants {
                 relms,
                 Nat.N2(),
                 Nat.N2(),
+                tolerance,
                 "Pivot");
 
     }

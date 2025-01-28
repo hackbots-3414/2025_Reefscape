@@ -29,6 +29,8 @@ public class StateSpaceConfig<States extends Num, Inputs extends Num, Outputs ex
   private Nat<States> m_states;
   private Nat<Outputs> m_outputs;
 
+  private double m_tolerance;
+
   private String m_name;
 
   /**
@@ -50,6 +52,7 @@ public class StateSpaceConfig<States extends Num, Inputs extends Num, Outputs ex
     Vector<Inputs> relms,
     Nat<States> states,
     Nat<Outputs> outputs,
+    double tolerance,
     String name
     ) {
 
@@ -63,6 +66,8 @@ public class StateSpaceConfig<States extends Num, Inputs extends Num, Outputs ex
 
       m_states = states;
       m_outputs = outputs;
+
+      m_tolerance = tolerance;
 
       m_name = name;
     }
@@ -111,5 +116,9 @@ public class StateSpaceConfig<States extends Num, Inputs extends Num, Outputs ex
    */
   public String getName() {
     return m_name;
+  }
+
+  public double getTolerance() {
+    return m_tolerance;
   }
 }
