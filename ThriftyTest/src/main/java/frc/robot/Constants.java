@@ -63,6 +63,7 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
     }
     public static class VisionConstants {
+        public static final String k_estimationName = "estimation";
         // aliases
         private static final double x = RobotConstants.k_cameraOffsetX;
         private static final double y = RobotConstants.k_cameraOffsetY;
@@ -112,7 +113,7 @@ public class Constants {
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera) we expect to see per tick
-        public static final double k_maxResults = 3;
+        public static final int k_maxResults = 2;
         // The maximum tolerated latency, in seconds.
         public static final double k_latencyThreshold = 0.75;
         // The maximum tolerated ambiguity value.

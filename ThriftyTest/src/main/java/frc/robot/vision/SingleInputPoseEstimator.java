@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -26,22 +27,28 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class SingleInputPoseEstimator implements Runnable {
     private Logger m_logger = LoggerFactory.getLogger(SingleInputPoseEstimator.class);
 
     private PhotonCamera m_camera;
-    private PhotonPoseEstimator m_estimator;
     private Consumer<TimestampedPoseEstimate> m_reporter;
+
+    // Estimators
+    private PhotonPoseEstimator m_estimator;
+    private SingleTagEstimator m_singleTagEstimator;
+
+    private Supplier<Optional<Integer>> m_singleTag;
 
     public SingleInputPoseEstimator(
         PhotonCamera camera,
         Transform3d robotToCamera,
-        Consumer<TimestampedPoseEstimate> callback
+        Consumer<TimestampedPoseEstimate> updateCallback,
+        Supplier<Optional<Integer>> singleTagSupplier
     ) {
         m_camera = camera;
-        m_reporter = callback;
+        m_reporter = updateCallback;
+        m_singleTag = singleTagSupplier;
         AprilTagFieldLayout layout = null;
         try {
             layout = AprilTagFieldLayout.loadFromResource(
@@ -60,33 +67,49 @@ public class SingleInputPoseEstimator implements Runnable {
         m_estimator.setMultiTagFallbackStrategy(
             PoseStrategy.LOWEST_AMBIGUITY
         );
-    }
-    
-    public SingleInputPoseEstimator(
-        PhotonCamera camera,
-        Transform3d robotToCamera,
-        CommandSwerveDrivetrain drivetrain
-    ) {
-        this(camera, robotToCamera, drivetrain::addPoseEstimate);
+        m_singleTagEstimator = new SingleTagEstimator(
+            layout,
+            robotToCamera
+        );
     }
 
     public void run() {
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
         if (results.size() > VisionConstants.k_maxResults) {
+            /*
+            Rationale for this warning:
+            This run() method should be running on a loop. It should run fast.
+            Ideally, it runs WAY faster than the camera always receives either
+            0 or 1 new result.
+            We may want to know if we are being bombarded with too many results,
+            i.e. the camera is running faster than we are, which could suggest
+            that we are running slow.
+            Also, we assume that the time that we see the result minus the time
+            the result took to get sent to us is the time that it was sent.
+            But if we are running slowly, it's possible there would be some
+            time between when a result was sent and when we "see" it. This would
+            mess up the timestamping logic.
+            */
             m_logger.warn("Possibly too many result: {}", results.size());
         }
         for (PhotonPipelineResult result : results) {
-            boolean isValid = precheckValidity(result);
-            if (isValid) {
-                // report the valid estimate to our estimator
-                m_estimator.update(result).ifPresent((EstimatedRobotPose estimation) -> {
-                    process(result, estimation).ifPresent((tEstimation) -> {
-                        m_reporter.accept(tEstimation);
-                    });
-                });
-            };
+            handleResult(result);
         }
+    }
+
+    private void handleResult(PhotonPipelineResult result) {
+        boolean isValid = precheckValidity(result);
+        if (!isValid) return;
+        // By this point the result is valid.
+        m_singleTag.get().ifPresentOrElse(
+            (Integer id) -> {
+                singleTag(result, id.intValue());
+            },
+            () -> {
+                multiTag(result);
+            }
+        );
     }
 
     private boolean precheckValidity(PhotonPipelineResult result) {
@@ -100,6 +123,27 @@ public class SingleInputPoseEstimator implements Runnable {
         // no targets -> no pose
         return result.hasTargets();
     }
+
+    private void singleTag(
+        PhotonPipelineResult result,
+        int tagId
+    ) {
+        for (PhotonTrackedTarget target : result.getTargets()) {
+            if (target.getFiducialId() != tagId) continue;
+            // if we are running this, then we have the tag.
+            m_singleTagEstimator.estimate(target).ifPresent((Pose3d est) -> {
+                process(result, est).ifPresent(m_reporter);
+            });
+        }
+    }
+
+    private void multiTag(
+        PhotonPipelineResult result
+    ) {
+        m_estimator.update(result).ifPresent((EstimatedRobotPose est) -> {
+            process(result, est).ifPresent(m_reporter);
+        });
+    }
     
     private Optional<TimestampedPoseEstimate> process(
         PhotonPipelineResult result,
@@ -110,11 +154,24 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose3d pose = estimation.estimatedPose;
         double ambiguity = getAmbiguity(result);
         Matrix<N3, N1> stdDevs = calculateStdDevs(result, timestamp);
-        if (!checkValidity(pose, ambiguity)) {
-            return Optional.empty();
-        }
+        // check validity again
+        if (!checkValidity(pose, ambiguity)) return Optional.empty();
         return Optional.of(
             new TimestampedPoseEstimate(pose.toPose2d(), timestamp, stdDevs)
+        );
+    }
+
+    private Optional<TimestampedPoseEstimate> process(
+        PhotonPipelineResult result,
+        Pose3d estimate
+    ) {
+        double timestamp = Utils.getCurrentTimeSeconds()
+            - result.metadata.getLatencyMillis() / 1.0e+3;
+        Matrix<N3, N1> stdDevs = calculateStdDevs(result, timestamp);
+        // check validity again, but set ambiguity to 0 so that we have no issues.
+        if (!checkValidity(estimate, 0.0)) return Optional.empty();
+        return Optional.of(
+            new TimestampedPoseEstimate(estimate.toPose2d(), timestamp, stdDevs)
         );
     }
 

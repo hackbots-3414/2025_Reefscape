@@ -59,12 +59,16 @@ public class RobotContainer {
             )
         );
 
-        // m_driveController.square().whileTrue(drivetrain.applyRequest(() -> brake));
-        // m_driveController.b().whileTrue(drivetrain.applyRequest(() -> {
-        //     return point.withModuleDirection(new Rotation2d(-m_driveController.getLeftY(), -m_driveController.getLeftX()));
-        // }));
         m_driveController.button(1).onTrue(new InstantCommand(() -> {
             drivetrain.resetView();
+        }));
+
+        m_driveController.button(2).onTrue(new InstantCommand(() -> {
+            m_vision.setMultitag();
+        }));
+
+        m_driveController.button(3).onTrue(new InstantCommand(() -> {
+            m_vision.setSingleTag(10);
         }));
 
         drivetrain.registerTelemetry(m_telemetry::telemeterize);

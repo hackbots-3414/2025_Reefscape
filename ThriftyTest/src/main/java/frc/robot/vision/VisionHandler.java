@@ -1,12 +1,13 @@
 package frc.robot.vision;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Milliseconds;
 
 import java.io.IOException;
+import java.lang.StackWalker.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -35,9 +38,9 @@ public class VisionHandler implements AutoCloseable {
     private SimCameraProperties m_simProps = new SimCameraProperties();
 
     private Field2d m_field;
-    
-    private List<TimestampedPoseEstimate> m_lastEstimates = new ArrayList<>();
 
+    private Optional<Integer> m_singleTag;
+    
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
         try {
@@ -51,6 +54,7 @@ public class VisionHandler implements AutoCloseable {
         m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
         SmartDashboard.putData("April Tag Debug Field", m_field);
+        m_singleTag = Optional.empty();
     }
 
     private void setupAprilTagField() throws IOException {
@@ -81,18 +85,7 @@ public class VisionHandler implements AutoCloseable {
             VisionConstants.k_errStdDev
         );
     }
-
-    private void updateEstimators() {
-        for (SingleInputPoseEstimator estimator : m_estimators) {
-            estimator.run();
-        }
-        m_visionSim.update(m_drivetrain.getPose());
-    }
-
-    public void startThread() {
-        m_notifier.startPeriodic(VisionConstants.k_periodic);
-    }
-
+    
     private void setupCameras() {
         for (Map.Entry<String, Transform3d> entry : VisionConstants.cameras.entrySet()) {
             // it's easier to read this way:
@@ -108,22 +101,47 @@ public class VisionHandler implements AutoCloseable {
                 // competition use. it will boink the roborio's cpu :(
                 simCamera.enableDrawWireframe(true);
             }
-            m_visionSim.getCameraPose(simCamera);
-            // Transform2d robotToCamera2d = new Transform2d(
-            //     robotToCamera.getX(),
-            //     robotToCamera.getY(),
-            //     robotToCamera.getRotation().toRotation2d()
-            // );
             SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
                 realCamera,
                 robotToCamera,
-                (TimestampedPoseEstimate estimate) -> {
-                    m_lastEstimates.add(estimate);
-                    m_drivetrain.addPoseEstimate(estimate);
-                }
+                this::addEstimate,
+                this::getSingleTag
             );
             m_estimators.add(estimator);
         }
+    }
+
+    private void updateEstimators() {
+        // clear previous output from the estimators.
+        m_field.getObject(VisionConstants.k_estimationName).setPoses();
+        for (SingleInputPoseEstimator estimator : m_estimators) {
+            estimator.run();
+        }
+        m_visionSim.update(m_drivetrain.getPose());
+    }
+
+    public void startThread() {
+        m_notifier.startPeriodic(VisionConstants.k_periodic);
+    }
+
+    private void addEstimate(TimestampedPoseEstimate estimate) {
+        List<Pose2d> poses = m_field.getObject(VisionConstants.k_estimationName)
+            .getPoses();
+        poses.add(estimate.pose());
+        m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
+        m_drivetrain.addPoseEstimate(estimate);
+    }
+
+    private Optional<Integer> getSingleTag() {
+        return m_singleTag;
+    }
+
+    public void setMultitag() {
+        m_singleTag = Optional.empty();
+    }
+
+    public void setSingleTag(int tagId) {
+        m_singleTag = Optional.of(tagId);
     }
 
     public void close() {
