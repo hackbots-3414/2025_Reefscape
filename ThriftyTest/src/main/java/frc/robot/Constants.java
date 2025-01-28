@@ -40,6 +40,9 @@ public final class Constants {
         public static final int motorID = 59;
         public static final int cancoderPort = 51;
 
+        public static final int l_elevatorID = 51; // Left Elevator CanID
+        public static final int r_elevatorID = 52; // Right Elevator CanID
+
         public static final int forwardLimitChannelID = 0;
         public static final int reverseLimitChannelID = 1;
 
@@ -98,6 +101,9 @@ public final class Constants {
 
         public static final double rotorToSensorRatio = 125;
         public static final double sensorToMechanismRatio = 1.0;
+
+        public static final int algaePivotID = 62; // Algae CANID 
+
 
         public static final InvertedValue motorInvert = InvertedValue.Clockwise_Positive;
         public static final SensorDirectionValue cancoderInvert = SensorDirectionValue.CounterClockwise_Positive;
