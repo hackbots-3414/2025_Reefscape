@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -17,24 +21,24 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.utils.StateSpaceController;
 
 public class Pivot extends SubsystemBase {
-
   private final TalonFX pivot = new TalonFX(PivotConstants.pivotMotorID);
   private final CANcoder cancoder = new CANcoder(PivotConstants.EncoderID);
 
-    private StateSpaceController<N2, N1, N2> pivotController;
+  private final StateSpaceController<N2, N1, N2> pivotController;
 
   private double position;
+  private double velocity;
 
   public Pivot() {
     configEncoder();
     configMotor();
     Vector<N2> initialState = getOutput();
-    pivotController = new StateSpaceController<N2, N1, N2>(ElevatorConstants.k_config, this::getOutput, this::applyInput, initialState);
+    pivotController = new StateSpaceController<>(PivotConstants.k_config, this::getOutput, this::applyInput,
+        initialState);
   }
 
   public void configEncoder() {
@@ -43,7 +47,7 @@ public class Pivot extends SubsystemBase {
 
     CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration()
         .withMagnetSensor(new MagnetSensorConfigs()
-        .withAbsoluteSensorDiscontinuityPoint(PivotConstants.absoluteSensorRange)
+            .withAbsoluteSensorDiscontinuityPoint(PivotConstants.absoluteSensorRange)
             .withSensorDirection(PivotConstants.cancoderInvert)
             .withMagnetOffset(PivotConstants.encoderOffset));
 
@@ -51,9 +55,10 @@ public class Pivot extends SubsystemBase {
   }
 
   public void configMotor() {
-    pivot.getConfigurator().apply(new TalonFXConfiguration(), 0.050);
-
-    TalonFXConfiguration configuration = new TalonFXConfiguration()
+    TalonFXConfiguration config = new TalonFXConfiguration()
+        .withMotorOutput(new MotorOutputConfigs()
+            .withNeutralMode(NeutralModeValue.Brake)
+            .withInverted(PivotConstants.motorInvert))
 
         .withFeedback(new FeedbackConfigs()
             .withFeedbackRemoteSensorID(PivotConstants.EncoderID)
@@ -61,23 +66,27 @@ public class Pivot extends SubsystemBase {
             .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
             .withRotorToSensorRatio(PivotConstants.rotorToSensorRatio)
             .withSensorToMechanismRatio(PivotConstants.sensorToMechanismRatio))
-            
-        .withMotorOutput(new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Brake)
-            .withInverted(PivotConstants.motorInvert))
-            
+
+        // .withCurrentLimits(new CurrentLimitsConfigs()
+        // .withSupplyCurrentLimitEnable(true)
+        // .withSupplyCurrentLimit(PivotConstants.supplyCurrentLimit))
+
+        // .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
+        // .withForwardLimitEnable(true)
+        // .withReverseLimitEnable(true)
+        // .withReverseLimitAutosetPositionEnable(true)
+        // .withReverseLimitAutosetPositionValue(0.0))
+
         .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
             .withForwardSoftLimitThreshold(PivotConstants.forwardSoftLimitThreshold)
             .withForwardSoftLimitEnable(true)
             .withReverseSoftLimitThreshold(PivotConstants.reverseSoftLimitThreshold)
             .withReverseSoftLimitEnable(true));
 
-    pivot.getConfigurator().apply(configuration, 0.2);
+    pivot.getConfigurator().apply(config, 0.2);
   }
 
   private Vector<N2> getOutput() {
-    double position = cancoder.getAbsolutePosition().getValueAsDouble(); // position is in mechanism rotations
-    double velocity = cancoder.getVelocity().getValueAsDouble();
     return VecBuilder.fill(position, velocity);
   }
 
@@ -88,17 +97,45 @@ public class Pivot extends SubsystemBase {
     pivot.setControl(config.withOutput(volts));
   }
 
-  public void setPosition(double goal) {pivotController.setReference(VecBuilder.fill(goal, 0.0));}
-  public void stop() {setPosition(position);}
-  public double getPosition() {return position;}
+  public void setPosition(double goal) {
+    pivotController.setReference(VecBuilder.fill(goal, 0.0));
+  }
 
-  public void setGroundPickup() {setPosition(PivotConstants.groundPickup);}
-  public void setProcessor() {setPosition(PivotConstants.processor);}
-  public void setReefPickup() {setPosition(PivotConstants.reefPickup);}
-  public void setNet() {setPosition(PivotConstants.net);}
+  public void setStow() {
+    setPosition(PivotConstants.stow);
+  }
+
+  public void setProcessor() {
+    setPosition(PivotConstants.processor);
+  }
+
+  public void setNet() {
+    setPosition(PivotConstants.net);
+  }
+
+  public void setGroundPickup() {
+    setPosition(PivotConstants.groundPickup);
+  }
+
+  public void setReefPickup() {
+    setPosition(PivotConstants.reefPickup);
+  }
+
+  public void stop() {
+    setPosition(position);
+  }
+
+  public double getPosition() {
+    return position;
+  }
+
+  public boolean atSetpoint() {
+    return position - pivotController.getReference() < PivotConstants.atSetpointTolerance;
+  }
 
   @Override
   public void periodic() {
-    position = cancoder.getAbsolutePosition().getValueAsDouble();
+    position = cancoder.getPosition().getValueAsDouble();
+    velocity = cancoder.getVelocity().getValueAsDouble();
   }
 }
