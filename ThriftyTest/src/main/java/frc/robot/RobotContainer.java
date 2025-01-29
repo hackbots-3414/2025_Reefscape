@@ -38,21 +38,31 @@ public class RobotContainer {
         configureAutonChooser();
     }
 
-
-
-
     // ********** BINDINGS **********
 
     private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
-    private double getX() {return -dragonReins.getLeftY();}
-    private double getY() {return dragonReins.getLeftX();}
-    private double getRot() {return -dragonReins.getRightX();}
-    private boolean getUseOpenLoopButton() {return dragonReins.button(3).getAsBoolean();}
+
+    private double getX() {
+        return -dragonReins.getLeftY();
+    }
+
+    private double getY() {
+        return dragonReins.getLeftX();
+    }
+
+    private double getRot() {
+        return -dragonReins.getRightX();
+    }
+
+    private boolean getUseOpenLoopButton() {
+        return dragonReins.button(3).getAsBoolean();
+    }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
+        drivetrain.setDefaultCommand(
+                new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
         // reset the field-centric heading on left bumper press
         dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -61,35 +71,60 @@ public class RobotContainer {
 
         // bindButtonBoard(dragonReins);
 
-        dragonReins.axisMagnitudeGreaterThan(0, 0.0).or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no dragonReins input is there
+        dragonReins.axisMagnitudeGreaterThan(0, 0.0)
+                .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean())
+                .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as
+                                                                                // no dragonReins input is there
     }
 
     private void configureSysId() {
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        dragonReins.button(1).and(dragonReins.button(3)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        dragonReins.button(1).and(dragonReins.button(4)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-        dragonReins.button(2).and(dragonReins.button(3)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        dragonReins.button(2).and(dragonReins.button(4)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-    }    
+        dragonReins.button(1).and(dragonReins.button(3))
+                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        dragonReins.button(1).and(dragonReins.button(4))
+                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        dragonReins.button(2).and(dragonReins.button(3))
+                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        dragonReins.button(2).and(dragonReins.button(4))
+                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+    }
 
     private void bindButtonBoard(CommandXboxController controller) {
-        controller.button(1).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
-        controller.button(2).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
-        controller.button(3).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
-        controller.button(4).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
-        controller.button(5).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
-        controller.button(6).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
-        controller.button(7).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
-        controller.button(8).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
-        controller.button(9).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
-        controller.button(10).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
-        controller.button(11).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
-        controller.button(12).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
-        controller.button(13).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
-        controller.button(14).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
+        controller.button(1).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
+        controller.button(2).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
+        controller.button(3).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
+        controller.button(4).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
+        controller.button(5).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
+        controller.button(6).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
+        controller.button(7).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
+        controller.button(8).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
+        controller.button(9).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
+        controller.button(10).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
+        controller.button(11).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
+        controller.button(12).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
+        controller.button(13).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
+        controller.button(14).and(controller.button(15))
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
 
-        controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only ever queue paths while button is held, and when let go, queue will clear
+        controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only
+                                                                                              // ever queue paths while
+                                                                                              // button is held, and
+                                                                                              // when let go, queue will
+                                                                                              // clear
     }
 
     public enum ScoringLocations {
@@ -107,16 +142,13 @@ public class RobotContainer {
         L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
         FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
         CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
-        
+
         private Pose2d value;
 
         private ScoringLocations(Pose2d value) {
             this.value = value;
         }
     }
-
-
-
 
     // ********** AUTONOMOUS **********
 
@@ -132,14 +164,13 @@ public class RobotContainer {
         // Filter any autos with the "comp" prefix
         // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
         // (stream) -> isCompetition
-            // ? stream.filter(auto -> auto.getName().startsWith("comp"))
-        //     : stream
+        // ? stream.filter(auto -> auto.getName().startsWith("comp"))
+        // : stream
         // );
 
         // autoChooser = AutoBuilder.buildAutoChooser();
-        
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
 
+        // SmartDashboard.putData("Auto Chooser", autoChooser);
 
         for (int i = 0; i < AutonConstants.numWaypoints; i++) {
             SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
@@ -151,7 +182,7 @@ public class RobotContainer {
             configureHeightChooser(heightChooser);
             scoringHeightsChooser.add(heightChooser);
             SmartDashboard.putData("Height to Score #" + (i), heightChooser);
-        }        
+        }
 
         pickupLocation.setDefaultOption("CLOSE", ScoringLocations.CLOSEHP.value);
         pickupLocation.addOption("FAR", ScoringLocations.FARHP.value);
@@ -194,9 +225,6 @@ public class RobotContainer {
         return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
     }
 
-
-
-
     // ********** SUBSYSTEMS **********
 
     private Elevator elevator;
@@ -207,5 +235,7 @@ public class RobotContainer {
         this.pivot = new Pivot();
     }
 
-    private Command scoreCommand(int level) {return new Score(level);}
+    private Command scoreCommand(int level) {
+        return new Score(level);
+    }
 }
