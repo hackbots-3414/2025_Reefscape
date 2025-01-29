@@ -27,9 +27,6 @@ import frc.robot.utils.AutonomousUtil;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
     private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
