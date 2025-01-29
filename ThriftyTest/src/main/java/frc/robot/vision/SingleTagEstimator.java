@@ -1,7 +1,6 @@
 package frc.robot.vision;
 
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.slf4j.Logger;
