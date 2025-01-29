@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.PivotConstants;
-import frc.robot.utils.StateSpaceController;
+import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
   private final TalonFX elevator = new TalonFX(ElevatorConstants.motorID);

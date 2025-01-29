@@ -4,35 +4,36 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ScoringLocations;
 import frc.robot.commands.Score;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
-    private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+    private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    private VisionHandler m_vision = new VisionHandler(drivetrain);
 
     // private final SendableChooser<Command> autoChooser;
 
@@ -48,23 +49,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
-
-        // this.elevator = new Elevator();
-        // this.coral = new Coral();
-
-        // boolean isCompetition = true;
-
-        // Filter any autos with the "comp" prefix
-        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        // (stream) -> isCompetition
-        //     ? stream.filter(auto -> auto.getName().startsWith("comp"))
-        //     : stream
-        // );
-
-        // autoChooser = AutoBuilder.buildAutoChooser();
-        
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
-
+        m_vision.startThread();
         configureAutonChooser();
     }
 
@@ -72,33 +57,25 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
-
-        // dragonReins.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // dragonReins.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-dragonReins.getLeftY(), -dragonReins.getLeftX()))
-        // ));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        // dragonReins.back().and(dragonReins.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        // dragonReins.back().and(dragonReins.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-        // dragonReins.start().and(dragonReins.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        // dragonReins.start().and(dragonReins.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-
-        // reset the field-centric heading on left bumper press
-        // dragonReins.button(4).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        drivetrain.registerTelemetry(logger::telemeterize);
-
-        //bindButtonBoard(dragonReins);
-
+        drivetrain.registerTelemetry(telemetry::telemeterize);
         dragonReins.axisMagnitudeGreaterThan(0, 0.0).or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no dragonReins input is there
     }
 
-    private double getX() {return -dragonReins.getLeftY();}
-    private double getY() {return dragonReins.getLeftX();}
-    private double getRot() {return -dragonReins.getRightX();}
-    private boolean getUseOpenLoopButton() {return dragonReins.button(3).getAsBoolean();}
+    private double getX() {
+        return -dragonReins.getLeftY();
+    }
+
+    private double getY() {
+        return dragonReins.getLeftX();
+    }
+
+    private double getRot() {
+        return -dragonReins.getRightX();
+    }
+
+    private boolean getUseOpenLoopButton() {
+        return dragonReins.button(3).getAsBoolean();
+    }
 
     private void bindButtonBoard(CommandXboxController controller) {
         controller.button(1).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
@@ -117,29 +94,6 @@ public class RobotContainer {
         controller.button(14).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
 
         controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only ever queue paths while button is held, and when let go, queue will clear
-    }
-
-    public enum ScoringLocations {
-        A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
-        B(new Pose2d(3.16, 3.875, Rotation2d.fromDegrees(0))),
-        C(new Pose2d(3.675, 3, Rotation2d.fromDegrees(60))),
-        D(new Pose2d(4, 2.78, Rotation2d.fromDegrees(60))),
-        E(new Pose2d(5, 2.8, Rotation2d.fromDegrees(120))),
-        F(new Pose2d(5.3, 3, Rotation2d.fromDegrees(120))),
-        G(new Pose2d(5.8, 3.85, Rotation2d.fromDegrees(180))),
-        H(new Pose2d(5.8, 4.2, Rotation2d.fromDegrees(180))),
-        I(new Pose2d(5.3, 5.1, Rotation2d.fromDegrees(-120))),
-        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))),
-        K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
-        L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
-        FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
-        
-        private Pose2d value;
-
-        private ScoringLocations(Pose2d value) {
-            this.value = value;
-        }
     }
 
     private void configureAutonChooser() {
@@ -183,10 +137,22 @@ public class RobotContainer {
     }
 
 
-    private Command scoreL1() {return makeScoreCommand(1);}
-    private Command scoreL2() {return makeScoreCommand(2);}
-    private Command scoreL3() {return makeScoreCommand(3);}
-    private Command scoreL4() {return makeScoreCommand(4);}
+    private Command scoreL1() {
+        return makeScoreCommand(1);
+    }
+
+    private Command scoreL2() {
+        return makeScoreCommand(2);
+    }
+
+    private Command scoreL3() {
+        return makeScoreCommand(3);
+    }
+
+    private Command scoreL4() {
+        return makeScoreCommand(4);
+    }
+
     private Command makeScoreCommand(int level) {return new Score(level);}
 
     public Command getAutonomousCommand() {

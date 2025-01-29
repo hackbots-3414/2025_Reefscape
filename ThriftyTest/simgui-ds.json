@@ -4,6 +4,11 @@
       "visible": false
     }
   },
+  "Joysticks": {
+    "window": {
+      "visible": false
+    }
+  },
   "System Joysticks": {
     "window": {
       "enabled": false
@@ -14,30 +19,24 @@
       "axisConfig": [
         {
           "decKey": 65,
-          "decayRate": 1.0,
-          "incKey": 68,
-          "keyRate": 1.0
+          "incKey": 68
         },
         {
           "decKey": 87,
-          "decayRate": 1.0,
-          "incKey": 83,
-          "keyRate": 1.0
+          "incKey": 83
         },
         {
-          "decKey": 69,
-          "decayRate": 1.0,
-          "incKey": 81,
-          "keyRate": 1.0
+          "decKey": 91,
+          "incKey": 93,
+          "keyRate": 0.009999999776482582
         },
-        {},
         {
-          "decKey": 262,
-          "incKey": 263
+          "decKey": 264,
+          "incKey": 265
         }
       ],
       "axisCount": 3,
-      "buttonCount": 15,
+      "buttonCount": 10,
       "buttonKeys": [
         49,
         50,
@@ -49,15 +48,10 @@
         56,
         57,
         48,
-        45,
-        61,
-        67,
-        86,
-        46
+        -1
       ],
       "povConfig": [
         {
-          "key0": 328,
           "key135": 323,
           "key180": 322,
           "key225": 321,
@@ -67,17 +61,13 @@
           "key90": 326
         }
       ],
-      "povCount": 1
+      "povCount": 0
     },
     {
       "axisConfig": [
+        {},
         {
-          "decKey": 74,
-          "incKey": 76
-        },
-        {
-          "decKey": 73,
-          "incKey": 75
+          "decKey": 73
         }
       ],
       "axisCount": 2,
@@ -85,17 +75,44 @@
       "buttonKeys": [
         77,
         44,
+        46,
+        47,
         -1,
-        47
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
       ],
       "povCount": 0
     },
     {
       "axisConfig": [
-        {},
         {
-          "decKey": 265,
-          "incKey": 264
+          "decKey": 263,
+          "incKey": 262
         }
       ],
       "axisCount": 2,
@@ -120,5 +137,7 @@
     {
       "guid": "Keyboard0"
     }
-  ]
+  ],
+  "useEnableDisableHotkeys": true,
+  "useEstopHotkey": true
 }

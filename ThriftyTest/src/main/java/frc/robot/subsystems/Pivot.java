@@ -22,7 +22,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PivotConstants;
-import frc.robot.utils.StateSpaceController;
+import frc.robot.stateSpace.StateSpaceController;
 
 public class Pivot extends SubsystemBase {
   private final TalonFX pivot = new TalonFX(PivotConstants.pivotMotorID);
