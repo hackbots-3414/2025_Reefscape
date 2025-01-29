@@ -30,10 +30,13 @@ import frc.robot.utils.StateSpaceConfig;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
     public static final class StateSpaceConstants {
         public static final double k_dt = 0.02;
         public static final double k_maxVoltage = 4.0;
+    }
+
+    public static final class AutonConstants {
+        public static final int numWaypoints = 5;
     }
 
     public static final class ElevatorConstants {

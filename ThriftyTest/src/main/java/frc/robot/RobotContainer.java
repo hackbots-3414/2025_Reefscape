@@ -4,101 +4,74 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.commands.Score;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
 
 public class RobotContainer {
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
     private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
-
-    private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    // private final SendableChooser<Command> autoChooser;
-
-    private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
-    private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
-    private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
-
-    private final int numAutonWaypoints = 5;
-
-    // private Elevator elevator;
-    // private Coral coral;
-    
-
     public RobotContainer() {
+        // configureSubsystems();
         configureBindings();
-
-        // this.elevator = new Elevator();
-        // this.coral = new Coral();
-
-        // boolean isCompetition = true;
-
-        // Filter any autos with the "comp" prefix
-        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        // (stream) -> isCompetition
-        //     ? stream.filter(auto -> auto.getName().startsWith("comp"))
-        //     : stream
-        // );
-
-        // autoChooser = AutoBuilder.buildAutoChooser();
-        
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
-
         configureAutonChooser();
     }
+
+
+
+
+    // ********** BINDINGS **********
+
+    private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
+    private double getX() {return -dragonReins.getLeftY();}
+    private double getY() {return dragonReins.getLeftX();}
+    private double getRot() {return -dragonReins.getRightX();}
+    private boolean getUseOpenLoopButton() {return dragonReins.button(3).getAsBoolean();}
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
-        // dragonReins.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // dragonReins.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-dragonReins.getLeftY(), -dragonReins.getLeftX()))
-        // ));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        // dragonReins.back().and(dragonReins.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        // dragonReins.back().and(dragonReins.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-        // dragonReins.start().and(dragonReins.y()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        // dragonReins.start().and(dragonReins.x()).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-
         // reset the field-centric heading on left bumper press
-        // dragonReins.button(4).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        //bindButtonBoard(dragonReins);
+        // bindButtonBoard(dragonReins);
 
         dragonReins.axisMagnitudeGreaterThan(0, 0.0).or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean()).onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as no dragonReins input is there
     }
 
-    private double getX() {return -dragonReins.getLeftY();}
-    private double getY() {return dragonReins.getLeftX();}
-    private double getRot() {return -dragonReins.getRightX();}
-    private boolean getUseOpenLoopButton() {return dragonReins.button(3).getAsBoolean();}
+    private void configureSysId() {
+        // Run SysId routines when holding back/start and X/Y.
+        // Note that each routine should be run exactly once in a single log.
+        dragonReins.button(1).and(dragonReins.button(3)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        dragonReins.button(1).and(dragonReins.button(4)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        dragonReins.button(2).and(dragonReins.button(3)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        dragonReins.button(2).and(dragonReins.button(4)).whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+    }    
 
     private void bindButtonBoard(CommandXboxController controller) {
         controller.button(1).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
@@ -142,8 +115,33 @@ public class RobotContainer {
         }
     }
 
+
+
+
+    // ********** AUTONOMOUS **********
+
+    // private final SendableChooser<Command> autoChooser;
+
+    private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
+    private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
+    private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
+
     private void configureAutonChooser() {
-        for (int i = 0; i < numAutonWaypoints; i++) {
+        // boolean isCompetition = true;
+
+        // Filter any autos with the "comp" prefix
+        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+        // (stream) -> isCompetition
+            // ? stream.filter(auto -> auto.getName().startsWith("comp"))
+        //     : stream
+        // );
+
+        // autoChooser = AutoBuilder.buildAutoChooser();
+        
+        // SmartDashboard.putData("Auto Chooser", autoChooser);
+
+
+        for (int i = 0; i < AutonConstants.numWaypoints; i++) {
             SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
             configurePlaceChooser(placeChooser);
             scoringLocationsChooser.add(placeChooser);
@@ -176,18 +174,11 @@ public class RobotContainer {
     }
 
     private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
-        chooser.addOption("L1", this::scoreL1);
-        chooser.addOption("L2", this::scoreL2);
-        chooser.addOption("L3", this::scoreL3);
-        chooser.setDefaultOption("L4", this::scoreL4);
+        chooser.addOption("L1", () -> scoreCommand(1));
+        chooser.addOption("L2", () -> scoreCommand(2));
+        chooser.addOption("L3", () -> scoreCommand(3));
+        chooser.setDefaultOption("L4", () -> scoreCommand(4));
     }
-
-
-    private Command scoreL1() {return makeScoreCommand(1);}
-    private Command scoreL2() {return makeScoreCommand(2);}
-    private Command scoreL3() {return makeScoreCommand(3);}
-    private Command scoreL4() {return makeScoreCommand(4);}
-    private Command makeScoreCommand(int level) {return new Score(level);}
 
     public Command getAutonomousCommand() {
         Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
@@ -202,4 +193,19 @@ public class RobotContainer {
 
         return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
     }
+
+
+
+
+    // ********** SUBSYSTEMS **********
+
+    private Elevator elevator;
+    private Pivot pivot;
+
+    private void configureSubsystems() {
+        this.elevator = new Elevator();
+        this.pivot = new Pivot();
+    }
+
+    private Command scoreCommand(int level) {return new Score(level);}
 }

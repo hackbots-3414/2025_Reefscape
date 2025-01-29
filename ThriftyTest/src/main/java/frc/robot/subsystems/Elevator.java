@@ -24,7 +24,6 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.utils.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
