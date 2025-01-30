@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.commands.ElevatorToPointCommand;
 import frc.robot.commands.ManualElevator;
 import frc.robot.commands.ManualPivot;
 import frc.robot.commands.Score;
@@ -51,15 +53,15 @@ public class RobotContainer {
     private final CommandPS5Controller operator = new CommandPS5Controller(1);
 
     private double getX() {
-        return -dragonReins.getLeftY();
+        return -dragonReins.getRawAxis(1);
     }
 
     private double getY() {
-        return dragonReins.getLeftX();
+        return dragonReins.getRawAxis(0);
     }
 
     private double getRot() {
-        return -dragonReins.getRightX();
+        return -dragonReins.getRawAxis(2);
     }
 
     private boolean getUseOpenLoopButton() {
@@ -122,11 +124,8 @@ public class RobotContainer {
         controller.button(14).and(controller.button(15))
                 .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
 
-        controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue())); // code where u can only
-                                                                                              // ever queue paths while
-                                                                                              // button is held, and
-                                                                                              // when let go, queue will
-                                                                                              // clear
+        // code where u can only ever queue paths while button is held, and when let go, queue will clear
+        controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
     private void configureOperatorBindings() {
@@ -235,7 +234,7 @@ public class RobotContainer {
             heights[i] = scoringHeightsChooser.get(i).getSelected().get();
         }
 
-        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
+        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, () -> new ElevatorToPointCommand(ElevatorConstants.stow, elevator));
     }
 
     // ********** SUBSYSTEMS **********

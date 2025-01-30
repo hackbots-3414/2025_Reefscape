@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
 
@@ -89,12 +90,13 @@ public class AutonomousUtil {
     }
 
     public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
-            Command[] scoringCommands) {
+            Command[] scoringCommands, Supplier<Command> stowCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
             if (i == 0) {
                 routine.addCommands(pathFinder(poses[i]));
             } else {
+                routine.addCommands(stowCommand.get());
                 routine.addCommands(pathFinder(desiredPickupLocation));
                 routine.addCommands(pathFinder(poses[i]));
             }
