@@ -25,11 +25,14 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
-    private final Telemetry logger = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+    private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    private VisionHandler m_vision = new VisionHandler(drivetrain);
 
     public RobotContainer() {
         configureSubsystems();
@@ -37,6 +40,7 @@ public class RobotContainer {
         configureOperatorBindings();
         configureButtonBoard(dragonReins);
         configureAutonChooser();
+        m_vision.startThread();
     }
 
     // ********** BINDINGS **********
@@ -65,7 +69,7 @@ public class RobotContainer {
 
         dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        drivetrain.registerTelemetry(telemetry::telemeterize);
 
         dragonReins.axisMagnitudeGreaterThan(0, 0.0)
                 .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean())

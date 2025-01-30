@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.utils.StateSpaceController;
+import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
     private final TalonFX elevatorLeft = new TalonFX(ElevatorConstants.leftMotorID);

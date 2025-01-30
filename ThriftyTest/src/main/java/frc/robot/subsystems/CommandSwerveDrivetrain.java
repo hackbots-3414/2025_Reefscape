@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -14,19 +18,19 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -51,42 +55,39 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-        AutonomousUtil.initializePathPlanner(this);
+        setup();
     }
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
-        if (Utils.isSimulation()) {
-            startSimThread();
-        }
-        AutonomousUtil.initializePathPlanner(this);
+        setup();
     }
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
-            Matrix<N3, N1> odometryStandardDeviation, Matrix<N3, N1> visionStandardDeviation,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
-                modules);
-        if (Utils.isSimulation()) {
+    
+    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,double odometryUpdateFrequency,Matrix<N3, N1> odometryStandardDeviation,Matrix<N3, N1> visionStandardDeviation,SwerveModuleConstants<?, ?, ?>... modules) {
+        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+        setup();
+    }
+
+    private void setup() {
+        AutonomousUtil.initializePathPlanner(this);
+        if (Robot.isSimulation()) {
             startSimThread();
         }
-        AutonomousUtil.initializePathPlanner(this);
-    }
+    }   
 
     public Pose2d getPose() {
         return estimatedPose;
     }
 
-    public void setPose(Pose2d pose) {
-        super.resetPose(pose);
-    }
 
     public void zeroPose() {
         setPose(new Pose2d());
+    }
+
+    public void setPose(Pose2d pose) {
+        super.resetPose(pose);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -111,8 +112,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
         field.setRobotPose(estimatedPose);
-        SmartDashboard.putData(field);
-
+        
         AutonomousUtil.handleQueue();
     }
 
@@ -176,6 +176,28 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     },
                     null,
                     this));
+
+    public void driveRobotRelative(ChassisSpeeds speeds) {
+        setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds));
+    }
+
+    public void addPoseEstimate(TimestampedPoseEstimate estimate) {
+        // This should NOT run in simulation!
+        if (Robot.isSimulation()) return;
+        // Depending on our configs, we should use or not use the std devs
+        if (Constants.VisionConstants.k_useStdDevs) {
+            addVisionMeasurement(
+                estimate.pose(),
+                estimate.timestamp(),
+                estimate.stdDevs()
+            );
+        } else {
+            addVisionMeasurement(
+                estimate.pose(),
+                estimate.timestamp()
+            );
+        }
+    }
 
     public Command sysIdQuasistaticTranslation(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineTranslation.quasistatic(direction);
