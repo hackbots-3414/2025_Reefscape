@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.commands.Score;
@@ -33,14 +32,17 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public RobotContainer() {
-        // configureSubsystems();
-        configureBindings();
+        configureSubsystems();
+        configureDriverBindings();
+        configureOperatorBindings();
+        configureButtonBoard(dragonReins);
         configureAutonChooser();
     }
 
     // ********** BINDINGS **********
 
     private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
+    private final CommandPS5Controller operator = new CommandPS5Controller(1);
 
     private double getX() {
         return -dragonReins.getLeftY();
@@ -58,18 +60,12 @@ public class RobotContainer {
         return dragonReins.button(3).getAsBoolean();
     }
 
-    private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
+    private void configureDriverBindings() {
+        drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
-        // reset the field-centric heading on left bumper press
         dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
-
-        // bindButtonBoard(dragonReins);
 
         dragonReins.axisMagnitudeGreaterThan(0, 0.0)
                 .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean())
@@ -90,7 +86,7 @@ public class RobotContainer {
                 .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
     }
 
-    private void bindButtonBoard(CommandXboxController controller) {
+    private void configureButtonBoard(CommandPS5Controller controller) {
         controller.button(1).and(controller.button(15))
                 .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
         controller.button(2).and(controller.button(15))
@@ -125,6 +121,17 @@ public class RobotContainer {
                                                                                               // button is held, and
                                                                                               // when let go, queue will
                                                                                               // clear
+    }
+
+    private void configureOperatorBindings() {
+        // operator.button(1).onTrue(manualElevatorDown());
+        // operator.button(2).onTrue(manualElevatorUp());
+        // operator.button(3).onTrue(manualPivotUp());
+        // operator.button(4).onTrue(manualPivotDown());
+        operator.button(1).onTrue(scoreCommand(1));
+        operator.button(2).onTrue(scoreCommand(2));
+        operator.button(3).onTrue(scoreCommand(3));
+        operator.button(4).onTrue(scoreCommand(4));
     }
 
     public enum ScoringLocations {
@@ -236,6 +243,6 @@ public class RobotContainer {
     }
 
     private Command scoreCommand(int level) {
-        return new Score(level);
+        return new Score(level, elevator);
     }
 }

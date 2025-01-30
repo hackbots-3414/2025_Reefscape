@@ -4,24 +4,23 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Elevator;
 
 public class Score extends Command {
-    private final int level;
-    // private final Elevator elevator;
+    private final int elevatorLevel;
+    private final Elevator elevator;
     // private final Coral coral;
 
-    public Score(int level) {
-        this.level = level;
-        // this.elevator = elevator;
+    public Score(int elevatorLevel, Elevator elevator) {
+        this.elevatorLevel = elevatorLevel;
+        this.elevator = elevator;
         // this.coral = coral;
     }
 
     @Override
     public void initialize() {
-        // elevator.setLevel(level);
-        SmartDashboard.putString("SCORE LOCATION", "L" + level);
+        elevator.setLevel(elevatorLevel);
     }
 
     @Override
@@ -34,6 +33,7 @@ public class Score extends Command {
     @Override
     public boolean isFinished() {
         // return !coral.hasCoral();
-        return true;
+        // return true;
+        return elevator.atSetpoint();
     }
 }

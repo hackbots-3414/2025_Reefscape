@@ -14,7 +14,17 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.utils.StateSpaceController;
@@ -34,12 +44,22 @@ public class Elevator extends SubsystemBase {
     private boolean reverseLimit;
     private boolean forwardLimit;
 
+    private ElevatorSim elevatorSim;
+    private double simPosition = 0.0; // Simulated position in meters
+    private double simVelocity = 0.0; // Simulated velocity in meters per second
+    private final DCMotor elevatorGearbox = DCMotor.getFalcon500(2); // 2 motors (left and right)
+
+    private Mechanism2d mechVisual;
+    private MechanismRoot2d mechRoot;
+    private MechanismLigament2d elevatorArm;
+
     public Elevator() {
         configEncoder();
         configMotor();
         Vector<N2> initialState = getOutput();
         controller = new StateSpaceController<>(ElevatorConstants.stateSpaceConfig, this::getOutput, this::applyInput,
                 initialState);
+        configSim();
     }
 
     public void configEncoder() {
@@ -53,8 +73,30 @@ public class Elevator extends SubsystemBase {
         elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
     }
 
+    public void configSim() {
+        elevatorSim = new ElevatorSim(
+                ElevatorConstants.stateSpacePlant,
+                elevatorGearbox,
+                ElevatorConstants.reverseSoftLimit,
+                ElevatorConstants.forwardSoftLimit,
+                true,
+                ElevatorConstants.reverseSoftLimit
+        );
+
+        // elevatorSim = new ElevatorSim(TalonFXConstants.TalonFXDCMotor, ElevatorConstants.gearRatio, ElevatorConstants.carriageMass, ElevatorConstants.drumRadius, ElevatorConstants.reverseSoftLimit, ElevatorConstants.forwardSoftLimit, true, ElevatorConstants.reverseSoftLimit);
+
+        mechVisual = new Mechanism2d(1, 5.0); // Width/height in meters
+        mechRoot = mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
+        elevatorArm = mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.1, 90)); // Start at 0.1m height
+        SmartDashboard.putData("Elevator Visualization", mechVisual);
+    }
+
     private Vector<N2> getOutput() {
-        return VecBuilder.fill(position, velocity);
+        if (RobotBase.isSimulation()) {
+            return VecBuilder.fill(simPosition, simVelocity);
+        } else {
+            return VecBuilder.fill(position, velocity);
+        }
     }
 
     private void applyInput(Vector<N1> inputs) {
@@ -133,5 +175,26 @@ public class Elevator extends SubsystemBase {
 
         reverseLimit = !reverseLimiter.get();
         forwardLimit = !forwardLimiter.get();
+
+        elevatorArm.setLength(simPosition + 0.1); // Offset to avoid overlapping with root
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        // Update the simulation with the motor voltage
+        double appliedVolts = elevatorLeft.get() * RobotController.getBatteryVoltage();
+        elevatorSim.setInput(appliedVolts);
+        elevatorSim.update(0.02); // Update every 20ms (standard loop time)
+
+        // Update simulated position and velocity
+        simPosition = elevatorSim.getPositionMeters();
+        simVelocity = elevatorSim.getVelocityMetersPerSecond();
+
+        // Update the simulated encoder values
+        cancoder.getSimState().setRawPosition(simPosition / ElevatorConstants.metersPerRotation);
+        cancoder.getSimState().setVelocity(simVelocity / ElevatorConstants.mpsPerRPM);
+
+        // Simulate battery voltage
+        RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));
     }
 }

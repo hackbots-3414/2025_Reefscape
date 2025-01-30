@@ -25,6 +25,7 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import frc.robot.utils.StateSpaceConfig;
 
 /**
@@ -59,29 +60,33 @@ public final class Constants {
         public static final int forwardLimitChannelID = 0;
         public static final int reverseLimitChannelID = 1;
 
-        public static final double forwardSoftLimit = 2;
+        public static final double forwardSoftLimit = 4;
         public static final double reverseSoftLimit = 0;
 
         public static final double supplyCurrentLimit = 40;
 
-        public static final double rotorToSensorRatio = 1;
+        public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
 
         public static final InvertedValue motorInverted = InvertedValue.Clockwise_Positive;
+        
+        public static final double gearRatio = 5.2;
+        
+        public static final double carriageMass = Units.lbsToKilograms(14); // Mass of the elevator carriage
+        public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
+        public static final double metersPerRotation = (2 * Math.PI * drumRadius) / gearRatio;
+        public static final double mpsPerRPM = metersPerRotation / 60.0;
 
-        public static final double momentOfIntertia = 0.2188; // SI units
-        public static final double gearRatio = 125.0;
+        public static final double momentOfIntertia = 0.005715;
 
-        public static final double maxHeight = 4;
+        public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
 
-        public static final double tolerance = maxHeight * 0.01; // 1% tolerance
-
-        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(0.1, 0.3);
+        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(12, 0.3);
 
         private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(4.0);
+        private static final Vector<N1> relms = VecBuilder.fill(1.0);
 
-        private static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
+        public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
                 .createDCMotorSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
 
         public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
@@ -144,17 +149,17 @@ public final class Constants {
         public static final int encoderID = 62;
         public static final double encoderOffset = 0.324707;
 
-        public static final double rotorToSensorRatio = 125;
-        public static final double sensorToMechanismRatio = 1.0;
+        public static final double rotorToSensorRatio = 70.0 / 8.0;
+        public static final double sensorToMechanismRatio = 32.0 / 14.0;
 
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
-        public static final double forwardSoftLimitThreshold = 0.085693;
+        public static final double forwardSoftLimitThreshold = Math.PI / 2;
         public static final double reverseSoftLimitThreshold = 0;
 
-        public static final double radiansAtZero = Math.toRadians(0);
-        public static final double radiansAtMax = Math.toRadians(90);
+        public static final double radiansAtMax = forwardSoftLimitThreshold;
+        public static final double radiansAtZero = 0;
 
         public static final double absoluteSensorRange = 0.5;
 
@@ -162,10 +167,10 @@ public final class Constants {
 
         public static final double tolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
 
-        public static final double groundPickup = 0.5;
-        public static final double processor = 0.25;
-        public static final double reefPickup = 0.5;
-        public static final double net = 0.0;
+        public static final double groundPickup = Math.PI / 2 * 4 / 5;
+        public static final double processor = Math.PI / 5;
+        public static final double reefPickup = Math.PI / 8;
+        public static final double net = Math.PI / 2;
         public static final double stow = 0;
 
         private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
@@ -173,10 +178,10 @@ public final class Constants {
         private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
         private static final Vector<N1> relms = VecBuilder.fill(4.0);
 
-        public static final double momentOfIntertia = 0.2188; // SI units
-        public static final double gearRatio = 125.0;
+        public static final double momentOfIntertia = 0.14622;
+        public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
 
-        private static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
+        public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
                 .createDCMotorSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
 
         public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
@@ -223,6 +228,8 @@ public final class Constants {
                         .withForwardSoftLimitEnable(true)
                         .withReverseSoftLimitThreshold(reverseSoftLimitThreshold)
                         .withReverseSoftLimitEnable(true));
+
+        public static final double armLength = 0.443;
 
     }
 
