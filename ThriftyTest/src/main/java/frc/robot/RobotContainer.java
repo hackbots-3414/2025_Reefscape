@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.commands.ManualElevator;
+import frc.robot.commands.ManualPivot;
 import frc.robot.commands.Score;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -128,14 +130,14 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        // operator.button(1).onTrue(manualElevatorDown());
-        // operator.button(2).onTrue(manualElevatorUp());
-        // operator.button(3).onTrue(manualPivotUp());
-        // operator.button(4).onTrue(manualPivotDown());
-        operator.button(1).onTrue(scoreCommand(1));
-        operator.button(2).onTrue(scoreCommand(2));
-        operator.button(3).onTrue(scoreCommand(3));
-        operator.button(4).onTrue(scoreCommand(4));
+        // operator.button(1).onTrue(scoreCommand(1));
+        // operator.button(2).onTrue(scoreCommand(2));
+        // operator.button(3).onTrue(scoreCommand(3));
+        // operator.button(4).onTrue(scoreCommand(4));
+        operator.button(1).whileTrue(new ManualPivot(pivot, true));
+        operator.button(2).whileTrue(new ManualPivot(pivot, false));
+        operator.button(3).whileTrue(new ManualElevator(elevator, true));
+        operator.button(4).whileTrue(new ManualElevator(elevator, false));
     }
 
     public enum ScoringLocations {

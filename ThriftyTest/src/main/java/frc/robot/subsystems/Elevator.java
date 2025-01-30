@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -115,6 +116,20 @@ public class Elevator extends SubsystemBase {
 
     public void setPosition(double goal) {
         controller.setReference(VecBuilder.fill(goal, 0.0));
+    }
+
+    public void setSpeed(double speed) {
+        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
+        elevatorLeft.setControl(new DutyCycleOut(speed));
+        elevatorRight.setControl(follower);
+    }
+
+    public void enableStateSpace() {
+        controller.enableStateSpace();
+    }
+
+    public void disableStateSpace() {
+        controller.disableStateSpace();
     }
 
     public void setStow() {

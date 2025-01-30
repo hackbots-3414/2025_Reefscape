@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -100,6 +101,18 @@ public class Pivot extends SubsystemBase {
 
     public void setPosition(double goal) {
         controller.setReference(VecBuilder.fill(goal, 0.0));
+    }
+
+    public void setSpeed(double speed) {
+        pivot.setControl(new DutyCycleOut(speed));
+    }
+
+    public void enableStateSpace() {
+        controller.enableStateSpace();
+    }
+
+    public void disableStateSpace() {
+        controller.disableStateSpace();
     }
 
     public void setStow() {

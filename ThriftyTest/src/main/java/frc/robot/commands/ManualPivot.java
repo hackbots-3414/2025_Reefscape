@@ -1,0 +1,29 @@
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Pivot;
+
+public class ManualPivot extends Command {
+    private final boolean isUp;
+    private final Pivot pivot;
+
+    public ManualPivot(Pivot pivot, boolean isUp) {
+        this.isUp = isUp;
+        this.pivot = pivot;
+    }
+
+    @Override
+    public void initialize() {
+        pivot.disableStateSpace();
+    }
+
+    @Override
+    public void execute() {
+        pivot.setSpeed(isUp ? 0.1 : -0.1);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        pivot.enableStateSpace();
+    }
+}
