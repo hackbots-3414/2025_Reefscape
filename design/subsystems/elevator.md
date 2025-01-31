@@ -4,6 +4,7 @@
 * can reach reach different heights, either via elevator or Elevator.
 * can maneouver a hand
 * can rotate a wrist motor's pitch.
+* Slow down drivetrain, when extended
 
 ## Operations
 `setStackPosition` 
