@@ -3,7 +3,10 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -27,19 +30,20 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         rightClimbMotor.clearStickyFaults();
 
         //FIXME: Put the right inversions in for real bot
-        Constants.ClimberConstants.currentConfigs.Inverted = InvertedValue.CounterClockwise_Positive;
-        leftClimbMotor.getConfigurator().apply(Constants.ClimberConstants.currentConfigs);
-        Constants.ClimberConstants.currentConfigs.Inverted = InvertedValue.Clockwise_Positive;
-        rightClimbMotor.getConfigurator().apply(Constants.ClimberConstants.currentConfigs);
+        MotorOutputConfigs motorOutput = new MotorOutputConfigs();
+        motorOutput.withNeutralMode(NeutralModeValue.Brake);
+        motorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs();
+        currentConfigs.withSupplyCurrentLimit(Constants.ClimberConstants.climberCurrentLimit);
+        currentConfigs.SupplyCurrentLimitEnable = true;
+        TalonFXConfigurator configurator = rightClimbMotor.getConfigurator();
+        configurator.apply(currentConfigs, Constants.globalCanTimeout);
+        configurator.apply(motorOutput, Constants.globalCanTimeout);
+        configurator = leftClimbMotor.getConfigurator();
+        configurator.apply(currentConfigs, Constants.globalCanTimeout);
+        configurator.apply(motorOutput, Constants.globalCanTimeout);
 
-        TalonFXConfiguration configuration = new TalonFXConfiguration();
-
-        rightClimbMotor.getConfigurator().apply(configuration, 0.2);
-
-        rightClimbMotor.setNeutralMode(NeutralModeValue.Brake);
-        leftClimbMotor.setNeutralMode(NeutralModeValue.Brake);
-
-        leftClimbMotor.setControl(new Follower(rightClimbMotor.getDeviceID(), false));
+        leftClimbMotor.setControl(new Follower(rightClimbMotor.getDeviceID(), true));
     }
 
     @Override
@@ -54,10 +58,6 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     public void setClimbUpVolts() {
         setMotor(ClimberConstants.climberUpVolts);
-    }
-
-    public void setClimbDownVolts() {
-        setMotor(ClimberConstants.climberDownVolts);
     }
 
     public void stopMotor() {
