@@ -32,10 +32,12 @@ public class Pivot extends SubsystemBase {
     private final TalonFX pivot = new TalonFX(PivotConstants.motorID);
     private final CANcoder cancoder = new CANcoder(PivotConstants.encoderID);
 
-    private final StateSpaceController<N2, N1, N2> controller;
+    private StateSpaceController<N2, N1, N2> controller;
 
     private double position;
     private double velocity;
+
+    private boolean stateSpaceEnabled;
 
     private SingleJointedArmSim armSim;
     private double simPosition = 0.0; // Simulated position in meters
@@ -49,23 +51,21 @@ public class Pivot extends SubsystemBase {
     public Pivot() {
         configEncoder();
         configMotor();
-        Vector<N2> initialState = getOutput();
-        controller = new StateSpaceController<>(PivotConstants.stateSpaceConfig, this::getOutput, this::applyInput,
-                initialState);
+        configStateSpace();
         configSim();
     }
 
-    public void configEncoder() {
+    private void configEncoder() {
         cancoder.clearStickyFaults();
         cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
         cancoder.getConfigurator().apply(PivotConstants.encoderConfig, 0.2);
     }
 
-    public void configMotor() {
+    private void configMotor() {
         pivot.getConfigurator().apply(PivotConstants.motorConfig, 0.2);
     }
 
-    public void configSim() {
+    private void configSim() {
         armSim = new SingleJointedArmSim(
                 PivotConstants.stateSpacePlant,
                 armGearbox,
@@ -84,6 +84,13 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putData("Pivot Arm Visualization", mechVisual);
     }
 
+    private void configStateSpace() {
+        Vector<N2> initialState = getOutput();
+        controller = new StateSpaceController<>(PivotConstants.stateSpaceConfig, this::getOutput, this::applyInput,
+                initialState);
+        enableStateSpace();
+    }
+
     private Vector<N2> getOutput() {
         if (RobotBase.isSimulation()) {
             return VecBuilder.fill(simPosition, simVelocity);
@@ -93,6 +100,8 @@ public class Pivot extends SubsystemBase {
     }
 
     private void applyInput(Vector<N1> inputs) {
+        if (!stateSpaceEnabled) return;
+
         VoltageOut config = new VoltageOut(0);
         double volts = inputs.get(0);
 
@@ -108,11 +117,12 @@ public class Pivot extends SubsystemBase {
     }
 
     public void enableStateSpace() {
-        controller.enableStateSpace();
+        controller.setReference(getOutput());
+        stateSpaceEnabled = true;
     }
 
     public void disableStateSpace() {
-        controller.disableStateSpace();
+        stateSpaceEnabled = false;
     }
 
     public void setStow() {

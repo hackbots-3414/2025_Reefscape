@@ -38,12 +38,14 @@ public class Elevator extends SubsystemBase {
     private final DigitalInput forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
     private final DigitalInput reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
 
-    private final StateSpaceController<N2, N1, N2> controller;
+    private StateSpaceController<N2, N1, N2> m_controller;
 
     private double position;
     private double velocity;
     private boolean reverseLimit;
     private boolean forwardLimit;
+
+    private boolean stateSpaceEnabled;
 
     private ElevatorSim elevatorSim;
     private double simPosition = 0.0; // Simulated position in meters
@@ -57,24 +59,22 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         configEncoder();
         configMotor();
-        Vector<N2> initialState = getOutput();
-        controller = new StateSpaceController<>(ElevatorConstants.stateSpaceConfig, this::getOutput, this::applyInput,
-                initialState);
+        configStateSpace();
         configSim();
     }
 
-    public void configEncoder() {
+    private void configEncoder() {
         cancoder.clearStickyFaults();
         cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
         cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
     }
 
-    public void configMotor() {
+    private void configMotor() {
         elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
     }
 
-    public void configSim() {
+    private void configSim() {
         elevatorSim = new ElevatorSim(
                 ElevatorConstants.stateSpacePlant,
                 elevatorGearbox,
@@ -84,12 +84,17 @@ public class Elevator extends SubsystemBase {
                 ElevatorConstants.reverseSoftLimit
         );
 
-        // elevatorSim = new ElevatorSim(TalonFXConstants.TalonFXDCMotor, ElevatorConstants.gearRatio, ElevatorConstants.carriageMass, ElevatorConstants.drumRadius, ElevatorConstants.reverseSoftLimit, ElevatorConstants.forwardSoftLimit, true, ElevatorConstants.reverseSoftLimit);
-
         mechVisual = new Mechanism2d(1, 5.0); // Width/height in meters
         mechRoot = mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
         elevatorArm = mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.1, 90)); // Start at 0.1m height
         SmartDashboard.putData("Elevator Visualization", mechVisual);
+    }
+
+    private void configStateSpace() {
+        Vector<N2> initialState = getOutput();
+        m_controller = new StateSpaceController<>(ElevatorConstants.stateSpaceConfig, this::getOutput, this::applyInput,
+                initialState);
+        enableStateSpace();
     }
 
     private Vector<N2> getOutput() {
@@ -101,6 +106,8 @@ public class Elevator extends SubsystemBase {
     }
 
     private void applyInput(Vector<N1> inputs) {
+        if (!stateSpaceEnabled) return;
+
         VoltageOut config = new VoltageOut(0);
         Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
         double volts = inputs.get(0);
@@ -115,7 +122,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setPosition(double goal) {
-        controller.setReference(VecBuilder.fill(goal, 0.0));
+        m_controller.setReference(VecBuilder.fill(goal, 0.0));
     }
 
     public void setSpeed(double speed) {
@@ -125,11 +132,12 @@ public class Elevator extends SubsystemBase {
     }
 
     public void enableStateSpace() {
-        controller.enableStateSpace();
+        m_controller.setReference(getOutput());
+        stateSpaceEnabled = true;
     }
 
     public void disableStateSpace() {
-        controller.disableStateSpace();
+        stateSpaceEnabled = false;
     }
 
     public void setStow() {
@@ -180,7 +188,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return controller.isAtSetpoint();
+        return m_controller.isAtSetpoint();
     }
 
     @Override

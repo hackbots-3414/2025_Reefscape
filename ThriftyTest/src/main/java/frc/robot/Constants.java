@@ -69,6 +69,10 @@ And +Z is upwards, so it wouldn't show here.
 */
 
 public class Constants {
+    public static class SimConstants {
+        public static final double k_simPeriodic = 0.005;
+    }
+
     public static class RobotConstants {
         public static final double k_robotX = Units.inchesToMeters(30.0);
         public static final double k_robotY = Units.inchesToMeters(30.0);

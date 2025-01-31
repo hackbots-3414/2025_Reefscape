@@ -31,7 +31,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private VisionHandler m_vision = new VisionHandler(drivetrain);
+    private final VisionHandler m_vision = new VisionHandler(drivetrain);
 
     public RobotContainer() {
         configureSubsystems();

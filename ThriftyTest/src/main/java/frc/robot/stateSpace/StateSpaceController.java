@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.Num;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,19 +15,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.StateSpaceConstants;
 
 public class StateSpaceController<States extends Num, Inputs extends Num, Outputs extends Num> extends SubsystemBase {
-    private LinearSystemLoop<States, Inputs, Outputs> m_loop;
+    private final LinearSystemLoop<States, Inputs, Outputs> m_loop;
 
-    private Supplier<Vector<Outputs>> m_outputSupplier;
-    private Consumer<Vector<Inputs>> m_inputConsumer;
+    private final Supplier<Vector<Outputs>> m_outputSupplier;
+    private final Consumer<Vector<Inputs>> m_inputConsumer;
 
-    private double m_tolerance;
+    private final double m_tolerance;
 
-    private String m_name;
+    private final String m_name;
 
     private boolean isAtSetpoint = false;
-
-    private boolean isStateSpaceEnabled = true;
-    private boolean wasStateSpaceEnabled = false;
 
     /** Creates a new StateSpaceController. */
     public StateSpaceController(
@@ -48,38 +44,27 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
         m_loop.reset(initialState);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void periodic() {
-        if (isStateSpaceEnabled) {
-            if (!wasStateSpaceEnabled) {
-                setReference((Vector<States>) VecBuilder.fill(m_outputSupplier.get().get(0), 0.0));
-                wasStateSpaceEnabled = true;
-            }
-            // Correct our Kalman Filter's state vector estimate with the latest data
-            Vector<Outputs> lastMeasurement = m_outputSupplier.get();
-            m_loop.correct(lastMeasurement);
+        // Correct our Kalman Filter's state vector estimate with the latest data
+        Vector<Outputs> lastMeasurement = m_outputSupplier.get();
+        m_loop.correct(lastMeasurement);
 
-            // Update the LQR to generate new control inputs
-            // and use the generated values to predict the next state.
-            m_loop.predict(StateSpaceConstants.k_dt);
+        // Update the LQR to generate new control inputs
+        // and use the generated values to predict the next state.
+        m_loop.predict(StateSpaceConstants.k_dt);
 
-            // Send the next calculated value to the consumer
-            Vector<Inputs> inputs = new Vector<Inputs>(m_loop.getU());
-            m_inputConsumer.accept(inputs);
+        // Send the next calculated value to the consumer
+        Vector<Inputs> inputs = new Vector<>(m_loop.getU());
+        m_inputConsumer.accept(inputs);
 
-            // Send new readings to SmartDashboard for logging purposes
-            for (int row = 0; row < lastMeasurement.getNumRows(); row++) {
-                double measurement = lastMeasurement.get(row);
-                SmartDashboard.putNumber(m_name + " (" + row + ")", measurement);
-            }
-
-            isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) < m_tolerance;
-        } else {
-            if (wasStateSpaceEnabled) {
-                wasStateSpaceEnabled = false;
-            }
+        // Send new readings to SmartDashboard for logging purposes
+        for (int row = 0; row < lastMeasurement.getNumRows(); row++) {
+            double measurement = lastMeasurement.get(row);
+            SmartDashboard.putNumber(m_name + " (" + row + ")", measurement);
         }
+
+        isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) < m_tolerance;
     }
 
     /**
@@ -97,13 +82,5 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
 
     public boolean isAtSetpoint() {
         return isAtSetpoint;
-    }
-
-    public void disableStateSpace() {
-        this.isStateSpaceEnabled = false;
-    }
-
-    public void enableStateSpace() {
-        this.isStateSpaceEnabled = true;
     }
 }
