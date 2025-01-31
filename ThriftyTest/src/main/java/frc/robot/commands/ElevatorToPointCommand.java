@@ -22,6 +22,6 @@ public class ElevatorToPointCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return elevator.atSetpoint();
     }
 }
