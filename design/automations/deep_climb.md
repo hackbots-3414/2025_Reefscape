@@ -1,8 +1,8 @@
 # Deep climb
 
 ## Subsystems
-Drivetrain
-Climber
+* Drivetrain
+* Climber
 
 ## Assumptions
 * The closest available climb spot is an open deep climb.
@@ -11,6 +11,9 @@ interfere with our robot's climb.
 * The Elevator is at its lowest position and is not in the way.
 * The cage is not swinging, OR the mechanical design is
 compatible with such an event.
+* The funnel/intake can be positioned such that it does not interfere
+with our climb.
+* The climb is user-triggered.
 
 ## Operations
 `deepClimb`
@@ -23,4 +26,3 @@ the nearest climb spot.
 * Checks if the robot is close enough to the cage location to start `deepClimb`
 * Checks if the robot is within the last ~15 seconds of match
 * Check if intake is flipped down
-

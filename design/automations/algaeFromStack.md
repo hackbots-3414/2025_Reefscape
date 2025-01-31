@@ -1,18 +1,18 @@
-# Take Algae From Stack
+# Algae From Stack
 
 ## Subsystems
+* Drivetrain
+* Algae Intake
+* Photonvision
 
-1. Drivetrain
-1. Intake
-1. Photonvision
+## Assumptions
+* There is a stack that has an available algae.
+* This is available in auton, maybe user triggered?
 
-## Steps
-
-1. Locate Algae
-1. Approach Algae
-1. Retreive Algae
-
-## Automations
-
-1. Vision: Locate algae on stack
-1. Intake: Grab the algae from the stack and hold onto it until needed for scoring or shooting
+## Operations
+`getAlgaeFromStack(stackId)`
+* Drive to correct intaking position for the stack that corresponds to the stack ID.
+* Set elevator to the correct height (determined experimentally).
+* Run rollers for the intake
+* Use IR sensor to determine when an algae is obtained.
+* Stop the intake rollers once we have obtained an algae.
