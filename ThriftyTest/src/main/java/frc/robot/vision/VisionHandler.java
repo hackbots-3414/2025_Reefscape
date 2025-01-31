@@ -1,9 +1,6 @@
 package frc.robot.vision;
 
-import static edu.wpi.first.units.Units.Milliseconds;
-
 import java.io.IOException;
-import java.lang.StackWalker.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +16,8 @@ import org.slf4j.LoggerFactory;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,13 +28,13 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class VisionHandler implements AutoCloseable {
     private Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
     private CommandSwerveDrivetrain m_drivetrain;
-    private Notifier m_notifier;
+    private final Notifier m_notifier;
     private List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
 
     private VisionSystemSim m_visionSim = new VisionSystemSim("main");
     private SimCameraProperties m_simProps = new SimCameraProperties();
 
-    private Field2d m_field;
+    private final Field2d m_field;
 
     private Optional<Integer> m_singleTag;
     
@@ -144,6 +141,7 @@ public class VisionHandler implements AutoCloseable {
         m_singleTag = Optional.of(tagId);
     }
 
+    @Override
     public void close() {
         m_notifier.close();
     }
