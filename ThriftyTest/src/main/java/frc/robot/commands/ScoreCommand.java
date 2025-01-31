@@ -4,10 +4,14 @@
 
 package frc.robot.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 
 public class ScoreCommand extends Command {
+    private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
     private final int elevatorLevel;
     private final Elevator elevator;
     // private final Coral coral;
@@ -15,6 +19,7 @@ public class ScoreCommand extends Command {
     public ScoreCommand(int elevatorLevel, Elevator elevator) {
         this.elevatorLevel = elevatorLevel;
         this.elevator = elevator;
+        m_logger.error("No coral conf set yet, PLEASE CHANGE");
         // this.coral = coral;
     }
 
