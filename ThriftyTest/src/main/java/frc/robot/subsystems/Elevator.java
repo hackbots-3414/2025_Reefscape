@@ -206,8 +206,8 @@ public class Elevator extends SubsystemBase {
         simVelocity = elevatorSim.getVelocityMetersPerSecond();
 
         // Update the simulated encoder values
-        cancoder.getSimState().setRawPosition(simPosition / ElevatorConstants.metersPerRotation);
-        cancoder.getSimState().setVelocity(simVelocity / ElevatorConstants.mpsPerRPM);
+        cancoder.getSimState().setRawPosition(simPosition);
+        cancoder.getSimState().setVelocity(simVelocity);
 
         // Simulate battery voltage
         RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));

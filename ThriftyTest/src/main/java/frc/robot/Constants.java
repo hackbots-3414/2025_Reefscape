@@ -198,12 +198,10 @@ public class Constants {
         
         public static final double carriageMass = Units.lbsToKilograms(14); // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
-        public static final double metersPerRotation = (2 * Math.PI * drumRadius) / gearRatio;
-        public static final double mpsPerRPM = metersPerRotation / 60.0;
 
-        public static final double momentOfIntertia = 0.005715;
+        public static final double momentOfInertia = 0.005715;
 
-        public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
+        public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
         private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(12, 0.3);
 
@@ -211,7 +209,7 @@ public class Constants {
         private static final Vector<N1> relms = VecBuilder.fill(1.0);
 
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
-                .createDCMotorSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
+                .createDCMotorSystem(TalonFXConstants.TalonFXDCMotor, momentOfInertia, gearRatio);
 
         public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
                 stateSpacePlant,
@@ -226,7 +224,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.324707;
+        public static final double encoderOffset = 0.0;
 
         public static final double stow = 0;
         public static final double processor = 0.25;

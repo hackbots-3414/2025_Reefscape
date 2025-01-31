@@ -4,13 +4,12 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,8 +19,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.commands.ElevatorToPointCommand;
-import frc.robot.commands.ManualElevator;
-import frc.robot.commands.ManualPivot;
 import frc.robot.commands.Score;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -129,14 +126,14 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        // operator.button(1).onTrue(scoreCommand(1));
-        // operator.button(2).onTrue(scoreCommand(2));
-        // operator.button(3).onTrue(scoreCommand(3));
-        // operator.button(4).onTrue(scoreCommand(4));
-        operator.button(1).whileTrue(new ManualPivot(pivot, true));
-        operator.button(2).whileTrue(new ManualPivot(pivot, false));
-        operator.button(3).whileTrue(new ManualElevator(elevator, true));
-        operator.button(4).whileTrue(new ManualElevator(elevator, false));
+        operator.button(1).onTrue(scoreCommand(1));
+        operator.button(2).onTrue(scoreCommand(2));
+        operator.button(3).onTrue(scoreCommand(3));
+        operator.button(4).onTrue(scoreCommand(4));
+        // operator.button(1).whileTrue(new ManualPivot(pivot, true));
+        // operator.button(2).whileTrue(new ManualPivot(pivot, false));
+        // operator.button(3).whileTrue(new ManualElevator(elevator, true));
+        // operator.button(4).whileTrue(new ManualElevator(elevator, false));
     }
 
     public enum ScoringLocations {
@@ -234,7 +231,7 @@ public class RobotContainer {
             heights[i] = scoringHeightsChooser.get(i).getSelected().get();
         }
 
-        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, () -> new ElevatorToPointCommand(ElevatorConstants.stow, elevator));
+        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, () -> scoreCommand(1));
     }
 
     // ********** SUBSYSTEMS **********

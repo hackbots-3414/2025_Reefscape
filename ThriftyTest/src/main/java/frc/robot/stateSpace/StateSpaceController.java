@@ -74,7 +74,7 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
                 SmartDashboard.putNumber(m_name + " (" + row + ")", measurement);
             }
 
-            isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) > m_tolerance;
+            isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) < m_tolerance;
         } else {
             if (wasStateSpaceEnabled) {
                 wasStateSpaceEnabled = false;
