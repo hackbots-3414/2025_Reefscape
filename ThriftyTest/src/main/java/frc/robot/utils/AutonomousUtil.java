@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
 
@@ -21,30 +22,41 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
-    private static ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+    private static ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
+            .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
-        try{
+        try {
             config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
-            drivetrain::getPose, // Robot pose supplier
-            drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> drivetrain.setControl(autoRequest.withSpeeds(speeds)), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(15.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            drivetrain); // Reference to this subsystem to set requirements
+                    drivetrain::getPose, // Robot pose supplier
+                    drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+                    drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                    (speeds, feedforwards) -> drivetrain.setControl(autoRequest.withSpeeds(speeds)), // Method that will
+                                                                                                     // drive the robot
+                                                                                                     // given ROBOT
+                                                                                                     // RELATIVE
+                                                                                                     // ChassisSpeeds.
+                                                                                                     // Also optionally
+                                                                                                     // outputs
+                                                                                                     // individual
+                                                                                                     // module
+                                                                                                     // feedforwards
+                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
+                                                    // for holonomic drive trains
+                            new PIDConstants(15.0, 0.0, 0.0), // Translation PID constants
+                            new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
+                    ),
+                    config, // The robot configuration
+                    () -> {
+                        var alliance = DriverStation.getAlliance();
+                        if (alliance.isPresent()) {
+                            return alliance.get() == DriverStation.Alliance.Red;
+                        }
+                        return false;
+                    },
+                    drivetrain); // Reference to this subsystem to set requirements
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
@@ -67,7 +79,7 @@ public class AutonomousUtil {
     public static Command generateRoutine(Pose2d desiredPickupLocation, Pose2d[] poses) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
-            if (i==0) { 
+            if (i == 0) {
                 routine.addCommands(pathFinder(poses[i]));
             } else {
                 routine.addCommands(pathFinder(desiredPickupLocation));
@@ -77,27 +89,30 @@ public class AutonomousUtil {
         return routine;
     }
 
-    public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands) {
+    public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
+            Command[] scoringCommands, Supplier<Command> stowCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
-            if (i==0) { 
+            if (i == 0) {
                 routine.addCommands(pathFinder(poses[i]));
             } else {
+                routine.addCommands(stowCommand.get());
                 routine.addCommands(pathFinder(desiredPickupLocation));
                 routine.addCommands(pathFinder(poses[i]));
             }
             routine.addCommands(scoringCommands[i]);
         }
-        
+
         return routine;
     }
-
 
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
     public static void queuePath(String pathName) {
         try {
-            onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(PathPlannerPath.fromPathFile(pathName).getStartingDifferentialPose(), PathConstraints.unlimitedConstraints(12.0), 1));
+            onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(
+                    PathPlannerPath.fromPathFile(pathName).getStartingDifferentialPose(),
+                    PathConstraints.unlimitedConstraints(12.0), 1));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -15,72 +15,72 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.StateSpaceConstants;
 
 public class StateSpaceController<States extends Num, Inputs extends Num, Outputs extends Num> extends SubsystemBase {
-  private LinearSystemLoop<States, Inputs, Outputs> m_loop;
+    private final LinearSystemLoop<States, Inputs, Outputs> m_loop;
 
-  private Supplier<Vector<Outputs>> m_outputSupplier;
-  private Consumer<Vector<Inputs>> m_inputConsumer;
+    private final Supplier<Vector<Outputs>> m_outputSupplier;
+    private final Consumer<Vector<Inputs>> m_inputConsumer;
 
-  private double m_tolerance;
+    private final double m_tolerance;
 
-  private String m_name;
+    private final String m_name;
 
-  private boolean isAtSetpoint = false;
+    private boolean isAtSetpoint = false;
 
-  /** Creates a new StateSpaceController. */
-  public StateSpaceController(
-    StateSpaceConfig<States, Inputs, Outputs> config,
-    Supplier<Vector<Outputs>> outputSupplier,
-    Consumer<Vector<Inputs>> inputConsumer,
-    Vector<States> initialState
-    ) {
+    /** Creates a new StateSpaceController. */
+    public StateSpaceController(
+            StateSpaceConfig<States, Inputs, Outputs> config,
+            Supplier<Vector<Outputs>> outputSupplier,
+            Consumer<Vector<Inputs>> inputConsumer,
+            Vector<States> initialState) {
 
-    m_outputSupplier = outputSupplier;
-    m_inputConsumer = inputConsumer;
+        m_outputSupplier = outputSupplier;
+        m_inputConsumer = inputConsumer;
 
-    m_tolerance = config.getTolerance();
+        m_tolerance = config.getTolerance();
 
-    m_name = config.getName();
+        m_name = config.getName();
 
-    m_loop = config.buildLoop();
-    m_loop.reset(initialState);
-  }
-
-  @Override
-  public void periodic() {
-    // Correct our Kalman Filter's state vector estimate with the latest data
-    Vector<Outputs> lastMeasurement = m_outputSupplier.get();
-    m_loop.correct(lastMeasurement);
-
-    // Update the LQR to generate new control inputs
-    // and use the generated values to predict the next state.
-    m_loop.predict(StateSpaceConstants.k_dt);
-
-    // Send the next calculated value to the consumer
-    Vector<Inputs> inputs = new Vector<Inputs>(m_loop.getU());
-    m_inputConsumer.accept(inputs);
-
-    // Send new readings to SmartDashboard for logging purposes
-    for (int row = 0;row < lastMeasurement.getNumRows();row ++) {
-      double measurement = lastMeasurement.get(row);
-      SmartDashboard.putNumber(m_name + " (" + row + ")", measurement);
+        m_loop = config.buildLoop();
+        m_loop.reset(initialState);
     }
 
-    isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) > m_tolerance;
-  }
+    @Override
+    public void periodic() {
+        // Correct our Kalman Filter's state vector estimate with the latest data
+        Vector<Outputs> lastMeasurement = m_outputSupplier.get();
+        m_loop.correct(lastMeasurement);
 
-  /**
-   * Sets the new reference state
-   * @param ref The reference for each state
-   */
-  public void setReference(Vector<States> ref) {
-    m_loop.setNextR(ref);
-  }
+        // Update the LQR to generate new control inputs
+        // and use the generated values to predict the next state.
+        m_loop.predict(StateSpaceConstants.k_dt);
 
-  public double getReference() {
-    return m_loop.getNextR(0);
-  }
+        // Send the next calculated value to the consumer
+        Vector<Inputs> inputs = new Vector<>(m_loop.getU());
+        m_inputConsumer.accept(inputs);
 
-  public boolean isAtSetpoint() {
-    return isAtSetpoint;
-  }
+        // Send new readings to SmartDashboard for logging purposes
+        for (int row = 0; row < lastMeasurement.getNumRows(); row++) {
+            double measurement = lastMeasurement.get(row);
+            SmartDashboard.putNumber(m_name + " (" + row + ")", measurement);
+        }
+
+        isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) < m_tolerance;
+    }
+
+    /**
+     * Sets the new reference state
+     * 
+     * @param ref The reference for each state
+     */
+    public void setReference(Vector<States> ref) {
+        m_loop.setNextR(ref);
+    }
+
+    public double getReference() {
+        return m_loop.getNextR(0);
+    }
+
+    public boolean isAtSetpoint() {
+        return isAtSetpoint;
+    }
 }

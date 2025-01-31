@@ -5,134 +5,219 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
-  private final TalonFX elevator = new TalonFX(ElevatorConstants.motorID);
-  private final CANcoder cancoder = new CANcoder(ElevatorConstants.cancoderPort);
+    private final TalonFX elevatorLeft = new TalonFX(ElevatorConstants.leftMotorID);
+    private final TalonFX elevatorRight = new TalonFX(ElevatorConstants.rightMotorID);
+    private final CANcoder cancoder = new CANcoder(ElevatorConstants.encoderPort);
 
-  private final DigitalInput forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
-  private final DigitalInput reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
+    private final DigitalInput forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
+    private final DigitalInput reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
 
-  private final StateSpaceController<N2, N1, N2> controller;
+    private StateSpaceController<N2, N1, N2> m_controller;
 
-  private double position;
-  private double velocity;
-  private boolean reverseLimit;
-  private boolean forwardLimit;
-  
-  public Elevator() {
-    configEncoder();
-    configMotor();
-    Vector<N2> initialState = getOutput();
-    controller = new StateSpaceController<>(ElevatorConstants.k_config, this::getOutput, this::applyInput, initialState);
-  }
+    private double position;
+    private double velocity;
+    private boolean reverseLimit;
+    private boolean forwardLimit;
 
-  public void configEncoder() {
-    cancoder.clearStickyFaults();
-    cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
+    private boolean stateSpaceEnabled;
 
-    CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration()
-        .withMagnetSensor(new MagnetSensorConfigs()
-            .withAbsoluteSensorDiscontinuityPoint(ElevatorConstants.k_absoluteSensorRange)
-            .withSensorDirection(ElevatorConstants.k_cancoderInvert)
-            .withMagnetOffset(ElevatorConstants.k_encoderOffset));
+    private ElevatorSim elevatorSim;
+    private double simPosition = 0.0; // Simulated position in meters
+    private double simVelocity = 0.0; // Simulated velocity in meters per second
+    private final DCMotor elevatorGearbox = DCMotor.getFalcon500(2); // 2 motors (left and right)
 
-    cancoder.getConfigurator().apply(canCoderConfiguration, 0.2);
-  }
+    private Mechanism2d mechVisual;
+    private MechanismRoot2d mechRoot;
+    private MechanismLigament2d elevatorArm;
 
-  public void configMotor() {
-    TalonFXConfiguration config = new TalonFXConfiguration()
-        .withMotorOutput(new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Brake)
-            .withInverted(ElevatorConstants.invertedValue))
-
-        .withFeedback(new FeedbackConfigs()
-            .withRotorToSensorRatio(ElevatorConstants.rotorToSensorRatio)
-            .withSensorToMechanismRatio(ElevatorConstants.sensorToMechanismRatio))
-
-        .withCurrentLimits(new CurrentLimitsConfigs()
-            .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(ElevatorConstants.supplyCurrentLimit))
-
-        .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
-            .withForwardLimitEnable(true)
-            .withReverseLimitEnable(true)
-            .withReverseLimitAutosetPositionEnable(true)
-            .withReverseLimitAutosetPositionValue(0.0))
-
-        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(ElevatorConstants.forwardSoftLimit)
-            .withForwardSoftLimitEnable(true));
-
-    elevator.getConfigurator().apply(config, 0.2);
-  }
-
-  private Vector<N2> getOutput() {return VecBuilder.fill(position, velocity);}
-
-  private void applyInput(Vector<N1> inputs) {
-    VoltageOut config = new VoltageOut(0);
-    double volts = inputs.get(0);
-
-    if (volts < 0) {
-        config.withLimitReverseMotion(reverseLimit);
-    } else if (volts > 0) {
-        config.withLimitForwardMotion(forwardLimit);
+    public Elevator() {
+        configEncoder();
+        configMotor();
+        configStateSpace();
+        configSim();
     }
-    elevator.setControl(config.withOutput(volts));
-  }
 
-  public void setPosition(double goal) {controller.setReference(VecBuilder.fill(goal, 0.0));}
-  public void setStow() {setPosition(ElevatorConstants.stow);}
-  public void setProcessor() {setPosition(ElevatorConstants.processor);}
-  public void setL1() {setPosition(ElevatorConstants.L1);}
-  public void setL2() {setPosition(ElevatorConstants.L2);}
-  public void setL3() {setPosition(ElevatorConstants.L3);}
-  public void setL4() {setPosition(ElevatorConstants.L4);}
-  public void setNet() {setPosition(ElevatorConstants.net);}
-
-  public void stop() {setPosition(position);}
-  public double getPosition() {return position;}
-
-  public void setLevel(int level) {
-    switch (level) {
-      case 1 -> setL1();
-      case 2 -> setL2();
-      case 3 -> setL3();
-      case 4 -> setL4();
-      case 0 -> setStow();
-      default -> setStow();
+    private void configEncoder() {
+        cancoder.clearStickyFaults();
+        cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
+        cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
     }
-  }
 
-  public boolean atSetpoint() {return controller.isAtSetpoint();}
+    private void configMotor() {
+        elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+        elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+    }
 
-  @Override
-  public void periodic() {
-    position = cancoder.getPosition().getValueAsDouble();
-    velocity = cancoder.getVelocity().getValueAsDouble();
+    private void configSim() {
+        elevatorSim = new ElevatorSim(
+                ElevatorConstants.stateSpacePlant,
+                elevatorGearbox,
+                ElevatorConstants.reverseSoftLimit,
+                ElevatorConstants.forwardSoftLimit,
+                true,
+                ElevatorConstants.reverseSoftLimit
+        );
 
-    reverseLimit = !reverseLimiter.get();
-    forwardLimit = !forwardLimiter.get();
-  }
+        mechVisual = new Mechanism2d(1, 5.0); // Width/height in meters
+        mechRoot = mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
+        elevatorArm = mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.1, 90)); // Start at 0.1m height
+        SmartDashboard.putData("Elevator Visualization", mechVisual);
+    }
+
+    private void configStateSpace() {
+        Vector<N2> initialState = getOutput();
+        m_controller = new StateSpaceController<>(ElevatorConstants.stateSpaceConfig, this::getOutput, this::applyInput,
+                initialState);
+        enableStateSpace();
+    }
+
+    private Vector<N2> getOutput() {
+        if (RobotBase.isSimulation()) {
+            return VecBuilder.fill(simPosition, simVelocity);
+        } else {
+            return VecBuilder.fill(position, velocity);
+        }
+    }
+
+    private void applyInput(Vector<N1> inputs) {
+        if (!stateSpaceEnabled) return;
+
+        VoltageOut config = new VoltageOut(0);
+        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
+        double volts = inputs.get(0);
+
+        if (volts < 0) {
+            config.withLimitReverseMotion(reverseLimit);
+        } else if (volts > 0) {
+            config.withLimitForwardMotion(forwardLimit);
+        }
+        elevatorLeft.setControl(config.withOutput(volts));
+        elevatorRight.setControl(follower);
+    }
+
+    public void setPosition(double goal) {
+        m_controller.setReference(VecBuilder.fill(goal, 0.0));
+    }
+
+    public void setSpeed(double speed) {
+        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
+        elevatorLeft.setControl(new DutyCycleOut(speed));
+        elevatorRight.setControl(follower);
+    }
+
+    public void enableStateSpace() {
+        m_controller.setReference(getOutput());
+        stateSpaceEnabled = true;
+    }
+
+    public void disableStateSpace() {
+        stateSpaceEnabled = false;
+    }
+
+    public void setStow() {
+        setPosition(ElevatorConstants.stow);
+    }
+
+    public void setProcessor() {
+        setPosition(ElevatorConstants.processor);
+    }
+
+    public void setL1() {
+        setPosition(ElevatorConstants.L1);
+    }
+
+    public void setL2() {
+        setPosition(ElevatorConstants.L2);
+    }
+
+    public void setL3() {
+        setPosition(ElevatorConstants.L3);
+    }
+
+    public void setL4() {
+        setPosition(ElevatorConstants.L4);
+    }
+
+    public void setNet() {
+        setPosition(ElevatorConstants.net);
+    }
+
+    public void stop() {
+        setPosition(position);
+    }
+
+    public double getPosition() {
+        return position;
+    }
+
+    public void setLevel(int level) {
+        switch (level) {
+            case 1 -> setL1();
+            case 2 -> setL2();
+            case 3 -> setL3();
+            case 4 -> setL4();
+            case 0 -> setStow();
+            default -> setStow();
+        }
+    }
+
+    public boolean atSetpoint() {
+        return m_controller.isAtSetpoint();
+    }
+
+    @Override
+    public void periodic() {
+        position = cancoder.getPosition().getValueAsDouble();
+        velocity = cancoder.getVelocity().getValueAsDouble();
+
+        reverseLimit = !reverseLimiter.get();
+        forwardLimit = !forwardLimiter.get();
+
+        elevatorArm.setLength(simPosition + 0.1); // Offset to avoid overlapping with root
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        // Update the simulation with the motor voltage
+        double appliedVolts = elevatorLeft.get() * RobotController.getBatteryVoltage();
+        elevatorSim.setInput(appliedVolts);
+        elevatorSim.update(0.02); // Update every 20ms (standard loop time)
+
+        // Update simulated position and velocity
+        simPosition = elevatorSim.getPositionMeters();
+        simVelocity = elevatorSim.getVelocityMetersPerSecond();
+
+        // Update the simulated encoder values
+        cancoder.getSimState().setRawPosition(simPosition);
+        cancoder.getSimState().setVelocity(simVelocity);
+
+        // Simulate battery voltage
+        RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));
+    }
 }
