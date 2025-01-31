@@ -7,12 +7,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 
-public class Score extends Command {
+public class ScoreCommand extends Command {
     private final int elevatorLevel;
     private final Elevator elevator;
     // private final Coral coral;
 
-    public Score(int elevatorLevel, Elevator elevator) {
+    public ScoreCommand(int elevatorLevel, Elevator elevator) {
         this.elevatorLevel = elevatorLevel;
         this.elevator = elevator;
         // this.coral = coral;

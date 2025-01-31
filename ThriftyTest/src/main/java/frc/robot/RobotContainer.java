@@ -17,9 +17,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
-import frc.robot.Constants.ElevatorConstants;
-import frc.robot.commands.ElevatorToPointCommand;
-import frc.robot.commands.Score;
+import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -245,6 +243,6 @@ public class RobotContainer {
     }
 
     private Command scoreCommand(int level) {
-        return new Score(level, elevator);
+        return new ScoreCommand(level, elevator);
     }
 }

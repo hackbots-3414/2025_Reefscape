@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 
-public class ManualElevator extends Command {
+public class ManualElevatorCommand extends Command {
     private final boolean isUp;
     private final Elevator elevator;
 
-    public ManualElevator(Elevator elevator, boolean isUp) {
+    public ManualElevatorCommand(Elevator elevator, boolean isUp) {
         this.isUp = isUp;
         this.elevator = elevator;
     }
@@ -19,7 +20,7 @@ public class ManualElevator extends Command {
 
     @Override
     public void execute() {
-        elevator.setSpeed(isUp ? 0.1 : -0.1);
+        elevator.setSpeed(isUp ? ElevatorConstants.manualUpSpeed : ElevatorConstants.manualDownSpeed);
     }
 
     @Override

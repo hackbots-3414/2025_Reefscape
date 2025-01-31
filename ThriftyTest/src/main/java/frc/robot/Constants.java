@@ -234,6 +234,9 @@ public class Constants {
         public static final double L4 = 3.5;
         public static final double net = 4;
 
+        public static final double manualUpSpeed = 0.1;
+        public static final double manualDownSpeed = -0.1;
+
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
                         .withAbsoluteSensorDiscontinuityPoint(absoluteSensorRange)
@@ -294,6 +297,9 @@ public class Constants {
         public static final double reefPickup = Math.PI / 8;
         public static final double net = Math.PI / 2;
         public static final double stow = 0;
+
+        public static final double manualUpSpeed = 0.1;
+        public static final double manualDownSpeed = -0.1;
 
         private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
 

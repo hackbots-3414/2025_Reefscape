@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.PivotConstants;
 import frc.robot.subsystems.Pivot;
 
-public class ManualPivot extends Command {
+public class ManualPivotCommand extends Command {
     private final boolean isUp;
     private final Pivot pivot;
 
-    public ManualPivot(Pivot pivot, boolean isUp) {
+    public ManualPivotCommand(Pivot pivot, boolean isUp) {
         this.isUp = isUp;
         this.pivot = pivot;
     }
@@ -19,7 +20,7 @@ public class ManualPivot extends Command {
 
     @Override
     public void execute() {
-        pivot.setSpeed(isUp ? 0.1 : -0.1);
+        pivot.setSpeed(isUp ? PivotConstants.manualUpSpeed : PivotConstants.manualDownSpeed);
     }
 
     @Override
