@@ -1,5 +1,13 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import java.util.Map;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -9,11 +17,6 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Milliseconds;
-
-import java.util.Map;
-
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -35,6 +38,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.generated.TunerConstants;
 import frc.robot.stateSpace.StateSpaceConfig;
 
 /*
@@ -81,6 +85,9 @@ public class Constants {
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);
         public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
+
+        public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
     }
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
