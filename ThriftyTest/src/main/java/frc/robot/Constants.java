@@ -74,6 +74,8 @@ public class Constants {
     }
 
     public static class RobotConstants {
+        public static final double globalCanTimeout = 20;
+
         public static final double k_robotX = Units.inchesToMeters(30.0);
         public static final double k_robotY = Units.inchesToMeters(30.0);
 
@@ -410,4 +412,10 @@ public class Constants {
         }
     }
 
+    public static final class ClimberConstants {
+        public static final int leftClimberMotorID = 1;
+        public static final int rightClimberMotorID = 2;
+        public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
+        public static final double climberCurrentLimit = 80.0;
+    }
 }
