@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.commands.ScoreCommand;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -18,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
     
-    private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
+    private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
     private TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
     private TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
     private double motorPosition;
