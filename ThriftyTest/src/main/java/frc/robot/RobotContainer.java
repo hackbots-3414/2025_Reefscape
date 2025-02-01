@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.ManualClimberCommand;
-import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
@@ -128,10 +130,10 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        operator.button(1).onTrue(scoreCommand(1));
-        operator.button(2).onTrue(scoreCommand(2));
-        operator.button(3).onTrue(scoreCommand(3));
-        operator.button(4).onTrue(scoreCommand(4));
+        operator.button(1).onTrue(coralScoreCommand(1));
+        operator.button(2).onTrue(coralScoreCommand(2));
+        operator.button(3).onTrue(coralScoreCommand(3));
+        operator.button(4).onTrue(coralScoreCommand(4));
         // operator.button(1).whileTrue(new ManualPivot(pivot, true));
         // operator.button(2).whileTrue(new ManualPivot(pivot, false));
         // operator.button(3).whileTrue(new ManualElevator(elevator, true));
@@ -217,10 +219,10 @@ public class RobotContainer {
     }
 
     private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
-        chooser.addOption("L1", () -> scoreCommand(1));
-        chooser.addOption("L2", () -> scoreCommand(2));
-        chooser.addOption("L3", () -> scoreCommand(3));
-        chooser.setDefaultOption("L4", () -> scoreCommand(4));
+        chooser.addOption("L1", () -> coralScoreCommand(1));
+        chooser.addOption("L2", () -> coralScoreCommand(2));
+        chooser.addOption("L3", () -> coralScoreCommand(3));
+        chooser.setDefaultOption("L4", () -> coralScoreCommand(4));
     }
 
     public Command getAutonomousCommand() {
@@ -234,7 +236,7 @@ public class RobotContainer {
             heights[i] = scoringHeightsChooser.get(i).getSelected().get();
         }
 
-        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, () -> scoreCommand(1));
+        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::stowElevatorCommand, this::coralIntakeCommand);
     }
 
     // ********** SUBSYSTEMS **********
@@ -242,14 +244,24 @@ public class RobotContainer {
     private Elevator elevator;
     private Pivot pivot;
     private Climber climber;
+    private Coral coral;
 
     private void configureSubsystems() {
         elevator = new Elevator();
         pivot = new Pivot();
         climber = new Climber();
+        coral = new Coral();
     }
 
-    private Command scoreCommand(int level) {
-        return new ScoreCommand(level, elevator);
+    private Command coralIntakeCommand() {
+        return new CoralIntakeCommand(coral, elevator);
+    }
+
+    private Command coralScoreCommand(int level) {
+        return new CoralScoreCommand(coral, elevator, level);
+    }
+
+    private Command stowElevatorCommand() {
+        return new InstantCommand(() -> elevator.setStow());
     }
 }
