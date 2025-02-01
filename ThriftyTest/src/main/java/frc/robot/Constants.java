@@ -385,6 +385,25 @@ public class Constants {
 
     }
 
+    public static class CoralConstants {
+        public static final int left_motorID = 55;
+        public static final int right_motorID = 56;
+        public static final double intakeVoltage = 12;
+        public static final double ejectVoltage = 12;
+        public static final int k_frontSensorPort = 1;
+        public static final int k_backSensorPort = 2;
+        public static final boolean rightMotorInvert = true;
+
+        public static final double supplyCurrentLimit = 20;
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                    .withNeutralMode(NeutralModeValue.Brake)
+                    .withInverted(InvertedValue.Clockwise_Positive))
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                    .withSupplyCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(supplyCurrentLimit));
+    }
+
     public static final class TalonFXConstants {
         public final static double nominalVoltageVolts = 12.0; // DC Volts
         public final static double stallTorqueNewtonMeters = 4.69; // Nm
