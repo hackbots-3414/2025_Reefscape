@@ -5,6 +5,23 @@ Hackbots code for the 2025 FRC Reefscape game.
 |Device|ID|
 |----|----|
 | Pigeon | 50 |
+| **Front Left** | |
+| Drive | 11 |
+| Steer | 12 |
+| Encoder | 13 |
+| **Front Right** | |
+| Drive | 21 |
+| Steer | 22 |
+| Encoder | 23 |
+| **Back Left** | |
+| Drive | 31 |
+| Steer | 32 |
+| Encoder | 33 |
+| **Back Right** | |
+| Drive | 41 |
+| Steer | 42 |
+| Encoder | 43 |
+
 
 
 ## System CAN IDs
@@ -14,7 +31,8 @@ Hackbots code for the 2025 FRC Reefscape game.
 | Climb 2 | 2 |
 | L Elevator | 51 |
 | R Elevator | 52 |
-| Coral Wheels | 55 |
+| Coral 1 | 55 |
+| Coral 2 | 56 |
 | Algae Wheels | 61 |
 | Algae Pivot | 62 |
 
