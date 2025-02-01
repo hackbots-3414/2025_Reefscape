@@ -63,7 +63,7 @@ public class AutonomousUtil {
     }
 
     public static Command pathFinder(Pose2d pose) {
-        return AutoBuilder.pathfindToPoseFlipped(pose, PathConstraints.unlimitedConstraints(12.0), 1);
+        return AutoBuilder.pathfindToPoseFlipped(pose, PathConstraints.unlimitedConstraints(12.0), 0);
     }
 
     public static Command followPath(String pathName) {
@@ -90,7 +90,7 @@ public class AutonomousUtil {
     }
 
     public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
-            Command[] scoringCommands, Supplier<Command> stowCommand) {
+            Command[] scoringCommands, Supplier<Command> stowCommand, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
             if (i == 0) {
@@ -98,6 +98,7 @@ public class AutonomousUtil {
             } else {
                 routine.addCommands(stowCommand.get());
                 routine.addCommands(pathFinder(desiredPickupLocation));
+                routine.addCommands(intakeCommand.get());
                 routine.addCommands(pathFinder(poses[i]));
             }
             routine.addCommands(scoringCommands[i]);
