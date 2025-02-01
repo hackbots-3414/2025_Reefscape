@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -36,8 +33,6 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
-    private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
-
     private final TalonFX m_elevatorLeft = new TalonFX(ElevatorConstants.leftMotorID);
     private final TalonFX m_elevatorRight = new TalonFX(ElevatorConstants.rightMotorID);
 
