@@ -6,14 +6,12 @@ import frc.robot.commands.ScoreCommand;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -57,7 +55,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     //     motorPosition = rightClimbMotor.getPosition().getValueAsDouble();
     // }
 
-    public void setMotor(double voltage) {
+    private void setMotor(double voltage) {
         rightClimbMotor.setVoltage(voltage);
         leftClimbMotor.setVoltage(voltage);
     }

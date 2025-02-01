@@ -17,6 +17,7 @@ import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.commands.ScoreCommand;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
+    
     private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
     private TalonFX algaeRollerMotor = new TalonFX(Constants.AlgaeRollerConstants.algaeRollerMotorID);
 
@@ -27,30 +28,21 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     private void configIntakeMotor() {
         algaeRollerMotor.clearStickyFaults();
 
-        // FIXME: Put the right inversions in for real bot
-        m_logger.warn(
-                "Algae roller motor inversion for real bot not set, set algae roller motor inversion for real bot");
+        //FIXME: Put the right inversions in for real bot
+        m_logger.warn("Algae roller motor inversion for real bot not set, set algae roller motor inversion for real bot");
 
         MotorOutputConfigs motorOutput = new MotorOutputConfigs();
         motorOutput.withNeutralMode(NeutralModeValue.Brake);
         motorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs();
-        TalonFXConfigurator configurator = algaeRollerMotor.getConfigurator();
-
         currentConfigs.withSupplyCurrentLimit(Constants.AlgaeRollerConstants.algaeRollerCurrentLimit);
         currentConfigs.SupplyCurrentLimitEnable = true;
-
+        TalonFXConfigurator configurator = algaeRollerMotor.getConfigurator();
         configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout);
         configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout);
-
     }
 
-    // @Override
-    // public void periodic() {
-    // motorPosition = rightClimbMotor.getPosition().getValueAsDouble();
-    // }
-
-    public void setMotor(double voltage) {
+    private void setMotor(double voltage) {
         algaeRollerMotor.setVoltage(voltage);
     }
 
@@ -59,18 +51,17 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         m_logger.warn("Real bot's algaeRoller intake voltage not set, set intake voltage in Constants.AlgaeRollerConstants.intakePower");
         m_logger.warn("Real bot's algaeRoller hold voltage not set, set hold voltage in Constants.AlgaeRollerConstants.holdPower");
         m_logger.warn("Unsure if we're using stator, supply, or torque yet, please determine and set");
-        if (algaeRollerMotor.getTorqueCurrent().getValueAsDouble() > Constants.AlgaeRollerConstants.currentThreshold) {
-            m_logger.warn("Torque Current: "+ algaeRollerMotor.getTorqueCurrent().getValueAsDouble());
+        if (algaeRollerMotor.getTorqueCurrent().getValueAsDouble() >= Constants.AlgaeRollerConstants.currentThreshold) {
+            m_logger.warn("Torque Current (High): "+ algaeRollerMotor.getTorqueCurrent().getValueAsDouble());
             setMotor(AlgaeRollerConstants.intakePower);
-        } else if (algaeRollerMotor.getTorqueCurrent().getValueAsDouble() <= Constants.AlgaeRollerConstants.currentThreshold) {
+        } else if (algaeRollerMotor.getTorqueCurrent().getValueAsDouble() < Constants.AlgaeRollerConstants.currentThreshold) {
             setMotor(AlgaeRollerConstants.holdPower);
-            m_logger.warn("Torque Current: "+ algaeRollerMotor.getTorqueCurrent().getValueAsDouble());
+            m_logger.warn("Torque Current (Low): "+ algaeRollerMotor.getTorqueCurrent().getValueAsDouble());
         }
     }
 
     public void ejectAlgae() {
-        m_logger.warn(
-                "Voltage for real bot's eject  not set, set eject voltage for real bot in Constants.AlgaeRollerConstants.ejectPower");
+        m_logger.warn("Voltage for real bot's eject  not set, set eject voltage for real bot in Constants.AlgaeRollerConstants.ejectPower");
         setMotor(AlgaeRollerConstants.ejectPower);
     }
 
