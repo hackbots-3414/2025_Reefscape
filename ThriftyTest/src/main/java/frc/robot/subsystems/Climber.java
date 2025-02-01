@@ -52,10 +52,10 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         leftClimbMotor.setControl(new Follower(rightClimbMotor.getDeviceID(), true));
     }
 
-    @Override
-    public void periodic() {
-        motorPosition = rightClimbMotor.getPosition().getValueAsDouble();
-    }
+    // @Override
+    // public void periodic() {
+    //     motorPosition = rightClimbMotor.getPosition().getValueAsDouble();
+    // }
 
     public void setMotor(double voltage) {
         rightClimbMotor.setVoltage(voltage);
@@ -72,9 +72,9 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         leftClimbMotor.setVoltage(0);
     }
 
-    public double getMotorPos() {
-        return motorPosition;
-    }
+    // public double getMotorPos() {
+    //     return motorPosition;
+    // }
 
     @Override
     public void close() throws Exception {

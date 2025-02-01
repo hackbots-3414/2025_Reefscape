@@ -35,10 +35,10 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         motorOutput.withNeutralMode(NeutralModeValue.Brake);
         motorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         CurrentLimitsConfigs currentConfigs = new CurrentLimitsConfigs();
+        TalonFXConfigurator configurator = algaeRollerMotor.getConfigurator();
 
         currentConfigs.withSupplyCurrentLimit(Constants.AlgaeRollerConstants.algaeRollerCurrentLimit);
         currentConfigs.SupplyCurrentLimitEnable = true;
-        TalonFXConfigurator configurator = algaeRollerMotor.getConfigurator();
 
         configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout);
         configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout);
@@ -56,15 +56,15 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
 
     public void intakeAlgae() {
         // TODO: Figure out if we're using stator, supply, or torque current here.
-        m_logger.warn(
-                "Real bot's algaeRoller intake voltage not set, set intake voltage in Constants.AlgaeRollerConstants.intakePower");
-        m_logger.warn(
-                "Real bot's algaeRoller hold voltage not set, set hold voltage in Constants.AlgaeRollerConstants.holdPower");
+        m_logger.warn("Real bot's algaeRoller intake voltage not set, set intake voltage in Constants.AlgaeRollerConstants.intakePower");
+        m_logger.warn("Real bot's algaeRoller hold voltage not set, set hold voltage in Constants.AlgaeRollerConstants.holdPower");
         m_logger.warn("Unsure if we're using stator, supply, or torque yet, please determine and set");
-        if (algaeRollerMotor.getSupplyCurrent().getValueAsDouble() > Constants.AlgaeRollerConstants.currentThreshold) {
+        if (algaeRollerMotor.getTorqueCurrent().getValueAsDouble() > Constants.AlgaeRollerConstants.currentThreshold) {
+            m_logger.warn("Torque Current: "+ algaeRollerMotor.getTorqueCurrent().getValueAsDouble());
             setMotor(AlgaeRollerConstants.intakePower);
-        } else if (algaeRollerMotor.getSupplyCurrent().getValueAsDouble() <= Constants.AlgaeRollerConstants.currentThreshold) {
+        } else if (algaeRollerMotor.getTorqueCurrent().getValueAsDouble() <= Constants.AlgaeRollerConstants.currentThreshold) {
             setMotor(AlgaeRollerConstants.holdPower);
+            m_logger.warn("Torque Current: "+ algaeRollerMotor.getTorqueCurrent().getValueAsDouble());
         }
     }
 
@@ -80,7 +80,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
 
     @Override
     public void close() throws Exception {
-        // TODO Auto-generated method stub
         algaeRollerMotor.close();
     }
 
