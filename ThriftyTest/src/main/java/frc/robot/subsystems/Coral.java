@@ -22,9 +22,7 @@ public class Coral extends SubsystemBase {
   private boolean frontSensorValue = false;
   private boolean backSensorValue = false;
   
-  //MedianFilter documentation
   private MedianFilter m_Filter = new MedianFilter(5);
-  private MedianFilter m_Filter2 = new MedianFilter(5);
 
   public Coral() {
     configMotors();

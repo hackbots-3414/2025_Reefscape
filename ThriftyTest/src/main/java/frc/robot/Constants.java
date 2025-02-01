@@ -8,8 +8,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.Map;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
@@ -37,7 +37,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.generated.TunerConstants;
@@ -193,6 +192,16 @@ public class Constants {
         public static final int leftMotorID = 51;
         public static final int rightMotorID = 52;
         public static final int encoderPort = 53;
+        public static final int k_canRangeId = 5;
+
+        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
+            // .withFovParams(null)
+            // .withProximityParams(null)
+            // .withToFParams(null);
+
+        public static final double k_timeout = 1.0; // seconds
+
+        public static final int k_filterWindow = 5; // 5 measurements
 
         public static final boolean invertRightMotor = true;
 
