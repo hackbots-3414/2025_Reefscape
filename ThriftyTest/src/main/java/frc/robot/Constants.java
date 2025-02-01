@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.Map;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -36,6 +37,7 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.generated.TunerConstants;
@@ -284,7 +286,7 @@ public class Constants {
 
     public static final class PivotConstants {
         public static final int motorID = 57;
-        public static final int encoderID = 62;
+        public static final int encoderID = 58; //FIXME No Pivot CANcoder exists on the robot
         public static final double encoderOffset = 0.324707;
 
         public static final double rotorToSensorRatio = 70.0 / 8.0;
@@ -374,6 +376,25 @@ public class Constants {
 
     }
 
+    public static class CoralConstants {
+        public static final int left_motorID = 55;
+        public static final int right_motorID = 56;
+        public static final double intakeVoltage = 12;
+        public static final double ejectVoltage = 12;
+        public static final int k_frontSensorPort = 1;
+        public static final int k_backSensorPort = 2;
+        public static final boolean rightMotorInvert = true;
+
+        public static final double supplyCurrentLimit = 20;
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                    .withNeutralMode(NeutralModeValue.Brake)
+                    .withInverted(InvertedValue.Clockwise_Positive))
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                    .withSupplyCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(supplyCurrentLimit));
+    }
+
     public static final class TalonFXConstants {
         public final static double nominalVoltageVolts = 12.0; // DC Volts
         public final static double stallTorqueNewtonMeters = 4.69; // Nm
@@ -417,5 +438,15 @@ public class Constants {
         public static final int rightClimberMotorID = 2;
         public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
         public static final double climberCurrentLimit = 80.0;
+    }
+
+    public static final class AlgaeRollerConstants {
+        public static final int algaeRollerMotorID = 60;
+        public static final double intakePower = 1; //FIXME tune for actual robot
+        public static final double ejectPower = -1; //FIXME tune for actual robot
+        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
+        public static final double algaeRollerCurrentLimit = 80.0;
+        public static final double holdPower = 0.5;
+
     }
 }
