@@ -18,10 +18,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.commands.AlgaeRollerCommand;
 import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
@@ -136,6 +138,7 @@ public class RobotContainer {
         // operator.button(2).whileTrue(new ManualPivot(pivot, false));
         // operator.button(3).whileTrue(new ManualElevator(elevator, true));
         // operator.button(4).whileTrue(new ManualElevator(elevator, false));
+        operator.L1().onTrue(new AlgaeRollerCommand(roller));
         operator.cross().whileTrue(new ManualClimberCommand(climber));
     }
 
@@ -242,6 +245,7 @@ public class RobotContainer {
     private Elevator elevator;
     private Pivot pivot;
     private Climber climber;
+    private AlgaeRollers roller;
 
     private void configureSubsystems() {
         elevator = new Elevator();

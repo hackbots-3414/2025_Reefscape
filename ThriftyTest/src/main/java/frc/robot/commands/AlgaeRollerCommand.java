@@ -1,0 +1,30 @@
+package frc.robot.commands;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.AlgaeRollers;
+import frc.robot.subsystems.Climber;
+
+public class AlgaeRollerCommand extends Command {
+    private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
+
+    private AlgaeRollers rollers;
+
+    public AlgaeRollerCommand(AlgaeRollers rollers) {
+        addRequirements(rollers);
+        this.rollers = rollers;
+    }
+
+    @Override
+    public void initialize() {
+        m_logger.warn("Not yet sure how we want to handle the logic for algae roller intake vs eject. Figure out, then implement it here.");
+        rollers.intakeAlgae();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        rollers.stopMotor();
+    }
+}
