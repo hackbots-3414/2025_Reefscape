@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
 
-    private TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
+private TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
     private TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
     private double motorPosition;
 
