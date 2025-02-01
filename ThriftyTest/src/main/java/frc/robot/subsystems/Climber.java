@@ -37,11 +37,11 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         currentConfigs.withSupplyCurrentLimit(Constants.ClimberConstants.climberCurrentLimit);
         currentConfigs.SupplyCurrentLimitEnable = true;
         TalonFXConfigurator configurator = rightClimbMotor.getConfigurator();
-        configurator.apply(currentConfigs, Constants.globalCanTimeout);
-        configurator.apply(motorOutput, Constants.globalCanTimeout);
+        configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout);
+        configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout);
         configurator = leftClimbMotor.getConfigurator();
-        configurator.apply(currentConfigs, Constants.globalCanTimeout);
-        configurator.apply(motorOutput, Constants.globalCanTimeout);
+        configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout);
+        configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout);
 
         leftClimbMotor.setControl(new Follower(rightClimbMotor.getDeviceID(), true));
     }
