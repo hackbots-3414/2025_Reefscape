@@ -33,8 +33,9 @@ Hackbots code for the 2025 FRC Reefscape game.
 | R Elevator | 52 |
 | Coral 1 | 55 |
 | Coral 2 | 56 |
-| Algae Wheels | 61 |
-| Algae Pivot | 62 |
+| Algae Pivot | 57 |
+| Algae Rollers | 60 |
+
 
 ## Driver Controls
 |Fuction|Control|
