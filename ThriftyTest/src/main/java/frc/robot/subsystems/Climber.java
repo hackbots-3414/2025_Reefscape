@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import frc.robot.Constants.ClimberConstants;
-import frc.robot.commands.ScoreCommand;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -17,11 +16,9 @@ import org.slf4j.LoggerFactory;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
-    
-    private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
+    private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
     private TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
     private TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
-    private double motorPosition;
 
     public Climber() {
         configMotors();
@@ -50,14 +47,8 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         leftClimbMotor.setControl(new Follower(rightClimbMotor.getDeviceID(), true));
     }
 
-    // @Override
-    // public void periodic() {
-    //     motorPosition = rightClimbMotor.getPosition().getValueAsDouble();
-    // }
-
     private void setMotor(double voltage) {
         rightClimbMotor.setVoltage(voltage);
-        leftClimbMotor.setVoltage(voltage);
     }
 
     public void setClimbUpVolts() {
@@ -66,13 +57,8 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     public void stopMotor() {
-        rightClimbMotor.setVoltage(0);
-        leftClimbMotor.setVoltage(0);
+        rightClimbMotor.stopMotor();
     }
-
-    // public double getMotorPos() {
-    //     return motorPosition;
-    // }
 
     @Override
     public void close() throws Exception {

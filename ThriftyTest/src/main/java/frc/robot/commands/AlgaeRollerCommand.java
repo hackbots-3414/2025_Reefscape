@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeRollers;
 
 public class AlgaeRollerCommand extends Command {
-    private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
+    private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollerCommand.class);
 
     private AlgaeRollers rollers;
 

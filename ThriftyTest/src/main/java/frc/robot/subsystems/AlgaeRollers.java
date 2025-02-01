@@ -14,11 +14,10 @@ import org.slf4j.LoggerFactory;
 
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeRollerConstants;
-import frc.robot.commands.ScoreCommand;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     
-    private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
+    private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
     private TalonFX algaeRollerMotor = new TalonFX(Constants.AlgaeRollerConstants.algaeRollerMotorID);
 
     public AlgaeRollers() {
