@@ -283,7 +283,7 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final int motorID = 61;
+        public static final int motorID = 57;
         public static final int encoderID = 62;
         public static final double encoderOffset = 0.324707;
 
