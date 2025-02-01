@@ -25,6 +25,7 @@ public class CoralIntakeCommand extends Command {
     if(elevator.atSetpoint()) {
       if(!setIntakeAlready) {
         coral.setIntake();
+        setIntakeAlready = true;
       }
     }
   }
