@@ -99,34 +99,60 @@ public class RobotContainer {
     }
 
     private void configureButtonBoard(CommandPS5Controller controller) {
-        controller.button(1).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.A.value, drivetrain)));
-        controller.button(2).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.B.value, drivetrain)));
-        controller.button(3).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.C.value, drivetrain)));
-        controller.button(4).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.D.value, drivetrain)));
-        controller.button(5).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.E.value, drivetrain)));
-        controller.button(6).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.F.value, drivetrain)));
-        controller.button(7).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.G.value, drivetrain)));
-        controller.button(8).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.H.value, drivetrain)));
-        controller.button(9).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.I.value, drivetrain)));
-        controller.button(10).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.J.value, drivetrain)));
-        controller.button(11).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.K.value, drivetrain)));
-        controller.button(12).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.L.value, drivetrain)));
-        controller.button(13).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.FARHP.value, drivetrain)));
-        controller.button(14).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.CLOSEHP.value, drivetrain)));
+        controller.button(1).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.A.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(2).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.B.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(3).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.C.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(4).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.D.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(5).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.E.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(6).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.F.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(7).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.G.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(8).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.H.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(9).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.I.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(10).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.J.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(11).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.K.value, drivetrain, () -> coralScoreCommand(1))));
+        controller.button(12).and(controller.button(16)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.L.value, drivetrain, () -> coralScoreCommand(1))));
+
+        controller.button(1).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.A.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(2).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.B.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(3).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.C.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(4).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.D.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(5).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.E.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(6).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.F.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(7).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.G.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(8).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.H.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(9).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.I.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(10).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.J.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(11).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.K.value, drivetrain, () -> coralScoreCommand(2))));
+        controller.button(12).and(controller.button(17)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.L.value, drivetrain, () -> coralScoreCommand(2))));
+
+        controller.button(1).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.A.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(2).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.B.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(3).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.C.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(4).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.D.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(5).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.E.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(6).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.F.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(7).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.G.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(8).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.H.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(9).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.I.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(10).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.J.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(11).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.K.value, drivetrain, () -> coralScoreCommand(3))));
+        controller.button(12).and(controller.button(18)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.L.value, drivetrain, () -> coralScoreCommand(3))));
+        
+        controller.button(1).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.A.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(2).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.B.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(3).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.C.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(4).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.D.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(5).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.E.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(6).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.F.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(7).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.G.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(8).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.H.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(9).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.I.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(10).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.J.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(11).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.K.value, drivetrain, () -> coralScoreCommand(4))));
+        controller.button(12).and(controller.button(19)).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.L.value, drivetrain, () -> coralScoreCommand(4))));
+
+        controller.button(13).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.FARHP.value, drivetrain, () -> coralIntakeCommand())));
+        controller.button(14).and(controller.button(15)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.CLOSEHP.value, drivetrain, () -> coralIntakeCommand())));
 
         // code where u can only ever queue paths while button is held, and when let go, queue will clear
         controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
