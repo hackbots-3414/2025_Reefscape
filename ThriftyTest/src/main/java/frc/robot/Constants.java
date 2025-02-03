@@ -285,8 +285,13 @@ public class Constants {
     }
 
     public static final class PivotConstants {
+<<<<<<< HEAD
         public static final int motorID = 62;
         public static final int encoderID = 63;
+=======
+        public static final int motorID = 57;
+        public static final int encoderID = 58; //FIXME No Pivot CANcoder exists on the robot
+>>>>>>> e2e897270f712236d5127d94e62a5ee82514d13c
         public static final double encoderOffset = 0.324707;
 
         public static final double rotorToSensorRatio = 70.0 / 8.0;
@@ -422,10 +427,14 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
+<<<<<<< HEAD
         public static final int algaeRollerMotorID = 57;
+=======
+        public static final int algaeRollerMotorID = 60;
+>>>>>>> e2e897270f712236d5127d94e62a5ee82514d13c
         public static final double intakePower = 1; //FIXME tune for actual robot
         public static final double ejectPower = -1; //FIXME tune for actual robot
-        public static final double currentThreshold = 0.5; //FIXME tune for actual robot
+        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
         public static final double algaeRollerCurrentLimit = 80.0;
         public static final double holdPower = 0.5;
 

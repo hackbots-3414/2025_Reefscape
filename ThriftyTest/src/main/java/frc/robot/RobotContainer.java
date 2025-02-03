@@ -130,15 +130,15 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        // operator.button(1).onTrue(scoreCommand(1));
-        // operator.button(2).onTrue(scoreCommand(2));
-        // operator.button(3).onTrue(scoreCommand(3));
-        // operator.button(4).onTrue(scoreCommand(4));
+        operator.button(1).onTrue(scoreCommand(1));
+        operator.button(2).onTrue(scoreCommand(2));
+        operator.button(3).onTrue(scoreCommand(3));
+        operator.button(4).onTrue(scoreCommand(4));
         // operator.button(1).whileTrue(new ManualPivot(pivot, true));
         // operator.button(2).whileTrue(new ManualPivot(pivot, false));
         // operator.button(3).whileTrue(new ManualElevator(elevator, true));
         // operator.button(4).whileTrue(new ManualElevator(elevator, false));
-        operator.cross().whileTrue(new AlgaeRollerCommand(roller));
+        operator.circle().whileTrue(new AlgaeRollerCommand(roller));
         operator.cross().whileTrue(new ManualClimberCommand(climber));
     }
 
