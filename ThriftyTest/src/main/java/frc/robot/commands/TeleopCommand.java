@@ -7,7 +7,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -15,7 +14,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class TeleopCommand extends Command {
     private final PIDController xPIDController = new PIDController(15, 0, 0);
     private final PIDController yPIDController = new PIDController(15, 0, 0);
-    private final PIDController rotPIDController = new PIDController(Math.PI * 2, 0, 0);
+    private final PIDController rotPIDController = new PIDController(Math.PI * 2, Math.PI*5, 0);
 
     private final CommandSwerveDrivetrain drivetrain;
     private final Supplier<Double> xSupplier;
@@ -32,9 +31,9 @@ public class TeleopCommand extends Command {
 
     private boolean alreadyClosedLoop = false;
 
-    private double goalX = 0.0;
-    private double goalY = 0.0;
-    private double goalRot = 0.0;
+    private static double goalX = 0.0;
+    private static double goalY = 0.0;
+    private static double goalRot = 0.0;
 
     private double xVelo = 0.0;
     private double yVelo = 0.0;
@@ -88,11 +87,13 @@ public class TeleopCommand extends Command {
             yVelo = -yPIDController.calculate(currPose.getY(), goalY);
             rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
 
-            SmartDashboard.putNumber("goalX", goalX);
-            SmartDashboard.putNumber("goalY", goalY);
-            SmartDashboard.putNumber("rotVelo", rotVelo);
-
             drivetrain.setControl(drive.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
         }
+    }
+
+    public static void setGoalPose(Pose2d pose) {
+        goalRot = pose.getRotation().getRadians();
+        goalX = pose.getX();
+        goalY = pose.getY();
     }
 }

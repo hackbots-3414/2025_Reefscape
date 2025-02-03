@@ -1,7 +1,7 @@
 {
-  "FMS": {
+  "Keyboard 0 Settings": {
     "window": {
-      "visible": false
+      "visible": true
     }
   },
   "System Joysticks": {
@@ -35,13 +35,13 @@
         }
       ],
       "axisCount": 2,
-      "buttonCount": 5,
+      "buttonCount": 16,
       "buttonKeys": [
         49,
         50,
         51,
         52,
-        88,
+        53,
         54,
         55,
         56,
@@ -51,7 +51,8 @@
         61,
         90,
         -1,
-        46
+        46,
+        -1
       ],
       "povCount": 0
     },
@@ -126,6 +127,8 @@
     }
   ],
   "robotJoysticks": [
+    {},
+    {},
     {
       "guid": "Keyboard0"
     }

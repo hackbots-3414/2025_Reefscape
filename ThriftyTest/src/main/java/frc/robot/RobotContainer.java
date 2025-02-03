@@ -44,7 +44,7 @@ public class RobotContainer {
         configureSubsystems();
         configureDriverBindings();
         configureOperatorBindings();
-        configureButtonBoard(dragonReins);
+        configureButtonBoard(buttonBoard);
         configureAutonChooser();
         m_vision.startThread();
     }
@@ -53,6 +53,7 @@ public class RobotContainer {
 
     private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
     private final CommandPS5Controller operator = new CommandPS5Controller(1);
+    private final CommandPS5Controller buttonBoard = new CommandPS5Controller(2);
 
     private double getX() {
         return -dragonReins.getRawAxis(1);
@@ -99,33 +100,33 @@ public class RobotContainer {
 
     private void configureButtonBoard(CommandPS5Controller controller) {
         controller.button(1).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.A.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.A.value, drivetrain)));
         controller.button(2).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.B.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.B.value, drivetrain)));
         controller.button(3).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.C.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.C.value, drivetrain)));
         controller.button(4).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.D.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.D.value, drivetrain)));
         controller.button(5).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.E.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.E.value, drivetrain)));
         controller.button(6).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.F.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.F.value, drivetrain)));
         controller.button(7).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.G.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.G.value, drivetrain)));
         controller.button(8).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.H.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.H.value, drivetrain)));
         controller.button(9).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.I.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.I.value, drivetrain)));
         controller.button(10).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.J.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.J.value, drivetrain)));
         controller.button(11).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.K.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.K.value, drivetrain)));
         controller.button(12).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.L.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.L.value, drivetrain)));
         controller.button(13).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.FARHP.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.FARHP.value, drivetrain)));
         controller.button(14).and(controller.button(15))
-                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePath(ScoringLocations.CLOSEHP.value)));
+                .onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.CLOSEHP.value, drivetrain)));
 
         // code where u can only ever queue paths while button is held, and when let go, queue will clear
         controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
