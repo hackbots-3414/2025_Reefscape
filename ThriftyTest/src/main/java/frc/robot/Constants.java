@@ -285,8 +285,8 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final int motorID = 61;
-        public static final int encoderID = 62;
+        public static final int motorID = 62;
+        public static final int encoderID = 63;
         public static final double encoderOffset = 0.324707;
 
         public static final double rotorToSensorRatio = 70.0 / 8.0;
@@ -422,7 +422,7 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
-        public static final int algaeRollerMotorID = 61;
+        public static final int algaeRollerMotorID = 57;
         public static final double intakePower = 1; //FIXME tune for actual robot
         public static final double ejectPower = -1; //FIXME tune for actual robot
         public static final double currentThreshold = 0.5; //FIXME tune for actual robot
