@@ -188,20 +188,23 @@ public class Constants {
         public static final int numWaypoints = 5;
     }
 
+    public static final class CanRangeConstants {
+        public static final int k_canRangeId = 5;
+
+        public static final double k_timeout = 1.0; // seconds
+
+        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
+        // .withFovParams(null)
+        // .withProximityParams(null)
+        // .withToFParams(null);
+
+        public static final int k_filterWindow = 5; // 5 measurements
+    }
+
     public static final class ElevatorConstants {
         public static final int leftMotorID = 51;
         public static final int rightMotorID = 52;
         public static final int encoderPort = 53;
-        public static final int k_canRangeId = 5;
-
-        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
-            // .withFovParams(null)
-            // .withProximityParams(null)
-            // .withToFParams(null);
-
-        public static final double k_timeout = 1.0; // seconds
-
-        public static final int k_filterWindow = 5; // 5 measurements
 
         public static final boolean invertRightMotor = true;
 
