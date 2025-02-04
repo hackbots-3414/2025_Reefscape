@@ -390,7 +390,7 @@ public class Constants {
         public static final int right_motorID = 56;
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = 12;
-        public static final int k_frontSensorPort = 1;
+        public static final int k_frontSensorPort = 3;
         public static final int k_backSensorPort = 2;
         public static final boolean rightMotorInvert = true;
 
