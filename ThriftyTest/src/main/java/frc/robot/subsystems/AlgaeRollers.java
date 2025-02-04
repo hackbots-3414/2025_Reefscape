@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -8,16 +11,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeRollerConstants;
+import frc.robot.commands.ScoreCommand;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     
-    private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
+    private final Logger m_logger = LoggerFactory.getLogger(ScoreCommand.class);
     private TalonFX algaeRollerMotor = new TalonFX(Constants.AlgaeRollerConstants.algaeRollerMotorID);
 
     public AlgaeRollers() {
