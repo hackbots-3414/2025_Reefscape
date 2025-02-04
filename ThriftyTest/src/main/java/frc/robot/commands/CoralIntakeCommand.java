@@ -1,18 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Coral;
+import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
 public class CoralIntakeCommand extends Command {
-  private Coral coral;
+  private CoralRollers coral;
   private Elevator elevator;
 
-  private boolean setIntakeAlready;
-
-  public CoralIntakeCommand(Coral coral,Elevator elevator) {
-    this.coral = coral;
+  public CoralIntakeCommand(CoralRollers coralRollers,Elevator elevator) {
+    this.coral = coralRollers;
     this.elevator = elevator;
+    addRequirements(coralRollers, elevator);
   }
 
   @Override
@@ -23,10 +22,7 @@ public class CoralIntakeCommand extends Command {
   @Override
   public void execute() {
     if(elevator.atSetpoint()) {
-      if(!setIntakeAlready) {
-        coral.setIntake();
-        setIntakeAlready = true;
-      }
+      coral.setIntake();
     }
   }
 

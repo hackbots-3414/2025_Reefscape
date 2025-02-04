@@ -12,8 +12,8 @@ public class AlgaeRollerCommand extends Command {
     private AlgaeRollers rollers;
 
     public AlgaeRollerCommand(AlgaeRollers rollers) {
-        addRequirements(rollers);
         this.rollers = rollers;
+        addRequirements(rollers);
     }
 
     @Override

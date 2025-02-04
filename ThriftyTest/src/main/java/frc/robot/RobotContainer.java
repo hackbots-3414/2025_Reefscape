@@ -27,7 +27,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Coral;
+import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
@@ -248,14 +248,14 @@ public class RobotContainer {
     private Pivot pivot;
     private Climber climber;
     private AlgaeRollers roller;
-    private Coral coral;
+    private CoralRollers coral;
 
     private void configureSubsystems() {
         elevator = new Elevator();
         pivot = new Pivot();
         climber = new Climber();
         roller = new AlgaeRollers();
-        coral = new Coral();
+        coral = new CoralRollers();
     }
 
     private Command coralIntakeCommand() {
