@@ -95,11 +95,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
             m_algaeRoller.setVoltage(m_voltage);
             m_voltageChanged = false;
         }
-
-        // if (m_counter++ == AlgaeRollerConstants.k_updatePeriod - 1) {
-        //     m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
-        //     m_counter = 0;
-        // }
     }
 
     @Override
