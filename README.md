@@ -35,6 +35,7 @@ Hackbots code for the 2025 FRC Reefscape game.
 | Coral 2 | 56 |
 | Algae Pivot | 57 |
 | Algae Rollers | 60 |
+| CAN Range | 6 |
 
 
 ## Driver Controls

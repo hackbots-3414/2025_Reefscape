@@ -189,7 +189,7 @@ public class Constants {
     }
 
     public static final class CanRangeConstants {
-        public static final int k_canRangeId = 5;
+        public static final int k_canRangeId = 6;
 
         public static final double k_timeout = 1.0; // seconds
 
