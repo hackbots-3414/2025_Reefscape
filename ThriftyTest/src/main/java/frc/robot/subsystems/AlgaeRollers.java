@@ -68,7 +68,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         }
     }
 
-    private double getTorque() {
+    private double getTorqueCurrent() {
         return m_algaeRoller.getTorqueCurrent().getValueAsDouble();
     }
 
@@ -88,7 +88,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         }
 
         if (m_counter++ == AlgaeRollerConstants.k_updatePeriod - 1) {
-            m_hasObject = getTorque() >= AlgaeRollerConstants.currentThreshold;
+            m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
             m_counter = 0;
         }
     }
