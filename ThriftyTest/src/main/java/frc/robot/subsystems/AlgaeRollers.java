@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeRollerConstants;
@@ -25,12 +26,14 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     private double m_voltage;
     private boolean m_voltageChanged;
 
-    private int m_counter;
+    private Notifier m_notifier;
 
     private boolean m_hasObject;
 
     public AlgaeRollers() {
         configIntakeMotor();
+        m_notifier = new Notifier(this::updateObjectState);
+        m_notifier.startPeriodic(AlgaeRollerConstants.k_updateObjectPeriodSeconds);
     }
 
     private void configIntakeMotor() {
@@ -63,6 +66,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     public void intakeAlgae() {
         if (hasObject()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
+            m_logger.warn("We may need current limits for having an object which are not yet implemented");
         } else {
             setMotor(AlgaeRollerConstants.intakeVoltage);
         }
@@ -81,6 +85,10 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         setMotor(0);
     }
 
+    private void updateObjectState() {
+        m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
+    }
+
     @Override
     public void periodic() {
         if (m_voltageChanged) {
@@ -88,15 +96,16 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
             m_voltageChanged = false;
         }
 
-        if (m_counter++ == AlgaeRollerConstants.k_updatePeriod - 1) {
-            m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
-            m_counter = 0;
-        }
+        // if (m_counter++ == AlgaeRollerConstants.k_updatePeriod - 1) {
+        //     m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
+        //     m_counter = 0;
+        // }
     }
 
     @Override
     public void close() throws Exception {
         m_algaeRoller.close();
+        m_notifier.close();
     }
 
 }
