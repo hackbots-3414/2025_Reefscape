@@ -1,25 +1,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Coral;
+import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
 public class CoralScoreCommand extends Command {
-  private Coral coral;
+  private CoralRollers coral;
   private Elevator elevator;
-  private int Level;
-  private boolean setEjectAlready;
+  private int level;
 
-  public CoralScoreCommand( Coral coral, Elevator elevator, int Level) {
-    this.coral = coral;
+  public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int level) {
+    this.coral = coralRollers;
     this.elevator = elevator;
-    this.Level = Level;
+    this.level = level;
+    addRequirements(coralRollers, elevator);
   }
 
   
   @Override
   public void initialize() {
-    switch(Level) {
+    switch(level) {
       case 1:
         elevator.setL1();
         break;
@@ -44,10 +44,7 @@ public class CoralScoreCommand extends Command {
   @Override
   public void execute() {
     if(elevator.atSetpoint()) {
-      if(!setEjectAlready) {
-        coral.setEject();
-        setEjectAlready = true;
-      }
+      coral.setEject();
     }
   }
 

@@ -11,6 +11,7 @@ public class ManualElevatorCommand extends Command {
     public ManualElevatorCommand(Elevator elevator, boolean isUp) {
         this.isUp = isUp;
         this.elevator = elevator;
+        addRequirements(elevator);
     }
 
     @Override

@@ -75,7 +75,7 @@ public class Constants {
     }
 
     public static class RobotConstants {
-        public static final double globalCanTimeout = 20;
+        public static final Time globalCanTimeout = Milliseconds.of(20); // 20 milliseconds
 
         public static final double k_robotX = Units.inchesToMeters(30.0);
         public static final double k_robotY = Units.inchesToMeters(30.0);
@@ -191,20 +191,21 @@ public class Constants {
         public static double degreeTolerance = 2;
     }
 
+    public static final class CanRangeConstants {
+        public static final int k_canRangeId = 6;
+
+        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
+        // .withFovParams(null)
+        // .withProximityParams(null)
+        // .withToFParams(null);
+
+        public static final int k_filterWindow = 5; // 5 measurements
+    }
+
     public static final class ElevatorConstants {
         public static final int leftMotorID = 51;
         public static final int rightMotorID = 52;
         public static final int encoderPort = 53;
-        public static final int k_canRangeId = 5;
-
-        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
-            // .withFovParams(null)
-            // .withProximityParams(null)
-            // .withToFParams(null);
-
-        public static final double k_timeout = 1.0; // seconds
-
-        public static final int k_filterWindow = 5; // 5 measurements
 
         public static final boolean invertRightMotor = true;
 
@@ -389,8 +390,8 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final int left_motorID = 55;
-        public static final int right_motorID = 56;
+        public static final int k_leftMotorID = 55;
+        public static final int k_rightMotorID = 56;
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = 12;
         public static final int k_frontSensorPort = 3;
@@ -454,11 +455,11 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final int algaeRollerMotorID = 60;
-        public static final double intakePower = 1; //FIXME tune for actual robot
-        public static final double ejectPower = -1; //FIXME tune for actual robot
+        public static final double intakeVoltage = 1; //FIXME tune for actual robot
+        public static final double ejectVoltage = -1; //FIXME tune for actual robot
         public static final double currentThreshold = 40.2; //FIXME tune for actual robot
         public static final double algaeRollerCurrentLimit = 80.0;
-        public static final double holdPower = 0.5;
-
+        public static final double holdVoltage = 0.5;
+        public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
     }
 }

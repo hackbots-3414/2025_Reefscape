@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Coral;
+import frc.robot.subsystems.CoralRollers;
 
 public class CoralEjectCommand extends Command {
-  private Coral coral;
+  private CoralRollers coral;
 
-  public CoralEjectCommand(Coral coral) {
-      this.coral = coral;
+  public CoralEjectCommand(CoralRollers coralRollers) {
+      this.coral = coralRollers;
+      addRequirements(coralRollers);
   }
 
   @Override

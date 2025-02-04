@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -29,7 +31,9 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
@@ -38,9 +42,10 @@ public class Elevator extends SubsystemBase {
 
     private final CANcoder m_cancoder = new CANcoder(ElevatorConstants.encoderPort);
 
-    private final CANrange m_canrange = new CANrange(ElevatorConstants.k_canRangeId);
+    private final CANrange m_canrange = new CANrange(CanRangeConstants.k_canRangeId);
 
-    private final MedianFilter m_filter = new MedianFilter(ElevatorConstants.k_filterWindow);
+    // Although I would love to implement a Kalman Filter for this, that takes too much time!!!
+    private final MedianFilter m_filter = new MedianFilter(CanRangeConstants.k_filterWindow);
 
     private final DigitalInput m_forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
     private final DigitalInput m_reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
@@ -64,12 +69,15 @@ public class Elevator extends SubsystemBase {
     private MechanismRoot2d m_mechRoot;
     private MechanismLigament2d m_elevatorArm;
 
+    private double m_speed;
+    private boolean m_speedChanged;
+
     public Elevator() {
         configEncoder();
         configMotor();
         configStateSpace();
         configSim();
-        configLidar();
+        configCanRange();
     }
 
     private void configEncoder() {
@@ -81,6 +89,8 @@ public class Elevator extends SubsystemBase {
     private void configMotor() {
         m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
+        m_elevatorRight.setControl(follower);
     }
 
     private void configStateSpace() {
@@ -106,9 +116,12 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putData("Elevator Visualization", m_mechVisual);
     }
 
-    private void configLidar() {
+    private void configCanRange() {
         m_canrange.clearStickyFaults();
-        m_canrange.getConfigurator().apply(ElevatorConstants.k_canRangeConfig, ElevatorConstants.k_timeout);
+        m_canrange.getConfigurator().apply(
+            CanRangeConstants.k_canRangeConfig,
+            RobotConstants.globalCanTimeout.in(Seconds)
+        );
     }
 
     private Vector<N2> getOutput() {
@@ -123,7 +136,6 @@ public class Elevator extends SubsystemBase {
         if (!m_stateSpaceEnabled) return;
 
         VoltageOut config = new VoltageOut(0);
-        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
         double volts = inputs.get(0);
 
         if (volts < 0) {
@@ -132,7 +144,6 @@ public class Elevator extends SubsystemBase {
             config.withLimitForwardMotion(m_forwardLimit);
         }
         m_elevatorLeft.setControl(config.withOutput(volts));
-        m_elevatorRight.setControl(follower);
     }
 
     public void setPosition(double goal) {
@@ -140,9 +151,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
-        m_elevatorLeft.setControl(new DutyCycleOut(speed));
-        m_elevatorRight.setControl(follower);
+        m_speedChanged = (speed != m_speed);
+        m_speed = speed;
     }
 
     public void enableStateSpace() {
@@ -217,6 +227,10 @@ public class Elevator extends SubsystemBase {
         m_position = m_filter.calculate(m_canrange.getDistance().getValueAsDouble());
         SmartDashboard.putNumber("Elevator Position", m_position);
 
+        if (m_speedChanged && !m_stateSpaceEnabled) {
+            m_elevatorLeft.setControl(new DutyCycleOut(m_speed));
+            m_speedChanged = false;
+        }
     }
 
     @Override

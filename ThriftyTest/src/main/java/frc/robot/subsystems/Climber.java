@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-import frc.robot.Constants.ClimberConstants;
+import static edu.wpi.first.units.Units.Seconds;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -11,14 +13,17 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
-    private TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
-    private TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
+    private final TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
+    private final TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
+
+    private double m_voltage;
+    private boolean m_voltageChanged;
 
     public Climber() {
         configMotors();
@@ -28,7 +33,6 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         leftClimbMotor.clearStickyFaults();
         rightClimbMotor.clearStickyFaults();
 
-        //FIXME: Put the right inversions in for real bot
         m_logger.warn("Climber motor inversions for real bot not set, set climber inversions for real bot");
 
         MotorOutputConfigs motorOutput = new MotorOutputConfigs();
@@ -38,17 +42,18 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         currentConfigs.withSupplyCurrentLimit(Constants.ClimberConstants.climberCurrentLimit);
         currentConfigs.SupplyCurrentLimitEnable = true;
         TalonFXConfigurator configurator = rightClimbMotor.getConfigurator();
-        configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout);
-        configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout);
+        configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout.in(Seconds));
+        configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout.in(Seconds));
         configurator = leftClimbMotor.getConfigurator();
-        configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout);
-        configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout);
+        configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout.in(Seconds));
+        configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout.in(Seconds));
 
         leftClimbMotor.setControl(new Follower(rightClimbMotor.getDeviceID(), true));
     }
 
     private void setMotor(double voltage) {
-        rightClimbMotor.setVoltage(voltage);
+        m_voltageChanged = (m_voltage != voltage);
+        m_voltage = voltage;
     }
 
     public void setClimbUpVolts() {
@@ -58,6 +63,14 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     public void stopMotor() {
         rightClimbMotor.stopMotor();
+    }
+
+    @Override
+    public void periodic() {
+        if (m_voltageChanged) {
+            rightClimbMotor.setVoltage(m_voltage);
+            m_voltageChanged = false;
+        }
     }
 
     @Override

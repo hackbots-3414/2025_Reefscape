@@ -13,8 +13,7 @@ public class ManualClimberCommand extends Command {
 
     @Override
     public void initialize() {
-            climber.setClimbUpVolts();
-
+        climber.setClimbUpVolts();
     }
 
     @Override

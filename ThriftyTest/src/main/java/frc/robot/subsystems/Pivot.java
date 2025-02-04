@@ -48,6 +48,9 @@ public class Pivot extends SubsystemBase {
     private MechanismRoot2d mechRoot;
     private MechanismLigament2d armLigament;
 
+    private double m_speed;
+    private boolean m_speedChanged;
+
     public Pivot() {
         configEncoder();
         configMotor();
@@ -113,7 +116,8 @@ public class Pivot extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        pivot.setControl(new DutyCycleOut(speed));
+        m_speedChanged = (speed != m_speed);
+        m_speed = speed;
     }
 
     public void enableStateSpace() {
@@ -163,6 +167,11 @@ public class Pivot extends SubsystemBase {
         velocity = cancoder.getVelocity().getValueAsDouble();
 
         armLigament.setAngle(Math.toDegrees(simPosition));
+
+        if (m_speedChanged && !stateSpaceEnabled) {
+            pivot.setControl(new DutyCycleOut(m_speed));
+            m_speedChanged = false;
+        }
     }
 
     @Override
