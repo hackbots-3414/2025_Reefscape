@@ -11,6 +11,7 @@ public class ManualPivotCommand extends Command {
     public ManualPivotCommand(Pivot pivot, boolean isUp) {
         this.isUp = isUp;
         this.pivot = pivot;
+        addRequirements(pivot);
     }
 
     @Override

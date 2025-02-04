@@ -387,8 +387,8 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final int left_motorID = 55;
-        public static final int right_motorID = 56;
+        public static final int k_leftMotorID = 55;
+        public static final int k_rightMotorID = 56;
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = 12;
         public static final int k_frontSensorPort = 1;
@@ -452,11 +452,11 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final int algaeRollerMotorID = 60;
-        public static final double intakePower = 1; //FIXME tune for actual robot
-        public static final double ejectPower = -1; //FIXME tune for actual robot
+        public static final double intakeVoltage = 1; //FIXME tune for actual robot
+        public static final double ejectVoltage = -1; //FIXME tune for actual robot
         public static final double currentThreshold = 40.2; //FIXME tune for actual robot
         public static final double algaeRollerCurrentLimit = 80.0;
-        public static final double holdPower = 0.5;
-
+        public static final double holdVoltage = 0.5;
+        public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
     }
 }

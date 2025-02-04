@@ -13,6 +13,7 @@ public class ElevatorToPointCommand extends Command {
     public ElevatorToPointCommand(double elevatorPosition, Elevator elevator) {
         this.elevatorPosition = elevatorPosition;
         this.elevator = elevator;
+        addRequirements(elevator);
     }
 
     @Override

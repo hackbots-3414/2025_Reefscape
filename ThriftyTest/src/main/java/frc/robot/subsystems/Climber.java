@@ -19,8 +19,11 @@ import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
-    private TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
-    private TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
+    private final TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
+    private final TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
+
+    private double m_voltage;
+    private boolean m_voltageChanged;
 
     public Climber() {
         configMotors();
@@ -30,7 +33,6 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         leftClimbMotor.clearStickyFaults();
         rightClimbMotor.clearStickyFaults();
 
-        //FIXME: Put the right inversions in for real bot
         m_logger.warn("Climber motor inversions for real bot not set, set climber inversions for real bot");
 
         MotorOutputConfigs motorOutput = new MotorOutputConfigs();
@@ -50,7 +52,8 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     private void setMotor(double voltage) {
-        rightClimbMotor.setVoltage(voltage);
+        m_voltageChanged = (m_voltage != voltage);
+        m_voltage = voltage;
     }
 
     public void setClimbUpVolts() {
@@ -60,6 +63,14 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     public void stopMotor() {
         rightClimbMotor.stopMotor();
+    }
+
+    @Override
+    public void periodic() {
+        if (m_voltageChanged) {
+            rightClimbMotor.setVoltage(m_voltage);
+            m_voltageChanged = false;
+        }
     }
 
     @Override
