@@ -7,7 +7,7 @@
 
 ## Assumptions
 * "hand" has ability to grab vertical coral
-* "hand" can rotate in whatever orientation
+* "hand" does not rotate and has a set position
 * Elevator can reach low enough to the stack
 * Hand can tilt up and down.
 

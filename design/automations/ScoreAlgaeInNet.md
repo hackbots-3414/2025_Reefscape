@@ -8,7 +8,7 @@
 
 ## Assumptions
 * Assume elevator can reach high enough to place algae
-* We cannot hold coral and score in the net.
+* We can hold coral and score in the net.
 * We will have to shoot from a small distance (so we don't touch the net).
 
 ## Operations
