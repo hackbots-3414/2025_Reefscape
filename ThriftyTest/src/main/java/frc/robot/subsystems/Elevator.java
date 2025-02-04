@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -29,7 +31,9 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
@@ -38,9 +42,10 @@ public class Elevator extends SubsystemBase {
 
     private final CANcoder m_cancoder = new CANcoder(ElevatorConstants.encoderPort);
 
-    private final CANrange m_canrange = new CANrange(ElevatorConstants.k_canRangeId);
+    private final CANrange m_canrange = new CANrange(CanRangeConstants.k_canRangeId);
 
-    private final MedianFilter m_filter = new MedianFilter(ElevatorConstants.k_filterWindow);
+    // Although I would love to implement a Kalman Filter for this, that takes too much time!!!
+    private final MedianFilter m_filter = new MedianFilter(CanRangeConstants.k_filterWindow);
 
     private final DigitalInput m_forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
     private final DigitalInput m_reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
@@ -72,7 +77,7 @@ public class Elevator extends SubsystemBase {
         configMotor();
         configStateSpace();
         configSim();
-        configLidar();
+        configCanRange();
     }
 
     private void configEncoder() {
@@ -109,9 +114,12 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putData("Elevator Visualization", m_mechVisual);
     }
 
-    private void configLidar() {
+    private void configCanRange() {
         m_canrange.clearStickyFaults();
-        m_canrange.getConfigurator().apply(ElevatorConstants.k_canRangeConfig, ElevatorConstants.k_timeout);
+        m_canrange.getConfigurator().apply(
+            CanRangeConstants.k_canRangeConfig,
+            RobotConstants.globalCanTimeout.in(Seconds)
+        );
     }
 
     private Vector<N2> getOutput() {

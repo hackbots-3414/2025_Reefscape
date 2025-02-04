@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +13,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.AlgaeRollerConstants;
-import frc.robot.Constants.RobotConstants;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     
@@ -43,8 +45,8 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         currentConfigs.withSupplyCurrentLimit(AlgaeRollerConstants.algaeRollerCurrentLimit);
         currentConfigs.SupplyCurrentLimitEnable = true;
         TalonFXConfigurator configurator = m_algaeRoller.getConfigurator();
-        configurator.apply(currentConfigs, RobotConstants.globalCanTimeout);
-        configurator.apply(motorOutput, RobotConstants.globalCanTimeout);
+        configurator.apply(currentConfigs, Constants.RobotConstants.globalCanTimeout.in(Seconds));
+        configurator.apply(motorOutput, Constants.RobotConstants.globalCanTimeout.in(Seconds));
     }
 
     private void setMotor(double voltage) {
