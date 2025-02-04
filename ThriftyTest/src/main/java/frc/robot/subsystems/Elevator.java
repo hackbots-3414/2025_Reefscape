@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -113,7 +115,7 @@ public class Elevator extends SubsystemBase {
         m_canrange.clearStickyFaults();
         m_canrange.getConfigurator().apply(
             CanRangeConstants.k_canRangeConfig,
-            RobotConstants.globalCanTimeout
+            RobotConstants.globalCanTimeout.in(Seconds)
         );
     }
 

@@ -75,7 +75,7 @@ public class Constants {
     }
 
     public static class RobotConstants {
-        public static final double globalCanTimeout = 20;
+        public static final Time globalCanTimeout = Milliseconds.of(20); // 20 milliseconds
 
         public static final double k_robotX = Units.inchesToMeters(30.0);
         public static final double k_robotY = Units.inchesToMeters(30.0);
