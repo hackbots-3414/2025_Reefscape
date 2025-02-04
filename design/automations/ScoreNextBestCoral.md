@@ -9,8 +9,6 @@
 * We can see an April tag, or we can correctly estimate the position on the field.
 * The robot currently has a ready coral.
 * There is a next best coral
-* Our "database" of placed coral accurately reflects the current state of the reef.
-* This is triggered by the user.
 
 ## Operations
 `scoreNextBestCoral`
