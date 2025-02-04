@@ -191,8 +191,6 @@ public class Constants {
     public static final class CanRangeConstants {
         public static final int k_canRangeId = 6;
 
-        public static final double k_timeout = 1.0; // seconds
-
         public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
         // .withFovParams(null)
         // .withProximityParams(null)
