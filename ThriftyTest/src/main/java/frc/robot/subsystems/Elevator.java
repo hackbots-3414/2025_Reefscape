@@ -227,7 +227,7 @@ public class Elevator extends SubsystemBase {
         m_position = m_filter.calculate(m_canrange.getDistance().getValueAsDouble());
         SmartDashboard.putNumber("Elevator Position", m_position);
 
-        if (m_speedChanged) {
+        if (m_speedChanged && !m_stateSpaceEnabled) {
             m_elevatorLeft.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
