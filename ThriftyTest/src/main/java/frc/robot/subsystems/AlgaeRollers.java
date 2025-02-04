@@ -62,9 +62,9 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
 
     public void intakeAlgae() {
         if (hasObject()) {
-            setMotor(AlgaeRollerConstants.holdPower);
+            setMotor(AlgaeRollerConstants.holdVoltage);
         } else {
-            setMotor(AlgaeRollerConstants.intakePower);
+            setMotor(AlgaeRollerConstants.intakeVoltage);
         }
     }
 
@@ -74,7 +74,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
 
     public void ejectAlgae() {
         m_logger.warn("Voltage for real bot's eject not set, set eject voltage for real bot in Constants.AlgaeRollerConstants.ejectPower");
-        setMotor(AlgaeRollerConstants.ejectPower);
+        setMotor(AlgaeRollerConstants.ejectVoltage);
     }
 
     public void stopMotor() {

@@ -452,11 +452,11 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final int algaeRollerMotorID = 60;
-        public static final double intakePower = 1; //FIXME tune for actual robot
-        public static final double ejectPower = -1; //FIXME tune for actual robot
+        public static final double intakeVoltage = 1; //FIXME tune for actual robot
+        public static final double ejectVoltage = -1; //FIXME tune for actual robot
         public static final double currentThreshold = 40.2; //FIXME tune for actual robot
         public static final double algaeRollerCurrentLimit = 80.0;
-        public static final double holdPower = 0.5;
+        public static final double holdVoltage = 0.5;
         public static final int k_updatePeriod = 10; // every 10 periodic runs, we update m_hasObject
     }
 }
