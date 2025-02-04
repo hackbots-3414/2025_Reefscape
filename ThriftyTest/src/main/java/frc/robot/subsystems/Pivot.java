@@ -116,7 +116,7 @@ public class Pivot extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        m_speedChanged = (speed == m_speed);
+        m_speedChanged = (speed != m_speed);
         m_speed = speed;
     }
 
@@ -168,7 +168,7 @@ public class Pivot extends SubsystemBase {
 
         armLigament.setAngle(Math.toDegrees(simPosition));
 
-        if (m_speedChanged) {
+        if (m_speedChanged && !stateSpaceEnabled) {
             pivot.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
