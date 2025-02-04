@@ -69,6 +69,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     public void periodic() {
         if (m_voltageChanged) {
             rightClimbMotor.setVoltage(m_voltage);
+            m_voltageChanged = false;
         }
     }
 

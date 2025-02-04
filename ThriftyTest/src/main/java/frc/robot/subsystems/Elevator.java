@@ -229,6 +229,7 @@ public class Elevator extends SubsystemBase {
 
         if (m_speedChanged) {
             m_elevatorLeft.setControl(new DutyCycleOut(m_speed));
+            m_speedChanged = false;
         }
     }
 

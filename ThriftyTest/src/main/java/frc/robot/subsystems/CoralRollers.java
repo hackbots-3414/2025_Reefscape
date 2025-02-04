@@ -74,6 +74,7 @@ public class CoralRollers extends SubsystemBase {
 
     if (m_voltageChanged) {
       coralLeft.setVoltage(m_voltage);
+      m_voltageChanged = false;
     }
   }
 

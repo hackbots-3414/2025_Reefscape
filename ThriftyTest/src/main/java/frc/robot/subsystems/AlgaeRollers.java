@@ -85,6 +85,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     public void periodic() {
         if (m_voltageChanged) {
             m_algaeRoller.setVoltage(m_voltage);
+            m_voltageChanged = false;
         }
 
         if (m_counter++ == AlgaeRollerConstants.k_updatePeriod - 1) {

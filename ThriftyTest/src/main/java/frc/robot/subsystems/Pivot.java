@@ -170,6 +170,7 @@ public class Pivot extends SubsystemBase {
 
         if (m_speedChanged) {
             pivot.setControl(new DutyCycleOut(m_speed));
+            m_speedChanged = false;
         }
     }
 
