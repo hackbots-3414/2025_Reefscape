@@ -9,10 +9,10 @@ public class CoralScoreCommand extends Command {
   private Elevator elevator;
   private int level;
 
-  public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int Level) {
+  public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int level) {
     this.coral = coralRollers;
     this.elevator = elevator;
-    this.level = Level;
+    this.level = level;
     addRequirements(coralRollers, elevator);
   }
 
