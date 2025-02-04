@@ -89,6 +89,8 @@ public class Elevator extends SubsystemBase {
     private void configMotor() {
         m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
+        m_elevatorRight.setControl(follower);
     }
 
     private void configStateSpace() {
@@ -134,7 +136,6 @@ public class Elevator extends SubsystemBase {
         if (!m_stateSpaceEnabled) return;
 
         VoltageOut config = new VoltageOut(0);
-        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
         double volts = inputs.get(0);
 
         if (volts < 0) {
@@ -143,7 +144,6 @@ public class Elevator extends SubsystemBase {
             config.withLimitForwardMotion(m_forwardLimit);
         }
         m_elevatorLeft.setControl(config.withOutput(volts));
-        m_elevatorRight.setControl(follower);
     }
 
     public void setPosition(double goal) {
@@ -151,7 +151,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        m_speedChanged = (speed == m_speed);
+        m_speedChanged = (speed != m_speed);
         m_speed = speed;
     }
 
