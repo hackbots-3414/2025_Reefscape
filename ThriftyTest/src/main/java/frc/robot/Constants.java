@@ -186,6 +186,9 @@ public class Constants {
 
     public static final class AutonConstants {
         public static final int numWaypoints = 5;
+        public static double pathplannerMinRange = 0.5;
+        public static double overrideTolerance = 0.05;
+        public static double degreeTolerance = 2;
     }
 
     public static final class CanRangeConstants {
@@ -391,8 +394,8 @@ public class Constants {
         public static final int k_rightMotorID = 56;
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = 12;
-        public static final int k_frontSensorPort = 1;
-        public static final int k_backSensorPort = 2;
+        public static final int k_frontSensorPort = 3;
+        public static final int k_backSensorPort = 4;
         public static final boolean rightMotorInvert = true;
 
         public static final double supplyCurrentLimit = 20;

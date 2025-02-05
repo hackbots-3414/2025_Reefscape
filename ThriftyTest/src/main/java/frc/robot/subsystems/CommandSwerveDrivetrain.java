@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -14,8 +18,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -26,8 +28,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.Robot;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Robot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
 import frc.robot.vision.TimestampedPoseEstimate;
@@ -81,6 +84,33 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Pose2d getPose() {
         return estimatedPose;
+    }
+
+    public Pose2d getFlippedPose() {
+        return flipPose(estimatedPose);
+    }
+
+    public Pose2d flipPose(Pose2d pose) {
+        try {
+            if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+                Rotation2d goalRot = pose.getRotation();
+                if (goalRot.getRadians() > 0) {
+                    goalRot = goalRot.minus(Rotation2d.k180deg);
+                } else {
+                    goalRot = goalRot.plus(Rotation2d.k180deg);
+                }
+
+                if (goalRot.getRadians() > Math.PI || goalRot.getRadians() < -Math.PI) {
+                    goalRot = goalRot.times(-1);
+                    goalRot = goalRot.minus(Rotation2d.k180deg);
+                }
+                return new Pose2d(FieldConstants.k_fieldLength.baseUnitMagnitude() - pose.getX(), FieldConstants.k_fieldWidth.baseUnitMagnitude() - pose.getY(), goalRot);
+            } else {
+                return estimatedPose;
+            }
+        } catch (Exception e) {
+            return estimatedPose;
+        }
     }
 
     public void zeroPose() {

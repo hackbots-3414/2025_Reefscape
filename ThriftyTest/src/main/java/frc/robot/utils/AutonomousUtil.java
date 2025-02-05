@@ -19,6 +19,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
@@ -122,6 +124,16 @@ public class AutonomousUtil {
     public static void queuePath(Pose2d pose) {
         try {
             onTheFlyCommands.add(pathFinder(pose));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void queuePathWithOverrides(Pose2d pose, CommandSwerveDrivetrain drivetrain, Supplier<Command> coralScoreCommand) {
+        try {
+            onTheFlyCommands.add(pathFinder(pose));
+            onTheFlyCommands.add(new PathPlannerOverride(drivetrain.flipPose(pose), drivetrain));
+            onTheFlyCommands.add(coralScoreCommand.get());
         } catch (Exception e) {
             e.printStackTrace();
         }
