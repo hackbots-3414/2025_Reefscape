@@ -459,6 +459,7 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
+        public static final double algaeEjectTime = 0.3;
         public static final double reefPickupSafetyDistance = 1.75;
         public static final int algaeRollerMotorID = 60;
         public static final double intakeVoltage = 1; //FIXME tune for actual robot

@@ -51,7 +51,6 @@ public class AlgaeIntakeCommand extends Command {
   public void execute() {
     if (elevator.atSetpoint() && pivot.atSetpoint()) {
       rollers.intakeAlgae();
-      
     }
     if (rollers.hasObject()) {
       switch (location) {
@@ -67,7 +66,7 @@ public class AlgaeIntakeCommand extends Command {
         default:
           isDone = true;
       }
-      if (drivetrain.getFlippedPose().getTranslation().getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
+      if (drivetrain.getBluePose().getTranslation().getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
         isDone = true;
       }
     }
