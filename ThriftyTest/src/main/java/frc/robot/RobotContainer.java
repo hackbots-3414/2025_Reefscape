@@ -41,12 +41,15 @@ public class RobotContainer {
     private final VisionHandler m_vision = new VisionHandler(drivetrain);
 
     public RobotContainer() {
+    
         configureSubsystems();
         configureDriverBindings();
         configureOperatorBindings();
         configureButtonBoard(dragonReins);
         configureAutonChooser();
         m_vision.startThread();
+        
+
     }
 
     // ********** BINDINGS **********
