@@ -149,6 +149,10 @@ public class Pivot extends SubsystemBase {
         setPosition(PivotConstants.reefPickup);
     }
 
+    public void setReefExtract() {
+        setPosition(PivotConstants.reefExtract);
+    }
+    
     public void stop() {
         setPosition(position);
     }

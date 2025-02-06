@@ -5,8 +5,10 @@ import frc.robot.subsystems.AlgaeRollers;
 
 public class AlgaeEjectCommand extends Command {
   private AlgaeRollers rollers;
+  
   public AlgaeEjectCommand(AlgaeRollers rollers) {
    this.rollers = rollers;
+   addRequirements(rollers);
   }
 
   @Override

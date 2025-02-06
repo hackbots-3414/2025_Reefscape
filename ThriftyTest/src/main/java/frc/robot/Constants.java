@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -177,6 +178,7 @@ public class Constants {
     public static class FieldConstants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
+        public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
     }
 
     public static final class StateSpaceConstants {
@@ -261,6 +263,8 @@ public class Constants {
         public static final double L3 = 2.5;
         public static final double L4 = 3.5;
         public static final double net = 4;
+        public static final double reefLower = 1.75; // arbitrary, meters
+        public static final double reefUpper = 2.75; // arbitrary, meters
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
@@ -323,6 +327,7 @@ public class Constants {
         public static final double groundPickup = Math.PI / 2 * 4 / 5;
         public static final double processor = Math.PI / 5;
         public static final double reefPickup = Math.PI / 8;
+        public static final double reefExtract = reefPickup + Math.PI / 16;
         public static final double net = Math.PI / 2;
         public static final double stow = 0;
 
@@ -454,6 +459,7 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
+        public static final double reefPickupSafetyDistance = 1.75;
         public static final int algaeRollerMotorID = 60;
         public static final double intakeVoltage = 1; //FIXME tune for actual robot
         public static final double ejectVoltage = -1; //FIXME tune for actual robot

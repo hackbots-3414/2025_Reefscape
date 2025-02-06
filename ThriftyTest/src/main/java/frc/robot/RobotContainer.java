@@ -296,4 +296,8 @@ public class RobotContainer {
     private Command stowElevatorCommand() {
         return new InstantCommand(() -> elevator.setStow());
     }
+
+    public enum AlgaeLocationPresets {
+        REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET;
+    }
 }
