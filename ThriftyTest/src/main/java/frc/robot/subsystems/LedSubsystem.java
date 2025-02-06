@@ -17,7 +17,8 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import frc.robot.RobotContainer.JoystickChoice;
+import frc.robot.RobotContainer.JoystickChoice;
+import frc.robot.Constants.DriverConstants;
 // import org.slf4j.Logger;
 // import org.slf4j.LoggerFactory;
 import frc.robot.Constants.LEDConstants;
@@ -121,20 +122,20 @@ public class LedSubsystem extends SubsystemBase {
         new LarsonAnimation(255, 0, 255, 0, 0.50, LEDConstants.numLED, LarsonAnimation.BounceMode.Back, 7), 1);
     setColor("DEFAULT", 3, 3, "FLASH");
   }
-  // private boolean badController() {
-  //   if (!DriverStation.isJoystickConnected(0) || !DriverStation.isJoystickConnected(1)) {
-  //     return true;
-  //   }
+    private boolean badController() { 
+      if (!DriverStation.isJoystickConnected(0) || !DriverStation.isJoystickConnected(1)) {
+        return true;
+      }
 
-  //   String joystick1Name = DriverStation.getJoystickName(1).toLowerCase();
+      String joystick1Name = DriverStation.getJoystickName(1).toLowerCase();
 
-  //   // return !DriverStation.getJoystickName(0).contains("InterLinkDX") &&
-  //   //     !((DriverConstants.operatorController == JoystickChoice.XBOX &&
-  //   //         (joystick1Name.contains("xbox")) ||
-  //   //         (joystick1Name.contains("gamepad"))) ||
-  //   //         (DriverConstants.operatorController == JoystickChoice.PS5 &&
-  //   //             joystick1Name.contains("dualsense")));
-  // }
+      return !DriverStation.getJoystickName(0).contains("InterLinkDX") &&
+          !((DriverConstants.operatorController == JoystickChoice.XBOX &&
+              (joystick1Name.contains("xbox")) ||
+              (joystick1Name.contains("gamepad"))) ||
+              (DriverConstants.operatorController == JoystickChoice.PS5 &&
+                  joystick1Name.contains("dualsense")));
+    }
 
   public void setColor(String color, int LedStripStart, int LedStripEnd, String pattern) {
     if (color == "BLUE") {

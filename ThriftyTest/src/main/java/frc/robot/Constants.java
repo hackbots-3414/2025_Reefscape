@@ -39,8 +39,9 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.RobotContainer.JoystickChoice;
 import frc.robot.generated.TunerConstants;
-import frc.robot.stateSpace.StateSpaceConfig;
+import frc.robot.stateSpace.StateSpaceConfig; 
 
 /*
 PLEASE READ:
@@ -96,6 +97,29 @@ public class Constants {
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    }
+
+    public static final class DriverConstants { // Made Arbitrarly for LED's NEED to change for this Year
+    public static final int resetGyroButton = 1;
+    public static final int autoAimButton = 13;
+    public static final int resetAtPointButton = 12;
+    public static final int shellyButton = 2;
+    public static final int leftX = 0;
+    public static final int leftY = 1;
+    public static final int rightX = 3;
+    public static final int rightY = 2;
+    public static final int ampScoreButton = 16;
+
+    public static final double deadband = 0.01;// 0.06;
+    public static final double leftXMax = 0.75;
+    public static final double leftYMax = 0.66;
+    public static final double rightXMax = 0.8;
+    public static final double rightYMax = 0.8;
+
+    public static final double expoPower = 2.0;
+
+    public static final JoystickChoice operatorController = JoystickChoice.PS5;
+    // public static final AutonViews autonView = AutonViews.AMP;
     }
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";

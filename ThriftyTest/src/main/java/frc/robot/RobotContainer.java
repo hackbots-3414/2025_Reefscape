@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,6 +35,7 @@ import frc.robot.utils.AutonomousUtil;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
+    public enum JoystickChoice {PS5, XBOX;} 
     private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
