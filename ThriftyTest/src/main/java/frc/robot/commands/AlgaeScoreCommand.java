@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
@@ -13,19 +15,19 @@ public class AlgaeScoreCommand extends Command {
   private Pivot pivot;
   private AlgaeLocationPresets location;
   private boolean isDone;
-  private double timeElapsed;
+  private double initialTime;
 
   public AlgaeScoreCommand(AlgaeRollers rollers, Elevator elevator, Pivot pivot, AlgaeLocationPresets location) {
    this.rollers = rollers;
    this.elevator = elevator;
    this.pivot = pivot;
    this.location = location;
-   addRequirements(rollers); // don't add requirements on elevator and pivot; statespace will control them
+   addRequirements(rollers, elevator, pivot);
   }
 
   @Override
   public void initialize() {
-    timeElapsed = 0;
+    initialTime = Utils.getCurrentTimeSeconds();
     isDone = false;
     switch (location) {
       case NET: 
@@ -45,7 +47,6 @@ public class AlgaeScoreCommand extends Command {
   public void execute() {
     if (elevator.atSetpoint() && pivot.atSetpoint()) {
       rollers.ejectAlgae();
-      timeElapsed += 0.02;
     }
   }
 
@@ -58,6 +59,6 @@ public class AlgaeScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return isDone || timeElapsed >= AlgaeRollerConstants.algaeEjectTime;  
+    return isDone || (Utils.getCurrentTimeSeconds() - initialTime) >= AlgaeRollerConstants.algaeEjectTime;  
   }
 }
