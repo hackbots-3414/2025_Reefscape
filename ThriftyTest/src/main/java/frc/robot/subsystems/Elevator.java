@@ -188,6 +188,14 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.L4);
     }
 
+    public void setReefLower() {
+        setPosition(ElevatorConstants.reefLower);
+    }
+
+    public void setReefUpper() {
+        setPosition(ElevatorConstants.reefUpper);
+    }
+
     public void setNet() {
         setPosition(ElevatorConstants.net);
     }

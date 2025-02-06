@@ -56,6 +56,10 @@ public class TeleopCommand extends Command {
 
     @Override
     public void initialize() {
+        Pose2d currPose = drivetrain.getPose();
+        goalX = currPose.getX();
+        goalY = currPose.getY();
+        goalRot = currPose.getRotation().getRadians();
         alreadyClosedLoop = false;
     }
 

@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -85,8 +84,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Pose2d getPose() {
         return estimatedPose;
     }
-
-    public Pose2d getFlippedPose() {
+    
+    /**
+     * returns the current pose, with red side poses flipped
+     */
+    public Pose2d getBluePose() {
         return flipPose(estimatedPose);
     }
 

@@ -18,10 +18,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
-import frc.robot.commands.AlgaeRollerCommand;
+import frc.robot.commands.AlgaeEjectCommand;
+import frc.robot.commands.AlgaeIntakeCommand;
+import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
-import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
@@ -163,12 +164,18 @@ public class RobotContainer {
         operator.button(2).onTrue(coralScoreCommand(2));
         operator.button(3).onTrue(coralScoreCommand(3));
         operator.button(4).onTrue(coralScoreCommand(4));
+        operator.button(5).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
+        operator.button(6).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
+        operator.button(7).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.GROUND));
+        operator.button(8).whileTrue(algaeScoreCommand(AlgaeLocationPresets.NET));
+        operator.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+        operator.button(10).onTrue(new AlgaeEjectCommand(roller));
         // operator.button(1).whileTrue(new ManualPivot(pivot, true));
         // operator.button(2).whileTrue(new ManualPivot(pivot, false));
         // operator.button(3).whileTrue(new ManualElevator(elevator, true));
         // operator.button(4).whileTrue(new ManualElevator(elevator, false));
-        operator.circle().whileTrue(new AlgaeRollerCommand(roller));
-        operator.cross().whileTrue(new ManualClimberCommand(climber));
+        // operator.circle().whileTrue(new AlgaeRollerCommand(roller));
+        // operator.cross().whileTrue(new ManualClimberCommand(climber));
     }
 
     public enum ScoringLocations {
@@ -293,7 +300,19 @@ public class RobotContainer {
         return new CoralScoreCommand(coral, elevator, level);
     }
 
+    private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
+        return new AlgaeIntakeCommand(roller, elevator, pivot, drivetrain, intakeLocation);
+    }
+
+    private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
+        return new AlgaeScoreCommand(roller, elevator, pivot, scoreLocation);
+    }
+
     private Command stowElevatorCommand() {
         return new InstantCommand(() -> elevator.setStow());
+    }
+
+    public enum AlgaeLocationPresets {
+        REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET;
     }
 }
