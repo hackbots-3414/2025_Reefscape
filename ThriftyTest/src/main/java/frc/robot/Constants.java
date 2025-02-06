@@ -454,8 +454,19 @@ public class Constants {
     public static final class ClimberConstants {
         public static final int leftClimberMotorID = 1;
         public static final int rightClimberMotorID = 2;
+        public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
         public static final double climberCurrentLimit = 80.0;
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(climberCurrentLimit));
     }
 
     public static final class AlgaeRollerConstants {
@@ -468,5 +479,15 @@ public class Constants {
         public static final double algaeRollerCurrentLimit = 80.0;
         public static final double holdVoltage = 0.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
     }
 }
