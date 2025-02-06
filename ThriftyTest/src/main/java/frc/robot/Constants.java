@@ -324,10 +324,10 @@ public class Constants {
 
         public static final double tolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
 
-        public static final double groundPickup = Math.PI / 2 * 4 / 5;
+        public static final double groundPickup = Math.PI / 2 * 1 / 5;
         public static final double processor = Math.PI / 5;
         public static final double reefPickup = Math.PI / 8;
-        public static final double reefExtract = reefPickup + Math.PI / 16;
+        public static final double reefExtract = reefPickup + Math.PI / 8;
         public static final double net = Math.PI / 2;
         public static final double stow = 0;
 

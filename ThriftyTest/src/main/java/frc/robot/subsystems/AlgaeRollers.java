@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.AlgaeRollerConstants;
@@ -96,6 +97,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
 
     private void updateObjectState() {
         m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
+        SmartDashboard.putBoolean("Holding Algae", m_hasObject);
     }
 
     @Override
@@ -103,6 +105,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         if (m_voltageChanged) {
             m_algaeRoller.setVoltage(m_voltage);
             m_voltageChanged = false;
+            SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
         }
     }
 
