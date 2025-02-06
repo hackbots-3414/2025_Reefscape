@@ -23,7 +23,7 @@ public class AlgaeIntakeCommand extends Command {
    this.pivot = pivot;
    this.drivetrain = drivetrain;
    this.location = location;
-   addRequirements(rollers, elevator, pivot);
+   addRequirements(rollers); // don't add requirements on elevator and pivot; statespace will control them
   }
 
   @Override
@@ -76,6 +76,7 @@ public class AlgaeIntakeCommand extends Command {
   public void end(boolean interrupted) {
     elevator.setStow();
     pivot.setStow();
+    rollers.smartStop();
   }
 
   @Override

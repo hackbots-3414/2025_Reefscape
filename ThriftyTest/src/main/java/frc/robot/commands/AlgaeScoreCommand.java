@@ -20,7 +20,7 @@ public class AlgaeScoreCommand extends Command {
    this.elevator = elevator;
    this.pivot = pivot;
    this.location = location;
-   addRequirements(rollers, elevator, pivot);
+   addRequirements(rollers); // don't add requirements on elevator and pivot; statespace will control them
   }
 
   @Override
@@ -53,7 +53,7 @@ public class AlgaeScoreCommand extends Command {
   public void end(boolean interrupted) {
     elevator.setStow();
     pivot.setStow();
-    rollers.stopMotor();
+    rollers.smartStop();
   }
 
   @Override

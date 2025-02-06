@@ -72,6 +72,15 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         }
     }
 
+    public void smartStop() {
+        if (hasObject()) {
+            setMotor(AlgaeRollerConstants.holdVoltage);
+            m_logger.warn("We may need current limits for having an object which are not yet implemented");
+        } else {
+            stopMotor();
+        }
+    }
+
     private double getTorqueCurrent() {
         return m_algaeRoller.getTorqueCurrent().getValueAsDouble();
     }
