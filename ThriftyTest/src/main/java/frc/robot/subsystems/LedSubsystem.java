@@ -47,6 +47,10 @@ public class LedSubsystem extends SubsystemBase {
     IN_RANGE, IN_FEED_RANGE, NOTE_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, ALIGNED, DEFAULT, NOTE_IN_VIEW, INTAKE, BADCONTROLLER;
   };
 
+  private static enum LED_COLORS {
+    RED, GREEN, BLUE, YELLOW, ORANGE;
+  };
+
   private static LED_MODE chosenMode = null;
 
   CANdle ledcontroller = new CANdle(LEDConstants.candleCanid);
@@ -138,25 +142,35 @@ public class LedSubsystem extends SubsystemBase {
     }
 
   public void setColor(String color, int LedStripStart, int LedStripEnd, String pattern) {
-    if (color == "BLUE") {
-      r = 0;
-      g = 0;
-      b = 255;
-    } else if (color == "GREEN") {
-      r = 0;
-      g = 255;
-      b = 0;
 
-    } else if (color == "RED") {
-      r = 255;
-      g = 0;
-      b = 0;
+    //switch(color){
+    //    case :
+    //    r = 0;
+    //     g = 0;
+    //     b = 255;
+        
+    //     r = 0;
+    //    g = 255;
+    //     b = 0;
 
-    } else if (color == "YELLOW") {
-      r = 255;
-      g = 120;
-      b = 0;
-    } else if (color == "ORANGE") {
+    }
+    // if (color == "BLUE") {
+    //   
+    // } else if (color == "GREEN") {
+    //   r = 0;
+    //   g = 255;
+    //   b = 0;
+
+    // } else if (color == "RED") {
+    //   r = 255;
+    //   g = 0;
+    //   b = 0;
+
+    // } else if (color == "YELLOW") {
+    //   r = 255;
+    //   g = 120;
+    //   b = 0;
+    // } else if (color == "ORANGE") {
       
 
       b = 0;
