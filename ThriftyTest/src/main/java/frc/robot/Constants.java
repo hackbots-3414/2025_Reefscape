@@ -96,6 +96,8 @@ public class Constants {
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+
+        public static final double k_closedLoopOverrideTolerance = 0.02;
     }
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
