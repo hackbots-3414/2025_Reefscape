@@ -4,14 +4,13 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,8 +43,8 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureSubsystems();
-        configureDriverBindings();
-        configureOperatorBindings();
+        configureDriverBindings(dragonReins);
+        configureOperatorBindings(operator);
         configureButtonBoard(buttonBoard);
         configureAutonChooser();
         m_vision.startThread();
@@ -73,30 +72,30 @@ public class RobotContainer {
         return dragonReins.button(3).getAsBoolean();
     }
 
-    private void configureDriverBindings() {
+    private void configureDriverBindings(CommandPS5Controller controller) {
         drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
-        dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        controller.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.zeroPose()));
 
         drivetrain.registerTelemetry(telemetry::telemeterize);
 
-        dragonReins.axisMagnitudeGreaterThan(0, 0.02)
-                .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.02).getAsBoolean())
+        controller.axisMagnitudeGreaterThan(0, 0.02)
+                .or(() -> controller.axisMagnitudeGreaterThan(1, 0.02).getAsBoolean())
                 .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as
                                                                                 // no dragonReins input is there
     }
 
-    private void configureSysId() {
+    private void configureSysId(CommandPS5Controller controller) {
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
 
-        dragonReins.button(1).and(dragonReins.button(3))
+        controller.button(1).and(controller.button(3))
                 .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        dragonReins.button(1).and(dragonReins.button(4))
+        controller.button(1).and(controller.button(4))
                 .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-        dragonReins.button(2).and(dragonReins.button(3))
+        controller.button(2).and(controller.button(3))
                 .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        dragonReins.button(2).and(dragonReins.button(4))
+        controller.button(2).and(controller.button(4))
                 .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
     }
 
@@ -186,23 +185,17 @@ public class RobotContainer {
         // controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
-    private void configureOperatorBindings() {
-        operator.button(1).onTrue(coralScoreCommand(1));
-        operator.button(2).onTrue(coralScoreCommand(2));
-        operator.button(3).onTrue(coralScoreCommand(3));
-        operator.button(4).onTrue(coralScoreCommand(4));
-        operator.button(5).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
-        operator.button(6).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
-        operator.button(7).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.GROUND));
-        operator.button(8).whileTrue(algaeScoreCommand(AlgaeLocationPresets.NET));
-        operator.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
-        operator.button(10).onTrue(new AlgaeEjectCommand(roller));
-        // operator.button(1).whileTrue(new ManualPivot(pivot, true));
-        // operator.button(2).whileTrue(new ManualPivot(pivot, false));
-        // operator.button(3).whileTrue(new ManualElevator(elevator, true));
-        // operator.button(4).whileTrue(new ManualElevator(elevator, false));
-        // operator.circle().whileTrue(new AlgaeRollerCommand(roller));
-        // operator.cross().whileTrue(new ManualClimberCommand(climber));
+    private void configureOperatorBindings(CommandPS5Controller controller) {
+        controller.button(1).onTrue(coralScoreCommand(1));
+        controller.button(2).onTrue(coralScoreCommand(2));
+        controller.button(3).onTrue(coralScoreCommand(3));
+        controller.button(4).onTrue(coralScoreCommand(4));
+        controller.button(5).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
+        controller.button(6).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
+        controller.button(7).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.GROUND));
+        controller.button(8).whileTrue(algaeScoreCommand(AlgaeLocationPresets.NET));
+        controller.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+        controller.button(10).onTrue(new AlgaeEjectCommand(roller));
     }
 
     public enum ScoringLocations {

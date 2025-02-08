@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -17,6 +14,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -42,6 +41,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+    private Pose2d m_targetPose = new Pose2d();
+
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -52,6 +53,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Pose2d estimatedPose = new Pose2d();
 
     private final Field2d field = new Field2d();
+
+    private double m_oldVisionTimestamp = -1;
+
+    private boolean m_validPose = false;
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
@@ -147,6 +152,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         field.setRobotPose(estimatedPose);
 
         AutonomousUtil.handleQueue();
+
+        handleVisionToggle();
     }
 
     private void startSimThread() {
@@ -160,6 +167,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
         m_simNotifier.startPeriodic(SimConstants.k_simPeriodic);
+    }
+
+    private void handleVisionToggle() {
+        if (m_oldVisionTimestamp >= 0) {
+            m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
+        }
+        SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
     }
 
     /* Swerve requests to apply during SysId characterization */
@@ -215,6 +229,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public void addPoseEstimate(TimestampedPoseEstimate estimate) {
+        m_oldVisionTimestamp = estimate.timestamp();
         // This should NOT run in simulation!
         if (Robot.isSimulation()) return;
         // Depending on our configs, we should use or not use the std devs
@@ -252,5 +267,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineRotation.dynamic(direction);
+    }
+
+    public void addTargetPose(Pose2d pose) {
+        m_targetPose = pose;
+    }
+
+    public Pose2d getTargetPose() {
+        return m_targetPose;
     }
 }

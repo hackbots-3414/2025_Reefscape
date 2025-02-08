@@ -174,6 +174,8 @@ public class Constants {
         public static final Time k_latencyStdDev = Milliseconds.of(5);
         public static final double k_avgErr = 0.03;
         public static final double k_errStdDev = 0.02;
+        // Stop using vision after X time
+        public static final double k_visionTimeout = 0.5;
     }
     public static class FieldConstants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
