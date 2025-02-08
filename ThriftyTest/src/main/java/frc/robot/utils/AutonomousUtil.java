@@ -2,6 +2,7 @@ package frc.robot.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
@@ -19,7 +20,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.CoralScoreCommand;
+import frc.robot.RobotContainer.ButtonBoard;
 import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -137,6 +138,10 @@ public class AutonomousUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void queueClosest(ButtonBoard scoreLocation, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList, CommandSwerveDrivetrain drivetrain) {
+        queuePathWithOverrides(drivetrain.getBluePose().nearest(scoringLocationList), drivetrain, scoreSupplier);
     }
 
     public static void clearQueue() {
