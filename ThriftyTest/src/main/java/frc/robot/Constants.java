@@ -95,6 +95,8 @@ public class Constants {
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        public static double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
+        public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
     }
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
