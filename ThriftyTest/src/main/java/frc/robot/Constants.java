@@ -39,8 +39,9 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import frc.robot.RobotContainer.JoystickChoice;
 import frc.robot.generated.TunerConstants;
-import frc.robot.stateSpace.StateSpaceConfig;
+import frc.robot.stateSpace.StateSpaceConfig; 
 
 /*
 PLEASE READ:
@@ -92,9 +93,33 @@ public class Constants {
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);
         public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
+        
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    }
+
+    public static final class DriverConstants { // Made Arbitrarly for LED's NEED to change for this Year
+    public static final int resetGyroButton = 1;
+    public static final int autoAimButton = 13;
+    public static final int resetAtPointButton = 12;
+    public static final int shellyButton = 2;
+    public static final int leftX = 0;
+    public static final int leftY = 1;
+    public static final int rightX = 3;
+    public static final int rightY = 2;
+    public static final int ampScoreButton = 16;
+
+    public static final double deadband = 0.01;// 0.06;
+    public static final double leftXMax = 0.75;
+    public static final double leftYMax = 0.66;
+    public static final double rightXMax = 0.8;
+    public static final double rightYMax = 0.8;
+
+    public static final double expoPower = 2.0;
+
+    public static final JoystickChoice operatorController = JoystickChoice.PS5;
+    // public static final AutonViews autonView = AutonViews.AMP;
     }
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
@@ -458,4 +483,29 @@ public class Constants {
         public static final double holdPower = 0.5;
 
     }
+
+    public class LEDConstants {
+        public static final int candleCanid = 5;
+        public static final int numLED = 117;
+        public static final double flashSpeed = 0.75;
+        public static final double strobeSpeed = 0.1;
+        public static final double endgameWarning = 20;
+        public static final double endgameAlert = 10;
+        // public static final int leftOffset = 8;
+        // public static final int insideOffset = 9;
+        // public static final int topOffset = 11;
+        // public static final int rightOffset = 12;
+        // public static final int leftNumLED = 1;
+        // public static final int insideNumLED = 2;
+        // public static final int topNumLED = 1;
+        // public static final int rightNumLED = 1;
+        public static final int leftOffset = 8;
+        public static final int insideOffset = 22;
+        public static final int topOffset = 49;
+        public static final int rightOffset = 102;
+        public static final int leftNumLED = 14;
+        public static final int insideNumLED = 27;
+        public static final int topNumLED = 53;
+        public static final int rightNumLED = 13;
+}
 }
