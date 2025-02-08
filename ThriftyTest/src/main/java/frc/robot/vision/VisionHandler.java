@@ -115,6 +115,7 @@ public class VisionHandler implements AutoCloseable {
             estimator.run();
         }
         m_visionSim.update(m_drivetrain.getPose());
+        m_field.getObject("*TARGET POSE").setPose(m_drivetrain.getTargetPose());
     }
 
     public void startThread() {
@@ -139,6 +140,10 @@ public class VisionHandler implements AutoCloseable {
 
     public void setSingleTag(int tagId) {
         m_singleTag = Optional.of(tagId);
+    }
+
+    public void addPose(String name, Pose2d pose) {
+        m_field.getObject(name).setPose(pose);
     }
 
     @Override
