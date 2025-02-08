@@ -2,8 +2,10 @@ package frc.robot.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.json.simple.parser.ParseException;
 
@@ -15,9 +17,16 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer.ButtonBoard;
@@ -27,6 +36,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class AutonomousUtil {
     private static ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+
+    private static Field2d field = new Field2d();
 
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
@@ -60,6 +71,19 @@ public class AutonomousUtil {
                         return false;
                     },
                     drivetrain); // Reference to this subsystem to set requirements
+
+            PathPlannerLogging.setLogActivePathCallback((poseList) -> {
+                PathPlannerPath path = new PathPlannerPath(PathPlannerPath.fromPathPoints(pathPoints, constraints, goalEndState));
+                PathPlannerTrajectory traj = new PathPlannerTrajectory(path, drivetrain.getRobotRelativeSpeeds(), drivetrain.getPose().getRotation(), config);
+    
+                List<PathPlannerTrajectoryState> pathPlannerStates = traj.getStates();
+        
+                List<State> states = pathPlannerStates.stream()
+                    .map(pathPlannerState -> new State(pathPlannerState.timeSeconds, pathPlannerState, pathPlannerState.accelerationMetersPerSecondSq, pathPlannerState.poseMeters, pathPlannerState.curvatureRadPerMeter))
+                    .collect(Collectors.toList());
+        
+                field.getObject("Pathfind Trajectory").setTrajectory(new Trajectory(states));
+            });
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
@@ -130,7 +154,8 @@ public class AutonomousUtil {
         }
     }
 
-    public static void queuePathWithOverrides(Pose2d pose, CommandSwerveDrivetrain drivetrain, Supplier<Command> coralScoreCommand) {
+    public static void queuePathWithOverrides(Pose2d pose, CommandSwerveDrivetrain drivetrain,
+            Supplier<Command> coralScoreCommand) {
         try {
             onTheFlyCommands.add(pathFinder(pose));
             onTheFlyCommands.add(new PathPlannerOverride(drivetrain.flipPose(pose), drivetrain));
@@ -140,7 +165,8 @@ public class AutonomousUtil {
         }
     }
 
-    public static void queueClosest(ButtonBoard scoreLocation, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList, CommandSwerveDrivetrain drivetrain) {
+    public static void queueClosest(ButtonBoard scoreLocation, Supplier<Command> scoreSupplier,
+            List<Pose2d> scoringLocationList, CommandSwerveDrivetrain drivetrain) {
         queuePathWithOverrides(drivetrain.getBluePose().nearest(scoringLocationList), drivetrain, scoreSupplier);
     }
 
