@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -95,8 +96,10 @@ public class Constants {
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        
         public static double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
         public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
+        public static final double k_closedLoopOverrideTolerance = 0.02;
     }
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
@@ -175,10 +178,13 @@ public class Constants {
         public static final Time k_latencyStdDev = Milliseconds.of(5);
         public static final double k_avgErr = 0.03;
         public static final double k_errStdDev = 0.02;
+        // Stop using vision after X time
+        public static final double k_visionTimeout = 0.5;
     }
     public static class FieldConstants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
+        public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
     }
 
     public static final class StateSpaceConstants {
@@ -263,6 +269,8 @@ public class Constants {
         public static final double L3 = 2.5;
         public static final double L4 = 3.5;
         public static final double net = 4;
+        public static final double reefLower = 1.75; // arbitrary, meters
+        public static final double reefUpper = 2.75; // arbitrary, meters
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
@@ -322,9 +330,10 @@ public class Constants {
 
         public static final double tolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
 
-        public static final double groundPickup = Math.PI / 2 * 4 / 5;
+        public static final double groundPickup = Math.PI / 2 * 1 / 5;
         public static final double processor = Math.PI / 5;
         public static final double reefPickup = Math.PI / 8;
+        public static final double reefExtract = reefPickup + Math.PI / 8;
         public static final double net = Math.PI / 2;
         public static final double stow = 0;
 
@@ -451,11 +460,24 @@ public class Constants {
     public static final class ClimberConstants {
         public static final int leftClimberMotorID = 1;
         public static final int rightClimberMotorID = 2;
+        public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
         public static final double climberCurrentLimit = 80.0;
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(climberCurrentLimit));
     }
 
     public static final class AlgaeRollerConstants {
+        public static final double algaeEjectTime = 0.3;
+        public static final double reefPickupSafetyDistance = 1.75;
         public static final int algaeRollerMotorID = 60;
         public static final double intakeVoltage = 1; //FIXME tune for actual robot
         public static final double ejectVoltage = -1; //FIXME tune for actual robot
@@ -463,5 +485,15 @@ public class Constants {
         public static final double algaeRollerCurrentLimit = 80.0;
         public static final double holdVoltage = 0.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
     }
 }

@@ -1,7 +1,7 @@
 {
-  "Keyboard 0 Settings": {
+  "FMS": {
     "window": {
-      "visible": true
+      "visible": false
     }
   },
   "System Joysticks": {
@@ -14,20 +14,21 @@
       "axisConfig": [
         {
           "decKey": 83,
-          "decayRate": 1.0,
+          "decayRate": 0.8999999761581421,
           "incKey": 87,
-          "keyRate": 1.0
+          "keyRate": 0.20000000298023224
         },
         {
           "decKey": 68,
-          "decayRate": 1.0,
+          "decayRate": 0.8999999761581421,
           "incKey": 65,
-          "keyRate": 1.0
+          "keyRate": 0.20000000298023224
         },
         {
           "decKey": 91,
+          "decayRate": 0.8999999761581421,
           "incKey": 93,
-          "keyRate": 0.009999999776482582
+          "keyRate": 0.20000000298023224
         },
         {
           "decKey": 264,
