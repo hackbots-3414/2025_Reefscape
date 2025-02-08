@@ -42,8 +42,8 @@ public class Elevator extends SubsystemBase {
 
     private final MedianFilter m_filter = new MedianFilter(ElevatorConstants.k_filterWindow);
 
-    private final DigitalInput m_forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
-    private final DigitalInput m_reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
+   // private final DigitalInput m_forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
+   // private final DigitalInput m_reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
 
     private StateSpaceController<N2, N1, N2> m_controller;
 
@@ -209,8 +209,8 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         m_velocity = m_cancoder.getVelocity().getValueAsDouble();
 
-        m_reverseLimit = !m_reverseLimiter.get();
-        m_forwardLimit = !m_forwardLimiter.get();
+      //  m_reverseLimit = !m_reverseLimiter.get();
+       // m_forwardLimit = !m_forwardLimiter.get();
 
         m_elevatorArm.setLength(m_simPosition + 0.1); // Offset to avoid overlapping with root
 

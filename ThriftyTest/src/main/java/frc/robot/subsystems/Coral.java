@@ -16,8 +16,8 @@ public class Coral extends SubsystemBase {
   private TalonFX coralLeft = new TalonFX(CoralConstants.left_motorID) ;
   private TalonFX coralRight = new TalonFX(CoralConstants.right_motorID) ;
 
-  private DigitalInput frontSensor = new DigitalInput(CoralConstants.k_frontSensorPort) ;
-  private DigitalInput backSensor = new DigitalInput(CoralConstants.k_backSensorPort) ;
+ // private DigitalInput frontSensor = new DigitalInput(CoralConstants.k_frontSensorPort) ;
+ // private DigitalInput backSensor = new DigitalInput(CoralConstants.k_backSensorPort) ;
 
   private boolean frontSensorValue = false;
   private boolean backSensorValue = false;
@@ -68,8 +68,8 @@ public class Coral extends SubsystemBase {
 
   @Override
   public void periodic() {
-    frontSensorValue = frontSensor.get();
-    backSensorValue = backSensor.get();
+   // frontSensorValue = frontSensor.get();
+  //  backSensorValue = backSensor.get();
   }
 
   //TODO Set current limits

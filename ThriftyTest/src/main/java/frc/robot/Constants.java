@@ -499,13 +499,13 @@ public class Constants {
         // public static final int insideNumLED = 2;
         // public static final int topNumLED = 1;
         // public static final int rightNumLED = 1;
-        public static final int leftOffset = 8;
-        public static final int insideOffset = 22;
-        public static final int topOffset = 49;
-        public static final int rightOffset = 102;
-        public static final int leftNumLED = 14;
-        public static final int insideNumLED = 27;
-        public static final int topNumLED = 53;
-        public static final int rightNumLED = 13;
+        public static final int leftOffset = 0;
+        public static final int insideOffset = 2;
+        public static final int topOffset = 4;
+        public static final int rightOffset = 6;
+        public static final int leftNumLED = 2;
+        public static final int insideNumLED = 2;
+        public static final int topNumLED = 2;
+        public static final int rightNumLED = 2;
 }
 }

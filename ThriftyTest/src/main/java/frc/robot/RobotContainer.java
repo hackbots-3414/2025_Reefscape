@@ -30,6 +30,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
 import frc.robot.vision.VisionHandler;
@@ -38,18 +39,18 @@ public class RobotContainer {
     public enum JoystickChoice {PS5, XBOX;} 
     private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    // public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final VisionHandler m_vision = new VisionHandler(drivetrain);
+    // private final VisionHandler m_vision = new VisionHandler(drivetrain);
 
     public RobotContainer() {
     
         configureSubsystems();
         configureDriverBindings();
-        configureOperatorBindings();
+        // configureOperatorBindings();
         configureButtonBoard(dragonReins);
         configureAutonChooser();
-        m_vision.startThread();
+        // m_vision.startThread();
         
 
     }
@@ -76,11 +77,11 @@ public class RobotContainer {
     }
 
     private void configureDriverBindings() {
-        drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
+        // drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
-        dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        drivetrain.registerTelemetry(telemetry::telemeterize);
+        // drivetrain.registerTelemetry(telemetry::telemeterize);
 
         dragonReins.axisMagnitudeGreaterThan(0, 0.0)
                 .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean())
@@ -92,14 +93,14 @@ public class RobotContainer {
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
 
-        dragonReins.button(1).and(dragonReins.button(3))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        dragonReins.button(1).and(dragonReins.button(4))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-        dragonReins.button(2).and(dragonReins.button(3))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        dragonReins.button(2).and(dragonReins.button(4))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        // dragonReins.button(1).and(dragonReins.button(3))
+        //         .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        // dragonReins.button(1).and(dragonReins.button(4))
+        //         .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        // dragonReins.button(2).and(dragonReins.button(3))
+        //         .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        // dragonReins.button(2).and(dragonReins.button(4))
+        //         .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
     }
 
     private void configureButtonBoard(CommandPS5Controller controller) {
@@ -136,18 +137,18 @@ public class RobotContainer {
         controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
-    private void configureOperatorBindings() {
-        operator.button(1).onTrue(coralScoreCommand(1));
-        operator.button(2).onTrue(coralScoreCommand(2));
-        operator.button(3).onTrue(coralScoreCommand(3));
-        operator.button(4).onTrue(coralScoreCommand(4));
-        // operator.button(1).whileTrue(new ManualPivot(pivot, true));
-        // operator.button(2).whileTrue(new ManualPivot(pivot, false));
-        // operator.button(3).whileTrue(new ManualElevator(elevator, true));
-        // operator.button(4).whileTrue(new ManualElevator(elevator, false));
-        operator.circle().whileTrue(new AlgaeRollerCommand(roller));
-        operator.cross().whileTrue(new ManualClimberCommand(climber));
-    }
+    // private void configureOperatorBindings() {
+    //     operator.button(1).onTrue(coralScoreCommand(1));
+    //     operator.button(2).onTrue(coralScoreCommand(2));
+    //     operator.button(3).onTrue(coralScoreCommand(3));
+    //     operator.button(4).onTrue(coralScoreCommand(4));
+    //     // operator.button(1).whileTrue(new ManualPivot(pivot, true));
+    //     // operator.button(2).whileTrue(new ManualPivot(pivot, false));
+    //     // operator.button(3).whileTrue(new ManualElevator(elevator, true));
+    //     // operator.button(4).whileTrue(new ManualElevator(elevator, false));
+    //     operator.circle().whileTrue(new AlgaeRollerCommand(roller));
+    //     operator.cross().whileTrue(new ManualClimberCommand(climber));
+    // }
 
     public enum ScoringLocations {
         A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
@@ -201,7 +202,7 @@ public class RobotContainer {
             SmartDashboard.putData("Place to Score #" + (i), placeChooser);
 
             SendableChooser<Supplier<Command>> heightChooser = new SendableChooser<>();
-            configureHeightChooser(heightChooser);
+            // configureHeightChooser(heightChooser);
             scoringHeightsChooser.add(heightChooser);
             SmartDashboard.putData("Height to Score #" + (i), heightChooser);
         }
@@ -226,52 +227,58 @@ public class RobotContainer {
         chooser.addOption("L", ScoringLocations.L.value);
     }
 
-    private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
-        chooser.addOption("L1", () -> coralScoreCommand(1));
-        chooser.addOption("L2", () -> coralScoreCommand(2));
-        chooser.addOption("L3", () -> coralScoreCommand(3));
-        chooser.setDefaultOption("L4", () -> coralScoreCommand(4));
-    }
+    // private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
+    //     chooser.addOption("L1", () -> coralScoreCommand(1));
+    //     chooser.addOption("L2", () -> coralScoreCommand(2));
+    //     chooser.addOption("L3", () -> coralScoreCommand(3));
+    //     chooser.setDefaultOption("L4", () -> coralScoreCommand(4));
+    // }
 
-    public Command getAutonomousCommand() {
-        Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
-        for (int i = 0; i < scoringLocationsChooser.size(); i++) {
-            locations[i] = scoringLocationsChooser.get(i).getSelected();
-        }
+    // public Command getAutonomousCommand() {
+    //     Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
+    //     for (int i = 0; i < scoringLocationsChooser.size(); i++) {
+    //         locations[i] = scoringLocationsChooser.get(i).getSelected();
+    //     }
 
-        Command[] heights = new Command[scoringHeightsChooser.size()];
-        for (int i = 0; i < scoringHeightsChooser.size(); i++) {
-            heights[i] = scoringHeightsChooser.get(i).getSelected().get();
-        }
+    //     Command[] heights = new Command[scoringHeightsChooser.size()];
+    //     for (int i = 0; i < scoringHeightsChooser.size(); i++) {
+    //         heights[i] = scoringHeightsChooser.get(i).getSelected().get();
+    //     }
 
-        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::stowElevatorCommand, this::coralIntakeCommand);
-    }
+        // return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::stowElevatorCommand, this::coralIntakeCommand);
+    // }
 
     // ********** SUBSYSTEMS **********
 
-    private Elevator elevator;
-    private Pivot pivot;
-    private Climber climber;
-    private AlgaeRollers roller;
-    private Coral coral;
+//     private Elevator elevator;
+//    // private Pivot pivot;
+//     private Climber climber;
+//     private AlgaeRollers roller;
+//     private Coral coral;
+    private LedSubsystem ledSubsystem;
 
     private void configureSubsystems() {
-        elevator = new Elevator();
-        pivot = new Pivot();
-        climber = new Climber();
-        roller = new AlgaeRollers();
-        coral = new Coral();
+    //     elevator = new Elevator();
+    //    // pivot = new Pivot();
+    //     climber = new Climber();
+    //     roller = new AlgaeRollers();
+    //     coral = new Coral();
+        ledSubsystem = new LedSubsystem();
     }
 
-    private Command coralIntakeCommand() {
-        return new CoralIntakeCommand(coral, elevator);
-    }
+    // private Command coralIntakeCommand() {
+    //     return new CoralIntakeCommand(coral, elevator);
+    // }
 
-    private Command coralScoreCommand(int level) {
-        return new CoralScoreCommand(coral, elevator, level);
-    }
+    // private Command coralScoreCommand(int level) {
+    //     return new CoralScoreCommand(coral, elevator, level);
+    // }
 
-    private Command stowElevatorCommand() {
-        return new InstantCommand(() -> elevator.setStow());
+    // private Command stowElevatorCommand() {
+    //     return new InstantCommand(() -> elevator.setStow());
+    // }
+
+    public LedSubsystem getLedSubsystem() {
+        return ledSubsystem;
     }
 }
