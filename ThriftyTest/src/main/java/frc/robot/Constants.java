@@ -6,6 +6,9 @@ import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -42,6 +45,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.generated.TunerConstants;
 import frc.robot.stateSpace.StateSpaceConfig;
+import frc.robot.utils.Shape;
 
 /*
 PLEASE READ:
@@ -495,5 +499,19 @@ public class Constants {
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(algaeRollerCurrentLimit));
+    }
+
+    public static final class CommandBounds {
+        public static final List<Translation2d> reef = List.of(
+            new Translation2d(5.85, 3.19),
+            new Translation2d(5.85, 4.92),
+            new Translation2d(4.48, 5.66),
+            new Translation2d(3.06, 4.79),
+            new Translation2d(3.01, 3.22),
+            new Translation2d(4.46, 2.40)
+        );
+
+        public static final Shape reefBounds = Shape.fromUnsortedVertices(reef);
+
     }
 }
