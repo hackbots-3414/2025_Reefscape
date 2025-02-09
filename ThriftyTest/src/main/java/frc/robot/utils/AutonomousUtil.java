@@ -72,18 +72,7 @@ public class AutonomousUtil {
                     },
                     drivetrain); // Reference to this subsystem to set requirements
 
-            PathPlannerLogging.setLogActivePathCallback((poseList) -> {
-                PathPlannerPath path = new PathPlannerPath(PathPlannerPath.fromPathPoints(pathPoints, constraints, goalEndState));
-                PathPlannerTrajectory traj = new PathPlannerTrajectory(path, drivetrain.getRobotRelativeSpeeds(), drivetrain.getPose().getRotation(), config);
-    
-                List<PathPlannerTrajectoryState> pathPlannerStates = traj.getStates();
-        
-                List<State> states = pathPlannerStates.stream()
-                    .map(pathPlannerState -> new State(pathPlannerState.timeSeconds, pathPlannerState, pathPlannerState.accelerationMetersPerSecondSq, pathPlannerState.poseMeters, pathPlannerState.curvatureRadPerMeter))
-                    .collect(Collectors.toList());
-        
-                field.getObject("Pathfind Trajectory").setTrajectory(new Trajectory(states));
-            });
+            PathPlannerLogging.setLogActivePathCallback(poses) -> field.getObject("Pathfind Trajectory").setTrajectory(new Trajectory(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
