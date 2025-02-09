@@ -77,6 +77,18 @@ public class RobotContainer {
                     .collect(Collectors.toList())
             );
 
+            RobotObserver.getField().getObject("Blue Net Bounds").setPoses(
+                CommandBounds.netBounds.getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
+
+            RobotObserver.getField().getObject("Blue Processor Bounds").setPoses(
+                CommandBounds.oppositeAllianceProcessorBounds.getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
+
             RobotObserver.getField().getObject("Red Reef Bounds").setPoses(
                 CommandBounds.reefBounds.getVertices().stream()
                     .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
@@ -94,6 +106,19 @@ public class RobotContainer {
                     .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
                     .collect(Collectors.toList())
             );
+
+            RobotObserver.getField().getObject("Red Net Bounds").setPoses(
+                CommandBounds.netBounds.getVertices().stream()
+                    .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
+                    .collect(Collectors.toList())
+            );
+
+            RobotObserver.getField().getObject("Red Processor Bounds").setPoses(
+                CommandBounds.oppositeAllianceProcessorBounds.getVertices().stream()
+                    .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
+                    .collect(Collectors.toList())
+            );
+
         }
     
         // ********** BINDINGS **********

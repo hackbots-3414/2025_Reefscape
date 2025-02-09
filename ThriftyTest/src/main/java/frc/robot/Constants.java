@@ -92,6 +92,7 @@ public class Constants {
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_cameraBackYaw = Units.degreesToRadians(45.0);
     }
+    
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);
         public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
@@ -103,6 +104,7 @@ public class Constants {
         public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
         public static final double k_closedLoopOverrideTolerance = 0.02;
     }
+
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
         // aliases
@@ -183,6 +185,7 @@ public class Constants {
         // Stop using vision after X time
         public static final double k_visionTimeout = 0.5;
     }
+
     public static class FieldConstants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
@@ -422,6 +425,46 @@ public class Constants {
         public static double intakeTimeout = 1;
     }
 
+    public static final class ClimberConstants {
+        public static final int leftClimberMotorID = 1;
+        public static final int rightClimberMotorID = 2;
+        public static final boolean rightMotorInvert = true;
+        public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
+        public static final double climberCurrentLimit = 80.0;
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(climberCurrentLimit));
+    }
+
+    public static final class AlgaeRollerConstants {
+        public static final int algaeRollerMotorID = 60;
+        public static final double intakeVoltage = 1; //FIXME tune for actual robot
+        public static final double ejectVoltage = -1; //FIXME tune for actual robot
+        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
+        public static final double algaeRollerCurrentLimit = 80.0;
+        public static final double holdVoltage = 0.5;
+        public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        public static final double algaeEjectTime = 0.3;
+        public static final double reefPickupSafetyDistance = 1.75;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
+    }
+
     public static final class TalonFXConstants {
         public final static double nominalVoltageVolts = 12.0; // DC Volts
         public final static double stallTorqueNewtonMeters = 4.69; // Nm
@@ -460,46 +503,6 @@ public class Constants {
         }
     }
 
-    public static final class ClimberConstants {
-        public static final int leftClimberMotorID = 1;
-        public static final int rightClimberMotorID = 2;
-        public static final boolean rightMotorInvert = true;
-        public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
-        public static final double climberCurrentLimit = 80.0;
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
-
-        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
-                .withMotorOutput(new MotorOutputConfigs()
-                        .withNeutralMode(NeutralModeValue.Brake)
-                        .withInverted(invertMotor))
-
-                .withCurrentLimits(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(climberCurrentLimit));
-    }
-
-    public static final class AlgaeRollerConstants {
-        public static final double algaeEjectTime = 0.3;
-        public static final double reefPickupSafetyDistance = 1.75;
-        public static final int algaeRollerMotorID = 60;
-        public static final double intakeVoltage = 1; //FIXME tune for actual robot
-        public static final double ejectVoltage = -1; //FIXME tune for actual robot
-        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
-        public static final double algaeRollerCurrentLimit = 80.0;
-        public static final double holdVoltage = 0.5;
-        public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
-
-        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
-                .withMotorOutput(new MotorOutputConfigs()
-                        .withNeutralMode(NeutralModeValue.Brake)
-                        .withInverted(invertMotor))
-
-                .withCurrentLimits(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
-    }
-
     public static final class CommandBounds {
         // 1 robot of space around the entire reef
         public static final List<Translation2d> reef = List.of(
@@ -523,5 +526,23 @@ public class Constants {
 
         // 1.5 robot of space away from the same alliance barge side intake
         public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds);
+
+        // processor where we score
+        public static final List<Translation2d> oppositeAllianceProcessor = List.of(
+            new Translation2d(5.5, 0.0),
+            new Translation2d(6.5, 0.0),
+            new Translation2d(6.5, 1),
+            new Translation2d(5.5, 1)
+        );
+        public static final Shape oppositeAllianceProcessorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor);
+
+        // net where we score
+        public static final List<Translation2d> net = List.of(
+            new Translation2d(7.2, 4.25),
+            new Translation2d(10.3, 4.25),
+            new Translation2d(10.3, 8),
+            new Translation2d(7.2, 8)
+        );
+        public static final Shape netBounds = Shape.fromUnsortedVertices(net);
     }
 }

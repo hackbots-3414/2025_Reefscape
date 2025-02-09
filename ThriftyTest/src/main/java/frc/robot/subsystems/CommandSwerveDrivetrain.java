@@ -91,7 +91,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Boolean shapeChecker(Shape shape) {
         if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) {
             return true;
-        } 
+        }
         return shape.isPointInside(FlippingUtil.flipFieldPose(estimatedPose).getTranslation());
     }
 
