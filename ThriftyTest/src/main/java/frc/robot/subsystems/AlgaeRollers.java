@@ -27,7 +27,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
         configIntakeMotor();
         m_notifier = new Notifier(this::updateObjectState);
         m_notifier.startPeriodic(AlgaeRollerConstants.k_updateObjectPeriodSeconds);
-        SmartDashboard.putBoolean("Holding Algae", m_hasObject);
     }
 
     private void configIntakeMotor() {
@@ -78,8 +77,8 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     }
 
     private void updateObjectState() {
-        // m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
-        m_hasObject = SmartDashboard.getBoolean("Holding Algae", false);
+        m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
+        SmartDashboard.putBoolean("Holding Algae", m_hasObject);
     }
 
     @Override
