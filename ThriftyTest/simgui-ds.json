@@ -1,14 +1,4 @@
 {
-  "FMS": {
-    "window": {
-      "visible": false
-    }
-  },
-  "Keyboard 0 Settings": {
-    "window": {
-      "visible": true
-    }
-  },
   "System Joysticks": {
     "window": {
       "enabled": false
@@ -140,6 +130,5 @@
       "guid": "Keyboard0"
     }
   ],
-  "useEnableDisableHotkeys": true,
-  "useEstopHotkey": true
+  "useEnableDisableHotkeys": true
 }

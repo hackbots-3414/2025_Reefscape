@@ -20,9 +20,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class VisionHandler implements AutoCloseable {
@@ -50,7 +50,7 @@ public class VisionHandler implements AutoCloseable {
         setupCameras();
         m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
-        SmartDashboard.putData("April Tag Debug Field", m_field);
+        RobotObserver.setField(m_field);
         m_singleTag = Optional.empty();
     }
 
@@ -115,7 +115,6 @@ public class VisionHandler implements AutoCloseable {
             estimator.run();
         }
         m_visionSim.update(m_drivetrain.getPose());
-        m_field.getObject("*TARGET POSE").setPose(m_drivetrain.getTargetPose());
     }
 
     public void startThread() {
@@ -140,10 +139,6 @@ public class VisionHandler implements AutoCloseable {
 
     public void setSingleTag(int tagId) {
         m_singleTag = Optional.of(tagId);
-    }
-
-    public void addPose(String name, Pose2d pose) {
-        m_field.getObject(name).setPose(pose);
     }
 
     @Override

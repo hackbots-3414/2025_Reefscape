@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotObserver;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -99,13 +100,13 @@ public class TeleopCommand extends Command {
                 goalRot = -goalRot;
             }
 
-            Pose2d goalPose = new Pose2d(
+            Pose2d goal = new Pose2d(
                 goalX,
                 goalY,
                 new Rotation2d(goalRot)
             );
 
-            drivetrain.addTargetPose(goalPose);
+            RobotObserver.getField().getObject("Drive Target").setPose(goal);
 
             xVelo = -xPIDController.calculate(currPose.getX(), goalX);
             yVelo = -yPIDController.calculate(currPose.getY(), goalY);
