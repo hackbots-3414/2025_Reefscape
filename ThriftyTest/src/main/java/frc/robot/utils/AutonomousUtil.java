@@ -2,10 +2,8 @@ package frc.robot.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.json.simple.parser.ParseException;
 
@@ -17,27 +15,20 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer.ButtonBoard;
+import frc.robot.RobotObserver;
 import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
     private static ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
-
-    private static Field2d field = new Field2d();
 
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
@@ -72,7 +63,7 @@ public class AutonomousUtil {
                     },
                     drivetrain); // Reference to this subsystem to set requirements
 
-            PathPlannerLogging.setLogActivePathCallback(poses) -> field.getObject("Pathfind Trajectory").setTrajectory(new Trajectory(poses));
+            PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }

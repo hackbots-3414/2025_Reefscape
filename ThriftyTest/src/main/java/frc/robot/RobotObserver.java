@@ -1,8 +1,11 @@
 package frc.robot;
 
+import java.util.function.Function;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.utils.Shape;
 
 public class RobotObserver {
     private static RobotObserver m_instance;
@@ -48,5 +51,16 @@ public class RobotObserver {
 
     public static boolean getVisionExpired() {
         return getInstance().m_visionExpired;
+    }
+
+    /* Check for drive in pose range & vision works */
+    private Function<Shape, Boolean> m_shapeChecker;
+
+    public static void setShapeChecker(Function<Shape, Boolean> shapeChecker) {
+        getInstance().m_shapeChecker = shapeChecker;
+    }
+
+    public static Function<Shape, Boolean> getShapeChecker() {
+        return getInstance().m_shapeChecker;
     }
 }

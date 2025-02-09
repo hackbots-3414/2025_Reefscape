@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -14,8 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -25,13 +26,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.Shape;
 import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
@@ -80,10 +81,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
+        RobotObserver.setShapeChecker(this::shapeChecker);
     }
 
     public Pose2d getPose() {
         return estimatedPose;
+    }
+
+    public Boolean shapeChecker(Shape shape) {
+        return shape.isInside(getBluePose().getTranslation());
     }
     
     /**
@@ -150,8 +156,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AutonomousUtil.handleQueue();
 
         handleVisionToggle();
-
-        SmartDashboard.putBoolean("** IS IN REEF BOUNDS", CommandBounds.reefBounds.isInside(estimatedPose.getTranslation()));
     }
 
     private void startSimThread() {
