@@ -1,9 +1,4 @@
 {
-  "FMS": {
-    "window": {
-      "visible": false
-    }
-  },
   "System Joysticks": {
     "window": {
       "enabled": false
@@ -131,12 +126,9 @@
     }
   ],
   "robotJoysticks": [
-    {},
-    {},
     {
       "guid": "Keyboard0"
     }
   ],
-  "useEnableDisableHotkeys": true,
-  "useEstopHotkey": true
+  "useEnableDisableHotkeys": true
 }
