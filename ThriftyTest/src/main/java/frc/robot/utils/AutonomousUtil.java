@@ -87,18 +87,13 @@ public class AutonomousUtil {
         return routine;
     }
 
-    public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
-            Command[] scoringCommands, Supplier<Command> stowCommand, Supplier<Command> intakeCommand) {
+    public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
-            if (i == 0) {
-                routine.addCommands(pathFinder(poses[i]));
-            } else {
-                routine.addCommands(stowCommand.get());
+            if (i != 0) {
                 routine.addCommands(pathFinder(desiredPickupLocation));
-                routine.addCommands(intakeCommand.get());
-                routine.addCommands(pathFinder(poses[i]));
             }
+            routine.addCommands(pathFinder(poses[i]));
             routine.addCommands(scoringCommands[i]);
         }
 

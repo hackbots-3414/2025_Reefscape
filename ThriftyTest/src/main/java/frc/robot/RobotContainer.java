@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -57,21 +59,39 @@ public class RobotContainer {
         }
 
         public void addBoundsToField() {
-            RobotObserver.getField().getObject("Reef Bounds").setPoses(
+            RobotObserver.getField().getObject("Blue Reef Bounds").setPoses(
                 CommandBounds.reefBounds.getVertices().stream()
                     .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
                     .collect(Collectors.toList())
             );
 
-            RobotObserver.getField().getObject("Left Human Player Bounds").setPoses(
+            RobotObserver.getField().getObject("Blue Left Human Player Bounds").setPoses(
                 CommandBounds.leftIntakeBounds.getVertices().stream()
                     .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
                     .collect(Collectors.toList())
             );
 
-            RobotObserver.getField().getObject("Right Human Player Bounds").setPoses(
+            RobotObserver.getField().getObject("Blue Right Human Player Bounds").setPoses(
                 CommandBounds.rightIntakeBounds.getVertices().stream()
                     .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
+
+            RobotObserver.getField().getObject("Red Reef Bounds").setPoses(
+                CommandBounds.reefBounds.getVertices().stream()
+                    .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
+                    .collect(Collectors.toList())
+            );
+
+            RobotObserver.getField().getObject("Red Left Human Player Bounds").setPoses(
+                CommandBounds.leftIntakeBounds.getVertices().stream()
+                    .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
+                    .collect(Collectors.toList())
+            );
+
+            RobotObserver.getField().getObject("Red Right Human Player Bounds").setPoses(
+                CommandBounds.rightIntakeBounds.getVertices().stream()
+                    .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
                     .collect(Collectors.toList())
             );
         }
@@ -306,7 +326,7 @@ public class RobotContainer {
                 heights[i] = scoringHeightsChooser.get(i).getSelected().get();
             }
     
-            return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::stowElevatorCommand, this::coralIntakeCommand);
+            return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
         }
     
         // ********** SUBSYSTEMS **********
