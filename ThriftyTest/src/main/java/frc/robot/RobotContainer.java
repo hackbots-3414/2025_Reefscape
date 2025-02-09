@@ -102,6 +102,9 @@ public class RobotContainer {
             drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
     
             controller.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.zeroPose()));
+
+            controller.button(2).onTrue(new InstantCommand(() -> RobotObserver.setDisableBounds(true)));
+            controller.button(2).onFalse(new InstantCommand(() -> RobotObserver.setDisableBounds(false)));
     
             drivetrain.registerTelemetry(telemetry::telemeterize);
     

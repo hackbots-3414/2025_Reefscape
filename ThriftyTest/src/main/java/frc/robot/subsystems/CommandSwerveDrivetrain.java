@@ -10,6 +10,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -89,37 +89,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public Boolean shapeChecker(Shape shape) {
-        return shape.isPointInside(getBluePose().getTranslation());
-    }
-    
-    /**
-     * returns the current pose, with red side poses flipped
-     */
-    public Pose2d getBluePose() {
-        return flipPose(estimatedPose);
-    }
-
-    public Pose2d flipPose(Pose2d pose) {
-        try {
-            if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
-                Rotation2d goalRot = pose.getRotation();
-                if (goalRot.getRadians() > 0) {
-                    goalRot = goalRot.minus(Rotation2d.k180deg);
-                } else {
-                    goalRot = goalRot.plus(Rotation2d.k180deg);
-                }
-
-                if (goalRot.getRadians() > Math.PI || goalRot.getRadians() < -Math.PI) {
-                    goalRot = goalRot.times(-1);
-                    goalRot = goalRot.minus(Rotation2d.k180deg);
-                }
-                return new Pose2d(FieldConstants.k_fieldLength.baseUnitMagnitude() - pose.getX(), FieldConstants.k_fieldWidth.baseUnitMagnitude() - pose.getY(), goalRot);
-            } else {
-                return estimatedPose;
-            }
-        } catch (Exception e) {
-            return estimatedPose;
-        }
+        if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) {
+            return true;
+        } 
+        return shape.isPointInside(FlippingUtil.flipFieldPose(estimatedPose).getTranslation());
     }
 
     public void zeroPose() {

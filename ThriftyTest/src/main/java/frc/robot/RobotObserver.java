@@ -53,6 +53,16 @@ public class RobotObserver {
         return getInstance().m_visionExpired;
     }
 
+    private boolean m_disableBounds;
+
+    public static void setDisableBounds(boolean boundsDisabled) {
+        getInstance().m_disableBounds = boundsDisabled;
+    }
+
+    public static boolean getDisableBounds() {
+        return getInstance().m_disableBounds;
+    }
+
     /* Check for drive in pose range & vision works */
     private Function<Shape, Boolean> m_shapeChecker;
 
