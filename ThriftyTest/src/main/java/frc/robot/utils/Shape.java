@@ -1,16 +1,20 @@
 package frc.robot.utils;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants.FieldConstants;
 
 public class Shape {
-    private final List<Translation2d> vertices;
+    private final List<Translation2d> m_vertices;
 
     public Shape(List<Translation2d> vertices) {
-        this.vertices = vertices;
+        this.m_vertices = vertices;
     }
 
     public static Shape fromUnsortedVertices(List<Translation2d> unsortedVertices) {
@@ -38,14 +42,14 @@ public class Shape {
     }
 
     // ray cast: if crosses odd times, its inside
-    public boolean isInside (Translation2d point) {
+    public boolean isPointInside (Translation2d point) {
         int crossings = 0;
-        int numVertices = vertices.size();
+        int numVertices = m_vertices.size();
 
         // horizontal ray pointing right, counts num vertices it crosses
         for (int i = 0; i < numVertices; i++) {
-            Translation2d start = vertices.get(i);
-            Translation2d end = vertices.get((i+1) % numVertices); // rolls over to 1 after last vertex
+            Translation2d start = m_vertices.get(i);
+            Translation2d end = m_vertices.get((i+1) % numVertices); // rolls over to 1 after last vertex
 
             // converted to doubles for ez math
             double x = point.getX(), y = point.getY();
@@ -62,5 +66,17 @@ public class Shape {
         }
 
         return (crossings % 2 == 1);
+    }
+
+    public List<Translation2d> getVertices() {
+        return m_vertices;
+    }
+
+    // flips hotdog style (up down) - ex. reef pose
+    public static Shape flipHotdog(Shape shape) {
+        // flips the y axis by doing field width - old y
+        return new Shape(shape.getVertices().stream()
+            .map(oldTranslation -> new Translation2d(oldTranslation.getX(), FieldConstants.k_fieldWidth.in(Meters) - oldTranslation.getY()))
+            .collect(Collectors.toList()));
     }
 }

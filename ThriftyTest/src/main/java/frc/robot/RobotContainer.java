@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,10 +20,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
+import frc.robot.commands.CoralDefaultCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.TeleopCommand;
@@ -50,7 +53,28 @@ public class RobotContainer {
             configureButtonBoard(buttonBoard);
             configureAutonChooser();
             m_vision.startThread();
+            addBoundsToField();
         }
+
+        public void addBoundsToField() {
+        RobotObserver.getField().getObject("Reef Bounds").setPoses(
+            CommandBounds.reefBounds.getVertices().stream()
+                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                .collect(Collectors.toList())
+        );
+
+        RobotObserver.getField().getObject("Left Human Player Bounds").setPoses(
+            CommandBounds.leftIntakeBounds.getVertices().stream()
+                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                .collect(Collectors.toList())
+        );
+
+        RobotObserver.getField().getObject("Right Human Player Bounds").setPoses(
+            CommandBounds.rightIntakeBounds.getVertices().stream()
+                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                .collect(Collectors.toList())
+        );
+    }
     
         // ********** BINDINGS **********
     
@@ -138,6 +162,8 @@ public class RobotContainer {
             controller.button(8).whileTrue(algaeScoreCommand(AlgaeLocationPresets.NET));
             controller.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
             controller.button(10).onTrue(new AlgaeEjectCommand(roller));
+
+            coral.setDefaultCommand(new CoralDefaultCommand(coral, () -> controller.button(11).getAsBoolean()));
             // UNCOMMENT THE FOLLOWING FOR MANUAL MOVE FEATURES
     
             // controller.button(1).whileTrue(new ManualPivot(pivot, true));

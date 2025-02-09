@@ -6,8 +6,6 @@ import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -421,6 +419,7 @@ public class Constants {
                 .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(supplyCurrentLimit));
+        public static double intakeTimeout = 1;
     }
 
     public static final class TalonFXConstants {
@@ -502,6 +501,7 @@ public class Constants {
     }
 
     public static final class CommandBounds {
+        // 1 robot of space around the entire reef
         public static final List<Translation2d> reef = List.of(
             new Translation2d(5.85, 3.19),
             new Translation2d(5.85, 4.92),
@@ -510,8 +510,18 @@ public class Constants {
             new Translation2d(3.01, 3.22),
             new Translation2d(4.46, 2.40)
         );
-
         public static final Shape reefBounds = Shape.fromUnsortedVertices(reef);
 
+        // 1.5 robot of space away from the opposite alliance barge side intake
+        public static final List<Translation2d> leftIntake = List.of(
+            new Translation2d(0.0, 1.25),
+            new Translation2d(1.7, 0.0),
+            new Translation2d(3.2, 0.0),
+            new Translation2d(0.0, 2.35)
+        );
+        public static final Shape leftIntakeBounds = Shape.fromUnsortedVertices(leftIntake);
+
+        // 1.5 robot of space away from the same alliance barge side intake
+        public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds);
     }
 }
