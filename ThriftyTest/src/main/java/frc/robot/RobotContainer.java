@@ -57,24 +57,24 @@ public class RobotContainer {
         }
 
         public void addBoundsToField() {
-        RobotObserver.getField().getObject("Reef Bounds").setPoses(
-            CommandBounds.reefBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
+            RobotObserver.getField().getObject("Reef Bounds").setPoses(
+                CommandBounds.reefBounds.getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
 
-        RobotObserver.getField().getObject("Left Human Player Bounds").setPoses(
-            CommandBounds.leftIntakeBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
+            RobotObserver.getField().getObject("Left Human Player Bounds").setPoses(
+                CommandBounds.leftIntakeBounds.getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
 
-        RobotObserver.getField().getObject("Right Human Player Bounds").setPoses(
-            CommandBounds.rightIntakeBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
-    }
+            RobotObserver.getField().getObject("Right Human Player Bounds").setPoses(
+                CommandBounds.rightIntakeBounds.getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
+        }
     
         // ********** BINDINGS **********
     
@@ -137,17 +137,17 @@ public class RobotContainer {
             for (ScoringLocationsRight location : locationsRight) {
                 scoringLocationListRight.add(location.value);
             }
-            controller.button(1).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(1), scoringLocationListLeft, drivetrain)));
-            controller.button(2).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(2), scoringLocationListLeft, drivetrain)));
-            controller.button(3).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(3), scoringLocationListLeft, drivetrain)));
-            controller.button(4).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(4), scoringLocationListLeft, drivetrain)));
-            controller.button(5).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(1), scoringLocationListRight, drivetrain)));
-            controller.button(6).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(2), scoringLocationListRight, drivetrain)));
-            controller.button(7).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(3), scoringLocationListRight, drivetrain)));
-            controller.button(8).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(4), scoringLocationListRight, drivetrain)));
+            controller.button(1).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(1), scoringLocationListLeft)));
+            controller.button(2).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(2), scoringLocationListLeft)));
+            controller.button(3).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(3), scoringLocationListLeft)));
+            controller.button(4).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(4), scoringLocationListLeft)));
+            controller.button(5).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(1), scoringLocationListRight)));
+            controller.button(6).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(2), scoringLocationListRight)));
+            controller.button(7).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(3), scoringLocationListRight)));
+            controller.button(8).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(4), scoringLocationListRight)));
     
-            controller.button(9).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.FARHP.value, drivetrain, () -> coralIntakeCommand())));
-            controller.button(10).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.CLOSEHP.value, drivetrain, () -> coralIntakeCommand())));
+            controller.button(9).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.FARHP.value, () -> coralIntakeCommand())));
+            controller.button(10).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.CLOSEHP.value, () -> coralIntakeCommand())));
             controller.button(11).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
         }
     
@@ -331,7 +331,7 @@ public class RobotContainer {
         }
     
         private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
-            return new AlgaeIntakeCommand(roller, elevator, pivot, drivetrain, intakeLocation);
+            return new AlgaeIntakeCommand(roller, elevator, pivot, intakeLocation);
         }
     
         private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {

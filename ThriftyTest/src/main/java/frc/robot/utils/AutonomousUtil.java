@@ -15,6 +15,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,23 +36,13 @@ public class AutonomousUtil {
         try {
             config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
-                    drivetrain::getPose, // Robot pose supplier
-                    drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-                    drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> drivetrain.setControl(autoRequest.withSpeeds(speeds)), // Method that will
-                                                                                                     // drive the robot
-                                                                                                     // given ROBOT
-                                                                                                     // RELATIVE
-                                                                                                     // ChassisSpeeds.
-                                                                                                     // Also optionally
-                                                                                                     // outputs
-                                                                                                     // individual
-                                                                                                     // module
-                                                                                                     // feedforwards
-                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
-                                                    // for holonomic drive trains
-                            new PIDConstants(15.0, 0.0, 0.0), // Translation PID constants
-                            new PIDConstants(3.0, 0.0, 0.0) // Rotation PID constants
+                    drivetrain::getPose,
+                    drivetrain::resetPose,
+                    drivetrain::getRobotRelativeSpeeds,
+                    (speeds, feedforwards) -> drivetrain.setControl(autoRequest.withSpeeds(speeds)),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(15.0, 0.0, 0.0),
+                            new PIDConstants(3.0, 0.0, 0.0)
                     ),
                     config, // The robot configuration
                     () -> {
@@ -134,20 +125,22 @@ public class AutonomousUtil {
         }
     }
 
-    public static void queuePathWithOverrides(Pose2d pose, CommandSwerveDrivetrain drivetrain,
-            Supplier<Command> coralScoreCommand) {
+    public static void queuePathWithOverrides(Pose2d pose, Supplier<Command> coralScoreCommand) {
         try {
             onTheFlyCommands.add(pathFinder(pose));
-            onTheFlyCommands.add(new PathPlannerOverride(drivetrain.flipPose(pose), drivetrain));
+            onTheFlyCommands.add(new PathPlannerOverride(FlippingUtil.flipFieldPose(pose)));
             onTheFlyCommands.add(coralScoreCommand.get());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void queueClosest(ButtonBoard scoreLocation, Supplier<Command> scoreSupplier,
-            List<Pose2d> scoringLocationList, CommandSwerveDrivetrain drivetrain) {
-        queuePathWithOverrides(drivetrain.getBluePose().nearest(scoringLocationList), drivetrain, scoreSupplier);
+    public static void queueClosest(ButtonBoard scoreLocation, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        queuePathWithOverrides(clip(scoringLocationList), scoreSupplier);
+    }
+
+    public static Pose2d clip(List<Pose2d> list) {
+        return FlippingUtil.flipFieldPose(RobotObserver.getPose()).nearest(list);
     }
 
     public static void clearQueue() {

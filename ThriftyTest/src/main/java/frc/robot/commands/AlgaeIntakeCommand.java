@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.util.FlippingUtil;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.AlgaeRollers;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 
@@ -15,16 +16,13 @@ public class AlgaeIntakeCommand extends Command {
     private AlgaeRollers rollers;
     private Elevator elevator;
     private Pivot pivot;
-    private CommandSwerveDrivetrain drivetrain;
     private AlgaeLocationPresets location;
     private boolean isDone;
 
-    public AlgaeIntakeCommand(AlgaeRollers rollers, Elevator elevator, Pivot pivot, CommandSwerveDrivetrain drivetrain,
-            AlgaeLocationPresets location) {
+    public AlgaeIntakeCommand(AlgaeRollers rollers, Elevator elevator, Pivot pivot, AlgaeLocationPresets location) {
         this.rollers = rollers;
         this.elevator = elevator;
         this.pivot = pivot;
-        this.drivetrain = drivetrain;
         this.location = location;
         addRequirements(rollers, elevator, pivot);
     }
@@ -73,7 +71,7 @@ public class AlgaeIntakeCommand extends Command {
                 default:
                     isDone = true;
             }
-            if (drivetrain.getBluePose().getTranslation()
+            if (FlippingUtil.flipFieldPose(RobotObserver.getPose()).getTranslation()
                     .getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
                 isDone = true;
             }
