@@ -41,9 +41,10 @@ public class LedSubsystem extends SubsystemBase {
   private boolean endgameAlertStarted = false;
   private boolean inAuton = false;
   private boolean inTeleop = false;
+  private static Coral coralIntake;
   private static enum LED_MODE {
     CORAL_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, DEFAULT, CORAL_IN_VIEW,
-    BADCONTROLLER;
+    BADCONTROLLER, CORAL_INTAKE;
   };
 
   private static LED_MODE chosenMode = null;
@@ -51,7 +52,8 @@ public class LedSubsystem extends SubsystemBase {
   CANdle ledcontroller = new CANdle(LEDConstants.candleCanid);
   // private int currentMode = 0;
 
-  public LedSubsystem() {
+  public LedSubsystem(Coral coralIntake) {
+    // this.coralIntake = coralIntake;
   SmartDashboard.putBoolean("coralInView", true);
 
     CANdleConfiguration config = new CANdleConfiguration();
@@ -101,12 +103,12 @@ public class LedSubsystem extends SubsystemBase {
 
         if (matchTime > LEDConstants.endgameAlert && endgameWarningStarted == false && !inAuton) {
           endgameWarningStarted = true;
-          setColor("RED", 1, 2, "SOLID");
+          setColor("YELLOW", 1, 2, "SOLID"); // Changed
         }
 
         else if (matchTime <= LEDConstants.endgameAlert && endgameAlertStarted == false && !inAuton && matchTime > 0) {
           endgameAlertStarted = true;
-          setColor("RED", 1, 2, "STROBE");
+          setColor("YELLOW", 1, 2, "STROBE"); // Changed 
         }
       } else {
         ledStripStartIndex = 0;
@@ -117,18 +119,17 @@ public class LedSubsystem extends SubsystemBase {
     if (coralOnBoard) {
       if (chosenMode != LED_MODE.CORAL_ONBOARD) {
         chosenMode = LED_MODE.CORAL_ONBOARD;
-        setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "STROBE");
+        setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "SOLID");
       }
-      // } else if (intake.getIntakeIR() == true) {
-      // if (chosenMode != LED_MODE.INTAKE) {
-      // chosenMode = LED_MODE.INTAKE;
-      // setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "FLASH");
-      // }
+      } else if (coralIntake.getFrontIR() == true) {
+      if (chosenMode != LED_MODE.CORAL_INTAKE) {
+      chosenMode = LED_MODE.CORAL_INTAKE;
+      setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "FLASH");
+      }
       else if (coralInViewTest) {
         if (chosenMode != LED_MODE.CORAL_IN_VIEW) {
           chosenMode = LED_MODE.CORAL_IN_VIEW;
-          setColor("YELLOW", ledStripStartIndex, ledStripEndIndex, "FLASH");
-
+          setColor("BLUE", ledStripStartIndex, ledStripEndIndex, "SOLID");
         }
       } else {
         if (chosenMode != LED_MODE.DEFAULT) {
