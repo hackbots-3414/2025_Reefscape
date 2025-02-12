@@ -11,54 +11,36 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
-import frc.robot.commands.AlgaeRollerCommand;
-import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.CoralScoreCommand;
-import frc.robot.commands.ManualClimberCommand;
-import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.AlgaeRollers;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Coral;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedSubsystem;
-import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
-import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
     public enum JoystickChoice {PS5, XBOX;} 
     private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    // public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    // private final VisionHandler m_vision = new VisionHandler(drivetrain);
 
     public RobotContainer() {
-    
         configureSubsystems();
         configureDriverBindings();
         // configureOperatorBindings();
         configureButtonBoard(dragonReins);
         configureAutonChooser();
         // m_vision.startThread();
-        
-
     }
 
     // ********** BINDINGS **********
 
     private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
-    private final CommandPS5Controller operator = new CommandPS5Controller(1);
 
     private double getX() {
         return -dragonReins.getRawAxis(1);
@@ -137,18 +119,7 @@ public class RobotContainer {
         controller.button(15).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
-    // private void configureOperatorBindings() {
-    //     operator.button(1).onTrue(coralScoreCommand(1));
-    //     operator.button(2).onTrue(coralScoreCommand(2));
-    //     operator.button(3).onTrue(coralScoreCommand(3));
-    //     operator.button(4).onTrue(coralScoreCommand(4));
-    //     // operator.button(1).whileTrue(new ManualPivot(pivot, true));
-    //     // operator.button(2).whileTrue(new ManualPivot(pivot, false));
-    //     // operator.button(3).whileTrue(new ManualElevator(elevator, true));
-    //     // operator.button(4).whileTrue(new ManualElevator(elevator, false));
-    //     operator.circle().whileTrue(new AlgaeRollerCommand(roller));
-    //     operator.cross().whileTrue(new ManualClimberCommand(climber));
-    // }
+    
 
     public enum ScoringLocations {
         A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
@@ -174,26 +145,12 @@ public class RobotContainer {
     }
 
     // ********** AUTONOMOUS **********
-
-    // private final SendableChooser<Command> autoChooser;
-
     private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
     private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
 
     private void configureAutonChooser() {
-        // boolean isCompetition = true;
 
-        // Filter any autos with the "comp" prefix
-        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        // (stream) -> isCompetition
-        // ? stream.filter(auto -> auto.getName().startsWith("comp"))
-        // : stream
-        // );
-
-        // autoChooser = AutoBuilder.buildAutoChooser();
-
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
 
         for (int i = 0; i < AutonConstants.numWaypoints; i++) {
             SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
@@ -227,56 +184,11 @@ public class RobotContainer {
         chooser.addOption("L", ScoringLocations.L.value);
     }
 
-    // private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
-    //     chooser.addOption("L1", () -> coralScoreCommand(1));
-    //     chooser.addOption("L2", () -> coralScoreCommand(2));
-    //     chooser.addOption("L3", () -> coralScoreCommand(3));
-    //     chooser.setDefaultOption("L4", () -> coralScoreCommand(4));
-    // }
-
-    // public Command getAutonomousCommand() {
-    //     Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
-    //     for (int i = 0; i < scoringLocationsChooser.size(); i++) {
-    //         locations[i] = scoringLocationsChooser.get(i).getSelected();
-    //     }
-
-    //     Command[] heights = new Command[scoringHeightsChooser.size()];
-    //     for (int i = 0; i < scoringHeightsChooser.size(); i++) {
-    //         heights[i] = scoringHeightsChooser.get(i).getSelected().get();
-    //     }
-
-        // return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::stowElevatorCommand, this::coralIntakeCommand);
-    // }
-
-    // ********** SUBSYSTEMS **********
-
-//     private Elevator elevator;
-//    // private Pivot pivot;
-//     private Climber climber;
-//     private AlgaeRollers roller;
-//     private Coral coral;
     private LedSubsystem ledSubsystem;
 
     private void configureSubsystems() {
-    //     elevator = new Elevator();
-    //    // pivot = new Pivot();
-    //     climber = new Climber();
-    //     roller = new AlgaeRollers();
-    //     coral = new Coral();
         ledSubsystem = new LedSubsystem(null); //  Made Null Arbitrarly
     }
-
-    // private Command coralIntakeCommand() {
-    //     return new CoralIntakeCommand(coral, elevator);
-    // }
-
-    // private Command coralScoreCommand(int level) {
-    //     return new CoralScoreCommand(coral, elevator, level);
-    // }
-
-    // private Command stowElevatorCommand() {
-    //     return new InstantCommand(() -> elevator.setStow());
-    // }
 
     public LedSubsystem getLedSubsystem() {
         return ledSubsystem;
