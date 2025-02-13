@@ -1,6 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.CommandBounds;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
@@ -8,6 +10,8 @@ public class CoralScoreCommand extends Command {
   private CoralRollers coral;
   private Elevator elevator;
   private int level;
+
+  private boolean isDone;
 
   public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int level) {
     this.coral = coralRollers;
@@ -19,6 +23,11 @@ public class CoralScoreCommand extends Command {
   
   @Override
   public void initialize() {
+    if (!RobotObserver.getShapeChecker().apply(CommandBounds.reefBounds)) {
+        isDone = true;
+        return;
+    }
+
     switch(level) {
       case 1:
         elevator.setL1();
@@ -37,7 +46,7 @@ public class CoralScoreCommand extends Command {
         break;
       
       default:
-        elevator.setStow();
+        isDone = true;
     }
   }
 
@@ -56,6 +65,6 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return !coral.holdingPiece();
+    return !coral.holdingPiece() || isDone;
   }
 }

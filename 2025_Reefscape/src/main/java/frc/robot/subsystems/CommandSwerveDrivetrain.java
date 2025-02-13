@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -7,6 +10,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,23 +18,21 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.Shape;
 import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
@@ -41,8 +43,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
-    private Pose2d m_targetPose = new Pose2d();
-
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -51,8 +51,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean m_hasAppliedOperatorPerspective = false;
 
     private Pose2d estimatedPose = new Pose2d();
-
-    private final Field2d field = new Field2d();
 
     private double m_oldVisionTimestamp = -1;
 
@@ -83,41 +81,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
-        SmartDashboard.putData(field);
+        RobotObserver.setShapeChecker(this::shapeChecker);
     }
-
+    
     public Pose2d getPose() {
         return estimatedPose;
     }
-    
-    /**
-     * returns the current pose, with red side poses flipped
-     */
-    public Pose2d getBluePose() {
-        return flipPose(estimatedPose);
-    }
 
-    public Pose2d flipPose(Pose2d pose) {
-        try {
-            if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
-                Rotation2d goalRot = pose.getRotation();
-                if (goalRot.getRadians() > 0) {
-                    goalRot = goalRot.minus(Rotation2d.k180deg);
-                } else {
-                    goalRot = goalRot.plus(Rotation2d.k180deg);
-                }
-
-                if (goalRot.getRadians() > Math.PI || goalRot.getRadians() < -Math.PI) {
-                    goalRot = goalRot.times(-1);
-                    goalRot = goalRot.minus(Rotation2d.k180deg);
-                }
-                return new Pose2d(FieldConstants.k_fieldLength.baseUnitMagnitude() - pose.getX(), FieldConstants.k_fieldWidth.baseUnitMagnitude() - pose.getY(), goalRot);
-            } else {
-                return estimatedPose;
-            }
-        } catch (Exception e) {
-            return estimatedPose;
+    public Boolean shapeChecker(Shape shape) {
+        if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) {
+            return true;
         }
+        return shape.isPointInside(FlippingUtil.flipFieldPose(estimatedPose).getTranslation());
     }
 
     public void zeroPose() {
@@ -139,6 +114,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
         estimatedPose = this.getState().Pose;
+        RobotObserver.setPose(estimatedPose);
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
@@ -149,7 +125,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        field.setRobotPose(estimatedPose);
 
         AutonomousUtil.handleQueue();
 
@@ -174,6 +149,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
         }
         SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
+        RobotObserver.setVisionExpired(!m_validPose);
     }
 
     /* Swerve requests to apply during SysId characterization */
@@ -267,13 +243,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineRotation.dynamic(direction);
-    }
-
-    public void addTargetPose(Pose2d pose) {
-        m_targetPose = pose;
-    }
-
-    public Pose2d getTargetPose() {
-        return m_targetPose;
     }
 }

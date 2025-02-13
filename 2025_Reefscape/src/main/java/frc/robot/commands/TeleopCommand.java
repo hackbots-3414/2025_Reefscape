@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotObserver;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -23,11 +24,11 @@ public class TeleopCommand extends Command {
     private final Supplier<Double> rotSupplier;
     private final Supplier<Boolean> useOpenLoop;
 
-    private final double MaxSpeed = DriveConstants.k_maxLinearSpeed;
-    private final double MaxAngularRate = DriveConstants.k_maxAngularSpeed;
+    private final double maxSpeed = DriveConstants.k_maxLinearSpeed;
+    private final double maxAngularSpeed = DriveConstants.k_maxAngularSpeed;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(maxSpeed * 0.1).withRotationalDeadband(maxAngularSpeed * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     private boolean alreadyClosedLoop = false;
@@ -68,8 +69,8 @@ public class TeleopCommand extends Command {
     public void execute() {
         if (useOpenLoop.get()) { // open loop code
             drivetrain.setControl(
-                    drive.withVelocityX(-xSupplier.get() * MaxSpeed).withVelocityY(-ySupplier.get() * MaxSpeed)
-                            .withRotationalRate(-rotSupplier.get() * MaxAngularRate));
+                    drive.withVelocityX(-xSupplier.get() * maxSpeed).withVelocityY(-ySupplier.get() * maxSpeed)
+                            .withRotationalRate(-rotSupplier.get() * maxAngularSpeed));
             alreadyClosedLoop = false;
         } else { // closed loop code
             Pose2d currPose = drivetrain.getPose();
@@ -80,21 +81,32 @@ public class TeleopCommand extends Command {
                 alreadyClosedLoop = true;
             }
 
-            goalX += xSupplier.get() * MaxSpeed * dt;
-            goalY += ySupplier.get() * MaxSpeed * dt;
-            goalRot += rotSupplier.get() * MaxAngularRate * dt;
+            // prevents any [1,1] output, so scales down to make sure peak speed is always just max speed
+            double xInput = xSupplier.get();
+            double yInput = ySupplier.get();
+
+            double mag = Math.hypot(xInput, yInput);
+
+            if (mag > 1) {
+                xInput /= mag;
+                yInput /= mag;
+            }
+
+            goalX += (mag > 1 ? xInput / mag : xInput) * maxSpeed * dt;
+            goalY += (mag > 1 ? yInput / mag : yInput) * maxSpeed * dt;
+            goalRot += rotSupplier.get() * maxAngularSpeed * dt;
 
             if (goalRot > Math.PI || goalRot < -Math.PI) {
                 goalRot = -goalRot;
             }
 
-            Pose2d goalPose = new Pose2d(
+            Pose2d goal = new Pose2d(
                 goalX,
                 goalY,
                 new Rotation2d(goalRot)
             );
 
-            drivetrain.addTargetPose(goalPose);
+            RobotObserver.getField().getObject("Drive Target").setPose(goal);
 
             xVelo = -xPIDController.calculate(currPose.getX(), goalX);
             yVelo = -yPIDController.calculate(currPose.getY(), goalY);
