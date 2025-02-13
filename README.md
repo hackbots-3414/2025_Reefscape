@@ -50,7 +50,8 @@ Hackbots code for the 2025 FRC Reefscape game.
 ## LED codes:
 |Event|Color Pattern|
 |-----|-------------|
-|In Range / Alignment | Blue |
+|Coral on Board| Blue |
+|Coral on Board & Aligned| Blue Strobe |
 |Game element In Robot| Green |
 |Release Game item|  Solid White|
 |Bad Controller| Red Blink |
