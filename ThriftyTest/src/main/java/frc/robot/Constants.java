@@ -486,7 +486,7 @@ public class Constants {
 
     public class LEDConstants {
         public static final int candleCanid = 5;
-        public static final int numLED = 117;
+        public static final int numLED = 13;
         public static final double flashSpeed = 0.75;
         public static final double strobeSpeed = 0.1;
         public static final double endgameWarning = 20;
@@ -500,12 +500,12 @@ public class Constants {
         // public static final int topNumLED = 1;
         // public static final int rightNumLED = 1;
         public static final int leftOffset = 0;
-        public static final int insideOffset = 2;
-        public static final int topOffset = 4;
-        public static final int rightOffset = 6;
-        public static final int leftNumLED = 2;
-        public static final int insideNumLED = 2;
-        public static final int topNumLED = 2;
-        public static final int rightNumLED = 2;
+        public static final int insideOffset = 3;
+        public static final int topOffset = 6;
+        public static final int rightOffset = 9;
+        public static final int leftNumLED = 3;
+        public static final int insideNumLED = 3;
+        public static final int topNumLED = 3;
+        public static final int rightNumLED = 4;
 }
 }

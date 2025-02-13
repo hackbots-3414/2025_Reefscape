@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 
@@ -19,13 +20,14 @@ public class Coral extends SubsystemBase {
  // private DigitalInput frontSensor = new DigitalInput(CoralConstants.k_frontSensorPort) ;
  // private DigitalInput backSensor = new DigitalInput(CoralConstants.k_backSensorPort) ;
 
-  private boolean frontSensorValue = false;
+  private boolean frontSensorValue = false; 
   private boolean backSensorValue = false;
   
   private MedianFilter m_Filter = new MedianFilter(5);
 
   public Coral() {
     configMotors();
+    SmartDashboard.putBoolean("Coral Front Sensor", frontSensorValue);
   }
 
   private void configMotors() {
@@ -68,8 +70,9 @@ public class Coral extends SubsystemBase {
 
   @Override
   public void periodic() {
-   // frontSensorValue = frontSensor.get();
+    frontSensorValue = SmartDashboard.getBoolean("Coral Front Sensor", frontSensorValue);
   //  backSensorValue = backSensor.get();
+  
   }
 
   //TODO Set current limits

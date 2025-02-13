@@ -17,8 +17,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.utils.AutonomousUtil;
 
@@ -27,6 +29,7 @@ public class RobotContainer {
     private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Coral coralIntake = new Coral();
 
 
     public RobotContainer() {
@@ -59,11 +62,11 @@ public class RobotContainer {
     }
 
     private void configureDriverBindings() {
-        // drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
+        drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
         // dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // drivetrain.registerTelemetry(telemetry::telemeterize);
+        drivetrain.registerTelemetry(telemetry::telemeterize);
 
         dragonReins.axisMagnitudeGreaterThan(0, 0.0)
                 .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean())
@@ -187,7 +190,7 @@ public class RobotContainer {
     private LedSubsystem ledSubsystem;
 
     private void configureSubsystems() {
-        ledSubsystem = new LedSubsystem(null); //  Made Null Arbitrarly
+        ledSubsystem = new LedSubsystem(coralIntake); 
     }
 
     public LedSubsystem getLedSubsystem() {

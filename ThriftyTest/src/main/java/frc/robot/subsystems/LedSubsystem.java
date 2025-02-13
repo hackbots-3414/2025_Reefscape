@@ -23,9 +23,10 @@ import frc.robot.Constants.DriverConstants;
 // import org.slf4j.Logger;
 // import org.slf4j.LoggerFactory;
 import frc.robot.Constants.LEDConstants;
+
 public class LedSubsystem extends SubsystemBase {
   private static double matchTime = 0;
-  // private Supplier<Boolean>  coralInView;
+  // private Supplier<Boolean> coralInView;
   private boolean coralOnBoard = false;
   // private boolean coralOnBoardTest = false;
   // private boolean isInRangeTest = false;
@@ -35,13 +36,14 @@ public class LedSubsystem extends SubsystemBase {
   private int b = 0;
   private int offsetLED = 0;
   private int nbrLED = 0;
-  private int ledStripEndIndex = 0;
+  private int ledStripEndIndex = 12;
   private int ledStripStartIndex = 0;
   private boolean endgameWarningStarted = false;
   private boolean endgameAlertStarted = false;
   private boolean inAuton = false;
   private boolean inTeleop = false;
-  private static Coral coralIntake;
+  private Coral coralIntake;
+
   private static enum LED_MODE {
     CORAL_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, DEFAULT, CORAL_IN_VIEW,
     BADCONTROLLER, CORAL_INTAKE;
@@ -53,8 +55,8 @@ public class LedSubsystem extends SubsystemBase {
   // private int currentMode = 0;
 
   public LedSubsystem(Coral coralIntake) {
-    // this.coralIntake = coralIntake;
-  SmartDashboard.putBoolean("coralInView", true);
+    this.coralIntake = coralIntake;
+    SmartDashboard.putBoolean("coralInView", true);
 
     CANdleConfiguration config = new CANdleConfiguration();
     config.stripType = LEDStripType.RGB; // set the strip type to RGB
@@ -108,7 +110,7 @@ public class LedSubsystem extends SubsystemBase {
 
         else if (matchTime <= LEDConstants.endgameAlert && endgameAlertStarted == false && !inAuton && matchTime > 0) {
           endgameAlertStarted = true;
-          setColor("YELLOW", 1, 2, "STROBE"); // Changed 
+          setColor("YELLOW", 1, 2, "STROBE"); // Changed
         }
       } else {
         ledStripStartIndex = 0;
@@ -119,43 +121,41 @@ public class LedSubsystem extends SubsystemBase {
     if (coralOnBoard) {
       if (chosenMode != LED_MODE.CORAL_ONBOARD) {
         chosenMode = LED_MODE.CORAL_ONBOARD;
-        setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "SOLID");
+        setColor("ORANGE", ledStripStartIndex, ledStripEndIndex, "SOLID");
       }
-      } else if (coralIntake.getFrontIR() == true) {
+    } else if (coralIntake.getFrontIR()) {
       if (chosenMode != LED_MODE.CORAL_INTAKE) {
-      chosenMode = LED_MODE.CORAL_INTAKE;
-      setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "FLASH");
+        chosenMode = LED_MODE.CORAL_INTAKE;
+        setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "FLASH");
       }
-      else if (coralInViewTest) {
-        if (chosenMode != LED_MODE.CORAL_IN_VIEW) {
-          chosenMode = LED_MODE.CORAL_IN_VIEW;
-          setColor("BLUE", ledStripStartIndex, ledStripEndIndex, "SOLID");
-        }
-      } else {
-        if (chosenMode != LED_MODE.DEFAULT) {
-          chosenMode = LED_MODE.DEFAULT;
-          setColor("DEFAULT", ledStripStartIndex, ledStripEndIndex, "SOLID");
-
-        }
     }
-  }    
-        else {
-          if (badController()) {
-            if (chosenMode != LED_MODE.BADCONTROLLER) {
-              chosenMode = LED_MODE.BADCONTROLLER;
-              setColor("RED", 0, 2, "STROBE");
-            }
-          } else {
-            if (chosenMode != LED_MODE.DEFAULT) {
-              chosenMode = LED_MODE.DEFAULT;
-              defaultColors();
-
-            }
-          }
-        }
-      
+    if (coralInViewTest) {
+      if (chosenMode != LED_MODE.CORAL_IN_VIEW) {
+        chosenMode = LED_MODE.CORAL_IN_VIEW;
+        setColor("BLUE", ledStripStartIndex, ledStripEndIndex, "SOLID");
+      }
+    } else {
+      if (chosenMode != LED_MODE.DEFAULT) {
+        chosenMode = LED_MODE.DEFAULT;
+        setColor("DEFAULT", ledStripStartIndex, ledStripEndIndex, "SOLID");
+      }
+    }
     
+    if (badController()) {
+      if (chosenMode != LED_MODE.BADCONTROLLER) {
+        chosenMode = LED_MODE.BADCONTROLLER;
+        setColor("RED", 0, 2, "STROBE");
+      }
+    } else {
+      if (chosenMode != LED_MODE.DEFAULT) {
+        chosenMode = LED_MODE.DEFAULT;
+        defaultColors();
+
+      }
+    }
   }
+
+  
 
   private void defaultColors() {
     ledcontroller.clearAnimation(0);
@@ -208,7 +208,6 @@ public class LedSubsystem extends SubsystemBase {
       b = 0;
     } else {
       r = 255;
-      //
       g = 0;
       b = 255;
 
