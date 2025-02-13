@@ -31,7 +31,6 @@ public class RobotObserver {
     public static void setField(Field2d field) {
         getInstance().m_field = field;
         // A new field means that we should probably update smart dashboard
-        System.out.println(getInstance().m_field == null);
         SmartDashboard.putData("Super Field", getInstance().m_field);
     }
 
