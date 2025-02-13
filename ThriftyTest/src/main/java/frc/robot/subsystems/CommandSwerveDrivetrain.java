@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -29,6 +28,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
 import frc.robot.vision.TimestampedPoseEstimate;
@@ -41,8 +41,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
-    private Pose2d m_targetPose = new Pose2d();
-
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -51,8 +49,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean m_hasAppliedOperatorPerspective = false;
 
     private Pose2d estimatedPose = new Pose2d();
-
-    private final Field2d field = new Field2d();
 
     private double m_oldVisionTimestamp = -1;
 
@@ -83,7 +79,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
-        SmartDashboard.putData(field);
     }
 
     public Pose2d getPose() {
@@ -139,6 +134,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
         estimatedPose = this.getState().Pose;
+        RobotObserver.setPose(estimatedPose);
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
@@ -149,7 +145,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        field.setRobotPose(estimatedPose);
 
         AutonomousUtil.handleQueue();
 
@@ -174,6 +169,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
         }
         SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
+        RobotObserver.setVisionExpired(!m_validPose);
     }
 
     /* Swerve requests to apply during SysId characterization */
@@ -267,13 +263,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineRotation.dynamic(direction);
-    }
-
-    public void addTargetPose(Pose2d pose) {
-        m_targetPose = pose;
-    }
-
-    public Pose2d getTargetPose() {
-        return m_targetPose;
     }
 }
