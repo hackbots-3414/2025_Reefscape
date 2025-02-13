@@ -240,7 +240,7 @@ public class Constants {
         public static final double carriageMass = Units.lbsToKilograms(14); // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
 
-        public static final double momentOfInertia = 0.005715;
+        public static final double momentOfInertia = carriageMass * Math.pow(drumRadius, 2);
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
