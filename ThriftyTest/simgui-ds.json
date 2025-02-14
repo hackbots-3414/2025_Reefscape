@@ -131,12 +131,9 @@
     }
   ],
   "robotJoysticks": [
-    {},
-    {},
     {
       "guid": "Keyboard0"
     }
   ],
-  "useEnableDisableHotkeys": true,
-  "useEstopHotkey": true
+  "useEnableDisableHotkeys": true
 }

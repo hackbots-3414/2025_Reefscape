@@ -3,7 +3,6 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -36,7 +35,6 @@ public class Telemetry {
 
     /* Robot swerve drive state */
     private final NetworkTable driveStateTable = inst.getTable("DriveState");
-    private final StructPublisher<Pose2d> drivePose = driveStateTable.getStructTopic("Pose", Pose2d.struct).publish();
     private final StructPublisher<ChassisSpeeds> driveSpeeds = driveStateTable
             .getStructTopic("Speeds", ChassisSpeeds.struct).publish();
     private final StructArrayPublisher<SwerveModuleState> driveModuleStates = driveStateTable
@@ -85,7 +83,6 @@ public class Telemetry {
      */
     public void telemeterize(SwerveDriveState state) {
         /* Telemeterize the swerve drive state */
-        drivePose.set(state.Pose);
         driveSpeeds.set(state.Speeds);
         driveModuleStates.set(state.ModuleStates);
         driveModuleTargets.set(state.ModuleTargets);
