@@ -130,6 +130,56 @@
         }
       },
       "/SmartDashboard/Super Field": {
+        "Blue Left Human Player Bounds": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.08928561210632324,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Net Bounds": {
+          "arrows": false,
+          "color": [
+            0.035714149475097656,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Processor Bounds": {
+          "arrows": false,
+          "color": [
+            0.0,
+            0.01785731315612793,
+            1.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Reef Bounds": {
+          "arrows": false,
+          "color": [
+            1.0,
+            0.0,
+            0.9642858505249023,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Right Human Player Bounds": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.08928561210632324,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
         "Drive Target": {
           "arrows": false,
           "color": [
@@ -141,6 +191,50 @@
           "length": 0.7599999904632568,
           "selectable": false,
           "width": 0.7599999904632568
+        },
+        "Red Left Human Player Bounds": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.017857074737548828,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Net Bounds": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Processor Bounds": {
+          "arrows": false,
+          "color": [
+            1.0,
+            0.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Reef Bounds": {
+          "arrows": false,
+          "color": [
+            1.0,
+            0.0,
+            0.9107146263122559,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Right Human Player Bounds": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
         },
         "Robot": {
           "arrowColor": [
@@ -197,7 +291,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
