@@ -26,9 +26,9 @@ import frc.robot.utils.AutonomousUtil;
 
 public class RobotContainer {
     public enum JoystickChoice {PS5, XBOX;} 
-    private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+    // private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    // public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Coral coralIntake = new Coral();
 
 
@@ -62,16 +62,16 @@ public class RobotContainer {
     }
 
     private void configureDriverBindings() {
-        drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
+        // drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
-        // dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // // dragonReins.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        drivetrain.registerTelemetry(telemetry::telemeterize);
+        // drivetrain.registerTelemetry(telemetry::telemeterize);
 
-        dragonReins.axisMagnitudeGreaterThan(0, 0.0)
-                .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean())
-                .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as
-                                                                                // no dragonReins input is there
+        // dragonReins.axisMagnitudeGreaterThan(0, 0.0)
+        //         .or(() -> dragonReins.axisMagnitudeGreaterThan(1, 0.0).getAsBoolean())
+        //         .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as
+        //                                                                         // no dragonReins input is there
     }
 
     private void configureSysId() {

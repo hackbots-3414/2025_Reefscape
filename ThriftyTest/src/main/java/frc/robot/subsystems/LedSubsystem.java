@@ -26,7 +26,7 @@ import frc.robot.Constants.LEDConstants;
 
 public class LedSubsystem extends SubsystemBase {
   private static double matchTime = 0;
-  // private Supplier<Boolean> coralInView;
+  private Supplier<Boolean> isInRange;
   private boolean coralOnBoard = false;
   // private boolean coralOnBoardTest = false;
   // private boolean isInRangeTest = false;
@@ -46,7 +46,7 @@ public class LedSubsystem extends SubsystemBase {
 
   private static enum LED_MODE {
     CORAL_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, DEFAULT, CORAL_IN_VIEW,
-    BADCONTROLLER, CORAL_INTAKE;
+    BADCONTROLLER, CORAL_INTAKE, ALIGNED;
   };
 
   private static LED_MODE chosenMode = null;
@@ -65,15 +65,15 @@ public class LedSubsystem extends SubsystemBase {
     defaultColors();
 
     // uncomment to test LED strips
-    ledcontroller.setLEDs(255, 0, 0, 0, LEDConstants.leftOffset,
-        LEDConstants.leftNumLED);
-    ledcontroller.setLEDs(0, 0, 255, 0, LEDConstants.topOffset,
-        LEDConstants.topNumLED);
-    ledcontroller.setLEDs(0, 255, 0, 0, LEDConstants.insideOffset,
-        LEDConstants.insideNumLED);
-    ledcontroller.setLEDs(255, 0, 255, 0, LEDConstants.rightOffset,
-        LEDConstants.rightNumLED);
-    // end of test pattern
+    // ledcontroller.setLEDs(255, 0, 0, 0, LEDConstants.leftOffset,
+    //     LEDConstants.leftNumLED);
+    // ledcontroller.setLEDs(0, 0, 255, 0, LEDConstants.topOffset,
+    //     LEDConstants.topNumLED);
+    // ledcontroller.setLEDs(0, 255, 0, 0, LEDConstants.insideOffset,
+    //     LEDConstants.insideNumLED);
+    // ledcontroller.setLEDs(255, 0, 255, 0, LEDConstants.rightOffset,
+    //     LEDConstants.rightNumLED);
+    // // end of test pattern
 
     // Hackbot Purple Code : [0x67, 0x2C, 0x91]
     // #672C91
@@ -93,17 +93,22 @@ public class LedSubsystem extends SubsystemBase {
     // setColor("DEFAULT", 0, 2, "SOLID");
     // }
     coralInViewTest = SmartDashboard.getBoolean("coralInView", true);
-
+    SmartDashboard.putBoolean("Bad Controller", badController());
     // SmartDashboard.putBoolean("In Auton", inAuton);
     // SmartDashboard.putBoolean("In Teleop", inTeleop);
     SmartDashboard.putNumber("Match Time", matchTime);
     // SmartDashboard.putBoolean("badController", badController());
-    if (inTeleop || inAuton) {
+    if (badController()) {
+      if (chosenMode != LED_MODE.BADCONTROLLER) {
+        chosenMode = LED_MODE.BADCONTROLLER;
+        setColor("RED", 0, 2, "STROBE");
+      }
+    } else if (inTeleop || inAuton) {
       if (matchTime <= LEDConstants.endgameWarning && matchTime > 0 && !inAuton) {
         ledStripEndIndex = 0;
         ledStripStartIndex = 0;
 
-        if (matchTime > LEDConstants.endgameAlert && endgameWarningStarted == false && !inAuton) {
+        if (matchTime <= LEDConstants.endgameWarning  && endgameWarningStarted == false && !inAuton) {
           endgameWarningStarted = true;
           setColor("YELLOW", 1, 2, "SOLID"); // Changed
         }
@@ -118,44 +123,23 @@ public class LedSubsystem extends SubsystemBase {
       }
     }
 
-    if (coralOnBoard) {
+    else if (coralOnBoard && isInRange.get()) {
       if (chosenMode != LED_MODE.CORAL_ONBOARD) {
         chosenMode = LED_MODE.CORAL_ONBOARD;
-        setColor("ORANGE", ledStripStartIndex, ledStripEndIndex, "SOLID");
+        setColor("BLUE", ledStripStartIndex, ledStripEndIndex, "STROBE");
       }
-    } else if (coralIntake.getFrontIR()) {
-      if (chosenMode != LED_MODE.CORAL_INTAKE) {
-        chosenMode = LED_MODE.CORAL_INTAKE;
-        setColor("GREEN", ledStripStartIndex, ledStripEndIndex, "FLASH");
-      }
-    }
-    if (coralInViewTest) {
-      if (chosenMode != LED_MODE.CORAL_IN_VIEW) {
-        chosenMode = LED_MODE.CORAL_IN_VIEW;
+    } else if (coralOnBoard) {
+      if (chosenMode != LED_MODE.CORAL_ONBOARD) {
+        chosenMode = LED_MODE.CORAL_ONBOARD;
         setColor("BLUE", ledStripStartIndex, ledStripEndIndex, "SOLID");
       }
-    } else {
-      if (chosenMode != LED_MODE.DEFAULT) {
+    } else if (chosenMode != LED_MODE.DEFAULT) {
         chosenMode = LED_MODE.DEFAULT;
         setColor("DEFAULT", ledStripStartIndex, ledStripEndIndex, "SOLID");
-      }
-    }
+      } 
     
-    if (badController()) {
-      if (chosenMode != LED_MODE.BADCONTROLLER) {
-        chosenMode = LED_MODE.BADCONTROLLER;
-        setColor("RED", 0, 2, "STROBE");
-      }
-    } else {
-      if (chosenMode != LED_MODE.DEFAULT) {
-        chosenMode = LED_MODE.DEFAULT;
-        defaultColors();
 
-      }
-    }
   }
-
-  
 
   private void defaultColors() {
     ledcontroller.clearAnimation(0);
