@@ -9,8 +9,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class TeleopCommand extends Command {
@@ -81,19 +81,8 @@ public class TeleopCommand extends Command {
                 alreadyClosedLoop = true;
             }
 
-            // prevents any [1,1] output, so scales down to make sure peak speed is always just max speed
-            double xInput = xSupplier.get();
-            double yInput = ySupplier.get();
-
-            double mag = Math.hypot(xInput, yInput);
-
-            if (mag > 1) {
-                xInput /= mag;
-                yInput /= mag;
-            }
-
-            goalX += (mag > 1 ? xInput / mag : xInput) * maxSpeed * dt;
-            goalY += (mag > 1 ? yInput / mag : yInput) * maxSpeed * dt;
+            goalX += (xSupplier.get() / Math.sqrt(2)) * maxSpeed * dt;
+            goalY += (ySupplier.get() / Math.sqrt(2)) * maxSpeed * dt;
             goalRot += rotSupplier.get() * maxAngularSpeed * dt;
 
             if (goalRot > Math.PI || goalRot < -Math.PI) {
