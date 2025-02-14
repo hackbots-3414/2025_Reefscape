@@ -134,7 +134,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
         estimatedPose = this.getState().Pose;
-        RobotObserver.setPose(estimatedPose);
+        RobotObserver.setPoseSupplier(this::getPose);
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
@@ -164,12 +164,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(SimConstants.k_simPeriodic);
     }
 
+    private boolean getVisionExpired() {
+        return !m_validPose;
+    }
+
     private void handleVisionToggle() {
         if (m_oldVisionTimestamp >= 0) {
             m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
         }
         SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
-        RobotObserver.setVisionExpired(!m_validPose);
+        RobotObserver.setVisionExpiredSupplier(this::getVisionExpired);
     }
 
     /* Swerve requests to apply during SysId characterization */
