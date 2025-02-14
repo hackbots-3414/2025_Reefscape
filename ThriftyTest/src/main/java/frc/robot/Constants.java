@@ -94,7 +94,7 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);
+        public static final PIDConstants k_translationPID = new PIDConstants(15.0, 0.0, 0.0);
         public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
