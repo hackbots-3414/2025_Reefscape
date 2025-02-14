@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,14 +17,14 @@ public class RobotObserver {
     }
 
     /* Pose2d to watch the pose of the robot and associated methods */
-    private Pose2d m_pose;
+    private Supplier<Pose2d> m_poseSupplier;
 
-    public static void setPose(Pose2d pose) {
-        getInstance().m_pose = pose;
+    public static void setPoseSupplier(Supplier<Pose2d> poseSupplier) {
+        getInstance().m_poseSupplier = poseSupplier;
     }
 
     public static Pose2d getPose() {
-        return getInstance().m_pose;
+        return getInstance().m_poseSupplier.get();
     }
 
     /* Field2d to display important details about the robot */
@@ -39,13 +41,13 @@ public class RobotObserver {
     }
 
     /* Keeps track of the latest time an april tag was seen */
-    private boolean m_visionExpired;
+    private Supplier<Boolean> m_visionExpiredSupplier;
 
-    public static void setVisionExpired(boolean expired) {
-        getInstance().m_visionExpired = expired;
+    public static void setVisionExpiredSupplier(Supplier<Boolean> expiredSupplier) {
+        getInstance().m_visionExpiredSupplier = expiredSupplier;
     }
 
     public static boolean getVisionExpired() {
-        return getInstance().m_visionExpired;
+        return getInstance().m_visionExpiredSupplier.get();
     }
 }
