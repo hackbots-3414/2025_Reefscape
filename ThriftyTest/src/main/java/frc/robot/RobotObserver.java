@@ -1,10 +1,12 @@
 package frc.robot;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.utils.Shape;
 
 public class RobotObserver {
     private static RobotObserver m_instance;
@@ -49,5 +51,37 @@ public class RobotObserver {
 
     public static boolean getVisionExpired() {
         return getInstance().m_visionExpiredSupplier.get();
+    }
+
+    private boolean m_disableBounds;
+
+    public static void setDisableBounds(boolean boundsDisabled) {
+        getInstance().m_disableBounds = boundsDisabled;
+    }
+
+    public static boolean getDisableBounds() {
+        return getInstance().m_disableBounds;
+    }
+
+    /* Check for drive in pose range & vision works */
+    private Function<Shape, Boolean> m_shapeChecker;
+
+    public static void setShapeChecker(Function<Shape, Boolean> shapeChecker) {
+        getInstance().m_shapeChecker = shapeChecker;
+    }
+
+    public static Function<Shape, Boolean> getShapeChecker() {
+        return getInstance().m_shapeChecker;
+    }
+
+    /* Check for drive in pose range & vision works */
+    private Function<Pose2d, Pose2d> m_poseFlipper;
+
+    public static void setPoseFlipper(Function<Pose2d, Pose2d> poseFlipper) {
+        getInstance().m_poseFlipper = poseFlipper;
+    }
+
+    public static Function<Pose2d, Pose2d> getPoseFlipper() {
+        return getInstance().m_poseFlipper;
     }
 }

@@ -4,7 +4,9 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AlgaeRollerConstants;
+import frc.robot.Constants.CommandBounds;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
@@ -31,10 +33,12 @@ public class AlgaeScoreCommand extends Command {
     isDone = false;
     switch (location) {
       case NET: 
+        isDone = !RobotObserver.getShapeChecker().apply(CommandBounds.netBounds);
         elevator.setNet();
         pivot.setNet();
         break;
       case PROCESSOR:
+        isDone = !RobotObserver.getShapeChecker().apply(CommandBounds.oppositeAllianceProcessorBounds);
         elevator.setProcessor();
         pivot.setProcessor();
         break;

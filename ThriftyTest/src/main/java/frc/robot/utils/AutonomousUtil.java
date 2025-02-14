@@ -15,12 +15,14 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer.ButtonBoard;
+import frc.robot.RobotObserver;
 import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -60,6 +62,8 @@ public class AutonomousUtil {
                         return false;
                     },
                     drivetrain); // Reference to this subsystem to set requirements
+
+            PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
@@ -96,14 +100,10 @@ public class AutonomousUtil {
             Command[] scoringCommands, Supplier<Command> stowCommand, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
-            if (i == 0) {
-                routine.addCommands(pathFinder(poses[i]));
-            } else {
-                routine.addCommands(stowCommand.get());
+            if (i != 0) {
                 routine.addCommands(pathFinder(desiredPickupLocation));
-                routine.addCommands(intakeCommand.get());
-                routine.addCommands(pathFinder(poses[i]));
             }
+            routine.addCommands(pathFinder(poses[i]));
             routine.addCommands(scoringCommands[i]);
         }
 
@@ -130,18 +130,22 @@ public class AutonomousUtil {
         }
     }
 
-    public static void queuePathWithOverrides(Pose2d pose, CommandSwerveDrivetrain drivetrain, Supplier<Command> coralScoreCommand) {
+    public static void queuePathWithOverrides(Pose2d pose, Supplier<Command> coralScoreCommand) {
         try {
             onTheFlyCommands.add(pathFinder(pose));
-            onTheFlyCommands.add(new PathPlannerOverride(drivetrain.flipPose(pose), drivetrain));
+            onTheFlyCommands.add(new PathPlannerOverride(RobotObserver.getPoseFlipper().apply(RobotObserver.getPose())));
             onTheFlyCommands.add(coralScoreCommand.get());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void queueClosest(ButtonBoard scoreLocation, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList, CommandSwerveDrivetrain drivetrain) {
-        queuePathWithOverrides(drivetrain.getBluePose().nearest(scoringLocationList), drivetrain, scoreSupplier);
+    public static void queueClosest(ButtonBoard scoreLocation, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        queuePathWithOverrides(clip(scoringLocationList), scoreSupplier);
+    }
+
+    public static Pose2d clip(List<Pose2d> list) {
+        return RobotObserver.getPoseFlipper().apply(RobotObserver.getPose()).nearest(list);
     }
 
     public static void clearQueue() {
