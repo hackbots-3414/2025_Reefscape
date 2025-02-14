@@ -26,6 +26,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
+import frc.robot.commands.CoralDefaultCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.TeleopCommand;
@@ -208,6 +209,9 @@ public class RobotContainer {
         controller.button(8).whileTrue(algaeScoreCommand(AlgaeLocationPresets.NET));
         controller.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
         controller.button(10).onTrue(new AlgaeEjectCommand(roller));
+
+        coral.setDefaultCommand(new CoralDefaultCommand(coral, () -> controller.button(11).getAsBoolean()));
+        
         // UNCOMMENT THE FOLLOWING FOR MANUAL MOVE FEATURES
 
         // controller.button(1).whileTrue(new ManualPivot(pivot, true));

@@ -32,6 +32,7 @@ import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.Shape;
 import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
@@ -80,6 +81,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
+        RobotObserver.setShapeChecker(this::shapeChecker);
     }
 
     public Pose2d getPose() {
@@ -103,6 +105,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         } catch (Exception e) {
             return pose;
         }
+    }
+
+    public boolean shapeChecker(Shape shape) {
+        if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) {
+            return true;
+        }
+        return shape.isPointInside(FlippingUtil.flipFieldPose(estimatedPose).getTranslation());
     }
 
     public void zeroPose() {
