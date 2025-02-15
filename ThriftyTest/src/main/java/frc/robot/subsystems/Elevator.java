@@ -31,17 +31,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
-    private final TalonFX m_elevatorLeft = new TalonFX(ElevatorConstants.leftMotorID);
-    private final TalonFX m_elevatorRight = new TalonFX(ElevatorConstants.rightMotorID);
+    private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft);
+    private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight);
 
-    private final CANcoder m_cancoder = new CANcoder(ElevatorConstants.encoderPort);
-
-    // Although I would love to implement a Kalman Filter for this, that takes too much time!!!
-    // private final MedianFilter m_filter = new MedianFilter(CanRangeConstants.k_filterWindow);
+    private final CANcoder m_cancoder = new CANcoder(IDConstants.elevatorEncoder);
 
     private StateSpaceController<N2, N1, N2> m_controller;
 
@@ -78,7 +76,7 @@ public class Elevator extends SubsystemBase {
     private void configMotor() {
         m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
-        Follower follower = new Follower(ElevatorConstants.leftMotorID, ElevatorConstants.invertRightMotor);
+        Follower follower = new Follower(IDConstants.elevatorLeft, ElevatorConstants.invertRightMotor);
         m_elevatorRight.setControl(follower);
     }
 

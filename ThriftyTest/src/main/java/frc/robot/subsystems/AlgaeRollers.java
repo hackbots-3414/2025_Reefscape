@@ -9,12 +9,13 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeRollerConstants;
+import frc.robot.Constants.IDConstants;
 
-public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
+public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     
     private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
     
-    private final TalonFX m_algaeRoller = new TalonFX(AlgaeRollerConstants.algaeRollerMotorID);
+    private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algaeMotor);
 
     private double m_voltage;
     private boolean m_voltageChanged;
