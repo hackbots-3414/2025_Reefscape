@@ -69,7 +69,7 @@ public class Shape {
     }
 
     public boolean useBounds() {
-        if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) {
+        if (RobotObserver.getVisionExpired()) {
             return true;
         }
         return isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());

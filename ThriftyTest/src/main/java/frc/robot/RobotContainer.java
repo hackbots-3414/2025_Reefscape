@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -15,6 +13,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -147,9 +146,6 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
 
         controller.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.zeroPose()));
-        
-        controller.button(2).onTrue(new InstantCommand(() -> RobotObserver.setDisableBounds(true)));
-        controller.button(2).onFalse(new InstantCommand(() -> RobotObserver.setDisableBounds(false)));
 
         drivetrain.registerTelemetry(telemetry::telemeterize);
 
@@ -236,7 +232,7 @@ public class RobotContainer {
         controller.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
         controller.button(10).onTrue(new AlgaeEjectCommand(roller));
 
-        coral.setDefaultCommand(new CoralDefaultCommand(coral, () -> controller.button(11).getAsBoolean()));
+        coral.setDefaultCommand(new CoralDefaultCommand(coral));
 
         // UNCOMMENT THE FOLLOWING FOR MANUAL MOVE FEATURES
 

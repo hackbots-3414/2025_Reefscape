@@ -5,8 +5,8 @@ import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
 public class CoralIntakeCommand extends Command {
-  private CoralRollers coral;
-  private Elevator elevator;
+  private final CoralRollers coral;
+  private final Elevator elevator;
 
   public CoralIntakeCommand(CoralRollers coralRollers,Elevator elevator) {
     this.coral = coralRollers;

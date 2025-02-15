@@ -50,14 +50,4 @@ public class RobotObserver {
     public static boolean getVisionExpired() {
         return getInstance().m_visionExpiredSupplier.get();
     }
-
-    private boolean m_disableBounds;
-
-    public static void setDisableBounds(boolean boundsDisabled) {
-        getInstance().m_disableBounds = boundsDisabled;
-    }
-
-    public static boolean getDisableBounds() {
-        return getInstance().m_disableBounds;
-    }
 }
