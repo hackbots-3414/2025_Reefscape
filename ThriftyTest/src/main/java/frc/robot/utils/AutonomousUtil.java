@@ -78,7 +78,7 @@ public class AutonomousUtil {
     public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
         try {
             onTheFlyCommands.add(pathFinder(pose));
-            onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(RobotObserver.getPose()), drivetrain));
+            onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(pose), drivetrain));
             onTheFlyCommands.add(command.get());
         } catch (Exception e) {
             e.printStackTrace();
