@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -42,6 +43,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.generated.TunerConstants;
 import frc.robot.stateSpace.StateSpaceConfig;
+import frc.robot.utils.Shape;
 
 /*
 PLEASE READ:
@@ -90,15 +92,19 @@ public class Constants {
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_cameraBackYaw = Units.degreesToRadians(45.0);
     }
+    
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);
+        public static final PIDConstants k_translationPID = new PIDConstants(15.0, 0.0, 0.0);
         public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-
+        
+        public static double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
+        public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
         public static final double k_closedLoopOverrideTolerance = 0.02;
     }
+
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
         // aliases
@@ -179,6 +185,7 @@ public class Constants {
         // Stop using vision after X time
         public static final double k_visionTimeout = 0.5;
     }
+
     public static class FieldConstants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
@@ -229,11 +236,8 @@ public class Constants {
         public static final InvertedValue motorInverted = InvertedValue.Clockwise_Positive;
         
         public static final double gearRatio = 5.2;
-        
-        public static final double carriageMass = Units.lbsToKilograms(14); // Mass of the elevator carriage
+        public static final double carriageMass = Units.lbsToKilograms(19.25); // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
-
-        public static final double momentOfInertia = 0.005715;
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
@@ -241,9 +245,14 @@ public class Constants {
 
         private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
         private static final Vector<N1> relms = VecBuilder.fill(1.0);
-
-        public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
-                .createDCMotorSystem(TalonFXConstants.TalonFXDCMotor, momentOfInertia, gearRatio);
+        
+        public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
+                .createElevatorSystem(
+                    TalonFXConstants.TalonFXDCMotor,
+                    carriageMass,
+                    drumRadius,
+                    gearRatio
+                );
 
         public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
                 stateSpacePlant,
@@ -415,6 +424,47 @@ public class Constants {
                 .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(supplyCurrentLimit));
+        public static double intakeTimeout = 1;
+    }
+
+    public static final class ClimberConstants {
+        public static final int leftClimberMotorID = 1;
+        public static final int rightClimberMotorID = 2;
+        public static final boolean rightMotorInvert = true;
+        public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
+        public static final double climberCurrentLimit = 80.0;
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(climberCurrentLimit));
+    }
+
+    public static final class AlgaeRollerConstants {
+        public static final int algaeRollerMotorID = 60;
+        public static final double intakeVoltage = 1; //FIXME tune for actual robot
+        public static final double ejectVoltage = -1; //FIXME tune for actual robot
+        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
+        public static final double algaeRollerCurrentLimit = 80.0;
+        public static final double holdVoltage = 0.5;
+        public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        public static final double algaeEjectTime = 0.3;
+        public static final double reefPickupSafetyDistance = 1.75;
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+                .withMotorOutput(new MotorOutputConfigs()
+                        .withNeutralMode(NeutralModeValue.Brake)
+                        .withInverted(invertMotor))
+
+                .withCurrentLimits(new CurrentLimitsConfigs()
+                        .withSupplyCurrentLimitEnable(true)
+                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
     }
 
     public static final class TalonFXConstants {
@@ -455,43 +505,54 @@ public class Constants {
         }
     }
 
-    public static final class ClimberConstants {
-        public static final int leftClimberMotorID = 1;
-        public static final int rightClimberMotorID = 2;
-        public static final boolean rightMotorInvert = true;
-        public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
-        public static final double climberCurrentLimit = 80.0;
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+    public static final class CommandBounds {
+        // 1 robot of space around the entire reef
+        public static final List<Translation2d> reef = List.of(
+            new Translation2d(5.85, 3.2),
+            new Translation2d(5.85, 4.8),
+            new Translation2d(4.46, 5.66),
+            new Translation2d(3.06, 4.8),
+            new Translation2d(3.06, 3.2),
+            new Translation2d(4.46, 2.40)
+        );
+        public static final Shape reefBounds = Shape.fromUnsortedVertices(reef);
 
-        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
-                .withMotorOutput(new MotorOutputConfigs()
-                        .withNeutralMode(NeutralModeValue.Brake)
-                        .withInverted(invertMotor))
+        // 1.5 robot of space away from the opposite alliance barge side intake
+        public static final List<Translation2d> leftIntake = List.of(
+            new Translation2d(0.0, 1.25),
+            new Translation2d(1.7, 0.0),
+            new Translation2d(3.2, 0.0),
+            new Translation2d(0.0, 2.35)
+        );
+        public static final Shape leftIntakeBounds = Shape.fromUnsortedVertices(leftIntake);
 
-                .withCurrentLimits(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(climberCurrentLimit));
-    }
+        // 1.5 robot of space away from the same alliance barge side intake
+        public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds);
 
-    public static final class AlgaeRollerConstants {
-        public static final double algaeEjectTime = 0.3;
-        public static final double reefPickupSafetyDistance = 1.75;
-        public static final int algaeRollerMotorID = 60;
-        public static final double intakeVoltage = 1; //FIXME tune for actual robot
-        public static final double ejectVoltage = -1; //FIXME tune for actual robot
-        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
-        public static final double algaeRollerCurrentLimit = 80.0;
-        public static final double holdVoltage = 0.5;
-        public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        // processor where we score
+        public static final List<Translation2d> oppositeAllianceProcessor = List.of(
+            new Translation2d(5.5, 0.0),
+            new Translation2d(6.5, 0.0),
+            new Translation2d(6.5, 1),
+            new Translation2d(5.5, 1)
+        );
+        public static final Shape processorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor);
 
-        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
-                .withMotorOutput(new MotorOutputConfigs()
-                        .withNeutralMode(NeutralModeValue.Brake)
-                        .withInverted(invertMotor))
+        // net where we score
+        public static final List<Translation2d> net = List.of(
+            new Translation2d(7.2, 4.25),
+            new Translation2d(10.3, 4.25),
+            new Translation2d(10.3, 8),
+            new Translation2d(7.2, 8)
+        );
+        public static final Shape netBounds = Shape.fromUnsortedVertices(net);
 
-                .withCurrentLimits(new CurrentLimitsConfigs()
-                        .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
+        public static Map<String, Shape> displayBounds = Map.ofEntries(
+            Map.entry("Blue Alliance Reef", reefBounds),
+            Map.entry("Blue Alliance Net", netBounds),
+            Map.entry("Blue Alliance Left Intake", leftIntakeBounds),
+            Map.entry("Blue Alliance Right Intake", rightIntakeBounds),
+            Map.entry("Blue Alliance Processor", processorBounds)
+        );
     }
 }

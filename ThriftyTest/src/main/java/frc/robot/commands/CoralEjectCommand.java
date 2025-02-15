@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralRollers;
 
 public class CoralEjectCommand extends Command {
-  private CoralRollers coral;
+  private final CoralRollers coral;
 
   public CoralEjectCommand(CoralRollers coralRollers) {
-      this.coral = coralRollers;
-      addRequirements(coralRollers);
+    this.coral = coralRollers;
+    addRequirements(coralRollers);
   }
 
   @Override
@@ -23,6 +23,6 @@ public class CoralEjectCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return !coral.holdingPiece();
+    return !coral.presentPiece();
   }
 }

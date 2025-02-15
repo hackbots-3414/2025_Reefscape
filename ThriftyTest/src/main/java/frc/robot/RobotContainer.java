@@ -4,13 +4,16 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,10 +21,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
+import frc.robot.commands.CoralDefaultCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.TeleopCommand;
@@ -33,6 +38,7 @@ import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
@@ -49,6 +55,17 @@ public class RobotContainer {
         configureButtonBoard(buttonBoard);
         configureAutonChooser();
         m_vision.startThread();
+        addBoundsToField();
+    }
+
+    private void addBoundsToField() {
+        for (Map.Entry<String, Shape> entry : CommandBounds.displayBounds.entrySet()) {
+            RobotObserver.getField().getObject(entry.getKey()).setPoses(
+                entry.getValue().getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
+        }
     }
 
     // ********** BINDINGS **********
@@ -112,17 +129,42 @@ public class RobotContainer {
         for (ScoringLocationsRight location : locationsRight) {
             scoringLocationListRight.add(location.value);
         }
-        controller.button(1).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(1), scoringLocationListLeft, drivetrain)));
-        controller.button(2).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(2), scoringLocationListLeft, drivetrain)));
-        controller.button(3).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(3), scoringLocationListLeft, drivetrain)));
-        controller.button(4).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(4), scoringLocationListLeft, drivetrain)));
-        controller.button(5).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(1), scoringLocationListRight, drivetrain)));
-        controller.button(6).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(2), scoringLocationListRight, drivetrain)));
-        controller.button(7).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(3), scoringLocationListRight, drivetrain)));
-        controller.button(8).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(4), scoringLocationListRight, drivetrain)));
 
-        controller.button(9).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.FARHP.value, drivetrain, () -> coralIntakeCommand())));
-        controller.button(10).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.CLOSEHP.value, drivetrain, () -> coralIntakeCommand())));
+        ScoringLocationsMiddle[] locationsMiddle = ScoringLocationsMiddle.values();
+        List<Pose2d> scoringLocationListMiddle = new ArrayList<>();
+        for (ScoringLocationsMiddle location : locationsMiddle) {
+            scoringLocationListMiddle.add(location.value);
+        }
+
+        ClimbLocations[] climbLocations = ClimbLocations.values();
+        List<Pose2d> climbLocationsList = new ArrayList<>();
+        for (ClimbLocations location : climbLocations) {
+            climbLocationsList.add(location.value);
+        }
+
+        // CORAL SCORING AND PICKUP
+        controller.button(1).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(1), scoringLocationListLeft)));
+        controller.button(2).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(2), scoringLocationListLeft)));
+        controller.button(3).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(3), scoringLocationListLeft)));
+        controller.button(4).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(4), scoringLocationListLeft)));
+        controller.button(5).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(1), scoringLocationListRight)));
+        controller.button(6).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(2), scoringLocationListRight)));
+        controller.button(7).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(3), scoringLocationListRight)));
+        controller.button(8).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(4), scoringLocationListRight)));
+
+        controller.button(9).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocations.FARHP.value, () -> coralIntakeCommand())));
+        controller.button(10).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocations.CLOSEHP.value, () -> coralIntakeCommand())));
+
+        // ALGAE SCORING AND PICKUP
+        controller.button(12).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> algaeScoreCommand(AlgaeLocationPresets.REEFLOWER), scoringLocationListMiddle)));
+        controller.button(13).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> algaeScoreCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationListMiddle)));
+        controller.button(14).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocations.PROCESSOR.value, () -> algaeIntakeCommand(AlgaeLocationPresets.PROCESSOR))));
+        controller.button(15).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocations.NET.value, () -> algaeIntakeCommand(AlgaeLocationPresets.NET))));
+        controller.button(16).and(controller.button(11)).onTrue(algaeIntakeCommand(AlgaeLocationPresets.GROUND));
+
+        // END GAME
+        controller.button(17).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> climbCommand(), climbLocationsList)));
+
         controller.button(11).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
@@ -137,6 +179,9 @@ public class RobotContainer {
         controller.button(8).whileTrue(algaeScoreCommand(AlgaeLocationPresets.NET));
         controller.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
         controller.button(10).onTrue(new AlgaeEjectCommand(roller));
+
+        coral.setDefaultCommand(new CoralDefaultCommand(coral));
+
         // UNCOMMENT THE FOLLOWING FOR MANUAL MOVE FEATURES
 
         // controller.button(1).whileTrue(new ManualPivot(pivot, true));
@@ -161,7 +206,9 @@ public class RobotContainer {
         K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
         L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
         FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
+        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
+        PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),
+        NET(new Pose2d(7.7, 6.0, Rotation2d.fromDegrees(0)));
 
         private Pose2d value;
 
@@ -196,6 +243,33 @@ public class RobotContainer {
         private Pose2d value;
 
         private ScoringLocationsRight(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ScoringLocationsMiddle {
+        AB(ScoringLocations.A.value.interpolate(ScoringLocations.B.value, 0.5)),
+        CD(ScoringLocations.C.value.interpolate(ScoringLocations.D.value, 0.5)),
+        EF(ScoringLocations.E.value.interpolate(ScoringLocations.F.value, 0.5)),
+        GH(ScoringLocations.G.value.interpolate(ScoringLocations.H.value, 0.5)),
+        IJ(ScoringLocations.I.value.interpolate(ScoringLocations.J.value, 0.5)),
+        KL(ScoringLocations.K.value.interpolate(ScoringLocations.L.value, 0.5));
+
+        private Pose2d value;
+
+        private ScoringLocationsMiddle(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ClimbLocations {
+        WALL(new Pose2d(8.5, 7.26, Rotation2d.fromDegrees(0))),
+        MIDDLE(new Pose2d(8.5, 6.1, Rotation2d.fromDegrees(0))),
+        CENTER(new Pose2d(8.5, 5.0, Rotation2d.fromDegrees(0)));
+
+        private Pose2d value;
+
+        private ClimbLocations(Pose2d value) {
             this.value = value;
         }
     }
@@ -304,7 +378,7 @@ public class RobotContainer {
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
-        return new AlgaeIntakeCommand(roller, elevator, pivot, drivetrain, intakeLocation);
+        return new AlgaeIntakeCommand(roller, elevator, pivot, intakeLocation);
     }
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
@@ -313,6 +387,11 @@ public class RobotContainer {
 
     private Command stowElevatorCommand() {
         return new InstantCommand(() -> elevator.setStow());
+    }
+
+    private Command climbCommand() {
+        // return new ClimbCommand();
+        return new InstantCommand(() -> System.out.println("*********************************** WARNING NO CLIMB COMMAND ***********************"));
     }
 
     public enum AlgaeLocationPresets {

@@ -4,25 +4,26 @@ import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AlgaeRollerConstants;
+import frc.robot.Constants.CommandBounds;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 
 public class AlgaeScoreCommand extends Command {
-  private AlgaeRollers rollers;
-  private Elevator elevator;
-  private Pivot pivot;
-  private AlgaeLocationPresets location;
+  private final AlgaeRollers rollers;
+  private final Elevator elevator;
+  private final Pivot pivot;
+  private final AlgaeLocationPresets location;
   private boolean isDone;
   private double initialTime;
 
   public AlgaeScoreCommand(AlgaeRollers rollers, Elevator elevator, Pivot pivot, AlgaeLocationPresets location) {
-   this.rollers = rollers;
-   this.elevator = elevator;
-   this.pivot = pivot;
-   this.location = location;
-   addRequirements(rollers, elevator, pivot);
+    this.rollers = rollers;
+    this.elevator = elevator;
+    this.pivot = pivot;
+    this.location = location;
+    addRequirements(rollers, elevator, pivot);
   }
 
   @Override
@@ -30,16 +31,17 @@ public class AlgaeScoreCommand extends Command {
     initialTime = Utils.getCurrentTimeSeconds();
     isDone = false;
     switch (location) {
-      case NET: 
+      case NET -> {
+        isDone = !CommandBounds.netBounds.useBounds();
         elevator.setNet();
         pivot.setNet();
-        break;
-      case PROCESSOR:
+      }
+      case PROCESSOR -> {
+        isDone = !CommandBounds.processorBounds.useBounds();
         elevator.setProcessor();
         pivot.setProcessor();
-        break;
-      default: 
-        isDone = true;   
+      }
+      default -> isDone = true;
     }
   }
 
@@ -59,6 +61,6 @@ public class AlgaeScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return isDone || (Utils.getCurrentTimeSeconds() - initialTime) >= AlgaeRollerConstants.algaeEjectTime;  
+    return isDone || (Utils.getCurrentTimeSeconds() - initialTime) >= AlgaeRollerConstants.algaeEjectTime;
   }
 }

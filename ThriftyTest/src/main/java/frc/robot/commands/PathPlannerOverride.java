@@ -4,15 +4,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.RobotObserver;
 
 public class PathPlannerOverride extends Command {
     private final Pose2d goal;
-    private CommandSwerveDrivetrain drivetrain;
 
-    public PathPlannerOverride(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+    public PathPlannerOverride(Pose2d pose) {
         this.goal = pose;
-        this.drivetrain = drivetrain;
     }
 
     @Override
@@ -27,8 +25,9 @@ public class PathPlannerOverride extends Command {
 
     @Override
     public boolean isFinished() {
-        double translationDiff = drivetrain.getPose().getTranslation().getDistance(goal.getTranslation());
-        double rotationDiff = drivetrain.getPose().getRotation().getDegrees() - goal.getRotation().getDegrees();
+        Pose2d pose = RobotObserver.getPose();
+        double translationDiff = pose.getTranslation().getDistance(goal.getTranslation());
+        double rotationDiff = pose.getRotation().getDegrees() - goal.getRotation().getDegrees();
 
         SmartDashboard.putNumber("** TRANSLATION DIFF", translationDiff);
         SmartDashboard.putNumber("** ROTATION DIFF", rotationDiff);

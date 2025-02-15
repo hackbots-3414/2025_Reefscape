@@ -19,7 +19,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     private double m_voltage;
     private boolean m_voltageChanged;
 
-    private Notifier m_notifier;
+    private final Notifier m_notifier;
 
     private boolean m_hasObject;
 

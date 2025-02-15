@@ -81,9 +81,9 @@ public class TeleopCommand extends Command {
                 alreadyClosedLoop = true;
             }
 
-            goalX += xSupplier.get() * MaxSpeed * dt;
-            goalY += ySupplier.get() * MaxSpeed * dt;
-            goalRot += rotSupplier.get() * MaxAngularRate * dt;
+            goalX += (xSupplier.get() / Math.sqrt(2)) * MaxSpeed * dt;
+            goalY += (ySupplier.get() / Math.sqrt(2)) * MaxSpeed * dt;
+            goalRot += (rotSupplier.get() / Math.sqrt(2)) * MaxAngularRate * dt;
 
             if (goalRot > Math.PI || goalRot < -Math.PI) {
                 goalRot = -goalRot;

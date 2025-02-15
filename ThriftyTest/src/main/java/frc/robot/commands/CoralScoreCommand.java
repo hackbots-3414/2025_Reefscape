@@ -1,13 +1,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.CommandBounds;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
 public class CoralScoreCommand extends Command {
-  private CoralRollers coral;
-  private Elevator elevator;
-  private int level;
+  private final CoralRollers coral;
+  private final Elevator elevator;
+  private final int level;
+
+  private boolean isDone;
 
   public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int level) {
     this.coral = coralRollers;
@@ -16,28 +19,18 @@ public class CoralScoreCommand extends Command {
     addRequirements(coralRollers, elevator);
   }
 
-  
   @Override
   public void initialize() {
+    if (!CommandBounds.reefBounds.useBounds()) {
+        isDone = true;
+        return;
+    }
     switch(level) {
-      case 1:
-        elevator.setL1();
-        break;
-
-      case 2:
-        elevator.setL2();
-        break;
-      
-      case 3:
-        elevator.setL3();
-        break;
-      
-      case 4:
-        elevator.setL4();
-        break;
-      
-      default:
-        elevator.setStow();
+      case 1 -> elevator.setL1();
+      case 2 -> elevator.setL2();
+      case 3 -> elevator.setL3();
+      case 4 -> elevator.setL4();
+      default -> isDone = true;
     }
   }
 
@@ -56,6 +49,6 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return !coral.holdingPiece();
+    return !coral.presentPiece() || isDone;
   }
 }
