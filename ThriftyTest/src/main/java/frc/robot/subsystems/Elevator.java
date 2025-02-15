@@ -40,8 +40,6 @@ public class Elevator extends SubsystemBase {
 
     private final CANcoder m_cancoder = new CANcoder(ElevatorConstants.encoderPort);
 
-    private final CANrange m_canrange = new CANrange(CanRangeConstants.k_canRangeId);
-
     // Although I would love to implement a Kalman Filter for this, that takes too much time!!!
     // private final MedianFilter m_filter = new MedianFilter(CanRangeConstants.k_filterWindow);
 
@@ -69,7 +67,6 @@ public class Elevator extends SubsystemBase {
         configMotor();
         configStateSpace();
         configSim();
-        configCanRange();
     }
 
     private void configEncoder() {
@@ -106,14 +103,6 @@ public class Elevator extends SubsystemBase {
         m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
         m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.1, 90)); // Start at 0.1m height
         SmartDashboard.putData("Elevator Visualization", m_mechVisual);
-    }
-
-    private void configCanRange() {
-        m_canrange.clearStickyFaults();
-        m_canrange.getConfigurator().apply(
-            CanRangeConstants.k_canRangeConfig,
-            RobotConstants.globalCanTimeout.in(Seconds)
-        );
     }
 
     private Vector<N2> getOutput() {
