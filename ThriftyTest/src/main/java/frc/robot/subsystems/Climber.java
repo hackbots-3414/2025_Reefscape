@@ -8,11 +8,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
+import frc.robot.Constants.IDConstants;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
-    private final TalonFX leftClimbMotor = new TalonFX(ClimberConstants.leftClimberMotorID);
-    private final TalonFX rightClimbMotor = new TalonFX(ClimberConstants.rightClimberMotorID);
+    private final TalonFX leftClimbMotor = new TalonFX(IDConstants.climbLeft);
+    private final TalonFX rightClimbMotor = new TalonFX(IDConstants.climbRight);
 
     private double m_voltage;
     private boolean m_voltageChanged;
@@ -26,7 +27,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         rightClimbMotor.clearStickyFaults();
         leftClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
         rightClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
-        rightClimbMotor.setControl(new Follower(ClimberConstants.leftClimberMotorID, ClimberConstants.rightMotorInvert));
+        rightClimbMotor.setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
     }
 
     private void setMotor(double voltage) {

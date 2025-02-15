@@ -12,13 +12,14 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.IDConstants;
 
 public class CoralRollers extends SubsystemBase {
-    private final TalonFX coralLeft = new TalonFX(CoralConstants.k_leftMotorID);
-    private final TalonFX coralRight = new TalonFX(CoralConstants.k_rightMotorID);
+    private final TalonFX coralLeft = new TalonFX(IDConstants.coralLeft);
+    private final TalonFX coralRight = new TalonFX(IDConstants.coralRight);
 
-    private final DigitalInput frontSensor = new DigitalInput(CoralConstants.k_frontSensorPort);
-    private final DigitalInput backSensor = new DigitalInput(CoralConstants.k_backSensorPort);
+    private final DigitalInput frontSensor = new DigitalInput(IDConstants.coralFrontIR);
+    private final DigitalInput backSensor = new DigitalInput(IDConstants.coralRearIR);
 
     private boolean frontSensorValue = false;
     private boolean backSensorValue = false;
@@ -39,7 +40,7 @@ public class CoralRollers extends SubsystemBase {
         coralLeft.getConfigurator().apply(CoralConstants.motorConfig);
         coralRight.getConfigurator().apply(CoralConstants.motorConfig);
 
-        coralRight.setControl(new Follower(CoralConstants.k_leftMotorID, CoralConstants.rightMotorInvert));
+        coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
     }
 
     public void setVoltage(double voltage) {

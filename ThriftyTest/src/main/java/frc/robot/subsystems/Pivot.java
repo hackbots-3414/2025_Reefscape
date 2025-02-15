@@ -25,12 +25,13 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Pivot extends SubsystemBase {
-    private final TalonFX pivot = new TalonFX(PivotConstants.motorID);
-    private final CANcoder cancoder = new CANcoder(PivotConstants.encoderID);
+    private final TalonFX pivot = new TalonFX(IDConstants.pivotMotor);
+    private final CANcoder cancoder = new CANcoder(IDConstants.pivotEncoder);
 
     private StateSpaceController<N2, N1, N2> controller;
 

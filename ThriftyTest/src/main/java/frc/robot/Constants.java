@@ -105,6 +105,26 @@ public class Constants {
         public static final double k_closedLoopOverrideTolerance = 0.02;
     }
 
+    public static class IDConstants {
+        public static final int elevatorLeft = 51;
+        public static final int elevatorRight = 52;
+        public static final int canRange = 6;
+        public static final int elevatorEncoder = 53;
+
+        public static final int pivotMotor = 57;
+        public static final int pivotEncoder = 58;
+
+        public static final int coralLeft = 50;
+        public static final int coralRight = 50;
+        public static final int coralFrontIR = 3;
+        public static final int coralRearIR = 4;
+
+        public static final int climbLeft = 1;
+        public static final int climbRight = 2;
+
+        public static final int algaeMotor = 60;
+    }
+
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
         // aliases
@@ -205,7 +225,6 @@ public class Constants {
     }
 
     public static final class CanRangeConstants {
-        public static final int k_canRangeId = 6;
 
         public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
         // .withFovParams(null)
@@ -216,14 +235,7 @@ public class Constants {
     }
 
     public static final class ElevatorConstants {
-        public static final int leftMotorID = 51;
-        public static final int rightMotorID = 52;
-        public static final int encoderPort = 53;
-
         public static final boolean invertRightMotor = true;
-
-        public static final int forwardLimitChannelID = 0;
-        public static final int reverseLimitChannelID = 1;
 
         public static final double forwardSoftLimit = 2;
         public static final double reverseSoftLimit = 0;
@@ -301,18 +313,15 @@ public class Constants {
                         .withInverted(motorInverted))
 
                 .withFeedback(new FeedbackConfigs()
+                        .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
+                        .withFeedbackRotorOffset(encoderOffset)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(supplyCurrentLimit))
-
-                .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
-                        .withForwardLimitEnable(true)
-                        .withReverseLimitEnable(true)
-                        .withReverseLimitAutosetPositionEnable(true)
-                        .withReverseLimitAutosetPositionValue(0.0))
 
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(forwardSoftLimit)
@@ -322,8 +331,6 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final int motorID = 57;
-        public static final int encoderID = 58; //FIXME No Pivot CANcoder exists on the robot
         public static final double encoderOffset = 0.324707;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
@@ -388,7 +395,7 @@ public class Constants {
                         .withInverted(invertMotor))
 
                 .withFeedback(new FeedbackConfigs()
-                        .withFeedbackRemoteSensorID(encoderID)
+                        .withFeedbackRemoteSensorID(IDConstants.pivotEncoder)
                         .withFeedbackRotorOffset(encoderOffset)
                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
@@ -415,12 +422,8 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final int k_leftMotorID = 55;
-        public static final int k_rightMotorID = 56;
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = 12;
-        public static final int k_frontSensorPort = 3;
-        public static final int k_backSensorPort = 4;
         public static final boolean rightMotorInvert = true;
 
         public static final double supplyCurrentLimit = 20;
@@ -437,8 +440,6 @@ public class Constants {
     }
 
     public static final class ClimberConstants {
-        public static final int leftClimberMotorID = 1;
-        public static final int rightClimberMotorID = 2;
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
         public static final double climberCurrentLimit = 80.0;
@@ -455,7 +456,6 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
-        public static final int algaeRollerMotorID = 60;
         public static final double intakeVoltage = 1; //FIXME tune for actual robot
         public static final double ejectVoltage = -1; //FIXME tune for actual robot
         public static final double currentThreshold = 40.2; //FIXME tune for actual robot
