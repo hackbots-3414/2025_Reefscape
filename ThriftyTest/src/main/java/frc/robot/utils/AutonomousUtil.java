@@ -75,18 +75,18 @@ public class AutonomousUtil {
 
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
-    public static void queuePathWithCommand(Pose2d pose, Supplier<Command> command) {
+    public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
         try {
             onTheFlyCommands.add(pathFinder(pose));
-            onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(RobotObserver.getPose())));
+            onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(RobotObserver.getPose()), drivetrain));
             onTheFlyCommands.add(command.get());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void queueClosest(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
-        queuePathWithCommand(clip(scoringLocationList), scoreSupplier);
+    public static void queueClosest(CommandSwerveDrivetrain drivetrain, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        queuePathWithCommand(drivetrain, clip(scoringLocationList), scoreSupplier);
     }
 
     public static Pose2d clip(List<Pose2d> list) {

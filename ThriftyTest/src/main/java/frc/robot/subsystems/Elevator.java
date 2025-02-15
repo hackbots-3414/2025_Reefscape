@@ -16,11 +16,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -45,7 +43,7 @@ public class Elevator extends SubsystemBase {
     private final CANrange m_canrange = new CANrange(CanRangeConstants.k_canRangeId);
 
     // Although I would love to implement a Kalman Filter for this, that takes too much time!!!
-    private final MedianFilter m_filter = new MedianFilter(CanRangeConstants.k_filterWindow);
+    // private final MedianFilter m_filter = new MedianFilter(CanRangeConstants.k_filterWindow);
 
     private StateSpaceController<N2, N1, N2> m_controller;
 
