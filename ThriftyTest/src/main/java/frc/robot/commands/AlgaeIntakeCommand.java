@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
-import com.pathplanner.lib.util.FlippingUtil;
-
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.CommandBounds;
@@ -11,6 +10,7 @@ import frc.robot.RobotObserver;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.utils.FieldUtils;
 
 public class AlgaeIntakeCommand extends Command {
   private final AlgaeRollers rollers;
@@ -36,12 +36,12 @@ public class AlgaeIntakeCommand extends Command {
                 pivot.setGroundPickup();
             }
             case REEFLOWER -> {
-                isDone = !CommandBounds.reefBounds.useBounds();
+                isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefLower();
                 pivot.setReefPickup();
             }
             case REEFUPPER -> {
-                isDone = !CommandBounds.reefBounds.useBounds();
+                isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefUpper();
                 pivot.setReefPickup();
             }
@@ -58,17 +58,23 @@ public class AlgaeIntakeCommand extends Command {
             switch (location) {
                 case GROUND -> isDone = true;
                 case REEFLOWER -> {
-                    isDone = !CommandBounds.reefBounds.useBounds();
+                    isDone = !CommandBounds.reefBounds.isActive();
                     pivot.setReefExtract();
                 }
                 case REEFUPPER -> {
-                    isDone = !CommandBounds.reefBounds.useBounds();
+                    isDone = !CommandBounds.reefBounds.isActive();
                     pivot.setReefExtract();
                 }
                 default -> isDone = true;
             }
-            if (FlippingUtil.flipFieldPose(RobotObserver.getPose()).getTranslation()
-                    .getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
+            Pose2d alliancePose = FieldUtils.getAlliancePose(
+              RobotObserver.getPose()
+            );
+            double reefDistance = alliancePose
+              .getTranslation()
+              .getDistance(FieldConstants.reefCenter);
+            
+            if (reefDistance >= AlgaeRollerConstants.reefPickupSafetyDistance) {
                 isDone = true;
             }
         }

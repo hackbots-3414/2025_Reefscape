@@ -89,7 +89,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * returns the current pose, with red side poses flipped
      */
     public Pose2d getBluePose() {
-        return FieldUtils.flipPose(estimatedPose);
+        return FieldUtils.getAlliancePose(estimatedPose);
     }
 
     public void zeroPose() {

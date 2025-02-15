@@ -32,12 +32,12 @@ public class AlgaeScoreCommand extends Command {
     isDone = false;
     switch (location) {
       case NET -> {
-        isDone = !CommandBounds.netBounds.useBounds();
+        isDone = !CommandBounds.netBounds.isActive();
         elevator.setNet();
         pivot.setNet();
       }
       case PROCESSOR -> {
-        isDone = !CommandBounds.processorBounds.useBounds();
+        isDone = !CommandBounds.processorBounds.isActive();
         elevator.setProcessor();
         pivot.setProcessor();
       }

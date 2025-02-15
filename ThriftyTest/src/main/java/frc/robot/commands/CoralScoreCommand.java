@@ -21,7 +21,7 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void initialize() {
-    if (!CommandBounds.reefBounds.useBounds()) {
+    if (!CommandBounds.reefBounds.isActive()) {
         isDone = true;
         return;
     }

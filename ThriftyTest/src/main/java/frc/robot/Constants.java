@@ -507,7 +507,7 @@ public class Constants {
 
     public static final class CommandBounds {
         // 1 robot of space around the entire reef
-        public static final List<Translation2d> reef = List.of(
+        private static final List<Translation2d> reef = List.of(
             new Translation2d(5.85, 3.2),
             new Translation2d(5.85, 4.8),
             new Translation2d(4.46, 5.66),
@@ -518,7 +518,7 @@ public class Constants {
         public static final Shape reefBounds = Shape.fromUnsortedVertices(reef);
 
         // 1.5 robot of space away from the opposite alliance barge side intake
-        public static final List<Translation2d> leftIntake = List.of(
+        private static final List<Translation2d> leftIntake = List.of(
             new Translation2d(0.0, 1.25),
             new Translation2d(1.7, 0.0),
             new Translation2d(3.2, 0.0),
@@ -530,7 +530,7 @@ public class Constants {
         public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds);
 
         // processor where we score
-        public static final List<Translation2d> oppositeAllianceProcessor = List.of(
+        private static final List<Translation2d> oppositeAllianceProcessor = List.of(
             new Translation2d(5.5, 0.0),
             new Translation2d(6.5, 0.0),
             new Translation2d(6.5, 1),
@@ -539,7 +539,7 @@ public class Constants {
         public static final Shape processorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor);
 
         // net where we score
-        public static final List<Translation2d> net = List.of(
+        private static final List<Translation2d> net = List.of(
             new Translation2d(7.2, 4.25),
             new Translation2d(10.3, 4.25),
             new Translation2d(10.3, 8),

@@ -68,11 +68,16 @@ public class Shape {
         return (crossings % 2 == 1);
     }
 
-    public boolean useBounds() {
+    /**
+     * Determines if we are currently "inside" the shape.
+     * However, if the cameras have not been updated recently, we say `true` as
+     * a safety feature.
+     */
+    public boolean isActive() {
         if (RobotObserver.getVisionExpired()) {
             return true;
         }
-        return isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());
+        return isPointInside(FieldUtils.getAlliancePose(RobotObserver.getPose()).getTranslation());
     }
 
     public List<Translation2d> getVertices() {
