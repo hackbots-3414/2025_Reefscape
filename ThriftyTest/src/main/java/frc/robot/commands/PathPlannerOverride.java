@@ -5,9 +5,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class PathPlannerOverride extends Command {
@@ -49,10 +51,10 @@ public class PathPlannerOverride extends Command {
 
     @Override
     public void execute() {
-        Pose2d currPose = drivetrain.getBluePose();
+        Pose2d currPose = drivetrain.getPose();
 
-        double xVelo = -xPIDController.calculate(currPose.getX(), goalX);
-        double yVelo = -yPIDController.calculate(currPose.getY(), goalY);
+        double xVelo = xPIDController.calculate(currPose.getX(), goalX);
+        double yVelo = yPIDController.calculate(currPose.getY(), goalY);
         double rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
 
         drivetrain.setControl(driveClosedLoop.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
