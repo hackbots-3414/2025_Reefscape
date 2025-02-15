@@ -237,9 +237,9 @@ public class Constants {
     }
 
     public static final class ElevatorConstants {
-        public static final boolean invertRightMotor = true;
+        public static final boolean invertLeftMotorFollower = true;
 
-        public static final double forwardSoftLimit = 2;
+        public static final double forwardSoftLimit = 11.2;
         public static final double reverseSoftLimit = 0;
 
         public static final double supplyCurrentLimit = 40;
@@ -247,7 +247,7 @@ public class Constants {
         public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
 
-        public static final InvertedValue motorInverted = InvertedValue.Clockwise_Positive;
+        public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
         
         public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
 
@@ -288,7 +288,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.0;
+        public static final double encoderOffset = -0.427979;
 
         public static final double stow = 0;
         public static final double processor = 0.25;

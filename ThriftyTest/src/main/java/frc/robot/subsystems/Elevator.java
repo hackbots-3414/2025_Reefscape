@@ -69,10 +69,10 @@ public class Elevator extends SubsystemBase {
     }
 
     private void configMotor() {
-        m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
-        Follower follower = new Follower(IDConstants.elevatorLeft, ElevatorConstants.invertRightMotor);
-        m_elevatorRight.setControl(follower);
+        m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+        Follower follower = new Follower(IDConstants.elevatorRight, ElevatorConstants.invertLeftMotorFollower);
+        m_elevatorLeft.setControl(follower);
     }
 
     private void configStateSpace() {
