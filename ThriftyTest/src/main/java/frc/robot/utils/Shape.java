@@ -68,8 +68,7 @@ public class Shape {
         return (crossings % 2 == 1);
     }
 
-    public boolean useBounds() {
-        
+    public boolean isActive() {
         if (RobotObserver.getVisionExpired()) {
             return true;
         }
