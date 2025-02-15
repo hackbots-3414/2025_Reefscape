@@ -14,11 +14,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 
 public class CoralRollers extends SubsystemBase {
-    private TalonFX coralLeft = new TalonFX(CoralConstants.k_leftMotorID);
-    private TalonFX coralRight = new TalonFX(CoralConstants.k_rightMotorID);
+    private final TalonFX coralLeft = new TalonFX(CoralConstants.k_leftMotorID);
+    private final TalonFX coralRight = new TalonFX(CoralConstants.k_rightMotorID);
 
-    private DigitalInput frontSensor = new DigitalInput(CoralConstants.k_frontSensorPort);
-    private DigitalInput backSensor = new DigitalInput(CoralConstants.k_backSensorPort);
+    private final DigitalInput frontSensor = new DigitalInput(CoralConstants.k_frontSensorPort);
+    private final DigitalInput backSensor = new DigitalInput(CoralConstants.k_backSensorPort);
 
     private boolean frontSensorValue = false;
     private boolean backSensorValue = false;

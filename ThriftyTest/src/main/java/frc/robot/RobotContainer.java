@@ -58,7 +58,7 @@ public class RobotContainer {
         addBoundsToField();
     }
 
-    public void addBoundsToField() {
+    private void addBoundsToField() {
         RobotObserver.getField().getObject("Blue Reef Bounds").setPoses(
             CommandBounds.reefBounds.getVertices().stream()
                 .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))

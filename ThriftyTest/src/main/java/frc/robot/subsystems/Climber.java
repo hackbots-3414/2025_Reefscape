@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         configMotors();
     }
 
-    public void configMotors() {
+    private void configMotors() {
         leftClimbMotor.clearStickyFaults();
         rightClimbMotor.clearStickyFaults();
         leftClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
