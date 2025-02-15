@@ -26,7 +26,7 @@ import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
-    private static ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
+    private static final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
@@ -52,6 +52,7 @@ public class AutonomousUtil {
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -76,13 +77,9 @@ public class AutonomousUtil {
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
     public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
-        try {
-            onTheFlyCommands.add(pathFinder(pose));
-            onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(pose), drivetrain));
-            onTheFlyCommands.add(command.get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        onTheFlyCommands.add(pathFinder(pose));
+        onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(pose), drivetrain));
+        onTheFlyCommands.add(command.get());
     }
 
     public static void queueClosest(CommandSwerveDrivetrain drivetrain, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
@@ -134,11 +131,7 @@ public class AutonomousUtil {
     }
 
     public static void queuePath(Pose2d pose) {
-        try {
-            onTheFlyCommands.add(pathFinder(pose));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        onTheFlyCommands.add(pathFinder(pose));
     }
 
     public static Command followPath(String pathName) {
