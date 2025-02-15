@@ -8,7 +8,7 @@ import frc.robot.RobotObserver;
 import frc.robot.subsystems.CoralRollers;
 
 public class CoralDefaultCommand extends Command {
-    private CoralRollers m_coral;
+    private final CoralRollers m_coral;
 
     public CoralDefaultCommand(CoralRollers coral, Supplier<Boolean> disableAutoCoral) {
         m_coral = coral;

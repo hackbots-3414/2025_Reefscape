@@ -56,23 +56,33 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void timeoutIntake() {
-        // a whole lotta logic that essentially allows u to stop the motor in default
-        // command
-        // when you leave the yay zone after intakeTimeout seconds automatically (max
-        // process time) or when coral detected
-
+        // a whole lotta logic that essentially allows u to stop the motor in default command
+        // when you leave the yay zone after intakeTimeout seconds automatically (max process time) or when coral detected
         if (!m_stoppedTimeChanged) {
             m_stoppedTimeChanged = true;
             m_stoppedTime = Utils.getCurrentTimeSeconds();
-        } else {
-            if (Utils.getCurrentTimeSeconds() - m_stoppedTime > CoralConstants.intakeTimeout) {
-                stop();
-                resetTimeout();
-            } else {
-                if (holdingPiece()) {
-                    stop();
-                }
-            }
+        }
+
+        if (holdingPiece()) {
+            stop();
+            return;
+        }
+
+        if (presentPiece()) {
+            setIntake();
+            return;
+        }
+
+        double elapsed = Utils.getCurrentTimeSeconds() - m_stoppedTime;
+
+        if (elapsed > CoralConstants.intakeTimeout) {
+            stop();
+            resetTimeout();
+            return;
+        }
+
+        if (holdingPiece()) {
+            stop();
         }
     }
 
@@ -98,6 +108,10 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean holdingPiece() {
+        return getFrontIR() && getBackIR();
+    }
+
+    public boolean presentPiece() {
         return getFrontIR() || getBackIR();
     }
 
@@ -109,7 +123,6 @@ public class CoralRollers extends SubsystemBase {
         if (m_voltageChanged) {
             coralLeft.setVoltage(m_voltage);
             m_voltageChanged = false;
-
             SmartDashboard.putNumber("* CORAL VOLTS", m_voltage);
         }
     }

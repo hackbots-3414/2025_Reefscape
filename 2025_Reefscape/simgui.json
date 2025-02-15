@@ -1,0 +1,63 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Elevator Visualization": "Mechanism2d",
+      "/SmartDashboard/Height to Score #0": "String Chooser",
+      "/SmartDashboard/Height to Score #1": "String Chooser",
+      "/SmartDashboard/Height to Score #2": "String Chooser",
+      "/SmartDashboard/Height to Score #3": "String Chooser",
+      "/SmartDashboard/Height to Score #4": "String Chooser",
+      "/SmartDashboard/Module 0": "Mechanism2d",
+      "/SmartDashboard/Module 1": "Mechanism2d",
+      "/SmartDashboard/Module 2": "Mechanism2d",
+      "/SmartDashboard/Module 3": "Mechanism2d",
+      "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
+      "/SmartDashboard/Place to Score #0": "String Chooser",
+      "/SmartDashboard/Place to Score #1": "String Chooser",
+      "/SmartDashboard/Place to Score #2": "String Chooser",
+      "/SmartDashboard/Place to Score #3": "String Chooser",
+      "/SmartDashboard/Place to Score #4": "String Chooser",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Super Field": "Field2d",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Super Field": {
+        "Blue Left Human Player Bounds": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Reef Bounds": {
+          "arrows": false,
+          "color": [
+            0.0,
+            71.0127182006836,
+            255.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "apriltag": {
+          "style": "Hidden"
+        },
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "visibleTargetPoses": {
+          "style": "Hidden"
+        },
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables View": {
+    "visible": false
+  }
+}

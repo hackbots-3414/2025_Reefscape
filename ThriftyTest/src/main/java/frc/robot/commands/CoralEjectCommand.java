@@ -23,6 +23,6 @@ public class CoralEjectCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return !coral.holdingPiece();
+    return !coral.presentPiece();
   }
 }

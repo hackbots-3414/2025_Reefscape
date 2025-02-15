@@ -63,6 +63,6 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return !coral.holdingPiece() || isDone;
+    return !coral.presentPiece() || isDone;
   }
 }
