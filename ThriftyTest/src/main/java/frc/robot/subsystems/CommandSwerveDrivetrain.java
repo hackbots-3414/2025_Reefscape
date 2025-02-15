@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -10,7 +7,6 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.util.FlippingUtil;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +14,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -32,7 +30,7 @@ import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.AutonomousUtil;
-import frc.robot.utils.Shape;
+import frc.robot.utils.FieldUtils;
 import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
@@ -81,7 +79,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
-        RobotObserver.setShapeChecker(this::shapeChecker);
     }
 
     public Pose2d getPose() {
@@ -92,26 +89,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * returns the current pose, with red side poses flipped
      */
     public Pose2d getBluePose() {
-        return flipPose(estimatedPose);
-    }
-
-    public Pose2d flipPose(Pose2d pose) {
-        try {
-            if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
-                return FlippingUtil.flipFieldPose(pose);
-            } else {
-                return pose;
-            }
-        } catch (Exception e) {
-            return pose;
-        }
-    }
-
-    public boolean shapeChecker(Shape shape) {
-        if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) {
-            return true;
-        }
-        return shape.isPointInside(FlippingUtil.flipFieldPose(estimatedPose).getTranslation());
+        return FieldUtils.flipPose(estimatedPose);
     }
 
     public void zeroPose() {

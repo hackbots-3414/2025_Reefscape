@@ -78,7 +78,7 @@ public class AutonomousUtil {
     public static void queuePathWithCommand(Pose2d pose, Supplier<Command> command) {
         try {
             onTheFlyCommands.add(pathFinder(pose));
-            onTheFlyCommands.add(new PathPlannerOverride(RobotObserver.getPoseFlipper().apply(RobotObserver.getPose())));
+            onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(RobotObserver.getPose())));
             onTheFlyCommands.add(command.get());
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +90,7 @@ public class AutonomousUtil {
     }
 
     public static Pose2d clip(List<Pose2d> list) {
-        return RobotObserver.getPoseFlipper().apply(RobotObserver.getPose()).nearest(list);
+        return FieldUtils.flipPose(RobotObserver.getPose()).nearest(list);
     }
 
     // ****** HANDLE THE QUEUE ********

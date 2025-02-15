@@ -19,8 +19,8 @@ public class CoralDefaultCommand extends Command {
     public void execute() {
         if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) return;
 
-        if (RobotObserver.getShapeChecker().apply(CommandBounds.rightIntakeBounds) ||
-            RobotObserver.getShapeChecker().apply(CommandBounds.leftIntakeBounds)) {
+        if (CommandBounds.rightIntakeBounds.useBounds() ||
+            CommandBounds.leftIntakeBounds.useBounds()) {
             m_coral.resetTimeout();
             m_coral.setIntake();
         } else {

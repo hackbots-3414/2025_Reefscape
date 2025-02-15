@@ -13,10 +13,10 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 
 public class AlgaeIntakeCommand extends Command {
-  private AlgaeRollers rollers;
-  private Elevator elevator;
-  private Pivot pivot;
-  private AlgaeLocationPresets location;
+  private final AlgaeRollers rollers;
+  private final Elevator elevator;
+  private final Pivot pivot;
+  private final AlgaeLocationPresets location;
   private boolean isDone;
 
   public AlgaeIntakeCommand(AlgaeRollers rollers, Elevator elevator, Pivot pivot, AlgaeLocationPresets location) {
@@ -31,22 +31,21 @@ public class AlgaeIntakeCommand extends Command {
     public void initialize() {
         isDone = false;
         switch (location) {
-            case GROUND:
+            case GROUND -> {
                 elevator.setStow();
                 pivot.setGroundPickup();
-                break;
-            case REEFLOWER:
-                isDone = !RobotObserver.getShapeChecker().apply(CommandBounds.reefBounds);
+            }
+            case REEFLOWER -> {
+                isDone = !CommandBounds.reefBounds.useBounds();
                 elevator.setReefLower();
                 pivot.setReefPickup();
-                break;
-            case REEFUPPER:
-                isDone = !RobotObserver.getShapeChecker().apply(CommandBounds.reefBounds);
+            }
+            case REEFUPPER -> {
+                isDone = !CommandBounds.reefBounds.useBounds();
                 elevator.setReefUpper();
                 pivot.setReefPickup();
-                break;
-            default:
-                isDone = true;
+            }
+            default -> isDone = true;
         }
     }
 
@@ -57,19 +56,16 @@ public class AlgaeIntakeCommand extends Command {
         }
         if (rollers.hasObject()) {
             switch (location) {
-                case GROUND:
-                    isDone = true;
-                    break;
-                case REEFLOWER:
-                    isDone = !RobotObserver.getShapeChecker().apply(CommandBounds.reefBounds);
+                case GROUND -> isDone = true;
+                case REEFLOWER -> {
+                    isDone = !CommandBounds.reefBounds.useBounds();
                     pivot.setReefExtract();
-                    break;
-                case REEFUPPER:
-                    isDone = !RobotObserver.getShapeChecker().apply(CommandBounds.reefBounds);
+                }
+                case REEFUPPER -> {
+                    isDone = !CommandBounds.reefBounds.useBounds();
                     pivot.setReefExtract();
-                    break;
-                default:
-                    isDone = true;
+                }
+                default -> isDone = true;
             }
             if (FlippingUtil.flipFieldPose(RobotObserver.getPose()).getTranslation()
                     .getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {

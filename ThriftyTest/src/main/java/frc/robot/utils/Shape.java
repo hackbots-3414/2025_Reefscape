@@ -1,14 +1,14 @@
 package frc.robot.utils;
 
-import static edu.wpi.first.units.Units.Meters;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import static edu.wpi.first.units.Units.Meters;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.RobotObserver;
 
 public class Shape {
     private final List<Translation2d> m_vertices;
@@ -66,6 +66,13 @@ public class Shape {
         }
 
         return (crossings % 2 == 1);
+    }
+
+    public boolean useBounds() {
+        if (RobotObserver.getDisableBounds() || RobotObserver.getVisionExpired()) {
+            return true;
+        }
+        return isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());
     }
 
     public List<Translation2d> getVertices() {
