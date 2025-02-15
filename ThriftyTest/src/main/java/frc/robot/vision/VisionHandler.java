@@ -56,7 +56,7 @@ public class VisionHandler implements AutoCloseable {
 
     private void setupAprilTagField() throws IOException {
         AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadFromResource(
-            AprilTagFields.k2025Reefscape.m_resourceFile
+            AprilTagFields.k2025ReefscapeWelded.m_resourceFile
         );
         m_visionSim.addAprilTags(tagLayout);
     }
