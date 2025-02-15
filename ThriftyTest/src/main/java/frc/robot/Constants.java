@@ -504,6 +504,11 @@ public class Constants {
     }
 
     public static final class CommandBounds {
+        // public static Map<String, Shape> displayBounds = Map.ofEntries((
+        //     Map.entry("Blue Alliance Reef", reef)
+        //     // Map.entry();
+        // );
+
         // 1 robot of space around the entire reef
         public static final List<Translation2d> reef = List.of(
             new Translation2d(5.85, 3.2),
