@@ -31,6 +31,10 @@ public class TeleopCommand extends Command {
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
+    private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+
     private boolean alreadyClosedLoop = false;
 
     private static double goalX = 0.0;

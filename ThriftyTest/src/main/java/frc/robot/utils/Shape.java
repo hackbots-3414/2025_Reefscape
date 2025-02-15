@@ -69,6 +69,7 @@ public class Shape {
     }
 
     public boolean useBounds() {
+        
         if (RobotObserver.getVisionExpired()) {
             return true;
         }

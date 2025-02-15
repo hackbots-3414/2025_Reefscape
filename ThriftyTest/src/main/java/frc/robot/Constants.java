@@ -225,7 +225,7 @@ public class Constants {
         public static final int forwardLimitChannelID = 0;
         public static final int reverseLimitChannelID = 1;
 
-        public static final double forwardSoftLimit = 4;
+        public static final double forwardSoftLimit = 2;
         public static final double reverseSoftLimit = 0;
 
         public static final double supplyCurrentLimit = 40;
@@ -235,8 +235,15 @@ public class Constants {
 
         public static final InvertedValue motorInverted = InvertedValue.Clockwise_Positive;
         
-        public static final double gearRatio = 5.2;
-        public static final double carriageMass = Units.lbsToKilograms(19.25); // Mass of the elevator carriage
+        public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
+
+        public static final double stage1Mass = Units.lbsToKilograms(5.402);
+        public static final double stage2Mass = Units.lbsToKilograms(4.819);
+        public static final double carriageMass = Units.lbsToKilograms(3.084);
+        public static final double coralMechanismMass = Units.lbsToKilograms(8.173); // includes coral
+        public static final double algaeMechanismMass = Units.lbsToKilograms(8.359);
+
+        public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
@@ -249,7 +256,7 @@ public class Constants {
         public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
                 .createElevatorSystem(
                     TalonFXConstants.TalonFXDCMotor,
-                    carriageMass,
+                    netMass,
                     drumRadius,
                     gearRatio
                 );
@@ -319,8 +326,8 @@ public class Constants {
         public static final int encoderID = 58; //FIXME No Pivot CANcoder exists on the robot
         public static final double encoderOffset = 0.324707;
 
-        public static final double rotorToSensorRatio = 70.0 / 8.0;
-        public static final double sensorToMechanismRatio = 32.0 / 14.0;
+        public static final double rotorToSensorRatio = 64.0 / 14.0; 
+        public static final double sensorToMechanismRatio = 32.0 / 14.0; 
 
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
@@ -356,7 +363,7 @@ public class Constants {
         public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
 
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
-                .createDCMotorSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
+                .createSingleJointedArmSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
 
         public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
                 stateSpacePlant,
@@ -417,6 +424,7 @@ public class Constants {
         public static final boolean rightMotorInvert = true;
 
         public static final double supplyCurrentLimit = 20;
+
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Brake)
@@ -424,6 +432,7 @@ public class Constants {
                 .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(supplyCurrentLimit));
+
         public static double intakeTimeout = 1;
     }
 

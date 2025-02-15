@@ -47,16 +47,10 @@ public class Elevator extends SubsystemBase {
     // Although I would love to implement a Kalman Filter for this, that takes too much time!!!
     private final MedianFilter m_filter = new MedianFilter(CanRangeConstants.k_filterWindow);
 
-    private final DigitalInput m_forwardLimiter = new DigitalInput(ElevatorConstants.forwardLimitChannelID);
-    private final DigitalInput m_reverseLimiter = new DigitalInput(ElevatorConstants.reverseLimitChannelID);
-
     private StateSpaceController<N2, N1, N2> m_controller;
-
 
     private double m_position;
     private double m_velocity;
-    private boolean m_reverseLimit;
-    private boolean m_forwardLimit;
 
     private boolean m_stateSpaceEnabled;
 
@@ -138,11 +132,6 @@ public class Elevator extends SubsystemBase {
         VoltageOut config = new VoltageOut(0);
         double volts = inputs.get(0);
 
-        if (volts < 0) {
-            config.withLimitReverseMotion(m_reverseLimit);
-        } else if (volts > 0) {
-            config.withLimitForwardMotion(m_forwardLimit);
-        }
         m_elevatorLeft.setControl(config.withOutput(volts));
     }
 
@@ -227,12 +216,11 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         m_velocity = m_cancoder.getVelocity().getValueAsDouble();
 
-        m_reverseLimit = !m_reverseLimiter.get();
-        m_forwardLimit = !m_forwardLimiter.get();
-
         m_elevatorArm.setLength(m_simPosition + 0.1); // Offset to avoid overlapping with root
 
-        m_position = m_filter.calculate(m_canrange.getDistance().getValueAsDouble());
+        // m_position = m_filter.calculate(m_canrange.getDistance().getValueAsDouble());
+        m_position = m_cancoder.getAbsolutePosition().getValueAsDouble();
+
         SmartDashboard.putNumber("Elevator Position", m_position);
 
         if (m_speedChanged && !m_stateSpaceEnabled) {
