@@ -506,11 +506,6 @@ public class Constants {
     }
 
     public static final class CommandBounds {
-        // public static Map<String, Shape> displayBounds = Map.ofEntries((
-        //     Map.entry("Blue Alliance Reef", reef)
-        //     // Map.entry();
-        // );
-
         // 1 robot of space around the entire reef
         public static final List<Translation2d> reef = List.of(
             new Translation2d(5.85, 3.2),
@@ -541,7 +536,7 @@ public class Constants {
             new Translation2d(6.5, 1),
             new Translation2d(5.5, 1)
         );
-        public static final Shape oppositeAllianceProcessorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor);
+        public static final Shape processorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor);
 
         // net where we score
         public static final List<Translation2d> net = List.of(
@@ -551,5 +546,13 @@ public class Constants {
             new Translation2d(7.2, 8)
         );
         public static final Shape netBounds = Shape.fromUnsortedVertices(net);
+
+        public static Map<String, Shape> displayBounds = Map.ofEntries(
+            Map.entry("Blue Alliance Reef", reefBounds),
+            Map.entry("Blue Alliance Net", netBounds),
+            Map.entry("Blue Alliance Left Intake", leftIntakeBounds),
+            Map.entry("Blue Alliance Right Intake", rightIntakeBounds),
+            Map.entry("Blue Alliance Processor", processorBounds)
+        );
     }
 }

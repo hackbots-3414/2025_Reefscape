@@ -4,16 +4,16 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,6 +38,7 @@ import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
@@ -58,66 +59,13 @@ public class RobotContainer {
     }
 
     private void addBoundsToField() {
-        RobotObserver.getField().getObject("Blue Reef Bounds").setPoses(
-            CommandBounds.reefBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Blue Left Human Player Bounds").setPoses(
-            CommandBounds.leftIntakeBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Blue Right Human Player Bounds").setPoses(
-            CommandBounds.rightIntakeBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Blue Net Bounds").setPoses(
-            CommandBounds.netBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Blue Processor Bounds").setPoses(
-            CommandBounds.oppositeAllianceProcessorBounds.getVertices().stream()
-                .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Red Reef Bounds").setPoses(
-            CommandBounds.reefBounds.getVertices().stream()
-                .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Red Left Human Player Bounds").setPoses(
-            CommandBounds.leftIntakeBounds.getVertices().stream()
-                .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Red Right Human Player Bounds").setPoses(
-            CommandBounds.rightIntakeBounds.getVertices().stream()
-                .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Red Net Bounds").setPoses(
-            CommandBounds.netBounds.getVertices().stream()
-                .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
-                .collect(Collectors.toList())
-        );
-
-        RobotObserver.getField().getObject("Red Processor Bounds").setPoses(
-            CommandBounds.oppositeAllianceProcessorBounds.getVertices().stream()
-                .map(t -> FlippingUtil.flipFieldPose(new Pose2d(t.getX(), t.getY(), Rotation2d.kZero)))
-                .collect(Collectors.toList())
-        );
-
+        for (Map.Entry<String, Shape> entry : CommandBounds.displayBounds.entrySet()) {
+            RobotObserver.getField().getObject(entry.getKey()).setPoses(
+                entry.getValue().getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
+        }
     }
 
     // ********** BINDINGS **********

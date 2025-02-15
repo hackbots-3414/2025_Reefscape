@@ -37,7 +37,7 @@ public class AlgaeScoreCommand extends Command {
         pivot.setNet();
       }
       case PROCESSOR -> {
-        isDone = !CommandBounds.oppositeAllianceProcessorBounds.useBounds();
+        isDone = !CommandBounds.processorBounds.useBounds();
         elevator.setProcessor();
         pivot.setProcessor();
       }
