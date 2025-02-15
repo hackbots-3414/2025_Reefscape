@@ -6,9 +6,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
@@ -18,8 +18,7 @@ public class CoralRollers extends SubsystemBase {
     private final TalonFX coralLeft = new TalonFX(IDConstants.coralLeft);
     private final TalonFX coralRight = new TalonFX(IDConstants.coralRight);
 
-    private final DigitalInput frontSensor = new DigitalInput(IDConstants.coralFrontIR);
-    private final DigitalInput backSensor = new DigitalInput(IDConstants.coralRearIR);
+    private final CANdi candi = new CANdi(IDConstants.candi);
 
     private boolean frontSensorValue = false;
     private boolean backSensorValue = false;
@@ -31,6 +30,7 @@ public class CoralRollers extends SubsystemBase {
 
     public CoralRollers() {
         configMotors();
+        configCandi();
     }
 
     private void configMotors() {
@@ -41,6 +41,10 @@ public class CoralRollers extends SubsystemBase {
         coralRight.getConfigurator().apply(CoralConstants.motorConfig);
 
         coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
+    }
+
+    private void configCandi() {
+        candi.getConfigurator().apply(CoralConstants.candiConfig);
     }
 
     public void setVoltage(double voltage) {
@@ -118,8 +122,8 @@ public class CoralRollers extends SubsystemBase {
 
     @Override
     public void periodic() {
-        frontSensorValue = frontSensor.get();
-        backSensorValue = backSensor.get();
+        frontSensorValue = candi.getS1Closed().getValue();
+        backSensorValue = candi.getS2Closed().getValue();
 
         if (m_voltageChanged) {
             coralLeft.setVoltage(m_voltage);

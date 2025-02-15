@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -21,6 +23,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.S1CloseStateValue;
+import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 
@@ -108,16 +112,14 @@ public class Constants {
     public static class IDConstants {
         public static final int elevatorLeft = 51;
         public static final int elevatorRight = 52;
-        public static final int canRange = 6;
         public static final int elevatorEncoder = 53;
 
         public static final int pivotMotor = 57;
         public static final int pivotEncoder = 58;
 
-        public static final int coralLeft = 50;
-        public static final int coralRight = 50;
-        public static final int coralFrontIR = 3;
-        public static final int coralRearIR = 4;
+        public static final int coralLeft = 55;
+        public static final int coralRight = 56;
+        public static final int candi = 59;
 
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
@@ -432,9 +434,15 @@ public class Constants {
                 .withMotorOutput(new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Brake)
                     .withInverted(InvertedValue.Clockwise_Positive))
+
                 .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(supplyCurrentLimit));
+
+        public static final CANdiConfiguration candiConfig = new CANdiConfiguration()
+                .withDigitalInputs(new DigitalInputsConfigs()
+                        .withS1CloseState(S1CloseStateValue.CloseWhenHigh)
+                        .withS2CloseState(S2CloseStateValue.CloseWhenHigh));
 
         public static double intakeTimeout = 1;
     }
