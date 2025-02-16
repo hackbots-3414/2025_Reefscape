@@ -647,13 +647,76 @@ public class Constants {
         K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
         L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
         FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
-        
+        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
+        PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),
+        NET(new Pose2d(7.7, 6.0, Rotation2d.fromDegrees(0)));
+
         public Pose2d value;
 
         private ScoringLocations(Pose2d value) {
             this.value = value;
         }
+    }
+
+    public enum ScoringLocationsLeft {
+        A(ScoringLocations.A.value),
+        C(ScoringLocations.C.value),
+        E(ScoringLocations.E.value),
+        G(ScoringLocations.G.value),
+        I(ScoringLocations.I.value),
+        K(ScoringLocations.K.value);
+
+        public Pose2d value;
+
+        private ScoringLocationsLeft(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ScoringLocationsRight {
+        B(ScoringLocations.B.value),
+        D(ScoringLocations.D.value),
+        F(ScoringLocations.F.value),
+        H(ScoringLocations.H.value),
+        J(ScoringLocations.J.value),
+        L(ScoringLocations.L.value);
+
+        public Pose2d value;
+
+        private ScoringLocationsRight(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ScoringLocationsMiddle {
+        AB(ScoringLocations.A.value.interpolate(ScoringLocations.B.value, 0.5)),
+        CD(ScoringLocations.C.value.interpolate(ScoringLocations.D.value, 0.5)),
+        EF(ScoringLocations.E.value.interpolate(ScoringLocations.F.value, 0.5)),
+        GH(ScoringLocations.G.value.interpolate(ScoringLocations.H.value, 0.5)),
+        IJ(ScoringLocations.I.value.interpolate(ScoringLocations.J.value, 0.5)),
+        KL(ScoringLocations.K.value.interpolate(ScoringLocations.L.value, 0.5));
+
+        public Pose2d value;
+
+        private ScoringLocationsMiddle(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ClimbLocations {
+        WALL(new Pose2d(8.5, 7.26, Rotation2d.fromDegrees(0))),
+        MIDDLE(new Pose2d(8.5, 6.1, Rotation2d.fromDegrees(0))),
+        CENTER(new Pose2d(8.5, 5.0, Rotation2d.fromDegrees(0)));
+
+        public Pose2d value;
+
+        private ClimbLocations(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ReefClipLocations {
+        LEFT, RIGHT;
     }
 
     public static final class CommandBounds {

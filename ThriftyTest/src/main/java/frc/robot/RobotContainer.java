@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ButtonBindingConstants;
+import frc.robot.Constants.ClimbLocations;
 import frc.robot.Constants.ButtonBindingConstants.BackupDriver;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoard;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardAlternate;
@@ -32,6 +33,11 @@ import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ReefClipLocations;
+import frc.robot.Constants.ScoringLocations;
+import frc.robot.Constants.ScoringLocationsLeft;
+import frc.robot.Constants.ScoringLocationsMiddle;
+import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralIntakeCommand;
@@ -52,11 +58,11 @@ import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
-    private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+    private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
 
-    private final VisionHandler m_vision = new VisionHandler(drivetrain);
+    private final VisionHandler m_vision = new VisionHandler(m_drivetrain);
 
     public RobotContainer() {
         configureSubsystems();
@@ -81,46 +87,57 @@ public class RobotContainer {
 
     private void configureDriverBindings() {
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
-        
+
+        int xAxis;
+        int yAxis;
+        int rAxis; // rotation
+        int resetHeading;
+        int openLoop;
+
+        double flipX;
+        double flipY;
+        double flipR;
+
         if (ButtonBindingConstants.driverChoice == DriverChoice.DRAGONREINS) {
-            Supplier<Double> xSup = () -> controller.getRawAxis(DragonReins.xAxis) * (DragonReins.flipX ? -1 : 1);
-            Supplier<Double> ySup = () -> controller.getRawAxis(DragonReins.yAxis) * (DragonReins.flipY ? -1 : 1);
-            Supplier<Double> rotSup = () -> controller.getRawAxis(DragonReins.rotAxis) * (DragonReins.flipRot ? -1 : 1);
-            Supplier<Boolean> enableOpenLoopSup = () -> controller.button(DragonReins.enableOpenLoop).getAsBoolean();
-            
-            drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, xSup, ySup, rotSup, enableOpenLoopSup));
+            xAxis = DragonReins.xAxis;
+            yAxis = DragonReins.yAxis;
+            rAxis = DragonReins.rotAxis;
 
-            controller.button(DragonReins.resetHeading).onTrue(drivetrain.runOnce(() -> drivetrain.zeroPose()));
+            resetHeading = DragonReins.resetHeading;
+            openLoop = DragonReins.enableOpenLoop;
 
-            controller.axisMagnitudeGreaterThan(DragonReins.xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
-                    .or(() -> controller.axisMagnitudeGreaterThan(DragonReins.yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation).getAsBoolean())
-                    .or(() -> controller.axisMagnitudeGreaterThan(DragonReins.rotAxis, DriveConstants.k_closedLoopOverrideToleranceRotation).getAsBoolean())
-                    .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
+            flipX = DragonReins.flipX ? -1.0 : 1.0;
+            flipY = DragonReins.flipY ? -1.0 : 1.0;
+            flipR = DragonReins.flipRot ? -1.0 : 1.0;
+        } else {
+            xAxis = BackupDriver.xAxis;
+            yAxis = BackupDriver.yAxis;
+            rAxis = BackupDriver.rotAxis;
 
-            drivetrain.registerTelemetry(telemetry::telemeterize);
+            resetHeading = BackupDriver.resetHeading;
+            openLoop = BackupDriver.enableOpenLoop;
 
-            return;
+            flipX = BackupDriver.flipX ? -1.0 : 1.0;
+            flipY = BackupDriver.flipY ? -1.0 : 1.0;
+            flipR = BackupDriver.flipRot ? -1.0 : 1.0;
         }
 
-        if (ButtonBindingConstants.driverChoice == DriverChoice.BACKUP) {
-            Supplier<Double> xSup = () -> controller.getRawAxis(BackupDriver.xAxis) * (BackupDriver.flipX ? -1 : 1);
-            Supplier<Double> ySup = () -> controller.getRawAxis(BackupDriver.yAxis) * (BackupDriver.flipY ? -1 : 1);
-            Supplier<Double> rotSup = () -> controller.getRawAxis(BackupDriver.rotAxis) * (BackupDriver.flipRot ? -1 : 1);
-            Supplier<Boolean> enableOpenLoopSup = () -> controller.button(BackupDriver.enableOpenLoop).getAsBoolean();
-            
-            drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, xSup, ySup, rotSup, enableOpenLoopSup));
+        Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
+        Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
+        Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
+        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop)
+            .getAsBoolean();
 
-            controller.button(BackupDriver.resetHeading).onTrue(drivetrain.runOnce(() -> drivetrain.zeroPose()));
+        m_drivetrain.setDefaultCommand(
+            new TeleopCommand(m_drivetrain, xSup, ySup, rSup, openLoopSup)
+        );
 
-            controller.axisMagnitudeGreaterThan(BackupDriver.xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
-                    .or(() -> controller.axisMagnitudeGreaterThan(BackupDriver.yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation).getAsBoolean())
-                    .or(() -> controller.axisMagnitudeGreaterThan(BackupDriver.rotAxis, DriveConstants.k_closedLoopOverrideToleranceRotation).getAsBoolean())
-                    .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
+        controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.zeroPose()));
 
-            drivetrain.registerTelemetry(telemetry::telemeterize);
-
-            return;
-        }
+        controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
+            .or(() -> controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation).getAsBoolean())
+            .or(() -> controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation).getAsBoolean())
+            .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
     // private void configureSysId() {
@@ -261,103 +278,13 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoardAlternate.processor).and(safety));
 
             bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(safety));
-
-            return;
         }
-
-
     }
 
     public List<Pose2d> scoringLocationsListLeft;
     public List<Pose2d> scoringLocationsRightList;
     public List<Pose2d> scoringLocationsMiddleList;
     public List<Pose2d> climbLocationsList;
-
-    public enum ScoringLocations {
-        A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
-        B(new Pose2d(3.16, 3.875, Rotation2d.fromDegrees(0))),
-        C(new Pose2d(3.675, 3, Rotation2d.fromDegrees(60))),
-        D(new Pose2d(4, 2.78, Rotation2d.fromDegrees(60))),
-        E(new Pose2d(5, 2.8, Rotation2d.fromDegrees(120))),
-        F(new Pose2d(5.3, 3, Rotation2d.fromDegrees(120))),
-        G(new Pose2d(5.8, 3.85, Rotation2d.fromDegrees(180))),
-        H(new Pose2d(5.8, 4.2, Rotation2d.fromDegrees(180))),
-        I(new Pose2d(5.3, 5.1, Rotation2d.fromDegrees(-120))),
-        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))),
-        K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
-        L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
-        FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
-        PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),
-        NET(new Pose2d(7.7, 6.0, Rotation2d.fromDegrees(0)));
-
-        private Pose2d value;
-
-        private ScoringLocations(Pose2d value) {
-            this.value = value;
-        }
-    }
-
-    public enum ScoringLocationsLeft {
-        A(ScoringLocations.A.value),
-        C(ScoringLocations.C.value),
-        E(ScoringLocations.E.value),
-        G(ScoringLocations.G.value),
-        I(ScoringLocations.I.value),
-        K(ScoringLocations.K.value);
-
-        private Pose2d value;
-
-        private ScoringLocationsLeft(Pose2d value) {
-            this.value = value;
-        }
-    }
-
-    public enum ScoringLocationsRight {
-        B(ScoringLocations.B.value),
-        D(ScoringLocations.D.value),
-        F(ScoringLocations.F.value),
-        H(ScoringLocations.H.value),
-        J(ScoringLocations.J.value),
-        L(ScoringLocations.L.value);
-
-        private Pose2d value;
-
-        private ScoringLocationsRight(Pose2d value) {
-            this.value = value;
-        }
-    }
-
-    public enum ScoringLocationsMiddle {
-        AB(ScoringLocations.A.value.interpolate(ScoringLocations.B.value, 0.5)),
-        CD(ScoringLocations.C.value.interpolate(ScoringLocations.D.value, 0.5)),
-        EF(ScoringLocations.E.value.interpolate(ScoringLocations.F.value, 0.5)),
-        GH(ScoringLocations.G.value.interpolate(ScoringLocations.H.value, 0.5)),
-        IJ(ScoringLocations.I.value.interpolate(ScoringLocations.J.value, 0.5)),
-        KL(ScoringLocations.K.value.interpolate(ScoringLocations.L.value, 0.5));
-
-        private Pose2d value;
-
-        private ScoringLocationsMiddle(Pose2d value) {
-            this.value = value;
-        }
-    }
-
-    public enum ClimbLocations {
-        WALL(new Pose2d(8.5, 7.26, Rotation2d.fromDegrees(0))),
-        MIDDLE(new Pose2d(8.5, 6.1, Rotation2d.fromDegrees(0))),
-        CENTER(new Pose2d(8.5, 5.0, Rotation2d.fromDegrees(0)));
-
-        private Pose2d value;
-
-        private ClimbLocations(Pose2d value) {
-            this.value = value;
-        }
-    }
-
-    public enum ReefClipLocations {
-        LEFT, RIGHT;
-    }
 
     // ********** AUTONOMOUS **********
 
@@ -443,6 +370,7 @@ public class RobotContainer {
     private CoralRollers coral;
 
     private void configureSubsystems() {
+        m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
         elevator = new Elevator();
         pivot = new Pivot();
         climber = new Climber();
@@ -453,8 +381,8 @@ public class RobotContainer {
     // ** BUTTON BOARD HELPERS **
     private void bindAutoCoralIntakeCommand(ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(drivetrain, ScoringLocations.FARHP.value, () -> coralIntakeCommand())));
-            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(drivetrain, ScoringLocations.CLOSEHP.value, () -> coralIntakeCommand())));
+            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.FARHP.value, () -> coralIntakeCommand())));
+            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.CLOSEHP.value, () -> coralIntakeCommand())));
         }
     }
 
@@ -464,8 +392,8 @@ public class RobotContainer {
 
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));
-            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(drivetrain, () -> coralScoreCommand(level), scoringLocationsRightList)));
+            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));
+            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsRightList)));
         }   
     }
 
@@ -476,8 +404,8 @@ public class RobotContainer {
     private void bindAutoAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
             case GROUND -> algaeIntakeCommand(AlgaeLocationPresets.GROUND);
-            case REEFLOWER, REEFUPPER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeIntakeCommand(AlgaeLocationPresets.PROCESSOR))));
-            case NET, PROCESSOR -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(drivetrain, () -> algaeScoreCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationsMiddleList)));
+            case REEFLOWER, REEFUPPER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeIntakeCommand(AlgaeLocationPresets.PROCESSOR))));
+            case NET, PROCESSOR -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeScoreCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationsMiddleList)));
         }
     }
 
