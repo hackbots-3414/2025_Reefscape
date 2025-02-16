@@ -54,10 +54,10 @@ public class Pivot extends SubsystemBase {
     private boolean m_speedChanged;
 
     public Pivot() {
+        configSim();
         configEncoder();
         configMotor();
         configStateSpace();
-        configSim();
     }
 
     private void configEncoder() {

@@ -57,10 +57,10 @@ public class Elevator extends SubsystemBase {
     private boolean m_speedChanged;
 
     public Elevator() {
+        configSim();
         configEncoder();
         configMotor();
         configStateSpace();
-        configSim();
     }
 
     private void configEncoder() {
