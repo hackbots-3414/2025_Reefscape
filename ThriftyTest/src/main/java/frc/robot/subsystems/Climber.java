@@ -12,8 +12,8 @@ import frc.robot.Constants.IDConstants;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
-    private final TalonFX leftClimbMotor = new TalonFX(IDConstants.climbLeft);
-    private final TalonFX rightClimbMotor = new TalonFX(IDConstants.climbRight);
+    private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
+    private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
 
     private double m_voltage;
     private boolean m_voltageChanged;
@@ -23,11 +23,11 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     private void configMotors() {
-        leftClimbMotor.clearStickyFaults();
-        rightClimbMotor.clearStickyFaults();
-        leftClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
-        rightClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
-        rightClimbMotor.setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
+        m_leftClimbMotor.clearStickyFaults();
+        m_rightClimbMotor.clearStickyFaults();
+        m_leftClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
+        m_rightClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
+        m_rightClimbMotor.setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
     }
 
     private void setMotor(double voltage) {
@@ -41,20 +41,20 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     public void stopMotor() {
-        leftClimbMotor.stopMotor();
+        m_leftClimbMotor.stopMotor();
     }
 
     @Override
     public void periodic() {
         if (m_voltageChanged) {
-            leftClimbMotor.setVoltage(m_voltage);
+            m_leftClimbMotor.setVoltage(m_voltage);
             m_voltageChanged = false;
         }
     }
 
    @Override
     public void close() throws Exception {
-        leftClimbMotor.close();
-        rightClimbMotor.close();
+        m_leftClimbMotor.close();
+        m_rightClimbMotor.close();
     }
 }

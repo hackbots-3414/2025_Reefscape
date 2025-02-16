@@ -27,27 +27,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
+import frc.robot.Constants.SimConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Pivot extends SubsystemBase {
-    private final TalonFX pivot = new TalonFX(IDConstants.pivotMotor);
-    private final CANcoder cancoder = new CANcoder(IDConstants.pivotEncoder);
+    private final TalonFX m_pivot = new TalonFX(IDConstants.pivotMotor);
+    private final CANcoder m_cancoder = new CANcoder(IDConstants.pivotEncoder);
 
-    private StateSpaceController<N2, N1, N2> controller;
+    private StateSpaceController<N2, N1, N2> m_controller;
 
-    private double position;
-    private double velocity;
+    private double m_position;
+    private double m_velocity;
 
-    private boolean stateSpaceEnabled;
+    private boolean m_stateSpaceEnabled;
 
-    private SingleJointedArmSim armSim;
-    private double simPosition = 0.0; // Simulated position in meters
-    private double simVelocity = 0.0; // Simulated velocity in meters per second
-    private final DCMotor armGearbox = DCMotor.getFalcon500(1); // 2 motors (left and right)
+    private SingleJointedArmSim m_armSim;
+    private double m_simPosition = 0.0; // Simulated position in meters
+    private double m_simVelocity = 0.0; // Simulated velocity in meters per second
+    private final DCMotor m_gearbox = DCMotor.getFalcon500(1); // 2 motors (left and right)
 
-    private Mechanism2d mechVisual;
-    private MechanismRoot2d mechRoot;
-    private MechanismLigament2d armLigament;
+    private Mechanism2d m_mechVisual;
+    private MechanismRoot2d m_mechRoot;
+    private MechanismLigament2d m_armLigament;
 
     private double m_speed;
     private boolean m_speedChanged;
@@ -60,19 +61,19 @@ public class Pivot extends SubsystemBase {
     }
 
     private void configEncoder() {
-        cancoder.clearStickyFaults();
-        cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
-        cancoder.getConfigurator().apply(PivotConstants.encoderConfig, 0.2);
+        m_cancoder.clearStickyFaults();
+        m_cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
+        m_cancoder.getConfigurator().apply(PivotConstants.encoderConfig, 0.2);
     }
 
     private void configMotor() {
-        pivot.getConfigurator().apply(PivotConstants.motorConfig, 0.2);
+        m_pivot.getConfigurator().apply(PivotConstants.motorConfig, 0.2);
     }
 
     private void configSim() {
-        armSim = new SingleJointedArmSim(
+        m_armSim = new SingleJointedArmSim(
                 PivotConstants.stateSpacePlant,
-                armGearbox,
+                m_gearbox,
                 PivotConstants.gearRatio,
                 PivotConstants.armLength,
                 PivotConstants.radiansAtZero,
@@ -81,39 +82,49 @@ public class Pivot extends SubsystemBase {
                 PivotConstants.stow // Starting angle
         );
 
-        mechVisual = new Mechanism2d(1.0, 1.0); // Width/height in meters
-        mechRoot = mechVisual.getRoot("ArmRoot", 0.5, 0.0); // Center at (0.5, 0)
-        armLigament = mechRoot
-                .append(new MechanismLigament2d("Arm", PivotConstants.armLength, Math.toDegrees(simPosition)));
-        SmartDashboard.putData("Pivot Arm Visualization", mechVisual);
+        m_mechVisual = new Mechanism2d(1.0, 1.0); // Width/height in meters
+        m_mechRoot = m_mechVisual.getRoot("ArmRoot", 0.5, 0.0); // Center at (0.5, 0)
+        m_armLigament = m_mechRoot
+                .append(new MechanismLigament2d("Arm", PivotConstants.armLength, Math.toDegrees(m_simPosition)));
+        SmartDashboard.putData("Pivot Arm Visualization", m_mechVisual);
     }
 
     private void configStateSpace() {
         Vector<N2> initialState = getOutput();
-        controller = new StateSpaceController<>(PivotConstants.stateSpaceConfig, this::getOutput, this::applyInput,
-                initialState);
+        m_controller = new StateSpaceController<>(
+            PivotConstants.stateSpaceConfig,
+            this::getOutput,
+            this::applyInput,
+            initialState
+        );
         enableStateSpace();
     }
 
     private Vector<N2> getOutput() {
-        if (RobotBase.isSimulation()) {
-            return VecBuilder.fill(simPosition, simVelocity);
+        if (RobotBase.isReal()) {
+            return VecBuilder.fill(
+                getPositionUncached(),
+                getVelocityUncached()
+            );
         } else {
-            return VecBuilder.fill(position, velocity);
+            return VecBuilder.fill(
+                getSimPositionUncached(),
+                getSimVelocityUncached()
+            );
         }
     }
 
     private void applyInput(Vector<N1> inputs) {
-        if (!stateSpaceEnabled) return;
+        if (!m_stateSpaceEnabled) return;
 
         VoltageOut config = new VoltageOut(0);
         double volts = inputs.get(0);
 
-        pivot.setControl(config.withOutput(volts));
+        m_pivot.setControl(config.withOutput(volts));
     }
 
-    public void setPosition(double goal) {
-        controller.setReference(VecBuilder.fill(goal, 0.0));
+    public void setM_position(double goal) {
+        m_controller.setReference(VecBuilder.fill(goal, 0.0));
     }
 
     public void setSpeed(double speed) {
@@ -122,59 +133,79 @@ public class Pivot extends SubsystemBase {
     }
 
     public void enableStateSpace() {
-        controller.setReference(getOutput());
-        stateSpaceEnabled = true;
+        m_controller.setReference(getOutput());
+        m_stateSpaceEnabled = true;
     }
 
     public void disableStateSpace() {
-        stateSpaceEnabled = false;
+        m_stateSpaceEnabled = false;
     }
 
     public void setStow() {
-        setPosition(PivotConstants.stow);
+        setM_position(PivotConstants.stow);
     }
 
     public void setProcessor() {
-        setPosition(PivotConstants.processor);
+        setM_position(PivotConstants.processor);
     }
 
     public void setNet() {
-        setPosition(PivotConstants.net);
+        setM_position(PivotConstants.net);
     }
 
     public void setGroundPickup() {
-        setPosition(PivotConstants.groundPickup);
+        setM_position(PivotConstants.groundPickup);
     }
 
     public void setReefPickup() {
-        setPosition(PivotConstants.reefPickup);
+        setM_position(PivotConstants.reefPickup);
     }
 
     public void setReefExtract() {
-        setPosition(PivotConstants.reefExtract);
+        setM_position(PivotConstants.reefExtract);
     }
     
     public void stop() {
-        setPosition(position);
+        setM_position(m_position);
     }
 
-    public double getPosition() {
-        return position;
+    public double getM_position() {
+        return m_position;
     }
 
+    public double getM_velocity() {
+        return m_velocity;
+    }
+    
     public boolean atSetpoint() {
-        return controller.isAtSetpoint();
+        return m_controller.isAtSetpoint();
+    }
+    
+    private double getPositionUncached() {
+        return m_cancoder.getPosition().getValueAsDouble();
+    }
+
+    private double getVelocityUncached() {
+        return m_cancoder.getVelocity().getValueAsDouble();
+    }
+
+    private double getSimPositionUncached() {
+        return m_armSim.getAngleRads();
+    }
+
+    private double getSimVelocityUncached() {
+        return m_armSim.getVelocityRadPerSec();
     }
 
     @Override
     public void periodic() {
-        position = cancoder.getPosition().getValueAsDouble();
-        velocity = cancoder.getVelocity().getValueAsDouble();
+        m_position = getPositionUncached();
+        m_velocity = getVelocityUncached();
 
-        armLigament.setAngle(Math.toDegrees(simPosition));
+        m_armLigament.setAngle(Math.toDegrees(m_simPosition));
 
-        if (m_speedChanged && !stateSpaceEnabled) {
-            pivot.setControl(new DutyCycleOut(m_speed));
+        if (m_speedChanged && !m_stateSpaceEnabled) {
+            m_pivot.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
     }
@@ -182,19 +213,19 @@ public class Pivot extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
         // Update the simulation with the motor voltage
-        double appliedVolts = pivot.get() * RobotController.getBatteryVoltage();
-        armSim.setInput(appliedVolts);
-        armSim.update(0.02); // Update every 20ms (standard loop time)
+        double appliedVolts = m_pivot.get() * RobotController.getBatteryVoltage();
+        m_armSim.setInput(appliedVolts);
+        m_armSim.update(SimConstants.k_simPeriodic);
 
         // Update simulated angle and angular velocity
-        simPosition = armSim.getAngleRads();
-        simVelocity = armSim.getVelocityRadPerSec();
+        m_simPosition = getSimPositionUncached();
+        m_simVelocity = getSimVelocityUncached();
 
         // Update the simulated encoder values
-        cancoder.getSimState().setRawPosition(simPosition / (2 * Math.PI)); // Convert radians to rotations
-        cancoder.getSimState().setVelocity(simVelocity / (2 * Math.PI)); // Convert rad/s to RPM
+        m_cancoder.getSimState().setRawPosition(m_simPosition / (2 * Math.PI)); // Convert radians to rotations
+        m_cancoder.getSimState().setVelocity(m_simVelocity / (2 * Math.PI)); // Convert rad/s to RPM
 
         // Simulate battery voltage
-        RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(armSim.getCurrentDrawAmps()));
+        RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_armSim.getCurrentDrawAmps()));
     }
 }

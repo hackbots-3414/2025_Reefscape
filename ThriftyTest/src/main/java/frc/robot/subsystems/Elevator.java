@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.Constants.SimConstants;
 import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
@@ -77,8 +78,12 @@ public class Elevator extends SubsystemBase {
 
     private void configStateSpace() {
         Vector<N2> initialState = getOutput();
-        m_controller = new StateSpaceController<>(ElevatorConstants.stateSpaceConfig, this::getOutput, this::applyInput,
-                initialState);
+        m_controller = new StateSpaceController<>(
+            ElevatorConstants.stateSpaceConfig,
+            this::getOutput,
+            this::applyInput,
+            initialState
+        );
         enableStateSpace();
     }
 
@@ -100,9 +105,15 @@ public class Elevator extends SubsystemBase {
 
     private Vector<N2> getOutput() {
         if (RobotBase.isSimulation()) {
-            return VecBuilder.fill(m_simPosition, m_simVelocity);
+            return VecBuilder.fill(
+                getSimPositionUncached(),
+                getSimVelocityUncached()
+            );
         } else {
-            return VecBuilder.fill(m_position, m_velocity);
+            return VecBuilder.fill(
+                getPositionUncached(),
+                getVelocityUncached()
+            );
         }
     }
 
@@ -192,14 +203,32 @@ public class Elevator extends SubsystemBase {
         return m_position;
     }
 
+    public double getVelocity() {
+        return m_velocity;
+    }
+
+    private double getPositionUncached() {
+        return m_cancoder.getAbsolutePosition().getValueAsDouble();
+    }
+
+    private double getVelocityUncached() {
+        return m_cancoder.getVelocity().getValueAsDouble();
+    }
+
+    private double getSimPositionUncached() {
+        return m_elevatorSim.getPositionMeters();
+    }
+
+    private double getSimVelocityUncached() {
+        return m_elevatorSim.getVelocityMetersPerSecond();
+    }
+
     @Override
     public void periodic() {
-        m_velocity = m_cancoder.getVelocity().getValueAsDouble();
-
         m_elevatorArm.setLength(m_simPosition + 0.1); // Offset to avoid overlapping with root
 
-        // m_position = m_filter.calculate(m_canrange.getDistance().getValueAsDouble());
-        m_position = m_cancoder.getAbsolutePosition().getValueAsDouble();
+        m_position = getPositionUncached();
+        m_velocity = getVelocityUncached();
 
         SmartDashboard.putNumber("Elevator Position", m_position);
 
@@ -214,11 +243,11 @@ public class Elevator extends SubsystemBase {
         // Update the simulation with the motor voltage
         double appliedVolts = m_elevatorLeft.get() * RobotController.getBatteryVoltage();
         m_elevatorSim.setInput(appliedVolts);
-        m_elevatorSim.update(0.02); // Update every 20ms (standard loop time)
+        m_elevatorSim.update(SimConstants.k_simPeriodic);
 
         // Update simulated position and velocity
-        m_simPosition = m_elevatorSim.getPositionMeters();
-        m_simVelocity = m_elevatorSim.getVelocityMetersPerSecond();
+        m_simPosition = getSimPositionUncached();
+        m_simVelocity = getSimVelocityUncached();
 
         // Update the simulated encoder values
         m_cancoder.getSimState().setRawPosition(m_simPosition);

@@ -79,6 +79,25 @@ And +Z is upwards, so it wouldn't show here.
 */
 
 public class Constants {
+
+    public static class IDConstants {
+        public static final int elevatorLeft = 51;
+        public static final int elevatorRight = 52;
+        public static final int elevatorEncoder = 53;
+
+        public static final int pivotMotor = 57;
+        public static final int pivotEncoder = 58;
+
+        public static final int coralLeft = 55;
+        public static final int coralRight = 56;
+        public static final int candi = 59;
+
+        public static final int climbLeft = 1;
+        public static final int climbRight = 2;
+
+        public static final int algaeMotor = 60;
+    }
+
     public static class SimConstants {
         public static final double k_simPeriodic = 0.005;
     }
@@ -112,23 +131,6 @@ public class Constants {
         public static final double k_closedLoopOverrideToleranceRotation = 0.02;
     }
 
-    public static class IDConstants {
-        public static final int elevatorLeft = 51;
-        public static final int elevatorRight = 52;
-        public static final int elevatorEncoder = 53;
-
-        public static final int pivotMotor = 57;
-        public static final int pivotEncoder = 58;
-
-        public static final int coralLeft = 55;
-        public static final int coralRight = 56;
-        public static final int candi = 59;
-
-        public static final int climbLeft = 1;
-        public static final int climbRight = 2;
-
-        public static final int algaeMotor = 60;
-    }
 
     public static class ButtonBindingConstants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
@@ -349,7 +351,7 @@ public class Constants {
     }
 
     public static final class StateSpaceConstants {
-        public static final double k_dt = 0.02;
+        public static final double k_dt = 0.01; // fast state space, please!
         public static final double k_maxVoltage = 4.0;
     }
 
