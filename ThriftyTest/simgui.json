@@ -124,7 +124,14 @@
           "length": 0.4000000059604645,
           "width": 0.4000000059604645
         },
-        "width": 17.54825210571289,
+        "width": 17.54825210571289
+      },
+      "/SmartDashboard/Elevator Visualization": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Pivot Arm Visualization": {
         "window": {
           "visible": true
         }
@@ -351,7 +358,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
@@ -386,5 +393,8 @@
         "open": true
       }
     }
+  },
+  "NetworkTables Info": {
+    "visible": true
   }
 }
