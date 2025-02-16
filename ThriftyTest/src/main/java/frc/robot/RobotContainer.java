@@ -180,7 +180,7 @@ public class RobotContainer {
         }
 
         // handle bindings
-        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
+        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
         if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
             BooleanSupplier safetyOn = () -> controller.button(ButtonBoard.safetySwitch).getAsBoolean();
@@ -228,8 +228,6 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoard.processor).and(safetyOff));
 
             bindManualClimbCommand(controller.button(ButtonBoard.climb).and(safetyOff));
-
-            return;
         }
 
         if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BACKUP) {
@@ -418,8 +416,8 @@ public class RobotContainer {
 
     private void bindManualElevatorCommand(Direction direction, Trigger trigger) {
         switch (direction) {
-            case kForward -> trigger.onTrue(new ManualElevatorCommand(elevator, true));
-            case kReverse -> trigger.onTrue(new ManualElevatorCommand(elevator, false));
+            case kForward -> trigger.whileTrue(new ManualElevatorCommand(elevator, true));
+            case kReverse -> trigger.whileTrue(new ManualElevatorCommand(elevator, false));
         }
     }
 
