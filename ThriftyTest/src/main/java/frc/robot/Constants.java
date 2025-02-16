@@ -45,6 +45,8 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.PS5Controller.Axis;
+import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.generated.TunerConstants;
 import frc.robot.stateSpace.StateSpaceConfig;
 import frc.robot.utils.Shape;
@@ -106,7 +108,8 @@ public class Constants {
         
         public static double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
         public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
-        public static final double k_closedLoopOverrideTolerance = 0.02;
+        public static final double k_closedLoopOverrideToleranceTranslation = 0.02;
+        public static final double k_closedLoopOverrideToleranceRotation = 0.02;
     }
 
     public static class IDConstants {
@@ -125,6 +128,137 @@ public class Constants {
         public static final int climbRight = 2;
 
         public static final int algaeMotor = 60;
+    }
+
+    public static class ButtonBindingConstants {
+        public static enum DriverChoice {DRAGONREINS, BACKUP;}
+        public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
+
+        public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
+        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BUTTONBOARD;
+
+        public static final int driverPort = 0;
+        public static final int buttonBoardPort = 1;
+
+
+        public static class DragonReins {
+            public static final int xAxis = 1;
+            public static final int yAxis = 0;
+            public static final int rotAxis = 2;
+
+            public static final boolean flipX = true;
+            public static final boolean flipY = false;
+            public static final boolean flipRot = true;
+
+            public static final int enableOpenLoop = 3;
+            public static final int resetHeading = 1;
+        }
+
+        public static class BackupDriver {
+            public static final int xAxis = Axis.kLeftY.value;
+            public static final int yAxis = Axis.kLeftX.value;
+            public static final int rotAxis = Axis.kRightY.value;
+
+            public static final boolean flipX = true;
+            public static final boolean flipY = false;
+            public static final boolean flipRot = true;
+
+            public static final int enableOpenLoop = Button.kSquare.value;
+            public static final int resetHeading = Button.kCircle.value;
+        }
+
+        public static class ButtonBoard {
+            public static final int safetySwitch = 17;
+
+            // WHEN SAFETY ON - AUTOMATION BASED
+            public static final int L1Auto = 1;
+            public static final int L2Auto = 2;
+            public static final int L3Auto = 3;
+            public static final int L4Auto = 4;
+            public static final int R1Auto = 5;
+            public static final int R2Auto = 6;
+            public static final int R3Auto = 7;
+            public static final int R4Auto = 8;
+
+            public static final int lowAlgaeAuto = 9;
+            public static final int highAlgaeAuto = 10;
+            public static final int groundAlgaeAuto = 11;
+            public static final int processorAuto = 12;
+            public static final int netAuto = 13;
+
+            public static final int leftIntake = 14;
+            public static final int rightIntake = 15;
+
+            public static final int climbAuto = 16;
+
+            // WHEN SAFETY OFF - MANUAL STUFF
+            public static final int l1Score = 1;
+            public static final int l2Score = 2;
+            public static final int l3Score = 3;
+            public static final int l4Score = 4;
+
+            public static final int manualElevatorUp = 5;
+            public static final int manualElevatorDown = 6;
+            public static final int manualPivotUp = 7;
+            public static final int manualPivotDown = 8;
+
+            public static final int lowAlgae = 9;
+            public static final int highAlgae = 10;
+            public static final int groundAlgae = 11;
+            public static final int processor = 12;
+            public static final int net = 13;
+
+            public static final int intake = 14;
+            public static final int spitPiece = 15;
+
+            public static final int climb = 16;
+        }
+
+        public static class ButtonBoardAlternate {
+            public static final int safetySwitch = Button.kTouchpad.value;
+
+            // WHEN SAFETY ON - AUTOMATION BASED
+            public static final int L1 = 0; // POV
+            public static final int L2 = 270; // POV
+            public static final int L3 = 90; // POV
+            public static final int L4 = 180; // POV
+            public static final int leftReef = Button.kSquare.value;
+            public static final int rightReef = Button.kCircle.value;
+
+            public static final int lowAlgaeAuto = Button.kCross.value;
+            public static final int highAlgaeAuto = Button.kTriangle.value;
+            public static final int groundAlgaeAuto = 180; // POV
+            public static final int processorAuto = 90; // POV
+            public static final int netAuto = 0; // POV
+            public static final int algaeModeButton = Button.kOptions.value;
+            
+            public static final int leftIntake = Button.kL1.value; // LB
+            public static final int rightIntake = Button.kR1.value; // RB
+            
+            public static final int climbAuto = Button.kCreate.value;
+
+            // WHEN SAFETY OFF - MANUAL STUFF
+            public static final int l1Score = 0;
+            public static final int l2Score = 270;
+            public static final int l3Score = 90;
+            public static final int l4Score = 180;
+
+            public static final int manualElevatorUp = Axis.kLeftY.value;
+            public static final int manualElevatorDown = Axis.kLeftY.value;
+            public static final int manualPivotUp = Axis.kRightY.value;
+            public static final int manualPivotDown = Axis.kRightY.value;
+
+            public static final int lowAlgae = Button.kCross.value;
+            public static final int highAlgae = Button.kTriangle.value;
+            public static final int groundAlgae = Button.kSquare.value;
+            public static final int processor = Button.kCircle.value;
+            public static final int net = Button.kR1.value;
+
+            public static final int intake = Button.kL1.value; // LB
+            public static final int spitPiece = Button.kL2.value; // LT
+
+            public static final int climb = Button.kCreate.value;
+        }
     }
 
     public static class VisionConstants {

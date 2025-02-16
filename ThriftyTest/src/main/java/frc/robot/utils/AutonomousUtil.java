@@ -61,7 +61,7 @@ public class AutonomousUtil {
     }
 
     public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
-            Command[] scoringCommands, Supplier<Command> stowCommand, Supplier<Command> intakeCommand) {
+            Command[] scoringCommands, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
             if (i != 0) {

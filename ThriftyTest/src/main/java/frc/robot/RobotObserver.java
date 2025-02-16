@@ -50,4 +50,15 @@ public class RobotObserver {
     public static boolean getVisionExpired() {
         return getInstance().m_visionExpiredSupplier.get();
     }
+
+    /* Lets us keep track of if safety is enabled */
+    private boolean m_safety = true;
+
+    public static void toggleSafety() {
+        getInstance().m_safety = !getInstance().m_safety;
+    }
+
+    public static boolean getToggleSafety() {
+        return getInstance().m_visionExpiredSupplier.get();
+    }
 }
