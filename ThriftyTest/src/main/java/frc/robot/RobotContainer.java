@@ -429,8 +429,8 @@ public class RobotContainer {
 
     private void bindManualPivotCommand(Direction direction, Trigger trigger) {
         switch (direction) {
-            case kForward -> trigger.onTrue(new ManualPivotCommand(pivot, true));
-            case kReverse -> trigger.onTrue(new ManualPivotCommand(pivot, false));
+            case kForward -> trigger.whileTrue(new ManualPivotCommand(pivot, true));
+            case kReverse -> trigger.whileTrue(new ManualPivotCommand(pivot, false));
         }
     }
 
