@@ -132,8 +132,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setSpeed(double speed) {
-        //m_speedChanged = (speed != m_speed);
-        //m_speed = speed;
+        m_speedChanged = (speed != m_speed);
+        m_speed = speed;
     }
 
     public void enableStateSpace() {
