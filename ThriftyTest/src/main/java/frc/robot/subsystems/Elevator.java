@@ -123,7 +123,6 @@ public class Elevator extends SubsystemBase {
         if (!m_stateSpaceEnabled) return;
 
         double volts = inputs.get(0);
-        m_logger.trace("volts: {}", volts);
 
         m_elevatorRight.setVoltage(volts);
     }
