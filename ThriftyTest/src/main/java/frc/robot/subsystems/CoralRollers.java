@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.IDConstants;
 
@@ -122,8 +123,16 @@ public class CoralRollers extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_frontSensorValue = m_candi.getS1Closed().getValue();
-        m_backSensorValue = m_candi.getS2Closed().getValue();
+        if (Robot.isReal()) {
+            m_frontSensorValue = m_candi.getS1Closed().getValue();
+            m_backSensorValue = m_candi.getS2Closed().getValue();
+        } else {
+            m_frontSensorValue = SmartDashboard.getBoolean("Front IR", false);
+            m_backSensorValue = SmartDashboard.getBoolean("Back IR", false);
+        }
+
+        SmartDashboard.putBoolean("Front IR", m_frontSensorValue);
+        SmartDashboard.putBoolean("Back IR", m_backSensorValue);
 
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);
