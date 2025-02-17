@@ -396,6 +396,8 @@ public class Constants {
         public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
 
+        public static final double momentOfInertia = netMass * Math.pow(drumRadius, 2);
+
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
         private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(0.1, 0.03);
@@ -404,10 +406,9 @@ public class Constants {
         private static final Vector<N1> relms = VecBuilder.fill(9.0);
         
         public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
-                .createElevatorSystem(
+                .createDCMotorSystem(
                     TalonFXConstants.TalonFXDCMotor,
-                    netMass,
-                    drumRadius,
+                    momentOfInertia,
                     gearRatio
                 );
 
@@ -427,14 +428,14 @@ public class Constants {
         public static final double encoderOffset = -0.427979;
 
         public static final double stow = 0;
-        public static final double processor = 0.25;
-        public static final double L1 = 0.5;
-        public static final double L2 = 1.5;
-        public static final double L3 = 2.5;
-        public static final double L4 = 3.5;
-        public static final double net = 4;
-        public static final double reefLower = 1.75; // arbitrary, meters
-        public static final double reefUpper = 2.75; // arbitrary, meters
+        public static final double processor = 0.125;
+        public static final double L1 = 0.25;
+        public static final double L2 = 0.75;
+        public static final double L3 = 1.25;
+        public static final double L4 = 1.75;
+        public static final double net = 1.95;
+        public static final double reefLower = 0.5; // arbitrary, meters
+        public static final double reefUpper = 1.5; // arbitrary, meters
 
         public static final double manualUpSpeed = 0.5;
         public static final double manualDownSpeed = -0.5;
