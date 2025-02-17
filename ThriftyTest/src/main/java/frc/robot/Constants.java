@@ -79,6 +79,25 @@ And +Z is upwards, so it wouldn't show here.
 */
 
 public class Constants {
+
+    public static class IDConstants {
+        public static final int elevatorLeft = 51;
+        public static final int elevatorRight = 52;
+        public static final int elevatorEncoder = 53;
+
+        public static final int pivotMotor = 57;
+        public static final int pivotEncoder = 58;
+
+        public static final int coralLeft = 55;
+        public static final int coralRight = 56;
+        public static final int candi = 59;
+
+        public static final int climbLeft = 1;
+        public static final int climbRight = 2;
+
+        public static final int algaeMotor = 60;
+    }
+
     public static class SimConstants {
         public static final double k_simPeriodic = 0.005;
     }
@@ -112,23 +131,6 @@ public class Constants {
         public static final double k_closedLoopOverrideToleranceRotation = 0.02;
     }
 
-    public static class IDConstants {
-        public static final int elevatorLeft = 51;
-        public static final int elevatorRight = 52;
-        public static final int elevatorEncoder = 53;
-
-        public static final int pivotMotor = 57;
-        public static final int pivotEncoder = 58;
-
-        public static final int coralLeft = 55;
-        public static final int coralRight = 56;
-        public static final int candi = 59;
-
-        public static final int climbLeft = 1;
-        public static final int climbRight = 2;
-
-        public static final int algaeMotor = 60;
-    }
 
     public static class ButtonBindingConstants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
@@ -349,8 +351,8 @@ public class Constants {
     }
 
     public static final class StateSpaceConstants {
-        public static final double k_dt = 0.02;
-        public static final double k_maxVoltage = 4.0;
+        public static final double k_dt = 0.01; // fast state space, please!
+        public static final double k_maxVoltage = 12.0;
     }
 
     public static final class AutonConstants {
@@ -396,10 +398,10 @@ public class Constants {
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
-        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(12, 0.3);
+        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(0.1, 0.03);
 
-        private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(1.0);
+        private static final Vector<N2> qelms = VecBuilder.fill(0.002, 0.1);
+        private static final Vector<N1> relms = VecBuilder.fill(9.0);
         
         public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
                 .createElevatorSystem(
@@ -434,8 +436,8 @@ public class Constants {
         public static final double reefLower = 1.75; // arbitrary, meters
         public static final double reefUpper = 2.75; // arbitrary, meters
 
-        public static final double manualUpSpeed = 0.1;
-        public static final double manualDownSpeed = -0.1;
+        public static final double manualUpSpeed = 0.5;
+        public static final double manualDownSpeed = -0.5;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -450,8 +452,8 @@ public class Constants {
 
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
-                        .withFeedbackRotorOffset(encoderOffset)
                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+                        .withFeedbackRotorOffset(encoderOffset)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
@@ -499,7 +501,7 @@ public class Constants {
 
         private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
 
-        private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
+        private static final Vector<N2> qelms = VecBuilder.fill(0.002, 0.1);
         private static final Vector<N1> relms = VecBuilder.fill(4.0);
 
         public static final double momentOfIntertia = 0.14622;

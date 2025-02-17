@@ -48,7 +48,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    private Pose2d estimatedPose = new Pose2d();
+    private Pose2d m_estimatedPose = new Pose2d();
 
     private double m_oldVisionTimestamp = -1;
 
@@ -82,14 +82,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public Pose2d getPose() {
-        return estimatedPose;
+        return m_estimatedPose;
     }
     
     /**
      * returns the current pose, with red side poses flipped
      */
     public Pose2d getBluePose() {
-        return FieldUtils.flipPose(estimatedPose);
+        return FieldUtils.flipPose(m_estimatedPose);
     }
 
     public void zeroPose() {
@@ -110,7 +110,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     @Override
     public void periodic() {
-        estimatedPose = this.getState().Pose;
+        m_estimatedPose = this.getState().Pose;
         RobotObserver.setPoseSupplier(this::getPose);
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
