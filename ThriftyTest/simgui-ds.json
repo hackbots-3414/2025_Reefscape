@@ -1,4 +1,9 @@
 {
+  "FMS": {
+    "window": {
+      "visible": false
+    }
+  },
   "System Joysticks": {
     "window": {
       "enabled": false
@@ -8,15 +13,15 @@
     {
       "axisConfig": [
         {
-          "decKey": 83,
+          "decKey": 264,
           "decayRate": 0.8999999761581421,
-          "incKey": 87,
+          "incKey": 265,
           "keyRate": 0.20000000298023224
         },
         {
-          "decKey": 68,
+          "decKey": 262,
           "decayRate": 0.8999999761581421,
-          "incKey": 65,
+          "incKey": 263,
           "keyRate": 0.20000000298023224
         },
         {
@@ -24,14 +29,10 @@
           "decayRate": 0.8999999761581421,
           "incKey": 93,
           "keyRate": 0.20000000298023224
-        },
-        {
-          "decKey": 264,
-          "incKey": 265
         }
       ],
       "axisCount": 3,
-      "buttonCount": 19,
+      "buttonCount": 20,
       "buttonKeys": [
         49,
         50,
@@ -43,25 +44,20 @@
         56,
         57,
         48,
-        45,
-        61,
-        90,
-        88,
-        46,
+        81,
+        87,
+        69,
         82,
         84,
         89,
-        85
+        85,
+        73,
+        79,
+        80
       ],
-      "povCount": 0
+      "povCount": 1
     },
     {
-      "axisConfig": [
-        {},
-        {
-          "decKey": 73
-        }
-      ],
       "axisCount": 2,
       "buttonCount": 4,
       "buttonKeys": [
@@ -101,12 +97,6 @@
       "povCount": 0
     },
     {
-      "axisConfig": [
-        {
-          "decKey": 263,
-          "incKey": 262
-        }
-      ],
       "axisCount": 2,
       "buttonCount": 6,
       "buttonKeys": [
@@ -126,7 +116,6 @@
     }
   ],
   "robotJoysticks": [
-    {},
     {},
     {
       "guid": "Keyboard0"

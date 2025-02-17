@@ -180,7 +180,7 @@ public class RobotContainer {
         }
 
         // handle bindings
-        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
+        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
         if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
             BooleanSupplier safetyOn = () -> controller.button(ButtonBoard.safetySwitch).getAsBoolean();
