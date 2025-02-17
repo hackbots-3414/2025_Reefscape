@@ -35,6 +35,7 @@
       "/SmartDashboard/Place to Score #3": "String Chooser",
       "/SmartDashboard/Place to Score #4": "String Chooser",
       "/SmartDashboard/Raise Elevator": "Command",
+      "/SmartDashboard/Raise Pivot": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
@@ -125,10 +126,7 @@
           "length": 0.4000000059604645,
           "width": 0.4000000059604645
         },
-        "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
+        "width": 17.54825210571289
       },
       "/SmartDashboard/Elevator Visualization": {
         "window": {
@@ -141,6 +139,11 @@
         }
       },
       "/SmartDashboard/Raise Elevator": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Raise Pivot": {
         "window": {
           "visible": true
         }

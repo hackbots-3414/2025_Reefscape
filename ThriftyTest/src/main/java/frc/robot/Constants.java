@@ -393,7 +393,8 @@ public class Constants {
         public static final double coralMechanismMass = Units.lbsToKilograms(8.173); // includes coral
         public static final double algaeMechanismMass = Units.lbsToKilograms(8.359);
 
-        public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
+        //public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
+        public static final double netMass = 0.1; // very little mass
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance

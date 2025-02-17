@@ -123,7 +123,7 @@ public class Pivot extends SubsystemBase {
         m_pivot.setControl(config.withOutput(volts));
     }
 
-    public void setM_position(double goal) {
+    public void setPosition(double goal) {
         m_controller.setReference(VecBuilder.fill(goal, 0.0));
     }
 
@@ -142,31 +142,31 @@ public class Pivot extends SubsystemBase {
     }
 
     public void setStow() {
-        setM_position(PivotConstants.stow);
+        setPosition(PivotConstants.stow);
     }
 
     public void setProcessor() {
-        setM_position(PivotConstants.processor);
+        setPosition(PivotConstants.processor);
     }
 
     public void setNet() {
-        setM_position(PivotConstants.net);
+        setPosition(PivotConstants.net);
     }
 
     public void setGroundPickup() {
-        setM_position(PivotConstants.groundPickup);
+        setPosition(PivotConstants.groundPickup);
     }
 
     public void setReefPickup() {
-        setM_position(PivotConstants.reefPickup);
+        setPosition(PivotConstants.reefPickup);
     }
 
     public void setReefExtract() {
-        setM_position(PivotConstants.reefExtract);
+        setPosition(PivotConstants.reefExtract);
     }
     
     public void stop() {
-        setM_position(m_position);
+        setPosition(m_position);
     }
 
     public double getM_position() {

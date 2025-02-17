@@ -374,6 +374,12 @@ public class RobotContainer {
         climber = new Climber();
         roller = new AlgaeRollers();
         coral = new CoralRollers();
+        SmartDashboard.putData("Raise Elevator", new InstantCommand(() -> {
+            elevator.setPosition(1.0);
+        }));
+        SmartDashboard.putData("Raise Pivot", new InstantCommand(() -> {
+            pivot.setNet();
+        }));
     }
 
     // ** BUTTON BOARD HELPERS **
