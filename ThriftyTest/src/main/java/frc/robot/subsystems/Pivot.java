@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
@@ -42,8 +43,6 @@ public class Pivot extends SubsystemBase {
     private boolean m_stateSpaceEnabled;
 
     private SingleJointedArmSim m_armSim;
-    private double m_simPosition = 0.0; // Simulated position in meters
-    private double m_simVelocity = 0.0; // Simulated velocity in meters per second
     private final DCMotor m_gearbox = DCMotor.getFalcon500(1); // 2 motors (left and right)
 
     private Mechanism2d m_mechVisual;
@@ -85,7 +84,7 @@ public class Pivot extends SubsystemBase {
         m_mechVisual = new Mechanism2d(1.0, 1.0); // Width/height in meters
         m_mechRoot = m_mechVisual.getRoot("ArmRoot", 0.5, 0.0); // Center at (0.5, 0)
         m_armLigament = m_mechRoot
-                .append(new MechanismLigament2d("Arm", PivotConstants.armLength, Math.toDegrees(m_simPosition)));
+                .append(new MechanismLigament2d("Arm", PivotConstants.armLength, Math.toDegrees(m_position)));
         SmartDashboard.putData("Pivot Arm Visualization", m_mechVisual);
     }
 
@@ -101,17 +100,10 @@ public class Pivot extends SubsystemBase {
     }
 
     private Vector<N2> getOutput() {
-        if (RobotBase.isReal()) {
-            return VecBuilder.fill(
-                getPositionUncached(),
-                getVelocityUncached()
-            );
-        } else {
-            return VecBuilder.fill(
-                getSimPositionUncached(),
-                getSimVelocityUncached()
-            );
-        }
+        return VecBuilder.fill(
+            getPositionUncached(),
+            getVelocityUncached()
+        );
     }
 
     private void applyInput(Vector<N1> inputs) {
@@ -182,27 +174,28 @@ public class Pivot extends SubsystemBase {
     }
     
     private double getPositionUncached() {
-        return m_cancoder.getPosition().getValueAsDouble();
+        if (Robot.isReal()) {
+            m_position = m_cancoder.getPosition().getValueAsDouble();
+        } else {
+            m_position = m_armSim.getAngleRads();
+        }
+        
+        return m_position;
     }
 
     private double getVelocityUncached() {
-        return m_cancoder.getVelocity().getValueAsDouble();
-    }
+        if (Robot.isReal()) {
+            m_velocity = m_cancoder.getVelocity().getValueAsDouble();
+        } else {
+            m_velocity = m_armSim.getVelocityRadPerSec();
+        }
 
-    private double getSimPositionUncached() {
-        return m_armSim.getAngleRads();
-    }
-
-    private double getSimVelocityUncached() {
-        return m_armSim.getVelocityRadPerSec();
+        return m_velocity;
     }
 
     @Override
     public void periodic() {
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
-
-        m_armLigament.setAngle(Math.toDegrees(m_simPosition));
+        m_armLigament.setAngle(Math.toDegrees(m_position));
 
         if (m_speedChanged && !m_stateSpaceEnabled) {
             m_pivot.setControl(new DutyCycleOut(m_speed));
@@ -217,13 +210,9 @@ public class Pivot extends SubsystemBase {
         m_armSim.setInput(appliedVolts);
         m_armSim.update(SimConstants.k_simPeriodic);
 
-        // Update simulated angle and angular velocity
-        m_simPosition = getSimPositionUncached();
-        m_simVelocity = getSimVelocityUncached();
-
         // Update the simulated encoder values
-        m_cancoder.getSimState().setRawPosition(m_simPosition / (2 * Math.PI)); // Convert radians to rotations
-        m_cancoder.getSimState().setVelocity(m_simVelocity / (2 * Math.PI)); // Convert rad/s to RPM
+        m_cancoder.getSimState().setRawPosition(m_position / (2 * Math.PI)); // Convert radians to rotations
+        m_cancoder.getSimState().setVelocity(m_velocity / (2 * Math.PI)); // Convert rad/s to RPM
 
         // Simulate battery voltage
         RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_armSim.getCurrentDrawAmps()));
