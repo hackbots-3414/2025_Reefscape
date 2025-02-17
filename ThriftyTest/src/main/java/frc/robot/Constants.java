@@ -398,10 +398,10 @@ public class Constants {
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
-        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(12, 0.3);
+        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(0.1, 0.03);
 
         private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(1.0);
+        private static final Vector<N1> relms = VecBuilder.fill(9.0);
         
         public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
                 .createElevatorSystem(
@@ -436,8 +436,8 @@ public class Constants {
         public static final double reefLower = 1.75; // arbitrary, meters
         public static final double reefUpper = 2.75; // arbitrary, meters
 
-        public static final double manualUpSpeed = 0.1;
-        public static final double manualDownSpeed = -0.1;
+        public static final double manualUpSpeed = 0.5;
+        public static final double manualDownSpeed = -0.5;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -452,8 +452,8 @@ public class Constants {
 
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
-                        .withFeedbackRotorOffset(encoderOffset)
                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+                        .withFeedbackRotorOffset(encoderOffset)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
