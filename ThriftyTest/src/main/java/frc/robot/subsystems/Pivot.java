@@ -42,7 +42,7 @@ public class Pivot extends SubsystemBase {
     private boolean m_stateSpaceEnabled;
 
     private SingleJointedArmSim m_armSim;
-    private final DCMotor m_gearbox = DCMotor.getFalcon500(1); // 2 motors (left and right)
+    private final DCMotor m_gearbox = DCMotor.getKrakenX60(1); // 2 motors (left and right)
 
     private Mechanism2d m_mechVisual;
     private MechanismRoot2d m_mechRoot;
