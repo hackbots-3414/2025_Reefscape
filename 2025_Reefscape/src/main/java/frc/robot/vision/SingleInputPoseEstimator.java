@@ -52,7 +52,7 @@ public class SingleInputPoseEstimator implements Runnable {
         AprilTagFieldLayout layout = null;
         try {
             layout = AprilTagFieldLayout.loadFromResource(
-                AprilTagFields.k2025Reefscape.m_resourceFile
+                AprilTagFields.k2025ReefscapeWelded.m_resourceFile
             );
         } catch (IOException e) {
             m_logger.error("failed to load resource file: {}", e);
