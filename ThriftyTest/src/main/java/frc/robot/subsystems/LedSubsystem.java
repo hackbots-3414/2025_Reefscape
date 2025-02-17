@@ -109,7 +109,6 @@ public class LedSubsystem extends SubsystemBase {
         ledStripStartIndex = 0;
 
         if (matchTime <= LEDConstants.endgameWarning  && endgameWarningStarted == false && !inAuton) {
-          endgameWarningStarted = true;
           setColor("YELLOW", 0, 2, "SOLID"); // Changed
         }
 
