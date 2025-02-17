@@ -79,6 +79,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
+        RobotObserver.visionValidSupplier(this::getVisionValid);
     }
 
     public Pose2d getPose() {
@@ -141,8 +142,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(SimConstants.k_simPeriodic);
     }
 
-    private boolean getVisionExpired() {
-        return !m_validPose;
+    private boolean getVisionValid() {
+        return m_validPose;
     }
 
     private void handleVisionToggle() {
@@ -150,7 +151,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
         }
         SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
-        RobotObserver.setVisionExpiredSupplier(this::getVisionExpired);
     }
 
     /* Swerve requests to apply during SysId characterization */

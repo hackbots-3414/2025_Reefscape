@@ -1,6 +1,11 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "CANdi (v6)[59]": {
+        "header": {
+          "open": true
+        }
+      },
       "window": {
         "visible": false
       }
@@ -138,16 +143,6 @@
         }
       },
       "/SmartDashboard/Pivot Arm Visualization": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Raise Elevator": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Stow Elevator": {
         "window": {
           "visible": true
         }
@@ -374,7 +369,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [

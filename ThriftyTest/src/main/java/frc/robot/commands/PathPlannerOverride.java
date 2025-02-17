@@ -49,7 +49,7 @@ public class PathPlannerOverride extends Command {
 
     @Override
     public void execute() {
-        Pose2d currPose = drivetrain.getPose();
+        Pose2d currPose = drivetrain.getBluePose();
 
         double xVelo = xPIDController.calculate(currPose.getX(), goalX);
         double yVelo = yPIDController.calculate(currPose.getY(), goalY);
