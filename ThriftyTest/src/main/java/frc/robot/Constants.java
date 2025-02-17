@@ -352,7 +352,7 @@ public class Constants {
 
     public static final class StateSpaceConstants {
         public static final double k_dt = 0.01; // fast state space, please!
-        public static final double k_maxVoltage = 4.0;
+        public static final double k_maxVoltage = 12.0;
     }
 
     public static final class AutonConstants {
