@@ -45,7 +45,7 @@ public class LedSubsystem extends SubsystemBase {
   private Coral coralIntake;
 
   private static enum LED_MODE {
-    CORAL_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, DEFAULT, CORAL_IN_VIEW,
+    CORAL_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
     BADCONTROLLER, CORAL_INTAKE, ALIGNED;
   };
 
@@ -110,12 +110,12 @@ public class LedSubsystem extends SubsystemBase {
 
         if (matchTime <= LEDConstants.endgameWarning  && endgameWarningStarted == false && !inAuton) {
           endgameWarningStarted = true;
-          setColor("YELLOW", 1, 2, "SOLID"); // Changed
+          setColor("YELLOW", 0, 2, "SOLID"); // Changed
         }
 
         else if (matchTime <= LEDConstants.endgameAlert && endgameAlertStarted == false && !inAuton && matchTime > 0) {
           endgameAlertStarted = true;
-          setColor("YELLOW", 1, 2, "STROBE"); // Changed
+          setColor("YELLOW", 0, 2, "STROBE"); // Changed
         }
       } else {
         ledStripStartIndex = 0;
@@ -169,6 +169,7 @@ public class LedSubsystem extends SubsystemBase {
   }
 
   public void setColor(String color, int LedStripStart, int LedStripEnd, String pattern) {
+    ledcontroller.clearAnimation(0);
     if (color == "BLUE") {
       r = 0;
       g = 0;
@@ -186,9 +187,6 @@ public class LedSubsystem extends SubsystemBase {
     } else if (color == "YELLOW") {
       r = 255;
       g = 120;
-      b = 0;
-    } else if (color == "ORANGE") {
-
       b = 0;
     } else {
       r = 255;
