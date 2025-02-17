@@ -393,15 +393,14 @@ public class Constants {
         public static final double coralMechanismMass = Units.lbsToKilograms(8.173); // includes coral
         public static final double algaeMechanismMass = Units.lbsToKilograms(8.359);
 
-        //public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
-        public static final double netMass = 0.1; // very little mass
+        public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
         private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(0.1, 0.03);
 
-        private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
+        private static final Vector<N2> qelms = VecBuilder.fill(0.01, 0.1);
         private static final Vector<N1> relms = VecBuilder.fill(9.0);
         
         public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
@@ -502,7 +501,7 @@ public class Constants {
 
         private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
 
-        private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
+        private static final Vector<N2> qelms = VecBuilder.fill(0.01, 0.1);
         private static final Vector<N1> relms = VecBuilder.fill(4.0);
 
         public static final double momentOfIntertia = 0.14622;

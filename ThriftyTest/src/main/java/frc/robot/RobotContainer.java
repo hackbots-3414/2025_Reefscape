@@ -377,8 +377,8 @@ public class RobotContainer {
         SmartDashboard.putData("Raise Elevator", new InstantCommand(() -> {
             elevator.setPosition(1.0);
         }));
-        SmartDashboard.putData("Raise Pivot", new InstantCommand(() -> {
-            pivot.setNet();
+        SmartDashboard.putData("Stow Elevator", new InstantCommand(() -> {
+            elevator.setStow();
         }));
     }
 

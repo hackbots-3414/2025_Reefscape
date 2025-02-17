@@ -37,6 +37,7 @@
       "/SmartDashboard/Raise Elevator": "Command",
       "/SmartDashboard/Raise Pivot": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
@@ -126,7 +127,10 @@
           "length": 0.4000000059604645,
           "width": 0.4000000059604645
         },
-        "width": 17.54825210571289
+        "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
       },
       "/SmartDashboard/Elevator Visualization": {
         "window": {
@@ -143,7 +147,7 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Raise Pivot": {
+      "/SmartDashboard/Stow Elevator": {
         "window": {
           "visible": true
         }
