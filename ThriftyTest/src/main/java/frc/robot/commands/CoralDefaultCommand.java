@@ -15,7 +15,7 @@ public class CoralDefaultCommand extends Command {
 
     @Override
     public void execute() {
-        if (RobotObserver.getVisionValid()) return;
+        if (!RobotObserver.getVisionValid()) return;
 
         if (CommandBounds.rightIntakeBounds.isActive() ||
             CommandBounds.leftIntakeBounds.isActive()) {

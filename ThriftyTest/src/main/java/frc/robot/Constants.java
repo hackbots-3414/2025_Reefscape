@@ -738,7 +738,7 @@ public class Constants {
             new Translation2d(3.06, 3.2),
             new Translation2d(4.46, 2.40)
         );
-        public static final Shape reefBounds = Shape.fromUnsortedVertices(reef);
+        public static final Shape reefBounds = Shape.fromUnsortedVertices(reef, "Reef");
 
         // 1.5 robot of space away from the opposite alliance barge side intake
         public static final List<Translation2d> leftIntake = List.of(
@@ -747,10 +747,10 @@ public class Constants {
             new Translation2d(3.2, 0.0),
             new Translation2d(0.0, 2.35)
         );
-        public static final Shape leftIntakeBounds = Shape.fromUnsortedVertices(leftIntake);
+        public static final Shape leftIntakeBounds = Shape.fromUnsortedVertices(leftIntake, "Left Intake");
 
         // 1.5 robot of space away from the same alliance barge side intake
-        public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds);
+        public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds, "Right Intake");
 
         // processor where we score
         public static final List<Translation2d> oppositeAllianceProcessor = List.of(
@@ -759,7 +759,7 @@ public class Constants {
             new Translation2d(6.5, 1),
             new Translation2d(5.5, 1)
         );
-        public static final Shape processorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor);
+        public static final Shape processorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor, "Processor");
 
         // net where we score
         public static final List<Translation2d> net = List.of(
@@ -768,7 +768,7 @@ public class Constants {
             new Translation2d(10.3, 8),
             new Translation2d(7.2, 8)
         );
-        public static final Shape netBounds = Shape.fromUnsortedVertices(net);
+        public static final Shape netBounds = Shape.fromUnsortedVertices(net, "Net");
 
         public static Map<String, Shape> displayBounds = Map.ofEntries(
             Map.entry("Blue Alliance Reef", reefBounds),

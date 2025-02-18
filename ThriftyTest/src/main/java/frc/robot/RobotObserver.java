@@ -59,7 +59,7 @@ public class RobotObserver {
     }
 
     public static boolean getToggleSafety() {
-        return getInstance().m_visionValidSupplier.get();
+        return getInstance().m_safety;
     }
 
     private Supplier<Double> m_elevatorHeightSupplier;

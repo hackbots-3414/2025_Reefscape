@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -42,6 +43,7 @@ import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeIntakeManualCommand;
 import frc.robot.commands.AlgaeScoreCommand;
+import frc.robot.commands.CoralDefaultCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.ManualClimberCommand;
@@ -68,6 +70,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureSubsystems();
+        configureNamedCommands();
         configureDriverBindings();
         configureButtonBoard();
         configureAutonChooser();
@@ -184,6 +187,8 @@ public class RobotContainer {
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
+        m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers));
+
         // if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
         //     BooleanSupplier safetyOn = () -> controller.button(ButtonBoard.safetySwitch).getAsBoolean();
         //     BooleanSupplier safetyOff = () -> !controller.button(ButtonBoard.safetySwitch).getAsBoolean();
@@ -233,8 +238,8 @@ public class RobotContainer {
         // }
 
         if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BACKUP) {
-            controller.button(ButtonBoardAlternate.safetySwitch).onChange(new InstantCommand(() -> RobotObserver.toggleSafety()));
-            BooleanSupplier safety = () -> RobotObserver.getToggleSafety();
+            // controller.button(ButtonBoardAlternate.safetySwitch).onChange(new InstantCommand(() -> RobotObserver.toggleSafety()));
+            // BooleanSupplier safety = () -> RobotObserver.getToggleSafety();
 
             controller.povDown().onTrue(new InstantCommand(() -> m_elevator.setL1()));
             controller.povLeft().onTrue(new InstantCommand(() -> m_elevator.setL2()));
@@ -375,6 +380,16 @@ public class RobotContainer {
         } else {
             return autoChooser.getSelected();
         }
+    }
+
+    public void configureNamedCommands() {
+        NamedCommands.registerCommand("L1", coralScoreCommand(1));
+        NamedCommands.registerCommand("L2", coralScoreCommand(2));
+        NamedCommands.registerCommand("L3", coralScoreCommand(3));
+        NamedCommands.registerCommand("L4", coralScoreCommand(4));
+        NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
+        NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
+        NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
     }
 
     // ********** SUBSYSTEMS **********
