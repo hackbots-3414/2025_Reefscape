@@ -137,6 +137,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Elevator Visualization": {
         "window": {
           "visible": true
@@ -369,6 +374,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
+        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [

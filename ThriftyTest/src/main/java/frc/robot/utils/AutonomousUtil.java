@@ -26,9 +26,6 @@ import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
-    private static final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
-            .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
-
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
         try {
