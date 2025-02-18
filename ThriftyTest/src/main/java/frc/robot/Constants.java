@@ -146,7 +146,7 @@ public class Constants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
-        public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
+        public static final DriverChoice driverChoice = DriverChoice.BACKUP;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
         public static final int driverPort = 0;
