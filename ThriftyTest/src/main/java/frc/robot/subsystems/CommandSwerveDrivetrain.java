@@ -79,7 +79,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
-        RobotObserver.visionValidSupplier(this::getVisionValid);
+        RobotObserver.setVisionValidSupplier(this::getVisionValid);
     }
 
     public Pose2d getPose() {

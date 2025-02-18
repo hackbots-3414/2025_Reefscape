@@ -13,6 +13,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -300,35 +302,39 @@ public class RobotContainer {
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
     private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
 
+    private SendableChooser<Command> autoChooser = new SendableChooser<>();
+
     private void configureAutonChooser() {
-        // boolean isCompetition = true;
+        if (AutonConstants.useSuperAuton) {
+            for (int i = 0; i < AutonConstants.numWaypoints; i++) {
+                SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
+                configurePlaceChooser(placeChooser);
+                scoringLocationsChooser.add(placeChooser);
+                SmartDashboard.putData("Place to Score #" + (i), placeChooser);
 
-        // Filter any autos with the "comp" prefix
-        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        // (stream) -> isCompetition
-        // ? stream.filter(auto -> auto.getName().startsWith("comp"))
-        // : stream
-        // );
+                SendableChooser<Supplier<Command>> heightChooser = new SendableChooser<>();
+                configureHeightChooser(heightChooser);
+                scoringHeightsChooser.add(heightChooser);
+                SmartDashboard.putData("Height to Score #" + (i), heightChooser);
+            }
 
-        // autoChooser = AutoBuilder.buildAutoChooser();
+            pickupLocation.setDefaultOption("CLOSE", ScoringLocations.CLOSEHP.value);
+            pickupLocation.addOption("FAR", ScoringLocations.FARHP.value);
+            SmartDashboard.putData(pickupLocation);
+        } else {
+            boolean isCompetition = false;
 
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        for (int i = 0; i < AutonConstants.numWaypoints; i++) {
-            SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
-            configurePlaceChooser(placeChooser);
-            scoringLocationsChooser.add(placeChooser);
-            SmartDashboard.putData("Place to Score #" + (i), placeChooser);
-
-            SendableChooser<Supplier<Command>> heightChooser = new SendableChooser<>();
-            configureHeightChooser(heightChooser);
-            scoringHeightsChooser.add(heightChooser);
-            SmartDashboard.putData("Height to Score #" + (i), heightChooser);
+            // Filter any autos with the "comp" prefix
+            autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+            (stream) -> isCompetition
+            ? stream.filter(auto -> auto.getName().startsWith("comp"))
+            : stream
+            );
+    
+            autoChooser = AutoBuilder.buildAutoChooser();
+    
+            SmartDashboard.putData("Auto Chooser", autoChooser);
         }
-
-        pickupLocation.setDefaultOption("CLOSE", ScoringLocations.CLOSEHP.value);
-        pickupLocation.addOption("FAR", ScoringLocations.FARHP.value);
-        SmartDashboard.putData(pickupLocation);
     }
 
     private void configurePlaceChooser(SendableChooser<Pose2d> chooser) {
@@ -354,17 +360,21 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
-        for (int i = 0; i < scoringLocationsChooser.size(); i++) {
-            locations[i] = scoringLocationsChooser.get(i).getSelected();
+        if (AutonConstants.useSuperAuton) {
+            Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
+            for (int i = 0; i < scoringLocationsChooser.size(); i++) {
+                locations[i] = scoringLocationsChooser.get(i).getSelected();
+            }
+    
+            Command[] heights = new Command[scoringHeightsChooser.size()];
+            for (int i = 0; i < scoringHeightsChooser.size(); i++) {
+                heights[i] = scoringHeightsChooser.get(i).getSelected().get();
+            }
+    
+            return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
+        } else {
+            return autoChooser.getSelected();
         }
-
-        Command[] heights = new Command[scoringHeightsChooser.size()];
-        for (int i = 0; i < scoringHeightsChooser.size(); i++) {
-            heights[i] = scoringHeightsChooser.get(i).getSelected().get();
-        }
-
-        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::coralIntakeCommand);
     }
 
     // ********** SUBSYSTEMS **********

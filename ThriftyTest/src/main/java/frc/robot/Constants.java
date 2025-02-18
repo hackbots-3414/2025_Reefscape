@@ -127,8 +127,14 @@ public class Constants {
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
         
-        public static double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
-        public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
+        public static final double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
+        public static final double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
+
+        public static final double k_elevatorHeightLinearVelocityGain = -0.357; // for every 1 rotation elevator up, subtract X: 1 mps at max elevator
+        public static final double k_elevatorHeightLinearAccelerationGain = k_elevatorHeightLinearVelocityGain * 2;
+        public static final double k_elevatorHeightAngularVelocityGain = -0.0446; // for every 1 rotation elevator up, subtract X: 0.25 rps at max elevator
+        public static final double k_elevatorHeightAngularAccelerationGain = k_elevatorHeightAngularVelocityGain * 2;
+
         public static final double k_closedLoopOverrideToleranceTranslation = 0.02;
         public static final double k_closedLoopOverrideToleranceRotation = 0.02;
     }
@@ -358,6 +364,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
+        public static final boolean useSuperAuton = false;
+
         public static final int numWaypoints = 5;
         public static double pathplannerMinRange = 0.5;
         public static double overrideTolerance = 0.05;
