@@ -126,6 +126,8 @@ public class Constants {
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+
+        public static final double k_maxRotationalSpeed = k_maxLinearSpeed / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
         
         public static final double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
         public static final double k_maxAngularAcceleration = k_maxAngularSpeed * 2;

@@ -37,7 +37,7 @@ public class AutonomousUtil {
                     drivetrain::getPose, // Robot pose supplier
                     drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                     drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> drivetrain.setControl(autoRequest.withSpeeds(speeds)),
+                    (speeds, feedforwards) -> drivetrain.driveWithChassisSpeeds(speeds),
                     new PPHolonomicDriveController(DriveConstants.k_translationPID, DriveConstants.k_rotationPID),
                     config, // The robot configuration
                     () -> {
@@ -48,6 +48,8 @@ public class AutonomousUtil {
                         return false;
                     },
                     drivetrain); // Reference to this subsystem to set requirements
+
+            drivetrain.initializeSetpointGenerator(config);
 
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
