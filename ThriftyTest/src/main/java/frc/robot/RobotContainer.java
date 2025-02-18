@@ -234,8 +234,11 @@ public class RobotContainer {
             controller.button(ButtonBoardAlternate.safetySwitch).onChange(new InstantCommand(() -> RobotObserver.toggleSafety()));
             BooleanSupplier safety = () -> RobotObserver.getToggleSafety();
 
-            controller.povUp().onTrue(new InstantCommand(() -> m_elevator.setL1()));
-            controller.povDown().onTrue(new InstantCommand(() -> m_elevator.setStow()));
+            controller.povDown().onTrue(new InstantCommand(() -> m_elevator.setL1()));
+            controller.povLeft().onTrue(new InstantCommand(() -> m_elevator.setL2()));
+            controller.povUp().onTrue(new InstantCommand(() -> m_elevator.setL3()));
+            controller.povRight().onTrue(new InstantCommand(() -> m_elevator.setL4()));
+            controller.square().onTrue(new InstantCommand(() -> m_elevator.setStow()));
 
             bindManualCoralIntakeCommand(controller.cross());
             controller.circle().onTrue(new AlgaeIntakeManualCommand(m_algaeRollers));
@@ -459,5 +462,9 @@ public class RobotContainer {
 
     public enum AlgaeLocationPresets {
         REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET;
+    }
+
+    public void resetElevatorReference() {
+        m_elevator.setPosition(m_elevator.getPosition());
     }
 }

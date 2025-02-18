@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicExpoDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -119,17 +122,23 @@ public class Elevator extends SubsystemBase {
         );
     }
 
-    private void applyInput(Vector<N1> inputs) {
-        if (!m_stateSpaceEnabled) return;
-
-        double volts = inputs.get(0);
-
-        m_elevatorRight.setVoltage(volts);
-    }
+    private final MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
-        m_controller.setReference(VecBuilder.fill(goal, 0.0));
+        m_elevatorRight.setControl(control.withPosition(goal));
     }
+
+    private void applyInput(Vector<N1> inputs) {
+        // if (!m_stateSpaceEnabled) return;
+
+        // double volts = inputs.get(0);
+
+        // m_elevatorRight.setVoltage(volts);
+    }
+
+    // public void setPosition(double goal) {
+    //     m_controller.setReference(VecBuilder.fill(goal, 0.0));
+    // }
 
     public void setSpeed(double speed) {
         m_speedChanged = (speed != m_speed);

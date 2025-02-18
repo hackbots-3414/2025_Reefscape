@@ -108,10 +108,10 @@ public class Pivot extends SubsystemBase {
     private void applyInput(Vector<N1> inputs) {
         if (!m_stateSpaceEnabled) return;
 
-        VoltageOut config = new VoltageOut(0);
-        double volts = inputs.get(0);
+        // VoltageOut config = new VoltageOut(0);
+        // double volts = inputs.get(0);
 
-        m_pivot.setControl(config.withOutput(volts));
+        // m_pivot.setControl(config.withOutput(volts));
     }
 
     public void setPosition(double goal) {
