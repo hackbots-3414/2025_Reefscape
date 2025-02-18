@@ -17,10 +17,14 @@ import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
@@ -137,7 +141,7 @@ public class Constants {
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
-        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BUTTONBOARD;
+        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
         public static final int driverPort = 0;
         public static final int buttonBoardPort = 1;
@@ -402,17 +406,20 @@ public class Constants {
 
         private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(0.1, 0.03);
 
-        private static final Vector<N2> qelms = VecBuilder.fill(0.002, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(12.0);
+        private static final Vector<N2> qelms = VecBuilder.fill(0.02, 0.1);
+        private static final Vector<N1> relms = VecBuilder.fill(4.0);
         
-        public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
-                .createDCMotorSystem(
-                    TalonFXConstants.TalonFXDCMotor,
-                    momentOfInertia,
-                    gearRatio
-                );
+        // public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
+        //         .createDCMotorSystem(
+        //             TalonFXConstants.TalonFXDCMotor,
+        //             momentOfInertia,
+        //             gearRatio
+        //         );
 
-        public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
+        public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
+            .createElevatorSystem(TalonFXConstants.TalonFXDCMotor, netMass, drumRadius, gearRatio);
+
+        public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<>(
                 stateSpacePlant,
                 stateSpaceStandardDeviations,
                 VecBuilder.fill(TalonFXConstants.positionStdDevs, TalonFXConstants.velocityStdDevs),
@@ -427,18 +434,21 @@ public class Constants {
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
         public static final double encoderOffset = -0.427979;
 
-        public static final double stow = 0;
+        public static final double stow = 0.0;
         public static final double processor = 0.125;
-        public static final double L1 = 0.25;
-        public static final double L2 = 0.75;
-        public static final double L3 = 1.25;
-        public static final double L4 = 1.75;
+        public static final double L1 = 2;
+        public static final double L2 = 4;
+        public static final double L3 = 6;
+        public static final double L4 = 8;
         public static final double net = 1.95;
         public static final double reefLower = 0.5; // arbitrary, meters
         public static final double reefUpper = 1.5; // arbitrary, meters
 
-        public static final double manualUpSpeed = 0.5;
-        public static final double manualDownSpeed = -0.5;
+        public static final double manualUpSpeed = 0.2;
+        public static final double manualDownSpeed = -0.2;
+
+        public static final double maxSpeed = 10; // cancoder rotations per second
+        public static final double accelerationMultiplier = 3;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -453,8 +463,7 @@ public class Constants {
 
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-                        .withFeedbackRotorOffset(encoderOffset)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
@@ -466,11 +475,26 @@ public class Constants {
                         .withForwardSoftLimitThreshold(forwardSoftLimit)
                         .withForwardSoftLimitEnable(true)
                         .withReverseSoftLimitThreshold(reverseSoftLimit)
-                        .withForwardSoftLimitEnable(true));
+                        .withForwardSoftLimitEnable(true))
+
+                .withSlot0(new Slot0Configs()
+                        .withGravityType(GravityTypeValue.Elevator_Static)
+                        .withKP(5)
+                        .withKI(0)
+                        .withKD(0)
+                        .withKS(0)
+                        .withKV(3.59 * (drumRadius * 2 * Math.PI))
+                        .withKA(0.05 * (drumRadius * 2 * Math.PI))
+                        .withKG(0.42))
+
+                .withMotionMagic(new MotionMagicConfigs()
+                        .withMotionMagicCruiseVelocity(maxSpeed)
+                        .withMotionMagicAcceleration(maxSpeed * accelerationMultiplier)
+                        .withMotionMagicJerk(maxSpeed * accelerationMultiplier * 10));
     }
 
     public static final class PivotConstants {
-        public static final double encoderOffset = 0.324707;
+        public static final double encoderOffset = -0.558594;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
@@ -478,24 +502,24 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
-        public static final double forwardSoftLimitThreshold = Math.PI / 2;
+        public static final double forwardSoftLimitThreshold = 0.65;
         public static final double reverseSoftLimitThreshold = 0;
 
         public static final double radiansAtMax = forwardSoftLimitThreshold;
         public static final double radiansAtZero = 0;
 
-        public static final double absoluteSensorRange = 0.5;
+        public static final double absoluteSensorRange = 1;
 
         public static final double supplyCurrentLimit = 20;
 
         public static final double tolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
 
-        public static final double groundPickup = Math.PI / 2 * 1 / 5;
-        public static final double processor = Math.PI / 5;
-        public static final double reefPickup = Math.PI / 8;
-        public static final double reefExtract = reefPickup + Math.PI / 8;
-        public static final double net = Math.PI / 2;
-        public static final double stow = 0;
+        public static final double groundPickup = 0.62;
+        public static final double processor = 0.2;
+        public static final double reefPickup = 0.5;
+        public static final double reefExtract = 0.4;
+        public static final double net = 0.6;
+        public static final double stow = 0.03;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
@@ -503,7 +527,7 @@ public class Constants {
         private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
 
         private static final Vector<N2> qelms = VecBuilder.fill(0.002, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(4.0);
+        private static final Vector<N1> relms = VecBuilder.fill(0.5);
 
         public static final double momentOfIntertia = 0.14622;
         public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
@@ -544,12 +568,6 @@ public class Constants {
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(supplyCurrentLimit))
 
-                .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
-                        .withForwardLimitEnable(true)
-                        .withReverseLimitEnable(true)
-                        .withReverseLimitAutosetPositionEnable(true)
-                        .withReverseLimitAutosetPositionValue(0.0))
-
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(forwardSoftLimitThreshold)
                         .withForwardSoftLimitEnable(true)
@@ -557,7 +575,6 @@ public class Constants {
                         .withReverseSoftLimitEnable(true));
 
         public static final double armLength = 0.443;
-
     }
 
     public static class CoralConstants {
@@ -569,8 +586,8 @@ public class Constants {
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
-                    .withNeutralMode(NeutralModeValue.Brake)
-                    .withInverted(InvertedValue.Clockwise_Positive))
+                    .withNeutralMode(NeutralModeValue.Coast)
+                    .withInverted(InvertedValue.CounterClockwise_Positive))
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
@@ -601,13 +618,17 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
-        public static final double intakeVoltage = 1; //FIXME tune for actual robot
+        public static final double intakeVoltage = 12; //FIXME tune for actual robot
         public static final double ejectVoltage = -1; //FIXME tune for actual robot
-        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
-        public static final double algaeRollerCurrentLimit = 80.0;
-        public static final double holdVoltage = 0.5;
+
+        public static final double torqueCurrentThreshold = 30; //FIXME tune for actual robot
+
+        public static final double supplyCurrentLimit = 20.0;
+        public static final double statorCurrentLimit = 40.0;
+
+        public static final double holdVoltage = 1;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.3;
         public static final double reefPickupSafetyDistance = 1.75;
 
@@ -618,7 +639,7 @@ public class Constants {
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
+                        .withSupplyCurrentLimit(supplyCurrentLimit));
     }
 
     public static final class TalonFXConstants {

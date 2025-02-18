@@ -50,7 +50,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     public void intakeAlgae() {
         if (hasObject()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
-            m_logger.warn("We may need current limits for having an object which are not yet implemented");
+            m_logger.warn("holding!!!!");
         } else {
             setMotor(AlgaeRollerConstants.intakeVoltage);
         }
@@ -80,7 +80,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
 
     private void updateObjectState() {
         if (Robot.isReal()) {
-            m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
+            m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
         } else {
             m_hasObject = SmartDashboard.getBoolean("Algae Holding Object", false);
         }
@@ -90,7 +90,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
 
     @Override
     public void periodic() {
-
         if (m_voltageChanged) {
             m_algaeRoller.setVoltage(m_voltage);
             m_voltageChanged = false;
