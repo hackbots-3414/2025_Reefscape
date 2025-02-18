@@ -190,7 +190,7 @@ public class RobotContainer {
     private LedSubsystem ledSubsystem;
 
     private void configureSubsystems() {
-        ledSubsystem = new LedSubsystem(coralIntake); 
+        ledSubsystem = new LedSubsystem(); 
     }
 
     public LedSubsystem getLedSubsystem() {
