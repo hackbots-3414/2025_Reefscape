@@ -159,11 +159,11 @@ public class Pivot extends SubsystemBase {
         setPosition(m_position);
     }
 
-    public double getM_position() {
+    public double getPosition() {
         return m_position;
     }
 
-    public double getM_velocity() {
+    public double getVelocity() {
         return m_velocity;
     }
     
@@ -173,27 +173,26 @@ public class Pivot extends SubsystemBase {
     
     private double getPositionUncached() {
         if (Robot.isReal()) {
-            m_position = m_cancoder.getPosition().getValueAsDouble();
+            return m_cancoder.getPosition().getValueAsDouble();
         } else {
-            m_position = m_armSim.getAngleRads();
+            return m_armSim.getAngleRads();
         }
-        
-        return m_position;
     }
 
     private double getVelocityUncached() {
         if (Robot.isReal()) {
-            m_velocity = m_cancoder.getVelocity().getValueAsDouble();
+            return m_cancoder.getVelocity().getValueAsDouble();
         } else {
-            m_velocity = m_armSim.getVelocityRadPerSec();
+            return m_armSim.getVelocityRadPerSec();
         }
-
-        return m_velocity;
     }
 
     @Override
     public void periodic() {
         m_armLigament.setAngle(Math.toDegrees(m_position));
+
+        m_position = getPositionUncached();
+        m_velocity = getVelocityUncached();
 
         if (m_speedChanged && !m_stateSpaceEnabled) {
             m_pivot.setControl(new DutyCycleOut(m_speed));
