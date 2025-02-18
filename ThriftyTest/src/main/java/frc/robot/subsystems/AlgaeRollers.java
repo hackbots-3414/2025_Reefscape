@@ -13,7 +13,7 @@ import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.IDConstants;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
-    
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
     
     private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algaeMotor);
@@ -50,7 +50,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     public void intakeAlgae() {
         if (hasObject()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
-            m_logger.warn("holding!!!!");
         } else {
             setMotor(AlgaeRollerConstants.intakeVoltage);
         }
@@ -59,7 +58,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     public void smartStop() {
         if (hasObject()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
-            m_logger.warn("We may need current limits for having an object which are not yet implemented");
         } else {
             stopMotor();
         }
@@ -70,7 +68,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     }
 
     public void ejectAlgae() {
-        m_logger.warn("Voltage for real bot's eject not set, set eject voltage for real bot in Constants.AlgaeRollerConstants.ejectPower");
         setMotor(AlgaeRollerConstants.ejectVoltage);
     }
 
