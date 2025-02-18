@@ -402,31 +402,8 @@ public class Constants {
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
-        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(0.1, 0.03);
-
-        private static final Vector<N2> qelms = VecBuilder.fill(0.02, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(4.0);
-        
-        // public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
-        //         .createDCMotorSystem(
-        //             TalonFXConstants.TalonFXDCMotor,
-        //             momentOfInertia,
-        //             gearRatio
-        //         );
-
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
             .createElevatorSystem(TalonFXConstants.TalonFXDCMotor, netMass, drumRadius, gearRatio);
-
-        public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<>(
-                stateSpacePlant,
-                stateSpaceStandardDeviations,
-                VecBuilder.fill(TalonFXConstants.positionStdDevs, TalonFXConstants.velocityStdDevs),
-                qelms,
-                relms,
-                Nat.N2(),
-                Nat.N2(),
-                tolerance,
-                "Elevator");
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
