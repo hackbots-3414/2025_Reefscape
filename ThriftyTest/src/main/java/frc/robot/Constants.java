@@ -10,17 +10,23 @@ import java.util.List;
 import java.util.Map;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.S1CloseStateValue;
+import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 
@@ -41,6 +47,8 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.PS5Controller.Axis;
+import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.generated.TunerConstants;
 import frc.robot.stateSpace.StateSpaceConfig;
 import frc.robot.utils.Shape;
@@ -73,6 +81,25 @@ And +Z is upwards, so it wouldn't show here.
 */
 
 public class Constants {
+
+    public static class IDConstants {
+        public static final int elevatorLeft = 51;
+        public static final int elevatorRight = 52;
+        public static final int elevatorEncoder = 53;
+
+        public static final int pivotMotor = 57;
+        public static final int pivotEncoder = 58;
+
+        public static final int coralLeft = 55;
+        public static final int coralRight = 56;
+        public static final int candi = 59;
+
+        public static final int climbLeft = 1;
+        public static final int climbRight = 2;
+
+        public static final int algaeMotor = 60;
+    }
+
     public static class SimConstants {
         public static final double k_simPeriodic = 0.005;
     }
@@ -102,7 +129,140 @@ public class Constants {
         
         public static double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
         public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
-        public static final double k_closedLoopOverrideTolerance = 0.02;
+        public static final double k_closedLoopOverrideToleranceTranslation = 0.02;
+        public static final double k_closedLoopOverrideToleranceRotation = 0.02;
+    }
+
+
+    public static class ButtonBindingConstants {
+        public static enum DriverChoice {DRAGONREINS, BACKUP;}
+        public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
+
+        public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
+        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
+
+        public static final int driverPort = 0;
+        public static final int buttonBoardPort = 1;
+
+
+        public static class DragonReins {
+            public static final int xAxis = 1;
+            public static final int yAxis = 0;
+            public static final int rotAxis = 2;
+
+            public static final boolean flipX = true;
+            public static final boolean flipY = false;
+            public static final boolean flipRot = true;
+
+            public static final int enableOpenLoop = 3;
+            public static final int resetHeading = 1;
+        }
+
+        public static class BackupDriver {
+            public static final int xAxis = Axis.kLeftY.value;
+            public static final int yAxis = Axis.kLeftX.value;
+            public static final int rotAxis = Axis.kRightY.value;
+
+            public static final boolean flipX = true;
+            public static final boolean flipY = false;
+            public static final boolean flipRot = true;
+
+            public static final int enableOpenLoop = Button.kSquare.value;
+            public static final int resetHeading = Button.kCircle.value;
+        }
+
+        public static class ButtonBoard {
+            public static final int safetySwitch = 17;
+
+            // WHEN SAFETY ON - AUTOMATION BASED
+            public static final int L1Auto = 1;
+            public static final int L2Auto = 2;
+            public static final int L3Auto = 3;
+            public static final int L4Auto = 4;
+            public static final int R1Auto = 5;
+            public static final int R2Auto = 6;
+            public static final int R3Auto = 7;
+            public static final int R4Auto = 8;
+
+            public static final int lowAlgaeAuto = 9;
+            public static final int highAlgaeAuto = 10;
+            public static final int groundAlgaeAuto = 11;
+            public static final int processorAuto = 12;
+            public static final int netAuto = 13;
+
+            public static final int leftIntake = 14;
+            public static final int rightIntake = 15;
+
+            public static final int climbAuto = 16;
+
+            // WHEN SAFETY OFF - MANUAL STUFF
+            public static final int l1Score = 1;
+            public static final int l2Score = 2;
+            public static final int l3Score = 3;
+            public static final int l4Score = 4;
+
+            public static final int manualElevatorUp = 5;
+            public static final int manualElevatorDown = 6;
+            public static final int manualPivotUp = 7;
+            public static final int manualPivotDown = 8;
+
+            public static final int lowAlgae = 9;
+            public static final int highAlgae = 10;
+            public static final int groundAlgae = 11;
+            public static final int processor = 12;
+            public static final int net = 13;
+
+            public static final int intake = 14;
+            public static final int spitPiece = 15;
+
+            public static final int climb = 16;
+        }
+
+        public static class ButtonBoardAlternate {
+            public static final int safetySwitch = Button.kTouchpad.value;
+
+            // WHEN SAFETY ON - AUTOMATION BASED
+            public static final int L1 = 0; // POV
+            public static final int L2 = 270; // POV
+            public static final int L3 = 90; // POV
+            public static final int L4 = 180; // POV
+            public static final int leftReef = Button.kSquare.value;
+            public static final int rightReef = Button.kCircle.value;
+
+            public static final int lowAlgaeAuto = Button.kCross.value;
+            public static final int highAlgaeAuto = Button.kTriangle.value;
+            public static final int groundAlgaeAuto = 180; // POV
+            public static final int processorAuto = 90; // POV
+            public static final int netAuto = 0; // POV
+            public static final int algaeModeButton = Button.kOptions.value;
+            
+            public static final int leftIntake = Button.kL1.value; // LB
+            public static final int rightIntake = Button.kR1.value; // RB
+            
+            public static final int climbAuto = Button.kCreate.value;
+
+            // WHEN SAFETY OFF - MANUAL STUFF
+            public static final int l1Score = 0;
+            public static final int l2Score = 270;
+            public static final int l3Score = 90;
+            public static final int l4Score = 180;
+
+            public static final int manualElevatorUp = Axis.kLeftY.value;
+            public static final int manualElevatorDown = Axis.kLeftY.value;
+            public static final int manualPivotUp = Axis.kRightY.value;
+            public static final int manualPivotDown = Axis.kRightY.value;
+
+            public static final int lowAlgae = Button.kCross.value;
+            public static final int highAlgae = Button.kTriangle.value;
+            public static final int groundAlgae = Button.kSquare.value;
+            public static final int processor = Button.kCircle.value;
+            public static final int net = Button.kR1.value;
+
+            public static final int intake = Button.kL1.value; // LB
+            public static final int spitPiece = Button.kL2.value; // LT
+
+            public static final int climb = Button.kCreate.value;
+        }
     }
 
     public static class VisionConstants {
@@ -193,8 +353,8 @@ public class Constants {
     }
 
     public static final class StateSpaceConstants {
-        public static final double k_dt = 0.02;
-        public static final double k_maxVoltage = 4.0;
+        public static final double k_dt = 0.01; // fast state space, please!
+        public static final double k_maxVoltage = 12.0;
     }
 
     public static final class AutonConstants {
@@ -205,7 +365,6 @@ public class Constants {
     }
 
     public static final class CanRangeConstants {
-        public static final int k_canRangeId = 6;
 
         public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
         // .withFovParams(null)
@@ -216,16 +375,9 @@ public class Constants {
     }
 
     public static final class ElevatorConstants {
-        public static final int leftMotorID = 51;
-        public static final int rightMotorID = 52;
-        public static final int encoderPort = 53;
+        public static final boolean invertLeftMotorFollower = true;
 
-        public static final boolean invertRightMotor = true;
-
-        public static final int forwardLimitChannelID = 0;
-        public static final int reverseLimitChannelID = 1;
-
-        public static final double forwardSoftLimit = 4;
+        public static final double forwardSoftLimit = 11.2;
         public static final double reverseSoftLimit = 0;
 
         public static final double supplyCurrentLimit = 40;
@@ -233,54 +385,45 @@ public class Constants {
         public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
 
-        public static final InvertedValue motorInverted = InvertedValue.Clockwise_Positive;
+        public static final InvertedValue motorInverted = InvertedValue.CounterClockwise_Positive;
         
-        public static final double gearRatio = 5.2;
-        public static final double carriageMass = Units.lbsToKilograms(19.25); // Mass of the elevator carriage
+        public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
+
+        public static final double stage1Mass = Units.lbsToKilograms(5.402);
+        public static final double stage2Mass = Units.lbsToKilograms(4.819);
+        public static final double carriageMass = Units.lbsToKilograms(3.084);
+        public static final double coralMechanismMass = Units.lbsToKilograms(8.173); // includes coral
+        public static final double algaeMechanismMass = Units.lbsToKilograms(8.359);
+
+        public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
+
+        public static final double momentOfInertia = netMass * Math.pow(drumRadius, 2);
 
         public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
 
-        private static final Vector<N2> stateSpaceStandardDeviations = VecBuilder.fill(12, 0.3);
-
-        private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(1.0);
-        
-        public static final LinearSystem<N2, N1, N2> stateSpacePlant  = LinearSystemId
-                .createElevatorSystem(
-                    TalonFXConstants.TalonFXDCMotor,
-                    carriageMass,
-                    drumRadius,
-                    gearRatio
-                );
-
-        public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
-                stateSpacePlant,
-                stateSpaceStandardDeviations,
-                VecBuilder.fill(TalonFXConstants.positionStdDevs, TalonFXConstants.velocityStdDevs),
-                qelms,
-                relms,
-                Nat.N2(),
-                Nat.N2(),
-                tolerance,
-                "Elevator");
+        public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
+            .createElevatorSystem(TalonFXConstants.TalonFXDCMotor, netMass, drumRadius, gearRatio);
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.0;
+        public static final double encoderOffset = -0.427979;
 
-        public static final double stow = 0;
-        public static final double processor = 0.25;
-        public static final double L1 = 0.5;
-        public static final double L2 = 1.5;
-        public static final double L3 = 2.5;
-        public static final double L4 = 3.5;
-        public static final double net = 4;
-        public static final double reefLower = 1.75; // arbitrary, meters
-        public static final double reefUpper = 2.75; // arbitrary, meters
+        public static final double stow = 0.0;
+        public static final double processor = 0.125;
+        public static final double L1 = 2;
+        public static final double L2 = 4;
+        public static final double L3 = 6;
+        public static final double L4 = 8;
+        public static final double net = 1.95;
+        public static final double reefLower = 0.5; // arbitrary, meters
+        public static final double reefUpper = 1.5; // arbitrary, meters
 
-        public static final double manualUpSpeed = 0.1;
-        public static final double manualDownSpeed = -0.1;
+        public static final double manualUpSpeed = 0.2;
+        public static final double manualDownSpeed = -0.2;
+
+        public static final double maxSpeed = 10; // cancoder rotations per second
+        public static final double accelerationMultiplier = 3;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -294,6 +437,8 @@ public class Constants {
                         .withInverted(motorInverted))
 
                 .withFeedback(new FeedbackConfigs()
+                        .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
@@ -301,62 +446,69 @@ public class Constants {
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(supplyCurrentLimit))
 
-                .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
-                        .withForwardLimitEnable(true)
-                        .withReverseLimitEnable(true)
-                        .withReverseLimitAutosetPositionEnable(true)
-                        .withReverseLimitAutosetPositionValue(0.0))
-
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(forwardSoftLimit)
                         .withForwardSoftLimitEnable(true)
                         .withReverseSoftLimitThreshold(reverseSoftLimit)
-                        .withForwardSoftLimitEnable(true));
+                        .withForwardSoftLimitEnable(true))
+
+                .withSlot0(new Slot0Configs()
+                        .withGravityType(GravityTypeValue.Elevator_Static)
+                        .withKP(5)
+                        .withKI(0)
+                        .withKD(0)
+                        .withKS(0)
+                        .withKV(3.59 * (drumRadius * 2 * Math.PI))
+                        .withKA(0.05 * (drumRadius * 2 * Math.PI))
+                        .withKG(0.42))
+
+                .withMotionMagic(new MotionMagicConfigs()
+                        .withMotionMagicCruiseVelocity(maxSpeed)
+                        .withMotionMagicAcceleration(maxSpeed * accelerationMultiplier)
+                        .withMotionMagicJerk(maxSpeed * accelerationMultiplier * 10));
     }
 
     public static final class PivotConstants {
-        public static final int motorID = 57;
-        public static final int encoderID = 58; //FIXME No Pivot CANcoder exists on the robot
-        public static final double encoderOffset = 0.324707;
+        public static final double encoderOffset = -0.558594;
 
-        public static final double rotorToSensorRatio = 70.0 / 8.0;
-        public static final double sensorToMechanismRatio = 32.0 / 14.0;
+        public static final double rotorToSensorRatio = 64.0 / 14.0; 
+        public static final double sensorToMechanismRatio = 32.0 / 14.0; 
 
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
-        public static final double forwardSoftLimitThreshold = Math.PI / 2;
+        public static final double forwardSoftLimitThreshold = 0.65;
         public static final double reverseSoftLimitThreshold = 0;
 
         public static final double radiansAtMax = forwardSoftLimitThreshold;
         public static final double radiansAtZero = 0;
 
-        public static final double absoluteSensorRange = 0.5;
+        public static final double absoluteSensorRange = 1;
 
         public static final double supplyCurrentLimit = 20;
 
         public static final double tolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
 
-        public static final double groundPickup = Math.PI / 2 * 1 / 5;
-        public static final double processor = Math.PI / 5;
-        public static final double reefPickup = Math.PI / 8;
-        public static final double reefExtract = reefPickup + Math.PI / 8;
-        public static final double net = Math.PI / 2;
-        public static final double stow = 0;
+        public static final double groundPickup = 0.62;
+        public static final double processor = 0.2;
+        public static final double reefPickup = 0.5;
+        public static final double reefExtract = 0.4;
+        public static final double net = 0.6;
+        public static final double stow = 0.03;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
 
         private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
 
-        private static final Vector<N2> qelms = VecBuilder.fill(0.0001, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(4.0);
+        private static final Vector<N2> qelms = VecBuilder.fill(0.002, 0.1);
+        private static final Vector<N1> relms = VecBuilder.fill(0.5);
 
         public static final double momentOfIntertia = 0.14622;
         public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
 
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
-                .createDCMotorSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
+                .createSingleJointedArmSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
 
         public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
                 stateSpacePlant,
@@ -381,7 +533,7 @@ public class Constants {
                         .withInverted(invertMotor))
 
                 .withFeedback(new FeedbackConfigs()
-                        .withFeedbackRemoteSensorID(encoderID)
+                        .withFeedbackRemoteSensorID(IDConstants.pivotEncoder)
                         .withFeedbackRotorOffset(encoderOffset)
                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
@@ -391,12 +543,6 @@ public class Constants {
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(supplyCurrentLimit))
 
-                .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
-                        .withForwardLimitEnable(true)
-                        .withReverseLimitEnable(true)
-                        .withReverseLimitAutosetPositionEnable(true)
-                        .withReverseLimitAutosetPositionValue(0.0))
-
                 .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                         .withForwardSoftLimitThreshold(forwardSoftLimitThreshold)
                         .withForwardSoftLimitEnable(true)
@@ -404,32 +550,33 @@ public class Constants {
                         .withReverseSoftLimitEnable(true));
 
         public static final double armLength = 0.443;
-
     }
 
     public static class CoralConstants {
-        public static final int k_leftMotorID = 55;
-        public static final int k_rightMotorID = 56;
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = 12;
-        public static final int k_frontSensorPort = 3;
-        public static final int k_backSensorPort = 4;
         public static final boolean rightMotorInvert = true;
 
         public static final double supplyCurrentLimit = 20;
+
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
-                    .withNeutralMode(NeutralModeValue.Brake)
-                    .withInverted(InvertedValue.Clockwise_Positive))
+                    .withNeutralMode(NeutralModeValue.Coast)
+                    .withInverted(InvertedValue.CounterClockwise_Positive))
+
                 .withCurrentLimits(new CurrentLimitsConfigs()
                     .withSupplyCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(supplyCurrentLimit));
+
+        public static final CANdiConfiguration candiConfig = new CANdiConfiguration()
+                .withDigitalInputs(new DigitalInputsConfigs()
+                        .withS1CloseState(S1CloseStateValue.CloseWhenHigh)
+                        .withS2CloseState(S2CloseStateValue.CloseWhenHigh));
+
         public static double intakeTimeout = 1;
     }
 
     public static final class ClimberConstants {
-        public static final int leftClimberMotorID = 1;
-        public static final int rightClimberMotorID = 2;
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
         public static final double climberCurrentLimit = 80.0;
@@ -446,14 +593,17 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
-        public static final int algaeRollerMotorID = 60;
-        public static final double intakeVoltage = 1; //FIXME tune for actual robot
+        public static final double intakeVoltage = 12; //FIXME tune for actual robot
         public static final double ejectVoltage = -1; //FIXME tune for actual robot
-        public static final double currentThreshold = 40.2; //FIXME tune for actual robot
-        public static final double algaeRollerCurrentLimit = 80.0;
-        public static final double holdVoltage = 0.5;
+
+        public static final double torqueCurrentThreshold = 30; //FIXME tune for actual robot
+
+        public static final double supplyCurrentLimit = 20.0;
+        public static final double statorCurrentLimit = 40.0;
+
+        public static final double holdVoltage = 1;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.3;
         public static final double reefPickupSafetyDistance = 1.75;
 
@@ -464,7 +614,7 @@ public class Constants {
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(algaeRollerCurrentLimit));
+                        .withSupplyCurrentLimit(supplyCurrentLimit));
     }
 
     public static final class TalonFXConstants {
@@ -496,13 +646,76 @@ public class Constants {
         K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
         L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
         FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
-        
+        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
+        PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),
+        NET(new Pose2d(7.7, 6.0, Rotation2d.fromDegrees(0)));
+
         public Pose2d value;
 
         private ScoringLocations(Pose2d value) {
             this.value = value;
         }
+    }
+
+    public enum ScoringLocationsLeft {
+        A(ScoringLocations.A.value),
+        C(ScoringLocations.C.value),
+        E(ScoringLocations.E.value),
+        G(ScoringLocations.G.value),
+        I(ScoringLocations.I.value),
+        K(ScoringLocations.K.value);
+
+        public Pose2d value;
+
+        private ScoringLocationsLeft(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ScoringLocationsRight {
+        B(ScoringLocations.B.value),
+        D(ScoringLocations.D.value),
+        F(ScoringLocations.F.value),
+        H(ScoringLocations.H.value),
+        J(ScoringLocations.J.value),
+        L(ScoringLocations.L.value);
+
+        public Pose2d value;
+
+        private ScoringLocationsRight(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ScoringLocationsMiddle {
+        AB(ScoringLocations.A.value.interpolate(ScoringLocations.B.value, 0.5)),
+        CD(ScoringLocations.C.value.interpolate(ScoringLocations.D.value, 0.5)),
+        EF(ScoringLocations.E.value.interpolate(ScoringLocations.F.value, 0.5)),
+        GH(ScoringLocations.G.value.interpolate(ScoringLocations.H.value, 0.5)),
+        IJ(ScoringLocations.I.value.interpolate(ScoringLocations.J.value, 0.5)),
+        KL(ScoringLocations.K.value.interpolate(ScoringLocations.L.value, 0.5));
+
+        public Pose2d value;
+
+        private ScoringLocationsMiddle(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ClimbLocations {
+        WALL(new Pose2d(8.5, 7.26, Rotation2d.fromDegrees(0))),
+        MIDDLE(new Pose2d(8.5, 6.1, Rotation2d.fromDegrees(0))),
+        CENTER(new Pose2d(8.5, 5.0, Rotation2d.fromDegrees(0)));
+
+        public Pose2d value;
+
+        private ClimbLocations(Pose2d value) {
+            this.value = value;
+        }
+    }
+
+    public enum ReefClipLocations {
+        LEFT, RIGHT;
     }
 
     public static final class CommandBounds {

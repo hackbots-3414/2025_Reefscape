@@ -26,7 +26,7 @@ import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
-    private static ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
+    private static final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
             .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
@@ -52,6 +52,7 @@ public class AutonomousUtil {
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -60,7 +61,7 @@ public class AutonomousUtil {
     }
 
     public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
-            Command[] scoringCommands, Supplier<Command> stowCommand, Supplier<Command> intakeCommand) {
+            Command[] scoringCommands, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
             if (i != 0) {
@@ -75,18 +76,14 @@ public class AutonomousUtil {
 
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
-    public static void queuePathWithCommand(Pose2d pose, Supplier<Command> command) {
-        try {
-            onTheFlyCommands.add(pathFinder(pose));
-            onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(RobotObserver.getPose())));
-            onTheFlyCommands.add(command.get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
+        onTheFlyCommands.add(pathFinder(pose));
+        onTheFlyCommands.add(new PathPlannerOverride(pose, drivetrain));
+        onTheFlyCommands.add(command.get());
     }
 
-    public static void queueClosest(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
-        queuePathWithCommand(clip(scoringLocationList), scoreSupplier);
+    public static void queueClosest(CommandSwerveDrivetrain drivetrain, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        queuePathWithCommand(drivetrain, clip(scoringLocationList), scoreSupplier);
     }
 
     public static Pose2d clip(List<Pose2d> list) {
@@ -134,11 +131,7 @@ public class AutonomousUtil {
     }
 
     public static void queuePath(Pose2d pose) {
-        try {
-            onTheFlyCommands.add(pathFinder(pose));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        onTheFlyCommands.add(pathFinder(pose));
     }
 
     public static Command followPath(String pathName) {

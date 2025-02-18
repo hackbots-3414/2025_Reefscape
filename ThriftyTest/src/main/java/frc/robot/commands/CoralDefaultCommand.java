@@ -15,10 +15,10 @@ public class CoralDefaultCommand extends Command {
 
     @Override
     public void execute() {
-        if (RobotObserver.getVisionExpired()) return;
+        if (RobotObserver.getVisionValid()) return;
 
-        if (CommandBounds.rightIntakeBounds.useBounds() ||
-            CommandBounds.leftIntakeBounds.useBounds()) {
+        if (CommandBounds.rightIntakeBounds.isActive() ||
+            CommandBounds.leftIntakeBounds.isActive()) {
             m_coral.resetTimeout();
             m_coral.setIntake();
         } else {

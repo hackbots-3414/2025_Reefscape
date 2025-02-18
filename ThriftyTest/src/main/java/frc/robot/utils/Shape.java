@@ -68,8 +68,8 @@ public class Shape {
         return (crossings % 2 == 1);
     }
 
-    public boolean useBounds() {
-        if (RobotObserver.getVisionExpired()) {
+    public boolean isActive() {
+        if (!RobotObserver.getVisionValid() || !RobotObserver.getToggleSafety()) { // vision off or safety off = don't run shape logic
             return true;
         }
         return isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());

@@ -36,12 +36,12 @@ public class AlgaeIntakeCommand extends Command {
                 pivot.setGroundPickup();
             }
             case REEFLOWER -> {
-                isDone = !CommandBounds.reefBounds.useBounds();
+                isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefLower();
                 pivot.setReefPickup();
             }
             case REEFUPPER -> {
-                isDone = !CommandBounds.reefBounds.useBounds();
+                isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefUpper();
                 pivot.setReefPickup();
             }
@@ -58,11 +58,11 @@ public class AlgaeIntakeCommand extends Command {
             switch (location) {
                 case GROUND -> isDone = true;
                 case REEFLOWER -> {
-                    isDone = !CommandBounds.reefBounds.useBounds();
+                    isDone = !CommandBounds.reefBounds.isActive();
                     pivot.setReefExtract();
                 }
                 case REEFUPPER -> {
-                    isDone = !CommandBounds.reefBounds.useBounds();
+                    isDone = !CommandBounds.reefBounds.isActive();
                     pivot.setReefExtract();
                 }
                 default -> isDone = true;

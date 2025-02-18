@@ -41,13 +41,24 @@ public class RobotObserver {
     }
 
     /* Keeps track of the latest time an april tag was seen */
-    private Supplier<Boolean> m_visionExpiredSupplier;
+    private Supplier<Boolean> m_visionValidSupplier;
 
-    public static void setVisionExpiredSupplier(Supplier<Boolean> expiredSupplier) {
-        getInstance().m_visionExpiredSupplier = expiredSupplier;
+    public static void visionValidSupplier(Supplier<Boolean> visionValidSupplier) {
+        getInstance().m_visionValidSupplier = visionValidSupplier;
     }
 
-    public static boolean getVisionExpired() {
-        return getInstance().m_visionExpiredSupplier.get();
+    public static boolean getVisionValid() {
+        return getInstance().m_visionValidSupplier.get();
+    }
+
+    /* Lets us keep track of if safety is enabled */
+    private boolean m_safety = true;
+
+    public static void toggleSafety() {
+        getInstance().m_safety = !getInstance().m_safety;
+    }
+
+    public static boolean getToggleSafety() {
+        return getInstance().m_visionValidSupplier.get();
     }
 }

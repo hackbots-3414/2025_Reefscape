@@ -1,6 +1,11 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "CANdi (v6)[59]": {
+        "header": {
+          "open": true
+        }
+      },
       "window": {
         "visible": false
       }
@@ -34,7 +39,10 @@
       "/SmartDashboard/Place to Score #2": "String Chooser",
       "/SmartDashboard/Place to Score #3": "String Chooser",
       "/SmartDashboard/Place to Score #4": "String Chooser",
+      "/SmartDashboard/Raise Elevator": "Command",
+      "/SmartDashboard/Raise Pivot": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
@@ -129,7 +137,67 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Elevator Visualization": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Pivot Arm Visualization": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
+        "Blue Alliance Left Intake": {
+          "arrows": false,
+          "color": [
+            0.15189886093139648,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Alliance Net": {
+          "arrows": false,
+          "color": [
+            0.0,
+            0.025316476821899414,
+            1.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Alliance Processor": {
+          "arrows": false,
+          "color": [
+            0.025316238403320313,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Alliance Reef": {
+          "arrows": false,
+          "color": [
+            1.0,
+            0.0,
+            0.9620256423950195,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Blue Alliance Right Intake": {
+          "arrows": false,
+          "color": [
+            0.05063295364379883,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
         "Blue Left Human Player Bounds": {
           "arrows": false,
           "color": [
@@ -191,6 +259,16 @@
           "length": 0.7599999904632568,
           "selectable": false,
           "width": 0.7599999904632568
+        },
+        "Pathfind Trajectory": {
+          "arrows": false,
+          "color": [
+            238.86077880859375,
+            255.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line"
         },
         "Red Left Human Player Bounds": {
           "arrows": false,
@@ -327,6 +405,9 @@
     }
   },
   "NetworkTables Info": {
+    "Server": {
+      "open": true
+    },
     "visible": true
   }
 }

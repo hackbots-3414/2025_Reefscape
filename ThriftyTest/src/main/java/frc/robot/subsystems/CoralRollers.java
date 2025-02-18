@@ -6,22 +6,23 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.IDConstants;
 
 public class CoralRollers extends SubsystemBase {
-    private final TalonFX coralLeft = new TalonFX(CoralConstants.k_leftMotorID);
-    private final TalonFX coralRight = new TalonFX(CoralConstants.k_rightMotorID);
+    private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
+    private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
 
-    private final DigitalInput frontSensor = new DigitalInput(CoralConstants.k_frontSensorPort);
-    private final DigitalInput backSensor = new DigitalInput(CoralConstants.k_backSensorPort);
+    private final CANdi m_candi = new CANdi(IDConstants.candi);
 
-    private boolean frontSensorValue = false;
-    private boolean backSensorValue = false;
+    private boolean m_frontSensorValue = false;
+    private boolean m_backSensorValue = false;
 
     private double m_voltage;
     private boolean m_voltageChanged;
@@ -30,16 +31,21 @@ public class CoralRollers extends SubsystemBase {
 
     public CoralRollers() {
         configMotors();
+        configCandi();
     }
 
     private void configMotors() {
-        coralLeft.clearStickyFaults();
-        coralRight.clearStickyFaults();
+        m_coralLeft.clearStickyFaults();
+        m_coralRight.clearStickyFaults();
 
-        coralLeft.getConfigurator().apply(CoralConstants.motorConfig);
-        coralRight.getConfigurator().apply(CoralConstants.motorConfig);
+        m_coralLeft.getConfigurator().apply(CoralConstants.motorConfig);
+        m_coralRight.getConfigurator().apply(CoralConstants.motorConfig);
 
-        coralRight.setControl(new Follower(CoralConstants.k_leftMotorID, CoralConstants.rightMotorInvert));
+        m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
+    }
+
+    private void configCandi() {
+        m_candi.getConfigurator().apply(CoralConstants.candiConfig);
     }
 
     public void setVoltage(double voltage) {
@@ -100,11 +106,11 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean getFrontIR() {
-        return frontSensorValue;
+        return m_frontSensorValue;
     }
 
     public boolean getBackIR() {
-        return backSensorValue;
+        return m_backSensorValue;
     }
 
     public boolean holdingPiece() {
@@ -117,11 +123,19 @@ public class CoralRollers extends SubsystemBase {
 
     @Override
     public void periodic() {
-        frontSensorValue = frontSensor.get();
-        backSensorValue = backSensor.get();
+        if (Robot.isReal()) {
+            m_frontSensorValue = m_candi.getS1Closed().getValue();
+            m_backSensorValue = m_candi.getS2Closed().getValue();
+        } else {
+            m_frontSensorValue = SmartDashboard.getBoolean("Front IR", false);
+            m_backSensorValue = SmartDashboard.getBoolean("Back IR", false);
+        }
+
+        SmartDashboard.putBoolean("Front IR", m_frontSensorValue);
+        SmartDashboard.putBoolean("Back IR", m_backSensorValue);
 
         if (m_voltageChanged) {
-            coralLeft.setVoltage(m_voltage);
+            m_coralLeft.setVoltage(m_voltage);
             m_voltageChanged = false;
             SmartDashboard.putNumber("* CORAL VOLTS", m_voltage);
         }

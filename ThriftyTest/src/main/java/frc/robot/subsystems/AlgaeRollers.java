@@ -8,13 +8,15 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.AlgaeRollerConstants;
+import frc.robot.Constants.IDConstants;
 
-public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
-    
+public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
     
-    private final TalonFX m_algaeRoller = new TalonFX(AlgaeRollerConstants.algaeRollerMotorID);
+    private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algaeMotor);
 
     private double m_voltage;
     private boolean m_voltageChanged;
@@ -48,7 +50,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     public void intakeAlgae() {
         if (hasObject()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
-            m_logger.warn("We may need current limits for having an object which are not yet implemented");
         } else {
             setMotor(AlgaeRollerConstants.intakeVoltage);
         }
@@ -57,7 +58,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     public void smartStop() {
         if (hasObject()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
-            m_logger.warn("We may need current limits for having an object which are not yet implemented");
         } else {
             stopMotor();
         }
@@ -68,7 +68,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     }
 
     public void ejectAlgae() {
-        m_logger.warn("Voltage for real bot's eject not set, set eject voltage for real bot in Constants.AlgaeRollerConstants.ejectPower");
         setMotor(AlgaeRollerConstants.ejectVoltage);
     }
 
@@ -77,8 +76,13 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable{
     }
 
     private void updateObjectState() {
-        m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.currentThreshold;
-        SmartDashboard.putBoolean("Holding Algae", m_hasObject);
+        if (Robot.isReal()) {
+            m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
+        } else {
+            m_hasObject = SmartDashboard.getBoolean("Algae Holding Object", false);
+        }
+
+        SmartDashboard.putBoolean("Algae Holding Object", m_hasObject);
     }
 
     @Override

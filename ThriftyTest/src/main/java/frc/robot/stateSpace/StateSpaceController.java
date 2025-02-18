@@ -10,11 +10,11 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.Num;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.system.LinearSystemLoop;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.StateSpaceConstants;
 
-public class StateSpaceController<States extends Num, Inputs extends Num, Outputs extends Num> extends SubsystemBase {
+public class StateSpaceController<States extends Num, Inputs extends Num, Outputs extends Num> implements AutoCloseable {
     private final LinearSystemLoop<States, Inputs, Outputs> m_loop;
 
     private final Supplier<Vector<Outputs>> m_outputSupplier;
@@ -25,6 +25,8 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
     private final String m_name;
 
     private boolean isAtSetpoint = false;
+
+    private Notifier m_notifier;
 
     /** Creates a new StateSpaceController. */
     public StateSpaceController(
@@ -42,10 +44,13 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
 
         m_loop = config.buildLoop();
         m_loop.reset(initialState);
+        
+        // setup the notifier!
+        m_notifier = new Notifier(this::periodic);
+        m_notifier.startPeriodic(StateSpaceConstants.k_dt);
     }
 
-    @Override
-    public void periodic() {
+    private void periodic() {
         // Correct our Kalman Filter's state vector estimate with the latest data
         Vector<Outputs> lastMeasurement = m_outputSupplier.get();
         m_loop.correct(lastMeasurement);
@@ -82,5 +87,9 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
 
     public boolean isAtSetpoint() {
         return isAtSetpoint;
+    }
+
+    public void close() {
+        m_notifier.close();
     }
 }
