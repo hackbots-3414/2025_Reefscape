@@ -14,10 +14,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -32,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
-import frc.robot.stateSpace.StateSpaceController;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
@@ -44,12 +39,10 @@ public class Elevator extends SubsystemBase {
 
     private final CANcoder m_cancoder = new CANcoder(IDConstants.elevatorEncoder);
 
-    private StateSpaceController<N2, N1, N2> m_controller;
-
     private double m_position;
     private double m_velocity;
 
-    private boolean m_stateSpaceEnabled;
+    private double m_reference;
 
     private ElevatorSim m_elevatorSim;
     private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
@@ -65,7 +58,6 @@ public class Elevator extends SubsystemBase {
         configEncoder();
         configMotor();
         configSim();
-        configStateSpace();
     }
 
     private void configEncoder() {
@@ -79,17 +71,6 @@ public class Elevator extends SubsystemBase {
         m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         Follower follower = new Follower(IDConstants.elevatorRight, ElevatorConstants.invertLeftMotorFollower);
         m_elevatorLeft.setControl(follower);
-    }
-
-    private void configStateSpace() {
-        Vector<N2> initialState = getOutput();
-        m_controller = new StateSpaceController<>(
-            ElevatorConstants.stateSpaceConfig,
-            this::getOutput,
-            this::applyInput,
-            initialState
-        );
-        enableStateSpace();
     }
 
     private void configSim() {
@@ -113,43 +94,16 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    private Vector<N2> getOutput() {
-        return VecBuilder.fill(
-            getPositionUncached(),
-            getVelocityUncached()
-        );
-    }
-
     private final MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
         m_elevatorRight.setControl(control.withPosition(goal));
+        m_reference = goal;
     }
-
-    private void applyInput(Vector<N1> inputs) {
-        // if (!m_stateSpaceEnabled) return;
-
-        // double volts = inputs.get(0);
-
-        // m_elevatorRight.setVoltage(volts);
-    }
-
-    // public void setPosition(double goal) {
-    //     m_controller.setReference(VecBuilder.fill(goal, 0.0));
-    // }
 
     public void setSpeed(double speed) {
         m_speedChanged = (speed != m_speed);
         m_speed = speed;
-    }
-
-    public void enableStateSpace() {
-        m_controller.setReference(getOutput());
-        m_stateSpaceEnabled = true;
-    }
-
-    public void disableStateSpace() {
-        m_stateSpaceEnabled = false;
     }
 
     public void setStow() {
@@ -204,7 +158,11 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return m_controller.isAtSetpoint();
+        return Math.abs(getPosition() - getReference()) > ElevatorConstants.tolerance;
+    }
+
+    public double getReference() {
+        return m_reference;
     }
 
     public double getPosition() {
@@ -240,7 +198,7 @@ public class Elevator extends SubsystemBase {
 
         SmartDashboard.putNumber("Elevator Position", m_position);
 
-        if (m_speedChanged && !m_stateSpaceEnabled) {
+        if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
