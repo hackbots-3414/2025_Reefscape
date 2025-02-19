@@ -43,6 +43,7 @@ public class Elevator extends SubsystemBase {
     private double m_velocity;
 
     private double m_reference;
+    private double m_error;
 
     private ElevatorSim m_elevatorSim;
     private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
@@ -158,7 +159,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return Math.abs(getPosition() - getReference()) < ElevatorConstants.tolerance;
+        return m_error < ElevatorConstants.tolerance;
     }
 
     public double getReference() {
@@ -196,12 +197,14 @@ public class Elevator extends SubsystemBase {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
 
+        m_error = Math.abs(m_elevatorRight.getClosedLoopError().getValueAsDouble());
+
         if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
 
-        SmartDashboard.putBoolean("ELEVATOR AT POSITOIN", atSetpoint());
+        SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
     }
 
     @Override

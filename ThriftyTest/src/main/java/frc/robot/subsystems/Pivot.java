@@ -33,6 +33,7 @@ public class Pivot extends SubsystemBase {
     private double m_velocity;
 
     private double m_reference;
+    private double m_error;
 
     private SingleJointedArmSim m_armSim;
     private final DCMotor m_gearbox = DCMotor.getKrakenX60(1); // 2 motors (left and right)
@@ -132,7 +133,7 @@ public class Pivot extends SubsystemBase {
     }
     
     public boolean atSetpoint() {
-        return Math.abs(m_pivot.getClosedLoopError().getValueAsDouble()) < PivotConstants.tolerance;
+        return  m_error < PivotConstants.tolerance;
     }
     
     private double getPositionUncached() {
@@ -157,6 +158,8 @@ public class Pivot extends SubsystemBase {
 
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
+
+        m_error = Math.abs(m_pivot.getClosedLoopError().getValueAsDouble());
 
         if (m_speedChanged) {
             m_pivot.setControl(new DutyCycleOut(m_speed));
