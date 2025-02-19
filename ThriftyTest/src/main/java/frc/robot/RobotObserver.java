@@ -52,14 +52,14 @@ public class RobotObserver {
     }
 
     /* Lets us keep track of if safety is enabled */
-    private boolean m_safety = true;
+    private boolean m_manualModeEnabled = false;
 
-    public static void toggleSafety() {
-        getInstance().m_safety = !getInstance().m_safety;
+    public static void toggleManualMode() {
+        getInstance().m_manualModeEnabled = !getInstance().m_manualModeEnabled;
     }
 
-    public static boolean getToggleSafety() {
-        return getInstance().m_safety;
+    public static boolean getManualMode() {
+        return getInstance().m_manualModeEnabled;
     }
 
     private Supplier<Double> m_elevatorHeightSupplier;

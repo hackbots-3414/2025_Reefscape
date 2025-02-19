@@ -229,49 +229,39 @@ public class Constants {
         }
 
         public static class ButtonBoardAlternate {
-            public static final int safetySwitch = Button.kTouchpad.value;
+            public static final int manualModeSwitch = 15; // Share button
 
-            // WHEN SAFETY ON - AUTOMATION BASED
+            // Mutual Buttons
             public static final int L1 = 0; // POV
             public static final int L2 = 270; // POV
             public static final int L3 = 90; // POV
             public static final int L4 = 180; // POV
+            
             public static final int leftReef = Button.kSquare.value;
             public static final int rightReef = Button.kCircle.value;
 
-            public static final int lowAlgaeAuto = Button.kCross.value;
-            public static final int highAlgaeAuto = Button.kTriangle.value;
-            public static final int groundAlgaeAuto = 180; // POV
-            public static final int processorAuto = 90; // POV
-            public static final int netAuto = 0; // POV
-            public static final int algaeModeButton = Button.kOptions.value;
+            public static final int lowAlgae = Button.kCross.value;
+            public static final int highAlgae = Button.kTriangle.value;
+            public static final int groundAlgae = 180; // POV
+            public static final int processor = 90; // POV
+            public static final int net = 0; // POV
+            public static final int algaeModeButton = Axis.kL2.value; // L2
+            public static final double algaeModeButtonThreshold = 0.7;
             
             public static final int leftIntake = Button.kL1.value; // LB
             public static final int rightIntake = Button.kR1.value; // RB
             
-            public static final int climbAuto = Button.kCreate.value;
+            public static final int climb = Button.kCreate.value;
 
-            // WHEN SAFETY OFF - MANUAL STUFF
-            public static final int l1Score = 0;
-            public static final int l2Score = 270;
-            public static final int l3Score = 90;
-            public static final int l4Score = 180;
+            // Safety Mode "swaps"
 
             public static final int manualElevatorUp = Axis.kLeftY.value;
             public static final int manualElevatorDown = Axis.kLeftY.value;
             public static final int manualPivotUp = Axis.kRightY.value;
             public static final int manualPivotDown = Axis.kRightY.value;
 
-            public static final int lowAlgae = Button.kCross.value;
-            public static final int highAlgae = Button.kTriangle.value;
-            public static final int groundAlgae = Button.kSquare.value;
-            public static final int processor = Button.kCircle.value;
-            public static final int net = Button.kR1.value;
-
             public static final int intake = Button.kL1.value; // LB
             public static final int spitPiece = Button.kL2.value; // LT
-
-            public static final int climb = Button.kCreate.value;
         }
     }
 
