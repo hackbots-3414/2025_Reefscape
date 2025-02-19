@@ -28,7 +28,6 @@ import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.BackupDriver;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardAlternate;
-import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
 import frc.robot.Constants.ClimbLocations;
@@ -39,9 +38,7 @@ import frc.robot.Constants.ScoringLocations;
 import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsMiddle;
 import frc.robot.Constants.ScoringLocationsRight;
-import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.commands.AlgaeIntakeCommand;
-import frc.robot.commands.AlgaeIntakeManualCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralDefaultCommand;
 import frc.robot.commands.CoralIntakeCommand;
@@ -188,103 +185,55 @@ public class RobotContainer {
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
         m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers));
+        
+        controller.button(ButtonBoardAlternate.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
+        BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
+        BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
 
-        // if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
-        //     BooleanSupplier safetyOn = () -> controller.button(ButtonBoard.safetySwitch).getAsBoolean();
-        //     BooleanSupplier safetyOff = () -> !controller.button(ButtonBoard.safetySwitch).getAsBoolean();
+        Trigger algaeOn = controller.axisGreaterThan(ButtonBoardAlternate.algaeModeButton, ButtonBoardAlternate.algaeModeButtonThreshold);
 
-        //     // SAFETY **ON** MEANS USE THESE
-        //     bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.button(ButtonBoard.L1Auto).and(safetyOn));
-        //     bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.button(ButtonBoard.L2Auto).and(safetyOn));
-        //     bindAutoCoralScoreCommand(3, ReefClipLocations.LEFT, controller.button(ButtonBoard.L3Auto).and(safetyOn));
-        //     bindAutoCoralScoreCommand(4, ReefClipLocations.LEFT, controller.button(ButtonBoard.L4Auto).and(safetyOn));
-        //     bindAutoCoralScoreCommand(1, ReefClipLocations.RIGHT, controller.button(ButtonBoard.R1Auto).and(safetyOn));
-        //     bindAutoCoralScoreCommand(2, ReefClipLocations.RIGHT, controller.button(ButtonBoard.R2Auto).and(safetyOn));
-        //     bindAutoCoralScoreCommand(3, ReefClipLocations.RIGHT, controller.button(ButtonBoard.R3Auto).and(safetyOn));
-        //     bindAutoCoralScoreCommand(4, ReefClipLocations.RIGHT, controller.button(ButtonBoard.R4Auto).and(safetyOn));
+        // SAFETY **ON** MEANS USE THESE
+        bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        bindAutoCoralScoreCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        bindAutoCoralScoreCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        bindAutoCoralScoreCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
+        bindAutoCoralScoreCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
+        bindAutoCoralScoreCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
+        bindAutoCoralScoreCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
 
-        //     bindAutoCoralIntakeCommand(ReefClipLocations.LEFT, controller.button(ButtonBoard.leftIntake).and(safetyOn));
-        //     bindAutoCoralIntakeCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoard.rightIntake).and(safetyOn));
+        bindAutoCoralIntakeCommand(ReefClipLocations.LEFT, controller.button(ButtonBoardAlternate.leftIntake).and(manualModeOff));
+        bindAutoCoralIntakeCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightIntake).and(manualModeOff));
 
-        //     bindAutoAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoard.groundAlgaeAuto).and(safetyOn));
-        //     bindAutoAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoard.lowAlgaeAuto).and(safetyOn));
-        //     bindAutoAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoard.highAlgaeAuto).and(safetyOn));
-        //     bindAutoAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoard.netAuto).and(safetyOn));
-        //     bindAutoAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoard.processorAuto).and(safetyOn));
+        bindAutoAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOff));
+        bindAutoAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(algaeOn).and(manualModeOff));
+        bindAutoAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(algaeOn).and(manualModeOff));
+        bindAutoAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOff));
+        bindAutoAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOff));
 
-        //     bindManualClimbCommand(controller.button(ButtonBoard.climbAuto).and(safetyOn));
+        bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(manualModeOff));
 
-        //     // SAFETY **OFF** MEANS USE THESE
-        //     bindManualCoralScoreCommand(1, controller.button(ButtonBoard.l1Score).and(safetyOff));
-        //     bindManualCoralScoreCommand(2, controller.button(ButtonBoard.l2Score).and(safetyOff));
-        //     bindManualCoralScoreCommand(3, controller.button(ButtonBoard.l3Score).and(safetyOff));
-        //     bindManualCoralScoreCommand(4, controller.button(ButtonBoard.l4Score).and(safetyOff));
+        // // SAFETY **OFF** MEANS USE THESE
+        bindManualCoralScoreCommand(1, controller.pov(ButtonBoardAlternate.L1).and(manualModeOn));
+        bindManualCoralScoreCommand(2, controller.pov(ButtonBoardAlternate.L2).and(manualModeOn));
+        bindManualCoralScoreCommand(3, controller.pov(ButtonBoardAlternate.L3).and(manualModeOn));
+        bindManualCoralScoreCommand(4, controller.pov(ButtonBoardAlternate.L4).and(manualModeOn));
 
-        //     bindManualCoralIntakeCommand(controller.button(ButtonBoard.intake).and(safetyOff));
+        bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake).and(manualModeOn));
 
-        //     bindManualElevatorCommand(Direction.kForward, controller.button(ButtonBoard.manualElevatorUp).and(safetyOff));
-        //     bindManualElevatorCommand(Direction.kReverse, controller.button(ButtonBoard.manualElevatorDown).and(safetyOff));
+        bindManualElevatorCommand(Direction.kForward, controller.button(ButtonBoardAlternate.manualElevatorUp).and(manualModeOn));
+        bindManualElevatorCommand(Direction.kReverse, controller.button(ButtonBoardAlternate.manualElevatorDown).and(manualModeOn));
 
-        //     bindManualPivotCommand(Direction.kForward, controller.button(ButtonBoard.manualPivotUp).and(safetyOff));
-        //     bindManualPivotCommand(Direction.kReverse, controller.button(ButtonBoard.manualPivotDown).and(safetyOff));
+        bindManualPivotCommand(Direction.kForward, controller.button(ButtonBoardAlternate.manualPivotUp).and(manualModeOn));
+        bindManualPivotCommand(Direction.kReverse, controller.button(ButtonBoardAlternate.manualPivotDown).and(manualModeOn));
 
-        //     bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoard.groundAlgae).and(safetyOff));
-        //     bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoard.lowAlgae).and(safetyOff));
-        //     bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoard.highAlgae).and(safetyOff));
-        //     bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoard.net).and(safetyOff));
-        //     bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoard.processor).and(safetyOff));
+        bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
 
-        //     bindManualClimbCommand(controller.button(ButtonBoard.climb).and(safetyOff));
-        // }
-
-        if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BACKUP) {
-            controller.button(ButtonBoardAlternate.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
-            BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
-            BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
-
-            // SAFETY **ON** MEANS USE THESE
-            bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            bindAutoCoralScoreCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            bindAutoCoralScoreCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            bindAutoCoralScoreCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-            bindAutoCoralScoreCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-            bindAutoCoralScoreCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-            bindAutoCoralScoreCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-
-            bindAutoCoralIntakeCommand(ReefClipLocations.LEFT, controller.button(ButtonBoardAlternate.leftIntake).and(manualModeOff));
-            bindAutoCoralIntakeCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightIntake).and(manualModeOff));
-
-            bindAutoAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(manualModeOff));
-
-            bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(manualModeOff));
-
-            // // SAFETY **OFF** MEANS USE THESE
-            bindManualCoralScoreCommand(1, controller.pov(ButtonBoardAlternate.L1).and(manualModeOn));
-            bindManualCoralScoreCommand(2, controller.pov(ButtonBoardAlternate.L2).and(manualModeOn));
-            bindManualCoralScoreCommand(3, controller.pov(ButtonBoardAlternate.L3).and(manualModeOn));
-            bindManualCoralScoreCommand(4, controller.pov(ButtonBoardAlternate.L4).and(manualModeOn));
-
-            bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake).and(manualModeOn));
-
-            bindManualElevatorCommand(Direction.kForward, controller.button(ButtonBoardAlternate.manualElevatorUp).and(manualModeOn));
-            bindManualElevatorCommand(Direction.kReverse, controller.button(ButtonBoardAlternate.manualElevatorDown).and(manualModeOn));
-
-            bindManualPivotCommand(Direction.kForward, controller.button(ButtonBoardAlternate.manualPivotUp).and(manualModeOn));
-            bindManualPivotCommand(Direction.kReverse, controller.button(ButtonBoardAlternate.manualPivotDown).and(manualModeOn));
-
-            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoardAlternate.groundAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoardAlternate.net).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoardAlternate.processor).and(manualModeOn));
-
-            bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(manualModeOff));
-        }
+        bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(manualModeOff));
     }
 
     public List<Pose2d> scoringLocationsListLeft;
@@ -375,7 +324,7 @@ public class RobotContainer {
         }
     }
 
-    public void configureNamedCommands() {
+    private void configureNamedCommands() {
         NamedCommands.registerCommand("L1", coralScoreCommand(1));
         NamedCommands.registerCommand("L2", coralScoreCommand(2));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));

@@ -28,7 +28,7 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    coral.setIntake();
+    coral.stop();
   }
 
   @Override
