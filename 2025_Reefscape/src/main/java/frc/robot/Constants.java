@@ -91,8 +91,8 @@ public class Constants {
         public static final double k_cameraBackYaw = Units.degreesToRadians(45.0);
     }
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(5.0, 0.0, 0.0);// 
-        public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
+        public static final PIDConstants k_translationPID = new PIDConstants(0.067725, 0.0, 0.0); //kS: 0.198095 kV: 0.12131 kA: 0.00346945 
+        public static final PIDConstants k_rotationPID = new PIDConstants(1.6826, 0.0, 0.0); //kS: 0.27075 kV: 2.902 kA: 0.092378
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
