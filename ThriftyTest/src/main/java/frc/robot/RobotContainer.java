@@ -39,6 +39,7 @@ import frc.robot.Constants.ScoringLocations;
 import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsMiddle;
 import frc.robot.Constants.ScoringLocationsRight;
+import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeIntakeManualCommand;
 import frc.robot.commands.AlgaeScoreCommand;
@@ -240,14 +241,16 @@ public class RobotContainer {
             // controller.button(ButtonBoardAlternate.safetySwitch).onChange(new InstantCommand(() -> RobotObserver.toggleSafety()));
             // BooleanSupplier safety = () -> RobotObserver.getToggleSafety();
 
-            controller.povDown().onTrue(new InstantCommand(() -> m_elevator.setL1()));
-            controller.povLeft().onTrue(new InstantCommand(() -> m_elevator.setL2()));
-            controller.povUp().onTrue(new InstantCommand(() -> m_elevator.setL3()));
-            controller.povRight().onTrue(new InstantCommand(() -> m_elevator.setL4()));
-            controller.square().onTrue(new InstantCommand(() -> m_elevator.setStow()));
+            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.square());
+            bindManualCoralScoreCommand(1, controller.povDown());
+            bindManualCoralScoreCommand(2, controller.povRight());
+            bindManualCoralScoreCommand(3, controller.povLeft());
+            bindManualCoralScoreCommand(4, controller.povUp());
+            
 
             bindManualCoralIntakeCommand(controller.cross());
             controller.circle().onTrue(new AlgaeIntakeManualCommand(m_algaeRollers));
+            controller.triangle().onTrue(new InstantCommand(() -> m_algaePivot.setStow()));
             // SAFETY **ON** MEANS USE THESE
             // bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(safety));
             // bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(safety));
@@ -488,7 +491,8 @@ public class RobotContainer {
         REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET;
     }
 
-    public void resetElevatorReference() {
+    public void resetReferences() {
         m_elevator.setPosition(m_elevator.getPosition());
+        m_algaePivot.setPosition(m_algaePivot.getPosition());
     }
 }

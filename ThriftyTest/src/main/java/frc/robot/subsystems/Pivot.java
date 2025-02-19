@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -37,6 +38,8 @@ public class Pivot extends SubsystemBase {
 
     private double m_position;
     private double m_velocity;
+
+    private double m_reference;
 
     private boolean m_stateSpaceEnabled;
 
@@ -104,6 +107,13 @@ public class Pivot extends SubsystemBase {
         );
     }
 
+    MotionMagicVoltage control = new MotionMagicVoltage(0);
+
+    public void setPosition(double goal) {
+        m_pivot.setControl(control.withPosition(goal));
+        m_reference = goal;
+    }
+
     private void applyInput(Vector<N1> inputs) {
         if (!m_stateSpaceEnabled) return;
 
@@ -113,9 +123,9 @@ public class Pivot extends SubsystemBase {
         // m_pivot.setControl(config.withOutput(volts));
     }
 
-    public void setPosition(double goal) {
-        m_controller.setReference(VecBuilder.fill(goal, 0.0));
-    }
+    // public void setPosition(double goal) {
+    //     m_controller.setReference(VecBuilder.fill(goal, 0.0));
+    // }
 
     public void setSpeed(double speed) {
         m_speedChanged = (speed != m_speed);
@@ -163,12 +173,17 @@ public class Pivot extends SubsystemBase {
         return m_position;
     }
 
+    public double getReference() {
+        return m_reference;
+    }
+
     public double getVelocity() {
         return m_velocity;
     }
     
     public boolean atSetpoint() {
-        return m_controller.isAtSetpoint();
+        // return m_controller.isAtSetpoint();
+        return Math.abs(m_pivot.getClosedLoopError().getValueAsDouble()) < PivotConstants.tolerance;
     }
     
     private double getPositionUncached() {
@@ -198,6 +213,11 @@ public class Pivot extends SubsystemBase {
             m_pivot.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
+
+        SmartDashboard.putBoolean("PIVOT AT POSITOIN", atSetpoint());
+
+        SmartDashboard.putNumber("PIVOT POS", getPosition());
+        SmartDashboard.putNumber("PIVOT REF", getReference());
     }
 
     @Override

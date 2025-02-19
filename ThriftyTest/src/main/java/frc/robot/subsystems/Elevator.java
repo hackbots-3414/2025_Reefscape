@@ -158,7 +158,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return Math.abs(getPosition() - getReference()) > ElevatorConstants.tolerance;
+        return Math.abs(getPosition() - getReference()) < ElevatorConstants.tolerance;
     }
 
     public double getReference() {
@@ -196,12 +196,12 @@ public class Elevator extends SubsystemBase {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
 
-        SmartDashboard.putNumber("Elevator Position", m_position);
-
         if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
+
+        SmartDashboard.putBoolean("ELEVATOR AT POSITOIN", atSetpoint());
     }
 
     @Override

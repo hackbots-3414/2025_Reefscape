@@ -9,17 +9,19 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.Robot;
 
 public class CoralRollers extends SubsystemBase {
     private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
     private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
 
-    private final CANdi m_candi = new CANdi(IDConstants.candi);
+    private final AnalogInput m_frontIR = new AnalogInput(IDConstants.frontIR); // tolerance 1
+    private final AnalogInput m_backIR = new AnalogInput(IDConstants.rearIR);
 
     private boolean m_frontSensorValue = false;
     private boolean m_backSensorValue = false;
@@ -31,7 +33,6 @@ public class CoralRollers extends SubsystemBase {
 
     public CoralRollers() {
         configMotors();
-        configCandi();
     }
 
     private void configMotors() {
@@ -42,10 +43,6 @@ public class CoralRollers extends SubsystemBase {
         m_coralRight.getConfigurator().apply(CoralConstants.motorConfig);
 
         m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
-    }
-
-    private void configCandi() {
-        m_candi.getConfigurator().apply(CoralConstants.candiConfig);
     }
 
     public void setVoltage(double voltage) {
@@ -124,15 +121,20 @@ public class CoralRollers extends SubsystemBase {
     @Override
     public void periodic() {
         if (Robot.isReal()) {
-            m_frontSensorValue = m_candi.getS1Closed().getValue();
-            m_backSensorValue = m_candi.getS2Closed().getValue();
+            m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
+            m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
         } else {
             m_frontSensorValue = SmartDashboard.getBoolean("Front IR", false);
             m_backSensorValue = SmartDashboard.getBoolean("Back IR", false);
         }
 
-        SmartDashboard.putBoolean("Front IR", m_frontSensorValue);
-        SmartDashboard.putBoolean("Back IR", m_backSensorValue);
+        SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
+        SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
+
+        SmartDashboard.putNumber("Front IR", m_frontIR.getVoltage());
+        SmartDashboard.putNumber("Back IR", m_backIR.getVoltage());
+
+        SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
 
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);
