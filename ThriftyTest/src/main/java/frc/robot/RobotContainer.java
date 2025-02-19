@@ -249,7 +249,7 @@ public class RobotContainer {
             
 
             bindManualCoralIntakeCommand(controller.cross());
-            controller.circle().onTrue(new AlgaeIntakeManualCommand(m_algaeRollers));
+            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.circle());
             controller.triangle().onTrue(new InstantCommand(() -> m_algaePivot.setStow()));
             // SAFETY **ON** MEANS USE THESE
             // bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(safety));

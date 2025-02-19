@@ -423,13 +423,18 @@ public class Constants {
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
+        /* Please note:
+         * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
+         * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
+         */
+
         public static final double stow = 0.0;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
         public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
         public static final double L4 = Units.inchesToMeters(77.25) * metersToRotations;
-        public static final double net = Units.inchesToMeters(83) * metersToRotations;
+        public static final double net = Units.inchesToMeters(79) * metersToRotations;
         public static final double reefLower = Units.inchesToMeters(30) * metersToRotations;
         public static final double reefUpper = Units.inchesToMeters(60) * metersToRotations;
 
@@ -507,7 +512,7 @@ public class Constants {
         public static final double processor = 0.25;
         public static final double reefPickup = 0.34;
         public static final double reefExtract = 0.29;
-        public static final double net = 0.4;
+        public static final double net = 0.25;
         public static final double stow = 0.17;
 
         public static final double manualUpSpeed = 0.1;
@@ -628,7 +633,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12; //FIXME tune for actual robot
-        public static final double ejectVoltage = -1; //FIXME tune for actual robot
+        public static final double ejectVoltage = -3; //FIXME tune for actual robot
 
         public static final double torqueCurrentThreshold = 30; //FIXME tune for actual robot
 

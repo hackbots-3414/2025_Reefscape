@@ -28,11 +28,10 @@ public class AlgaeScoreCommand extends Command {
 
   @Override
   public void initialize() {
-    initialTime = Utils.getCurrentTimeSeconds();
     isDone = false;
     switch (location) {
       case NET -> {
-        isDone = !CommandBounds.netBounds.isActive();
+        // isDone = !CommandBounds.netBounds.isActive();
         elevator.setNet();
         pivot.setNet();
       }
@@ -49,6 +48,8 @@ public class AlgaeScoreCommand extends Command {
   public void execute() {
     if (elevator.atSetpoint() && pivot.atSetpoint()) {
       rollers.ejectAlgae();
+    } else {
+      initialTime = Utils.getCurrentTimeSeconds();
     }
   }
 
