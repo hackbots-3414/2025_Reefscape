@@ -28,7 +28,7 @@ public class LedSubsystem extends SubsystemBase {
   private static double matchTime = 0;
   private Supplier<Boolean> isInRange;
   private boolean coralOnBoard = false;
-  // private boolean coralOnBoardTest = false;
+  private boolean coralOnBoardTest = false;
   // private boolean isInRangeTest = false;
   private boolean coralInViewTest = false;
   private int r = 0;
@@ -42,7 +42,7 @@ public class LedSubsystem extends SubsystemBase {
   private boolean endgameAlertStarted = false;
   private boolean inAuton = false;
   private boolean inTeleop = false;
-  private Coral coralIntake;
+  private Coral coral;
 
   private static enum LED_MODE {
     CORAL_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
@@ -54,9 +54,8 @@ public class LedSubsystem extends SubsystemBase {
   CANdle ledcontroller = new CANdle(LEDConstants.candleCanid);
   // private int currentMode = 0;
 
-  public LedSubsystem(Coral coralIntake) {
-    this.coralIntake = coralIntake;
-    SmartDashboard.putBoolean("coralInView", true);
+  public LedSubsystem() {
+    SmartDashboard.putBoolean("coralOnBoard", true);
 
     CANdleConfiguration config = new CANdleConfiguration();
     config.stripType = LEDStripType.RGB; // set the strip type to RGB
@@ -85,6 +84,7 @@ public class LedSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    coralOnBoard = coral.holdingPiece();
     matchTime = DriverStation.getMatchTime();
 
     inAuton = DriverStation.isAutonomousEnabled();
@@ -92,7 +92,7 @@ public class LedSubsystem extends SubsystemBase {
     // if (inTeleop == false && endgameWarningStarted == false && matchTime > 0) {
     // setColor("DEFAULT", 0, 2, "SOLID");
     // }
-    coralInViewTest = SmartDashboard.getBoolean("coralInView", true);
+    coralOnBoardTest = SmartDashboard.getBoolean("coralIOnBoardTest", true);
     SmartDashboard.putBoolean("Bad Controller", badController());
     // SmartDashboard.putBoolean("In Auton", inAuton);
     // SmartDashboard.putBoolean("In Teleop", inTeleop);
