@@ -518,27 +518,11 @@ public class Constants {
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
 
-        private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
-
-        private static final Vector<N2> qelms = VecBuilder.fill(0.02, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(1);
-
         public static final double momentOfIntertia = 0.14622;
         public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
 
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
                 .createSingleJointedArmSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
-
-        public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
-                stateSpacePlant,
-                stateSpaceStandardDeviation,
-                VecBuilder.fill(TalonFXConstants.positionStdDevs, TalonFXConstants.velocityStdDevs),
-                qelms,
-                relms,
-                Nat.N2(),
-                Nat.N2(),
-                tolerance,
-                "Pivot");
 
         public static final double maxSpeed = 1.5; // cancoder rotations per second
         public static final double accelerationMultiplier = 2;

@@ -15,17 +15,12 @@ public class ManualPivotCommand extends Command {
     }
 
     @Override
-    public void initialize() {
-        pivot.disableStateSpace();
-    }
-
-    @Override
     public void execute() {
         pivot.setSpeed(isUp ? PivotConstants.manualUpSpeed : PivotConstants.manualDownSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        pivot.enableStateSpace();
+        pivot.stop();
     }
 }

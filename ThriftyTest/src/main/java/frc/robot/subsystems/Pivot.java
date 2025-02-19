@@ -10,10 +10,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -28,20 +24,15 @@ import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
-import frc.robot.stateSpace.StateSpaceController;
 
 public class Pivot extends SubsystemBase {
     private final TalonFX m_pivot = new TalonFX(IDConstants.pivotMotor);
     private final CANcoder m_cancoder = new CANcoder(IDConstants.pivotEncoder);
 
-    private StateSpaceController<N2, N1, N2> m_controller;
-
     private double m_position;
     private double m_velocity;
 
     private double m_reference;
-
-    private boolean m_stateSpaceEnabled;
 
     private SingleJointedArmSim m_armSim;
     private final DCMotor m_gearbox = DCMotor.getKrakenX60(1); // 2 motors (left and right)
@@ -57,7 +48,6 @@ public class Pivot extends SubsystemBase {
         configSim();
         configEncoder();
         configMotor();
-        configStateSpace();
     }
 
     private void configEncoder() {
@@ -89,24 +79,6 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putData("Pivot Arm Visualization", m_mechVisual);
     }
 
-    private void configStateSpace() {
-        Vector<N2> initialState = getOutput();
-        m_controller = new StateSpaceController<>(
-            PivotConstants.stateSpaceConfig,
-            this::getOutput,
-            this::applyInput,
-            initialState
-        );
-        enableStateSpace();
-    }
-
-    private Vector<N2> getOutput() {
-        return VecBuilder.fill(
-            getPositionUncached(),
-            getVelocityUncached()
-        );
-    }
-
     MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
@@ -114,31 +86,9 @@ public class Pivot extends SubsystemBase {
         m_reference = goal;
     }
 
-    private void applyInput(Vector<N1> inputs) {
-        if (!m_stateSpaceEnabled) return;
-
-        // VoltageOut config = new VoltageOut(0);
-        // double volts = inputs.get(0);
-
-        // m_pivot.setControl(config.withOutput(volts));
-    }
-
-    // public void setPosition(double goal) {
-    //     m_controller.setReference(VecBuilder.fill(goal, 0.0));
-    // }
-
     public void setSpeed(double speed) {
         m_speedChanged = (speed != m_speed);
         m_speed = speed;
-    }
-
-    public void enableStateSpace() {
-        m_controller.setReference(getOutput());
-        m_stateSpaceEnabled = true;
-    }
-
-    public void disableStateSpace() {
-        m_stateSpaceEnabled = false;
     }
 
     public void setStow() {
@@ -182,7 +132,6 @@ public class Pivot extends SubsystemBase {
     }
     
     public boolean atSetpoint() {
-        // return m_controller.isAtSetpoint();
         return Math.abs(m_pivot.getClosedLoopError().getValueAsDouble()) < PivotConstants.tolerance;
     }
     
@@ -209,7 +158,7 @@ public class Pivot extends SubsystemBase {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
 
-        if (m_speedChanged && !m_stateSpaceEnabled) {
+        if (m_speedChanged) {
             m_pivot.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }

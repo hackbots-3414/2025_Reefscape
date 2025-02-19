@@ -26,7 +26,7 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
 
     private boolean isAtSetpoint = false;
 
-    private Notifier m_notifier;
+    private final Notifier m_notifier;
 
     /** Creates a new StateSpaceController. */
     public StateSpaceController(
@@ -89,6 +89,7 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
         return isAtSetpoint;
     }
 
+    @Override
     public void close() {
         m_notifier.close();
     }

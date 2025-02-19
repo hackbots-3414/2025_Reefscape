@@ -16,23 +16,23 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void initialize() {
-    // elevator.setStow();
+    elevator.setStow();
   }
 
   @Override
   public void execute() {
-    // if(elevator.atSetpoint()) {
+    if(elevator.atSetpoint()) {
       coral.setIntake();
-    // }
+    }
   }
 
-  // @Override
-  // public void end(boolean interrupted) {
-  //   coral.stop();
-  // }
+  @Override
+  public void end(boolean interrupted) {
+    coral.setIntake();
+  }
 
-  // @Override
-  // public boolean isFinished() {
-  //   return coral.holdingPiece();
-  // }
+  @Override
+  public boolean isFinished() {
+    return coral.holdingPiece();
+  }
 }
