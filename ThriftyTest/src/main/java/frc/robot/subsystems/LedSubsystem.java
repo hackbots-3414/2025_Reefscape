@@ -108,14 +108,13 @@ public class LedSubsystem extends SubsystemBase {
         ledStripEndIndex = 0;
         ledStripStartIndex = 0;
 
-        if (matchTime <= LEDConstants.endgameWarning  && endgameWarningStarted == false && !inAuton) {
+        if (matchTime <= LEDConstants.endgameAlert && endgameAlertStarted == false && !inAuton && matchTime > 0) {
+          // endgameAlertStarted = true;
+          setColor("YELLOW", 0, 2, "STROBE"); // Changed          
+        } else if (matchTime <= LEDConstants.endgameWarning  && endgameWarningStarted == false && !inAuton) {
           setColor("YELLOW", 0, 2, "SOLID"); // Changed
         }
 
-        else if (matchTime <= LEDConstants.endgameAlert && endgameAlertStarted == false && !inAuton && matchTime > 0) {
-          endgameAlertStarted = true;
-          setColor("YELLOW", 0, 2, "STROBE"); // Changed
-        }
       } else {
         ledStripStartIndex = 0;
         ledStripEndIndex = 2;
@@ -222,7 +221,6 @@ public class LedSubsystem extends SubsystemBase {
       } else { // LARSON
         ledcontroller.animate(
             new LarsonAnimation(r, g, b, 0, 0.75, LEDConstants.numLED, LarsonAnimation.BounceMode.Back, 7), x);
-
       }
     }
   }
