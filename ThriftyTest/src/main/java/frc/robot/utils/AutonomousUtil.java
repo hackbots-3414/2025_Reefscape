@@ -7,8 +7,6 @@ import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
 
-import com.ctre.phoenix6.swerve.SwerveModule;
-import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -26,9 +24,6 @@ import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
-    private static final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds()
-            .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
-
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
         try {
@@ -37,7 +32,7 @@ public class AutonomousUtil {
                     drivetrain::getPose, // Robot pose supplier
                     drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                     drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> drivetrain.setControl(autoRequest.withSpeeds(speeds)),
+                    (speeds, feedforwards) -> drivetrain.driveWithChassisSpeeds(speeds),
                     new PPHolonomicDriveController(DriveConstants.k_translationPID, DriveConstants.k_rotationPID),
                     config, // The robot configuration
                     () -> {
@@ -48,6 +43,8 @@ public class AutonomousUtil {
                         return false;
                     },
                     drivetrain); // Reference to this subsystem to set requirements
+
+            drivetrain.initializeSetpointGenerator(config);
 
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
@@ -61,7 +58,7 @@ public class AutonomousUtil {
     }
 
     public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
-            Command[] scoringCommands, Supplier<Command> intakeCommand) {
+            Command[] scoringCommands) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
             if (i != 0) {

@@ -92,7 +92,9 @@ public class Constants {
 
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
-        public static final int candi = 59;
+
+        public static final int frontIR = 1;
+        public static final int rearIR = 2;
 
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
@@ -121,14 +123,22 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(15.0, 0.0, 0.0);
-        public static final PIDConstants k_rotationPID = new PIDConstants(5.0, 0.0, 0.0);
+        public static final PIDConstants k_translationPID = new PIDConstants(0.0742, 0.0, 0.0);
+        public static final PIDConstants k_rotationPID = new PIDConstants(1.6076, 0.0, 0.0);
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+
+        public static final double k_maxRotationalSpeed = k_maxLinearSpeed / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
         
-        public static double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
-        public static double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
+        public static final double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
+        public static final double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
+
+        public static final double k_elevatorHeightLinearVelocityGain = -0.357; // for every 1 rotation elevator up, subtract X: 1 mps at max elevator
+        public static final double k_elevatorHeightLinearAccelerationGain = k_elevatorHeightLinearVelocityGain * 2;
+        public static final double k_elevatorHeightAngularVelocityGain = -0.0446; // for every 1 rotation elevator up, subtract X: 0.25 rps at max elevator
+        public static final double k_elevatorHeightAngularAccelerationGain = k_elevatorHeightAngularVelocityGain * 2;
+
         public static final double k_closedLoopOverrideToleranceTranslation = 0.02;
         public static final double k_closedLoopOverrideToleranceRotation = 0.02;
     }
@@ -138,7 +148,7 @@ public class Constants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
-        public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
+        public static final DriverChoice driverChoice = DriverChoice.BACKUP;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
         public static final int driverPort = 0;
@@ -219,49 +229,39 @@ public class Constants {
         }
 
         public static class ButtonBoardAlternate {
-            public static final int safetySwitch = Button.kTouchpad.value;
+            public static final int manualModeSwitch = 15; // Share button
 
-            // WHEN SAFETY ON - AUTOMATION BASED
+            // Mutual Buttons
             public static final int L1 = 0; // POV
             public static final int L2 = 270; // POV
             public static final int L3 = 90; // POV
             public static final int L4 = 180; // POV
+            
             public static final int leftReef = Button.kSquare.value;
             public static final int rightReef = Button.kCircle.value;
 
-            public static final int lowAlgaeAuto = Button.kCross.value;
-            public static final int highAlgaeAuto = Button.kTriangle.value;
-            public static final int groundAlgaeAuto = 180; // POV
-            public static final int processorAuto = 90; // POV
-            public static final int netAuto = 0; // POV
-            public static final int algaeModeButton = Button.kOptions.value;
+            public static final int lowAlgae = Button.kCross.value;
+            public static final int highAlgae = Button.kTriangle.value;
+            public static final int groundAlgae = 180; // POV
+            public static final int processor = 90; // POV
+            public static final int net = 0; // POV
+            public static final int algaeModeButton = Axis.kL2.value; // L2
+            public static final double algaeModeButtonThreshold = 0.7;
             
             public static final int leftIntake = Button.kL1.value; // LB
             public static final int rightIntake = Button.kR1.value; // RB
             
-            public static final int climbAuto = Button.kCreate.value;
+            public static final int climb = Button.kCreate.value;
 
-            // WHEN SAFETY OFF - MANUAL STUFF
-            public static final int l1Score = 0;
-            public static final int l2Score = 270;
-            public static final int l3Score = 90;
-            public static final int l4Score = 180;
+            // Safety Mode "swaps"
 
             public static final int manualElevatorUp = Axis.kLeftY.value;
             public static final int manualElevatorDown = Axis.kLeftY.value;
             public static final int manualPivotUp = Axis.kRightY.value;
             public static final int manualPivotDown = Axis.kRightY.value;
 
-            public static final int lowAlgae = Button.kCross.value;
-            public static final int highAlgae = Button.kTriangle.value;
-            public static final int groundAlgae = Button.kSquare.value;
-            public static final int processor = Button.kCircle.value;
-            public static final int net = Button.kR1.value;
-
             public static final int intake = Button.kL1.value; // LB
             public static final int spitPiece = Button.kL2.value; // LT
-
-            public static final int climb = Button.kCreate.value;
         }
     }
 
@@ -358,6 +358,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
+        public static final boolean useSuperAuton = false;
+
         public static final int numWaypoints = 5;
         public static double pathplannerMinRange = 0.5;
         public static double overrideTolerance = 0.05;
@@ -400,7 +402,7 @@ public class Constants {
 
         public static final double momentOfInertia = netMass * Math.pow(drumRadius, 2);
 
-        public static final double tolerance = forwardSoftLimit * 0.05; // 5% tolerance
+        public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
 
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
             .createElevatorSystem(TalonFXConstants.TalonFXDCMotor, netMass, drumRadius, gearRatio);
@@ -409,15 +411,22 @@ public class Constants {
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
         public static final double encoderOffset = -0.427979;
 
+        public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
+
+        /* Please note:
+         * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
+         * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
+         */
+
         public static final double stow = 0.0;
         public static final double processor = 0.125;
-        public static final double L1 = 2;
-        public static final double L2 = 4;
-        public static final double L3 = 6;
-        public static final double L4 = 8;
-        public static final double net = 1.95;
-        public static final double reefLower = 0.5; // arbitrary, meters
-        public static final double reefUpper = 1.5; // arbitrary, meters
+        public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
+        public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;
+        public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
+        public static final double L4 = Units.inchesToMeters(77.25) * metersToRotations;
+        public static final double net = Units.inchesToMeters(79) * metersToRotations;
+        public static final double reefLower = Units.inchesToMeters(30) * metersToRotations;
+        public static final double reefUpper = Units.inchesToMeters(60) * metersToRotations;
 
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
@@ -469,7 +478,7 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final double encoderOffset = -0.558594;
+        public static final double encoderOffset = -0.263428;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
@@ -477,32 +486,27 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
-        public static final double forwardSoftLimitThreshold = 0.65;
-        public static final double reverseSoftLimitThreshold = 0;
+        public static final double forwardSoftLimitThreshold = 0.462891;
+        public static final double reverseSoftLimitThreshold = 0.163818;
 
         public static final double radiansAtMax = forwardSoftLimitThreshold;
         public static final double radiansAtZero = 0;
 
-        public static final double absoluteSensorRange = 1;
+        public static final double absoluteSensorRange = 0.5;
 
-        public static final double supplyCurrentLimit = 20;
+        public static final double supplyCurrentLimit = 40;
 
-        public static final double tolerance = forwardSoftLimitThreshold * 0.01; // 1% tolerance
+        public static final double tolerance = forwardSoftLimitThreshold * 0.1; // 1% tolerance
 
-        public static final double groundPickup = 0.62;
-        public static final double processor = 0.2;
-        public static final double reefPickup = 0.5;
-        public static final double reefExtract = 0.4;
-        public static final double net = 0.6;
-        public static final double stow = 0.03;
+        public static final double groundPickup = 0.45;
+        public static final double processor = 0.25;
+        public static final double reefPickup = 0.34;
+        public static final double reefExtract = 0.29;
+        public static final double net = 0.25;
+        public static final double stow = 0.17;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
-
-        private static final Vector<N2> stateSpaceStandardDeviation = VecBuilder.fill(0.1, 0.3);
-
-        private static final Vector<N2> qelms = VecBuilder.fill(0.002, 0.1);
-        private static final Vector<N1> relms = VecBuilder.fill(0.5);
 
         public static final double momentOfIntertia = 0.14622;
         public static final double gearRatio = rotorToSensorRatio * sensorToMechanismRatio;
@@ -510,16 +514,8 @@ public class Constants {
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
                 .createSingleJointedArmSystem(TalonFXConstants.TalonFXDCMotor, momentOfIntertia, gearRatio);
 
-        public static final StateSpaceConfig<N2, N1, N2> stateSpaceConfig = new StateSpaceConfig<N2, N1, N2>(
-                stateSpacePlant,
-                stateSpaceStandardDeviation,
-                VecBuilder.fill(TalonFXConstants.positionStdDevs, TalonFXConstants.velocityStdDevs),
-                qelms,
-                relms,
-                Nat.N2(),
-                Nat.N2(),
-                tolerance,
-                "Pivot");
+        public static final double maxSpeed = 1.5; // cancoder rotations per second
+        public static final double accelerationMultiplier = 2;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -534,8 +530,7 @@ public class Constants {
 
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackRemoteSensorID(IDConstants.pivotEncoder)
-                        .withFeedbackRotorOffset(encoderOffset)
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
@@ -547,7 +542,22 @@ public class Constants {
                         .withForwardSoftLimitThreshold(forwardSoftLimitThreshold)
                         .withForwardSoftLimitEnable(true)
                         .withReverseSoftLimitThreshold(reverseSoftLimitThreshold)
-                        .withReverseSoftLimitEnable(true));
+                        .withReverseSoftLimitEnable(true))
+
+                .withSlot0(new Slot0Configs()
+                        .withGravityType(GravityTypeValue.Arm_Cosine)
+                        .withKP(15)
+                        .withKI(0)
+                        .withKD(0)
+                        .withKS(0)
+                        .withKV(1.3)
+                        .withKA(0.12)
+                        .withKG(0.78))
+
+                .withMotionMagic(new MotionMagicConfigs()
+                        .withMotionMagicCruiseVelocity(maxSpeed)
+                        .withMotionMagicAcceleration(maxSpeed * accelerationMultiplier)
+                        .withMotionMagicJerk(maxSpeed * accelerationMultiplier * 10));
 
         public static final double armLength = 0.443;
     }
@@ -558,6 +568,9 @@ public class Constants {
         public static final boolean rightMotorInvert = true;
 
         public static final double supplyCurrentLimit = 20;
+
+        public static final double frontIRThreshold = 1;
+        public static final double rearIRThreashold = 1;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
@@ -594,7 +607,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12; //FIXME tune for actual robot
-        public static final double ejectVoltage = -1; //FIXME tune for actual robot
+        public static final double ejectVoltage = -3; //FIXME tune for actual robot
 
         public static final double torqueCurrentThreshold = 30; //FIXME tune for actual robot
 
@@ -728,7 +741,7 @@ public class Constants {
             new Translation2d(3.06, 3.2),
             new Translation2d(4.46, 2.40)
         );
-        public static final Shape reefBounds = Shape.fromUnsortedVertices(reef);
+        public static final Shape reefBounds = Shape.fromUnsortedVertices(reef, "Reef");
 
         // 1.5 robot of space away from the opposite alliance barge side intake
         public static final List<Translation2d> leftIntake = List.of(
@@ -737,10 +750,10 @@ public class Constants {
             new Translation2d(3.2, 0.0),
             new Translation2d(0.0, 2.35)
         );
-        public static final Shape leftIntakeBounds = Shape.fromUnsortedVertices(leftIntake);
+        public static final Shape leftIntakeBounds = Shape.fromUnsortedVertices(leftIntake, "Left Intake");
 
         // 1.5 robot of space away from the same alliance barge side intake
-        public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds);
+        public static final Shape rightIntakeBounds = Shape.flipHotdog(leftIntakeBounds, "Right Intake");
 
         // processor where we score
         public static final List<Translation2d> oppositeAllianceProcessor = List.of(
@@ -749,7 +762,7 @@ public class Constants {
             new Translation2d(6.5, 1),
             new Translation2d(5.5, 1)
         );
-        public static final Shape processorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor);
+        public static final Shape processorBounds = Shape.fromUnsortedVertices(oppositeAllianceProcessor, "Processor");
 
         // net where we score
         public static final List<Translation2d> net = List.of(
@@ -758,7 +771,7 @@ public class Constants {
             new Translation2d(10.3, 8),
             new Translation2d(7.2, 8)
         );
-        public static final Shape netBounds = Shape.fromUnsortedVertices(net);
+        public static final Shape netBounds = Shape.fromUnsortedVertices(net, "Net");
 
         public static Map<String, Shape> displayBounds = Map.ofEntries(
             Map.entry("Blue Alliance Reef", reefBounds),

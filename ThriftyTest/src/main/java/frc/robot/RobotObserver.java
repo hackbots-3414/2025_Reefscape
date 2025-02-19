@@ -43,7 +43,7 @@ public class RobotObserver {
     /* Keeps track of the latest time an april tag was seen */
     private Supplier<Boolean> m_visionValidSupplier;
 
-    public static void visionValidSupplier(Supplier<Boolean> visionValidSupplier) {
+    public static void setVisionValidSupplier(Supplier<Boolean> visionValidSupplier) {
         getInstance().m_visionValidSupplier = visionValidSupplier;
     }
 
@@ -52,13 +52,23 @@ public class RobotObserver {
     }
 
     /* Lets us keep track of if safety is enabled */
-    private boolean m_safety = true;
+    private boolean m_manualModeEnabled = false;
 
-    public static void toggleSafety() {
-        getInstance().m_safety = !getInstance().m_safety;
+    public static void toggleManualMode() {
+        getInstance().m_manualModeEnabled = !getInstance().m_manualModeEnabled;
     }
 
-    public static boolean getToggleSafety() {
-        return getInstance().m_visionValidSupplier.get();
+    public static boolean getManualMode() {
+        return getInstance().m_manualModeEnabled;
+    }
+
+    private Supplier<Double> m_elevatorHeightSupplier;
+
+    public static void setElevatorHeightSupplier(Supplier<Double> visionValidSupplier) {
+        getInstance().m_elevatorHeightSupplier = visionValidSupplier;
+    }
+
+    public static double getElevatorHeightSupplier() {
+        return getInstance().m_elevatorHeightSupplier.get();
     }
 }

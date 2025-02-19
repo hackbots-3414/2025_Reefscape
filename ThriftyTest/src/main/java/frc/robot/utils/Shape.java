@@ -6,18 +6,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static edu.wpi.first.units.Units.Meters;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotObserver;
 
 public class Shape {
     private final List<Translation2d> m_vertices;
+    private final String m_name;
 
-    public Shape(List<Translation2d> vertices) {
+    public Shape(List<Translation2d> vertices, String name) {
         this.m_vertices = vertices;
+        this.m_name = name;
     }
 
-    public static Shape fromUnsortedVertices(List<Translation2d> unsortedVertices) {
+    public static Shape fromUnsortedVertices(List<Translation2d> unsortedVertices, String name) {
         if (unsortedVertices.size() < 3) {
             throw new IllegalArgumentException("Polygon must be atleat 3 points.");
         }
@@ -38,7 +42,7 @@ public class Shape {
 
         mutableList.sort(Comparator.comparingDouble(point -> Math.atan2(point.getY() - cy, point.getX() - cx)));
 
-        return new Shape(mutableList);
+        return new Shape(mutableList, name);
     }
 
     // ray cast: if crosses odd times, its inside
@@ -69,10 +73,12 @@ public class Shape {
     }
 
     public boolean isActive() {
-        if (!RobotObserver.getVisionValid() || !RobotObserver.getToggleSafety()) { // vision off or safety off = don't run shape logic
+        if (!RobotObserver.getVisionValid() || RobotObserver.getManualMode()) { // vision off or safety off = don't run shape logic
             return true;
         }
-        return isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());
+        boolean isInside = isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());
+        SmartDashboard.putBoolean("SHAPE: " + m_name + "; INSIDE?", isInside);
+        return isInside;
     }
 
     public List<Translation2d> getVertices() {
@@ -80,10 +86,10 @@ public class Shape {
     }
 
     // flips hotdog style (up down) - ex. reef pose
-    public static Shape flipHotdog(Shape shape) {
+    public static Shape flipHotdog(Shape shape, String name) {
         // flips the y axis by doing field width - old y
         return new Shape(shape.getVertices().stream()
             .map(oldTranslation -> new Translation2d(oldTranslation.getX(), FieldConstants.k_fieldWidth.in(Meters) - oldTranslation.getY()))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList()), name);
     }
 }
