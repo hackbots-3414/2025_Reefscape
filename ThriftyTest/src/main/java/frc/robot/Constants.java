@@ -418,7 +418,7 @@ public class Constants {
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
         public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
-        public static final double L4 = Units.inchesToMeters(77.25) * metersToRotations;
+        public static final double L4 = Units.inchesToMeters(75.5) * metersToRotations;
         public static final double net = Units.inchesToMeters(79) * metersToRotations;
         public static final double reefLower = Units.inchesToMeters(30) * metersToRotations;
         public static final double reefUpper = Units.inchesToMeters(60) * metersToRotations;
