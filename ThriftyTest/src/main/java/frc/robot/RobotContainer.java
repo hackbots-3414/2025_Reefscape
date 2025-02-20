@@ -29,7 +29,7 @@ public class RobotContainer {
     // private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     // public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final Coral coralIntake = new Coral();
+    public final Coral coral = new Coral();
 
 
     public RobotContainer() {
@@ -190,7 +190,7 @@ public class RobotContainer {
     private LedSubsystem ledSubsystem;
 
     private void configureSubsystems() {
-        ledSubsystem = new LedSubsystem(); 
+        ledSubsystem = new LedSubsystem(coral); 
     }
 
     public LedSubsystem getLedSubsystem() {
