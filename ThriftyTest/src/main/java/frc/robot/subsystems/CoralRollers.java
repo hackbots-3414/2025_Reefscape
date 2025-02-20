@@ -32,6 +32,7 @@ public class CoralRollers extends SubsystemBase {
 
     public CoralRollers() {
         configMotors();
+        configDashboard();
     }
 
     private void configMotors() {
@@ -42,6 +43,15 @@ public class CoralRollers extends SubsystemBase {
         m_coralRight.getConfigurator().apply(CoralConstants.motorConfig);
 
         m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
+    }
+
+    private void configDashboard() {
+        if (Robot.isReal()) {
+            // NOTHING YET
+        } else {
+            SmartDashboard.putBoolean("Front IR", false);
+            SmartDashboard.putBoolean("Back IR", false);
+        }
     }
 
     public void setVoltage(double voltage) {
@@ -129,9 +139,6 @@ public class CoralRollers extends SubsystemBase {
 
         SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
         SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
-
-        SmartDashboard.putNumber("Front IR", m_frontIR.getVoltage());
-        SmartDashboard.putNumber("Back IR", m_backIR.getVoltage());
 
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
 

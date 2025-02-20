@@ -83,9 +83,9 @@ public class Elevator extends SubsystemBase {
                 ElevatorConstants.reverseSoftLimit
         );
 
-        m_mechVisual = new Mechanism2d(1, 2.0); // Width/height in meters
+        m_mechVisual = new Mechanism2d(1, 12); // Width/height in meters
         m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
-        m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.1, 90)); // Start at 0.1m height
+        m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.0, 90)); // Start at 0.1m height
         SmartDashboard.putData("Elevator Visualization", m_mechVisual);
         if (RobotBase.isSimulation()) {
             // in simulation, we want to emulate the effect produced by

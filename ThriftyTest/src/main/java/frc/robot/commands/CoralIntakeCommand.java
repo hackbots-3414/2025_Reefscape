@@ -30,4 +30,9 @@ public class CoralIntakeCommand extends Command {
   public void end(boolean interrupted) {
     coral.stop();
   }
+
+  @Override
+  public boolean isFinished() {
+    return coral.holdingPiece();
+  }
 }
