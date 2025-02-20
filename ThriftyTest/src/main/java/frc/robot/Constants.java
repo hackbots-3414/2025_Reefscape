@@ -1,11 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +24,6 @@ import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -45,12 +36,16 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.generated.TunerConstants;
-import frc.robot.stateSpace.StateSpaceConfig;
 import frc.robot.utils.Shape;
 
 /*
@@ -418,7 +413,7 @@ public class Constants {
          * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
-        public static final double stow = 0.0;
+        public static final double stow = 0.27;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
         public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;

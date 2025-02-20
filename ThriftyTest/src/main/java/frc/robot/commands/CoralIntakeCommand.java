@@ -8,7 +8,7 @@ public class CoralIntakeCommand extends Command {
   private final CoralRollers coral;
   private final Elevator elevator;
 
-  public CoralIntakeCommand(CoralRollers coralRollers,Elevator elevator) {
+  public CoralIntakeCommand(CoralRollers coralRollers, Elevator elevator) {
     this.coral = coralRollers;
     this.elevator = elevator;
     addRequirements(coralRollers, elevator);
@@ -26,13 +26,13 @@ public class CoralIntakeCommand extends Command {
     }
   }
 
-  @Override
-  public void end(boolean interrupted) {
-    coral.stop();
-  }
+  // @Override
+  // public void end(boolean interrupted) {
+  //   coral.stop();
+  // }
 
-  @Override
-  public boolean isFinished() {
-    return coral.holdingPiece();
-  }
+  // @Override
+  // public boolean isFinished() {
+  //   return coral.holdingPiece();
+  // }
 }
