@@ -72,4 +72,21 @@ public class RobotObserver {
     public static double getElevatorHeightSupplier() {
         return getInstance().m_elevatorHeightSupplier.get();
     }
+
+    private Runnable m_setSingleTag;
+    private Runnable m_setMultiTag;
+
+    public static void setSingleTag() {
+        getInstance().m_setSingleTag.run();
+    }
+    public static void setMultiTag() {
+        getInstance().m_setMultiTag.run();
+    }
+
+    public static void setSingleTagRunnable(Runnable singleTag) {
+        getInstance().m_setSingleTag = singleTag;
+    }
+    public static void setMultiTagRunnable(Runnable multiTag) {
+        getInstance().m_setMultiTag = multiTag;
+    }
 }

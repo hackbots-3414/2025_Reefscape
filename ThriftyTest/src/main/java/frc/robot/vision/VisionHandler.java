@@ -143,11 +143,6 @@ public class VisionHandler implements AutoCloseable {
         SmartDashboard.putBoolean("single tag", m_singleTag);
     }
 
-    public void toggleTag() {
-        m_singleTag = !m_singleTag;
-        SmartDashboard.putBoolean("single tag", m_singleTag);
-    }
-
     @Override
     public void close() {
         m_notifier.close();

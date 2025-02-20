@@ -71,7 +71,7 @@ public class RobotContainer {
         configureDriverBindings();
         configureButtonBoard();
         configureAutonChooser();
-        m_vision.startThread();
+        configureVision();
         addBoundsToField();
     }
 
@@ -332,6 +332,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
         NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
         NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+    }
+
+    private void configureVision() {
+        m_vision.startThread();
+        RobotObserver.setSingleTagRunnable(m_vision::setSingleTag);
+        RobotObserver.setMultiTagRunnable(m_vision::setMultitag);
     }
 
     // ********** SUBSYSTEMS **********
