@@ -94,10 +94,9 @@ public class VisionHandler implements AutoCloseable {
             m_visionSim.addCamera(simCamera, robotToCamera);
             // This is somewhat intensive (especially the first one) so we only
             // enable if the robot is in simulation mode.
-            //simCamera.enableRawStream(Robot.isSimulation());
-            //simCamera.enableProcessedStream(Robot.isSimulation());
-            //simCamera.enableDrawWireframe(Robot.isSimulation());
-            simCamera.enableDrawWireframe(true);
+            simCamera.enableRawStream(Robot.isSimulation());
+            simCamera.enableProcessedStream(Robot.isSimulation());
+            simCamera.enableDrawWireframe(Robot.isSimulation());
             // we always need to add a vision estimator
             SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
                 realCamera,
