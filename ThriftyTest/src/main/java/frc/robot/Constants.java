@@ -30,9 +30,6 @@ import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -50,7 +47,6 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.generated.TunerConstants;
-import frc.robot.stateSpace.StateSpaceConfig;
 import frc.robot.utils.Shape;
 
 /*

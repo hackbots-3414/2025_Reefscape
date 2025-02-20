@@ -3,8 +3,8 @@ package frc.robot.vision;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -25,6 +25,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
 
@@ -35,16 +36,16 @@ public class SingleInputPoseEstimator implements Runnable {
     private Consumer<TimestampedPoseEstimate> m_reporter;
 
     // Estimators
-    private PhotonPoseEstimator m_estimator;
-    private SingleTagEstimator m_singleTagEstimator;
+    private PhotonPoseEstimator m_pnpEstimator;
+    private PhotonPoseEstimator m_trigEstimator;
 
-    private Supplier<Optional<Integer>> m_singleTag;
+    private BooleanSupplier m_singleTag;
 
     public SingleInputPoseEstimator(
         PhotonCamera camera,
         Transform3d robotToCamera,
         Consumer<TimestampedPoseEstimate> updateCallback,
-        Supplier<Optional<Integer>> singleTagSupplier
+        BooleanSupplier singleTagSupplier
     ) {
         m_camera = camera;
         m_reporter = updateCallback;
@@ -59,21 +60,27 @@ public class SingleInputPoseEstimator implements Runnable {
             System.exit(1);
             // no need to worry about null exceptions if we just terminate now!
         }
-        m_estimator = new PhotonPoseEstimator(
+        m_pnpEstimator = new PhotonPoseEstimator(
             layout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             robotToCamera
         );
-        m_estimator.setMultiTagFallbackStrategy(
+        m_pnpEstimator.setMultiTagFallbackStrategy(
             PoseStrategy.LOWEST_AMBIGUITY
         );
-        m_singleTagEstimator = new SingleTagEstimator(
+        m_trigEstimator = new PhotonPoseEstimator(
             layout,
+            PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
             robotToCamera
         );
     }
 
     public void run() {
+        // add heading data, for trig-based estimation
+        m_trigEstimator.addHeadingData(
+            Utils.getCurrentTimeSeconds(),
+            RobotObserver.getPose().getRotation()
+        );
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
         if (results.size() > VisionConstants.k_maxResults) {
@@ -91,7 +98,7 @@ public class SingleInputPoseEstimator implements Runnable {
             time between when a result was sent and when we "see" it. This would
             mess up the timestamping logic.
             */
-            m_logger.warn("Possibly too many result: {}", results.size());
+            m_logger.warn("Possibly too many results: {}", results.size());
         }
         for (PhotonPipelineResult result : results) {
             handleResult(result);
@@ -102,14 +109,16 @@ public class SingleInputPoseEstimator implements Runnable {
         boolean isValid = precheckValidity(result);
         if (!isValid) return;
         // By this point the result is valid.
-        m_singleTag.get().ifPresentOrElse(
-            (Integer id) -> {
-                singleTag(result, id.intValue());
-            },
-            () -> {
-                multiTag(result);
-            }
-        );
+        PhotonPoseEstimator estimator;
+        if (m_singleTag.getAsBoolean()) {
+            estimator = m_trigEstimator;
+        } else {
+            estimator = m_pnpEstimator;
+        }
+        estimator.update(result).ifPresent((est) -> {
+            m_logger.info("actual updated result!");
+            process(result, est).ifPresent(m_reporter);
+        });
     }
 
     private boolean precheckValidity(PhotonPipelineResult result) {
@@ -124,27 +133,6 @@ public class SingleInputPoseEstimator implements Runnable {
         return result.hasTargets();
     }
 
-    private void singleTag(
-        PhotonPipelineResult result,
-        int tagId
-    ) {
-        for (PhotonTrackedTarget target : result.getTargets()) {
-            if (target.getFiducialId() != tagId) continue;
-            // if we are running this, then we have the tag.
-            m_singleTagEstimator.estimate(target).ifPresent((Pose3d est) -> {
-                process(result, est).ifPresent(m_reporter);
-            });
-        }
-    }
-
-    private void multiTag(
-        PhotonPipelineResult result
-    ) {
-        m_estimator.update(result).ifPresent((EstimatedRobotPose est) -> {
-            process(result, est).ifPresent(m_reporter);
-        });
-    }
-    
     private Optional<TimestampedPoseEstimate> process(
         PhotonPipelineResult result,
         EstimatedRobotPose estimation
@@ -158,20 +146,6 @@ public class SingleInputPoseEstimator implements Runnable {
         if (!checkValidity(pose, ambiguity)) return Optional.empty();
         return Optional.of(
             new TimestampedPoseEstimate(pose.toPose2d(), timestamp, stdDevs)
-        );
-    }
-
-    private Optional<TimestampedPoseEstimate> process(
-        PhotonPipelineResult result,
-        Pose3d estimate
-    ) {
-        double timestamp = Utils.getCurrentTimeSeconds()
-            - result.metadata.getLatencyMillis() / 1.0e+3;
-        Matrix<N3, N1> stdDevs = calculateStdDevs(result, timestamp);
-        // check validity again, but set ambiguity to 0 so that we have no issues.
-        if (!checkValidity(estimate, 0.0)) return Optional.empty();
-        return Optional.of(
-            new TimestampedPoseEstimate(estimate.toPose2d(), timestamp, stdDevs)
         );
     }
 

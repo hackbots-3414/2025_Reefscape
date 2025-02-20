@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -20,6 +19,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -36,7 +36,7 @@ public class VisionHandler implements AutoCloseable {
 
     private final Field2d m_field;
 
-    private Optional<Integer> m_singleTag;
+    private boolean m_singleTag;
     
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
@@ -51,7 +51,7 @@ public class VisionHandler implements AutoCloseable {
         m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
         RobotObserver.setField(m_field);
-        m_singleTag = Optional.empty();
+        m_singleTag = false;
     }
 
     private void setupAprilTagField() throws IOException {
@@ -94,9 +94,10 @@ public class VisionHandler implements AutoCloseable {
             m_visionSim.addCamera(simCamera, robotToCamera);
             // This is somewhat intensive (especially the first one) so we only
             // enable if the robot is in simulation mode.
-            simCamera.enableDrawWireframe(Robot.isSimulation());
-            simCamera.enableRawStream(Robot.isSimulation());
-            simCamera.enableProcessedStream(Robot.isSimulation());
+            //simCamera.enableRawStream(Robot.isSimulation());
+            //simCamera.enableProcessedStream(Robot.isSimulation());
+            //simCamera.enableDrawWireframe(Robot.isSimulation());
+            simCamera.enableDrawWireframe(true);
             // we always need to add a vision estimator
             SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
                 realCamera,
@@ -129,16 +130,23 @@ public class VisionHandler implements AutoCloseable {
         m_drivetrain.addPoseEstimate(estimate);
     }
 
-    private Optional<Integer> getSingleTag() {
+    private boolean getSingleTag() {
         return m_singleTag;
     }
 
     public void setMultitag() {
-        m_singleTag = Optional.empty();
+        m_singleTag = false;
+        SmartDashboard.putBoolean("single tag", m_singleTag);
     }
 
-    public void setSingleTag(int tagId) {
-        m_singleTag = Optional.of(tagId);
+    public void setSingleTag() {
+        m_singleTag = true;
+        SmartDashboard.putBoolean("single tag", m_singleTag);
+    }
+
+    public void toggleTag() {
+        m_singleTag = !m_singleTag;
+        SmartDashboard.putBoolean("single tag", m_singleTag);
     }
 
     @Override

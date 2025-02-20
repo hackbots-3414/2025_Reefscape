@@ -135,6 +135,7 @@ public class RobotContainer {
         );
 
         controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.zeroPose()));
+        controller.button(8).onTrue(new InstantCommand(m_vision::toggleTag));
 
         controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
             .or(() -> controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation).getAsBoolean())
