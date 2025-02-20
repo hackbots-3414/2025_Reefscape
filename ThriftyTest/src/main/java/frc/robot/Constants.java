@@ -1,11 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +24,6 @@ import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
 
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -45,12 +36,16 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.generated.TunerConstants;
-import frc.robot.stateSpace.StateSpaceConfig;
 import frc.robot.utils.Shape;
 
 /*
@@ -93,8 +88,8 @@ public class Constants {
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
 
-        public static final int frontIR = 1;
-        public static final int rearIR = 2;
+        public static final int frontIR = 2;
+        public static final int rearIR = 3;
 
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
@@ -148,7 +143,7 @@ public class Constants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
-        public static final DriverChoice driverChoice = DriverChoice.BACKUP;
+        public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
         public static final int driverPort = 0;
@@ -242,10 +237,10 @@ public class Constants {
 
             public static final int lowAlgae = Button.kCross.value;
             public static final int highAlgae = Button.kTriangle.value;
-            public static final int groundAlgae = 180; // POV
+            public static final int groundAlgae = 0; // POV
             public static final int processor = 90; // POV
-            public static final int net = 0; // POV
-            public static final int algaeModeButton = Axis.kL2.value; // L2
+            public static final int net = 180; // POV
+            public static final int algaeModeButton = Axis.kR2.value; // R2
             public static final double algaeModeButtonThreshold = 0.7;
             
             public static final int leftIntake = Button.kL1.value; // LB
@@ -418,12 +413,12 @@ public class Constants {
          * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
-        public static final double stow = 0.0;
+        public static final double stow = 0.27;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
         public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
-        public static final double L4 = Units.inchesToMeters(77.25) * metersToRotations;
+        public static final double L4 = Units.inchesToMeters(75.5) * metersToRotations;
         public static final double net = Units.inchesToMeters(79) * metersToRotations;
         public static final double reefLower = Units.inchesToMeters(30) * metersToRotations;
         public static final double reefUpper = Units.inchesToMeters(60) * metersToRotations;
@@ -563,7 +558,7 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final double intakeVoltage = 12;
+        public static final double intakeVoltage = 9;
         public static final double ejectVoltage = 12;
         public static final boolean rightMotorInvert = true;
 

@@ -8,7 +8,7 @@ public class CoralIntakeCommand extends Command {
   private final CoralRollers coral;
   private final Elevator elevator;
 
-  public CoralIntakeCommand(CoralRollers coralRollers,Elevator elevator) {
+  public CoralIntakeCommand(CoralRollers coralRollers, Elevator elevator) {
     this.coral = coralRollers;
     this.elevator = elevator;
     addRequirements(coralRollers, elevator);

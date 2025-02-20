@@ -12,7 +12,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class TeleopCommand extends Command {
-    private final PIDController rotPIDController = new PIDController(Math.PI * 2, Math.PI*5, 0);
+    private final PIDController rotPIDController = new PIDController(Math.PI * 2, 0, 0);
 
     private final CommandSwerveDrivetrain drivetrain;
     private final Supplier<Double> xSupplier;
