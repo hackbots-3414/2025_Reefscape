@@ -143,7 +143,7 @@ public class Constants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
-        public static final DriverChoice driverChoice = DriverChoice.BACKUP;
+        public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
         public static final int driverPort = 0;
@@ -237,10 +237,10 @@ public class Constants {
 
             public static final int lowAlgae = Button.kCross.value;
             public static final int highAlgae = Button.kTriangle.value;
-            public static final int groundAlgae = 180; // POV
+            public static final int groundAlgae = 0; // POV
             public static final int processor = 90; // POV
-            public static final int net = 0; // POV
-            public static final int algaeModeButton = Axis.kL2.value; // L2
+            public static final int net = 180; // POV
+            public static final int algaeModeButton = Axis.kR2.value; // R2
             public static final double algaeModeButtonThreshold = 0.7;
             
             public static final int leftIntake = Button.kL1.value; // LB

@@ -43,7 +43,6 @@ public class Elevator extends SubsystemBase {
     private double m_velocity;
 
     private double m_reference;
-    private double m_error;
 
     private ElevatorSim m_elevatorSim;
     private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
@@ -84,9 +83,9 @@ public class Elevator extends SubsystemBase {
                 ElevatorConstants.reverseSoftLimit
         );
 
-        m_mechVisual = new Mechanism2d(1, 2.0); // Width/height in meters
+        m_mechVisual = new Mechanism2d(1, 12); // Width/height in meters
         m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
-        m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.1, 90)); // Start at 0.1m height
+        m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.0, 90)); // Start at 0.1m height
         SmartDashboard.putData("Elevator Visualization", m_mechVisual);
         if (RobotBase.isSimulation()) {
             // in simulation, we want to emulate the effect produced by
@@ -164,7 +163,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return Math.abs(m_reference - m_elevatorRight.getPosition().getValueAsDouble()) < ElevatorConstants.tolerance;
+        return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
     }
 
     public double getReference() {
@@ -201,10 +200,6 @@ public class Elevator extends SubsystemBase {
 
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
-        
-        SmartDashboard.putNumber("** Elevator Error", m_error);
-        SmartDashboard.putNumber("elevator position", m_position);
-        SmartDashboard.putNumber("elevator reference", m_reference);
 
         if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));

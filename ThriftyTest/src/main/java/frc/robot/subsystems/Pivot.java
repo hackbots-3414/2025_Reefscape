@@ -33,7 +33,6 @@ public class Pivot extends SubsystemBase {
     private double m_velocity;
 
     private double m_reference;
-    private double m_error;
 
     private SingleJointedArmSim m_armSim;
     private final DCMotor m_gearbox = DCMotor.getKrakenX60(1); // 2 motors (left and right)
@@ -133,12 +132,12 @@ public class Pivot extends SubsystemBase {
     }
     
     public boolean atSetpoint() {
-        return  m_error < PivotConstants.tolerance;
+        return Math.abs(getReference() - getPosition()) < PivotConstants.tolerance;
     }
     
     private double getPositionUncached() {
         if (Robot.isReal()) {
-            return m_cancoder.getPosition().getValueAsDouble();
+            return m_pivot.getPosition().getValueAsDouble();
         } else {
             return m_armSim.getAngleRads();
         }
@@ -146,7 +145,7 @@ public class Pivot extends SubsystemBase {
 
     private double getVelocityUncached() {
         if (Robot.isReal()) {
-            return m_cancoder.getVelocity().getValueAsDouble();
+            return m_pivot.getVelocity().getValueAsDouble();
         } else {
             return m_armSim.getVelocityRadPerSec();
         }
@@ -159,17 +158,12 @@ public class Pivot extends SubsystemBase {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
 
-        m_error = Math.abs(m_pivot.getClosedLoopError().getValueAsDouble());
-
         if (m_speedChanged) {
             m_pivot.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
 
-        SmartDashboard.putBoolean("PIVOT AT POSITOIN", atSetpoint());
-
-        SmartDashboard.putNumber("PIVOT POS", getPosition());
-        SmartDashboard.putNumber("PIVOT REF", getReference());
+        SmartDashboard.putBoolean("PIVOT AT POSITION", atSetpoint());
     }
 
     @Override
