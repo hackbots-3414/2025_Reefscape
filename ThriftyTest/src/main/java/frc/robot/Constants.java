@@ -586,7 +586,7 @@ public class Constants {
 
     public static final class ClimberConstants {
         public static final boolean rightMotorInvert = true;
-        public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
+        public static final double climberUpVolts = 1.0;
         public static final double climberCurrentLimit = 80.0;
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
@@ -601,10 +601,10 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
-        public static final double intakeVoltage = 12; //FIXME tune for actual robot
-        public static final double ejectVoltage = -3; //FIXME tune for actual robot
+        public static final double intakeVoltage = 12;
+        public static final double ejectVoltage = -3;
 
-        public static final double torqueCurrentThreshold = 30; //FIXME tune for actual robot
+        public static final double torqueCurrentThreshold = 30;
 
         public static final double supplyCurrentLimit = 20.0;
         public static final double statorCurrentLimit = 40.0;

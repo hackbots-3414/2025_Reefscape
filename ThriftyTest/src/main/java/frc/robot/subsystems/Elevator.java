@@ -115,6 +115,11 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.processor);
     }
 
+    public void setGround() {
+        setPosition(0.0); // ground is the minimum.
+                          // We don't need a constant for 0
+    }
+
     public void setL1() {
         setPosition(ElevatorConstants.L1);
     }

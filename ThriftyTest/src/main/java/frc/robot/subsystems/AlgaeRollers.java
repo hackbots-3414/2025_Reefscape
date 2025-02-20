@@ -55,11 +55,12 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         }
     }
 
+    /**
+     * Only stop if there is not a currently held piece
+     */
     public void smartStop() {
-        if (hasObject()) {
-            setMotor(AlgaeRollerConstants.holdVoltage);
-        } else {
-            stopMotor();
+        if (!hasObject()) {
+            stop();
         }
     }
 
@@ -71,7 +72,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         setMotor(AlgaeRollerConstants.ejectVoltage);
     }
 
-    public void stopMotor() {
+    public void stop() {
         setMotor(0);
     }
 

@@ -36,8 +36,7 @@ import frc.robot.Constants.ScoringLocations;
 import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsMiddle;
 import frc.robot.Constants.ScoringLocationsRight;
-import frc.robot.commands.AlgaeIntakeCommand;
-import frc.robot.commands.AlgaeScoreCommand;
+import frc.robot.commands.CommandFactory;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.ManualClimberCommand;
@@ -425,11 +424,21 @@ public class RobotContainer {
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
-        return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
+        return CommandFactory.algaeIntake(
+                m_elevator,
+                m_algaeRollers,
+                m_algaePivot,
+                intakeLocation
+        );
     }
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
-        return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_algaePivot, scoreLocation);
+        return CommandFactory.algaeScore(
+            m_elevator,
+            m_algaePivot,
+            m_algaeRollers,
+            scoreLocation
+        );
     }
 
     public enum AlgaeLocationPresets {
