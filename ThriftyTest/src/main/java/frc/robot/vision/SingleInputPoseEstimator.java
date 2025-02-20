@@ -116,7 +116,6 @@ public class SingleInputPoseEstimator implements Runnable {
             estimator = m_pnpEstimator;
         }
         estimator.update(result).ifPresent((est) -> {
-            m_logger.info("actual updated result!");
             process(result, est).ifPresent(m_reporter);
         });
     }
