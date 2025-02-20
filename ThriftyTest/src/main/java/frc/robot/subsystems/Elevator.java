@@ -34,8 +34,8 @@ public class Elevator extends SubsystemBase {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
 
-    private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft);
-    private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight);
+    private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
+    private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*");
 
     private final CANcoder m_cancoder = new CANcoder(IDConstants.elevatorEncoder);
 
@@ -159,7 +159,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return m_error < ElevatorConstants.tolerance;
+        return Math.abs(m_reference - m_elevatorRight.getPosition().getValueAsDouble()) < ElevatorConstants.tolerance;
     }
 
     public double getReference() {
@@ -176,7 +176,7 @@ public class Elevator extends SubsystemBase {
 
     private double getPositionUncached() {
         if (RobotBase.isReal()) {
-            return m_cancoder.getPosition().getValueAsDouble();
+            return m_elevatorRight.getPosition().getValueAsDouble();
         } else {
             return m_elevatorSim.getPositionMeters();
         }
@@ -184,7 +184,7 @@ public class Elevator extends SubsystemBase {
 
     private double getVelocityUncached() {
         if (RobotBase.isReal()) {
-            return m_cancoder.getVelocity().getValueAsDouble();
+            return m_elevatorRight.getVelocity().getValueAsDouble();
         } else {
             return m_elevatorSim.getVelocityMetersPerSecond();
         }
@@ -196,8 +196,10 @@ public class Elevator extends SubsystemBase {
 
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
-
-        m_error = Math.abs(m_elevatorRight.getClosedLoopError().getValueAsDouble());
+        
+        SmartDashboard.putNumber("** Elevator Error", m_error);
+        SmartDashboard.putNumber("elevator position", m_position);
+        SmartDashboard.putNumber("elevator reference", m_reference);
 
         if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));

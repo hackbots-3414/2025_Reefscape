@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.subsystems.CoralRollers;
@@ -17,16 +18,22 @@ public class CoralScoreCommand extends Command {
     this.elevator = elevator;
     this.level = level;
     addRequirements(coralRollers, elevator);
+    
+    SmartDashboard.putBoolean("SCORING L1", false);
   }
 
   @Override
   public void initialize() {
-    if (!CommandBounds.reefBounds.isActive()) {
-        isDone = true;
-        return;
-    }
+    // if (!CommandBounds.reefBounds.isActive()) {
+    //     isDone = true;
+    //     return;
+    // }
     switch(level) {
-      case 1 -> elevator.setL1();
+      case 1 -> {
+        elevator.setL1();
+        SmartDashboard.putBoolean("SCORING L1", true);
+        break;
+      }
       case 2 -> elevator.setL2();
       case 3 -> elevator.setL3();
       case 4 -> elevator.setL4();

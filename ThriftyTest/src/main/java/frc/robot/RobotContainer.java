@@ -184,7 +184,10 @@ public class RobotContainer {
         // bindManualCoralIntakeCommand(controller.square());
         controller.square().whileTrue(new CoralIntakeCommand(m_coralRollers, m_elevator));
 
-        controller.circle().onTrue(new InstantCommand(() -> m_elevator.setL1()));
+        bindManualCoralScoreCommand(1, controller.povDown());
+        bindManualCoralScoreCommand(2, controller.povLeft());
+        bindManualCoralScoreCommand(3, controller.povRight());
+        bindManualCoralScoreCommand(4, controller.povUp());
 
         // m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers));
         

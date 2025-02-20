@@ -88,8 +88,8 @@ public class Constants {
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
 
-        public static final int frontIR = 1;
-        public static final int rearIR = 2;
+        public static final int frontIR = 2;
+        public static final int rearIR = 3;
 
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
@@ -558,7 +558,7 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final double intakeVoltage = 12;
+        public static final double intakeVoltage = 9;
         public static final double ejectVoltage = 12;
         public static final boolean rightMotorInvert = true;
 
