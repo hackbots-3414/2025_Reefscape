@@ -98,7 +98,6 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void stop() {
-        System.out.println("stopping");
         setVoltage(0);
     }
 

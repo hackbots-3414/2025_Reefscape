@@ -132,7 +132,7 @@ public class Pivot extends SubsystemBase {
     }
     
     public boolean atSetpoint() {
-        return Math.abs(m_pivot.getClosedLoopError().getValueAsDouble()) < PivotConstants.tolerance;
+        return Math.abs(getReference() - getPosition()) < PivotConstants.tolerance;
     }
     
     private double getPositionUncached() {
