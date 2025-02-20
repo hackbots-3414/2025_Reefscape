@@ -6,7 +6,13 @@ package frc.robot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -16,14 +22,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.ButtonBindingConstants;
+import frc.robot.Constants.ButtonBindingConstants.BackupDriver;
+import frc.robot.Constants.ButtonBindingConstants.ButtonBoardAlternate;
+import frc.robot.Constants.ButtonBindingConstants.DragonReins;
+import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
+import frc.robot.Constants.ClimbLocations;
+import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.AlgaeEjectCommand;
+import frc.robot.Constants.ReefClipLocations;
+import frc.robot.Constants.ScoringLocations;
+import frc.robot.Constants.ScoringLocationsLeft;
+import frc.robot.Constants.ScoringLocationsMiddle;
+import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.ManualClimberCommand;
+import frc.robot.commands.ManualElevatorCommand;
+import frc.robot.commands.ManualPivotCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
@@ -33,176 +54,191 @@ import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
-    private final Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+    private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
 
-    private final VisionHandler m_vision = new VisionHandler(drivetrain);
+    private final VisionHandler m_vision = new VisionHandler(m_drivetrain);
 
     public RobotContainer() {
         configureSubsystems();
-        configureDriverBindings(dragonReins);
-        configureOperatorBindings(operator);
-        configureButtonBoard(buttonBoard);
+        configureNamedCommands();
+        configureDriverBindings();
+        configureButtonBoard();
         configureAutonChooser();
-        m_vision.startThread();
+        configureVision();
+        addBoundsToField();
+    }
+
+    private void addBoundsToField() {
+        for (Map.Entry<String, Shape> entry : CommandBounds.displayBounds.entrySet()) {
+            RobotObserver.getField().getObject(entry.getKey()).setPoses(
+                entry.getValue().getVertices().stream()
+                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
+                    .collect(Collectors.toList())
+            );
+        }
     }
 
     // ********** BINDINGS **********
 
-    private final CommandPS5Controller dragonReins = new CommandPS5Controller(0);
-    private final CommandPS5Controller operator = new CommandPS5Controller(1);
-    private final CommandPS5Controller buttonBoard = new CommandPS5Controller(2);
+    private void configureDriverBindings() {
+        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
 
-    private double getX() {
-        return -dragonReins.getRawAxis(1);
+        int xAxis;
+        int yAxis;
+        int rAxis; // rotation
+        int resetHeading;
+        int openLoop;
+
+        double flipX;
+        double flipY;
+        double flipR;
+
+        if (ButtonBindingConstants.driverChoice == DriverChoice.DRAGONREINS) {
+            xAxis = DragonReins.xAxis;
+            yAxis = DragonReins.yAxis;
+            rAxis = DragonReins.rotAxis;
+
+            resetHeading = DragonReins.resetHeading;
+            openLoop = DragonReins.enableOpenLoop;
+
+            flipX = DragonReins.flipX ? -1.0 : 1.0;
+            flipY = DragonReins.flipY ? -1.0 : 1.0;
+            flipR = DragonReins.flipRot ? -1.0 : 1.0;
+        } else {
+            xAxis = BackupDriver.xAxis;
+            yAxis = BackupDriver.yAxis;
+            rAxis = BackupDriver.rotAxis;
+
+            resetHeading = BackupDriver.resetHeading;
+            openLoop = BackupDriver.enableOpenLoop;
+
+            flipX = BackupDriver.flipX ? -1.0 : 1.0;
+            flipY = BackupDriver.flipY ? -1.0 : 1.0;
+            flipR = BackupDriver.flipRot ? -1.0 : 1.0;
+        }
+
+        Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
+        Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
+        Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
+        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop)
+            .getAsBoolean();
+
+        m_drivetrain.setDefaultCommand(
+            new TeleopCommand(m_drivetrain, xSup, ySup, rSup, openLoopSup)
+        );
+
+        controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.zeroPose()));
+
+        controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
+            .or(() -> controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation).getAsBoolean())
+            .or(() -> controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation).getAsBoolean())
+            .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
-    private double getY() {
-        return dragonReins.getRawAxis(0);
-    }
+    // private void configureSysId() {
+    //     CommandPS5Controller controller = new CommandPS5Controller(3);
 
-    private double getRot() {
-        return -dragonReins.getRawAxis(2);
-    }
+    //     controller.button(1).and(controller.button(3))
+    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+    //     controller.button(1).and(controller.button(4))
+    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+    //     controller.button(2).and(controller.button(3))
+    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
+    //     controller.button(2).and(controller.button(4))
+    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+    // }
 
-    private boolean getUseOpenLoopButton() {
-        return dragonReins.button(3).getAsBoolean();
-    }
-
-    private void configureDriverBindings(CommandPS5Controller controller) {
-        drivetrain.setDefaultCommand(new TeleopCommand(drivetrain, this::getX, this::getY, this::getRot, this::getUseOpenLoopButton));
-
-        controller.button(1).onTrue(drivetrain.runOnce(() -> drivetrain.zeroPose()));
-
-        drivetrain.registerTelemetry(telemetry::telemeterize);
-
-        dragonReins.axisMagnitudeGreaterThan(0, DriveConstants.k_closedLoopOverrideTolerance)
-                .or(() -> dragonReins.axisMagnitudeGreaterThan(1, DriveConstants.k_closedLoopOverrideTolerance).getAsBoolean())
-                .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue())); // can queue paths whenever, so long as
-                                                                                // no dragonReins input is there
-    }
-
-    private void configureSysId(CommandPS5Controller controller) {
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-
-        controller.button(1).and(controller.button(3))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        controller.button(1).and(controller.button(4))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-        controller.button(2).and(controller.button(3))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        controller.button(2).and(controller.button(4))
-                .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-    }
-
-    private void configureButtonBoard(CommandPS5Controller controller) {
+    private void configureButtonBoard() {
+        // initializes lists of poses of all the enums - to use in auton util
         ScoringLocationsLeft[] locationsLeft = ScoringLocationsLeft.values();
-        List<Pose2d> scoringLocationListLeft = new ArrayList<>();
+        this.scoringLocationsListLeft = new ArrayList<>();
         for (ScoringLocationsLeft location : locationsLeft) {
-            scoringLocationListLeft.add(location.value);
+            this.scoringLocationsListLeft.add(location.value);
         }
 
         ScoringLocationsRight[] locationsRight = ScoringLocationsRight.values();
-        List<Pose2d> scoringLocationListRight = new ArrayList<>();
+        this.scoringLocationsRightList = new ArrayList<>();
         for (ScoringLocationsRight location : locationsRight) {
-            scoringLocationListRight.add(location.value);
+            this.scoringLocationsRightList.add(location.value);
         }
-        controller.button(1).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(1), scoringLocationListLeft, drivetrain)));
-        controller.button(2).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(2), scoringLocationListLeft, drivetrain)));
-        controller.button(3).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(3), scoringLocationListLeft, drivetrain)));
-        controller.button(4).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.LEFT, () -> coralScoreCommand(4), scoringLocationListLeft, drivetrain)));
-        controller.button(5).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(1), scoringLocationListRight, drivetrain)));
-        controller.button(6).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(2), scoringLocationListRight, drivetrain)));
-        controller.button(7).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(3), scoringLocationListRight, drivetrain)));
-        controller.button(8).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(ButtonBoard.RIGHT, () -> coralScoreCommand(4), scoringLocationListRight, drivetrain)));
 
-        controller.button(9).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.FARHP.value, drivetrain, () -> coralIntakeCommand())));
-        controller.button(10).and(controller.button(11)).onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithOverrides(ScoringLocations.CLOSEHP.value, drivetrain, () -> coralIntakeCommand())));
-        controller.button(11).onFalse(new InstantCommand(() -> AutonomousUtil.clearQueue()));
-    }
-
-    private void configureOperatorBindings(CommandPS5Controller controller) {
-        controller.button(1).onTrue(coralScoreCommand(1));
-        controller.button(2).onTrue(coralScoreCommand(2));
-        controller.button(3).onTrue(coralScoreCommand(3));
-        controller.button(4).onTrue(coralScoreCommand(4));
-        controller.button(5).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
-        controller.button(6).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
-        controller.button(7).whileTrue(algaeIntakeCommand(AlgaeLocationPresets.GROUND));
-        controller.button(8).whileTrue(algaeScoreCommand(AlgaeLocationPresets.NET));
-        controller.button(9).whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
-        controller.button(10).onTrue(new AlgaeEjectCommand(roller));
-        // UNCOMMENT THE FOLLOWING FOR MANUAL MOVE FEATURES
-
-        // controller.button(1).whileTrue(new ManualPivot(pivot, true));
-        // controller.button(2).whileTrue(new ManualPivot(pivot, false));
-        // controller.button(3).whileTrue(new ManualElevator(elevator, true));
-        // controller.button(4).whileTrue(new ManualElevator(elevator, false));
-        // controller.circle().whileTrue(new AlgaeRollerCommand(roller));
-        // controller.cross().whileTrue(new ManualClimberCommand(climber));
-    }
-
-    public enum ScoringLocations {
-        A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
-        B(new Pose2d(3.16, 3.875, Rotation2d.fromDegrees(0))),
-        C(new Pose2d(3.675, 3, Rotation2d.fromDegrees(60))),
-        D(new Pose2d(4, 2.78, Rotation2d.fromDegrees(60))),
-        E(new Pose2d(5, 2.8, Rotation2d.fromDegrees(120))),
-        F(new Pose2d(5.3, 3, Rotation2d.fromDegrees(120))),
-        G(new Pose2d(5.8, 3.85, Rotation2d.fromDegrees(180))),
-        H(new Pose2d(5.8, 4.2, Rotation2d.fromDegrees(180))),
-        I(new Pose2d(5.3, 5.1, Rotation2d.fromDegrees(-120))),
-        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))),
-        K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
-        L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
-        FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55)));
-
-        private Pose2d value;
-
-        private ScoringLocations(Pose2d value) {
-            this.value = value;
+        ScoringLocationsMiddle[] locationsMiddle = ScoringLocationsMiddle.values();
+        this.scoringLocationsMiddleList = new ArrayList<>();
+        for (ScoringLocationsMiddle location : locationsMiddle) {
+            this.scoringLocationsMiddleList.add(location.value);
         }
-    }
 
-    public enum ScoringLocationsLeft {
-        A(ScoringLocations.A.value),
-        C(ScoringLocations.C.value),
-        E(ScoringLocations.E.value),
-        G(ScoringLocations.G.value),
-        I(ScoringLocations.I.value),
-        K(ScoringLocations.K.value);
-
-        private Pose2d value;
-
-        private ScoringLocationsLeft(Pose2d value) {
-            this.value = value;
+        ClimbLocations[] climbLocations = ClimbLocations.values();
+        this.climbLocationsList = new ArrayList<>();
+        for (ClimbLocations location : climbLocations) {
+            this.climbLocationsList.add(location.value);
         }
+
+        // handle bindings
+        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
+
+        // m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers));
+        
+        controller.button(ButtonBoardAlternate.manualModeSwitch).onTrue(new InstantCommand(() -> RobotObserver.toggleManualMode()));
+        BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
+        BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
+
+        Trigger algaeOn = controller.axisGreaterThan(ButtonBoardAlternate.algaeModeButton, ButtonBoardAlternate.algaeModeButtonThreshold);
+
+        // Manual Mode Off
+        // bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        // bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        // bindAutoCoralScoreCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        // bindAutoCoralScoreCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
+        // bindAutoCoralScoreCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
+        // bindAutoCoralScoreCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
+        // bindAutoCoralScoreCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
+        // bindAutoCoralScoreCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
+
+        // bindAutoCoralIntakeCommand(ReefClipLocations.LEFT, controller.button(ButtonBoardAlternate.leftIntake).and(manualModeOff));
+        // bindAutoCoralIntakeCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightIntake).and(manualModeOff));
+
+        // bindAutoAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOff));
+        // bindAutoAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(algaeOn).and(manualModeOff));
+        // bindAutoAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(algaeOn).and(manualModeOff));
+        // bindAutoAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOff));
+        // bindAutoAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOff));
+
+        // bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(manualModeOff));
+
+        // Manual Mode On
+        bindManualCoralScoreCommand(1, controller.pov(ButtonBoardAlternate.L1).and(manualModeOn));
+        bindManualCoralScoreCommand(2, controller.pov(ButtonBoardAlternate.L2).and(manualModeOn));
+        bindManualCoralScoreCommand(3, controller.pov(ButtonBoardAlternate.L3).and(manualModeOn));
+        bindManualCoralScoreCommand(4, controller.pov(ButtonBoardAlternate.L4).and(manualModeOn));
+
+        bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake).and(manualModeOn));
+
+        bindManualElevatorCommand(Direction.kForward, controller.button(ButtonBoardAlternate.manualElevatorUp).and(manualModeOn));
+        bindManualElevatorCommand(Direction.kReverse, controller.button(ButtonBoardAlternate.manualElevatorDown).and(manualModeOn));
+
+        bindManualPivotCommand(Direction.kForward, controller.button(ButtonBoardAlternate.manualPivotUp).and(manualModeOn));
+        bindManualPivotCommand(Direction.kReverse, controller.button(ButtonBoardAlternate.manualPivotDown).and(manualModeOn));
+
+        bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
+
+        bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(manualModeOff));
     }
 
-    public enum ScoringLocationsRight {
-        B(ScoringLocations.B.value),
-        D(ScoringLocations.D.value),
-        F(ScoringLocations.F.value),
-        H(ScoringLocations.H.value),
-        J(ScoringLocations.J.value),
-        L(ScoringLocations.L.value);
-
-        private Pose2d value;
-
-        private ScoringLocationsRight(Pose2d value) {
-            this.value = value;
-        }
-    }
-
-    public enum ButtonBoard {
-        LEFT, RIGHT;
-    }
+    public List<Pose2d> scoringLocationsListLeft;
+    public List<Pose2d> scoringLocationsRightList;
+    public List<Pose2d> scoringLocationsMiddleList;
+    public List<Pose2d> climbLocationsList;
 
     // ********** AUTONOMOUS **********
 
@@ -212,35 +248,39 @@ public class RobotContainer {
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
     private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
 
+    private SendableChooser<Command> autoChooser = new SendableChooser<>();
+
     private void configureAutonChooser() {
-        // boolean isCompetition = true;
+        if (AutonConstants.useSuperAuton) {
+            for (int i = 0; i < AutonConstants.numWaypoints; i++) {
+                SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
+                configurePlaceChooser(placeChooser);
+                scoringLocationsChooser.add(placeChooser);
+                SmartDashboard.putData("Place to Score #" + (i), placeChooser);
 
-        // Filter any autos with the "comp" prefix
-        // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-        // (stream) -> isCompetition
-        // ? stream.filter(auto -> auto.getName().startsWith("comp"))
-        // : stream
-        // );
+                SendableChooser<Supplier<Command>> heightChooser = new SendableChooser<>();
+                configureHeightChooser(heightChooser);
+                scoringHeightsChooser.add(heightChooser);
+                SmartDashboard.putData("Height to Score #" + (i), heightChooser);
+            }
 
-        // autoChooser = AutoBuilder.buildAutoChooser();
+            pickupLocation.setDefaultOption("CLOSE", ScoringLocations.CLOSEHP.value);
+            pickupLocation.addOption("FAR", ScoringLocations.FARHP.value);
+            SmartDashboard.putData(pickupLocation);
+        } else {
+            boolean isCompetition = false;
 
-        // SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        for (int i = 0; i < AutonConstants.numWaypoints; i++) {
-            SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
-            configurePlaceChooser(placeChooser);
-            scoringLocationsChooser.add(placeChooser);
-            SmartDashboard.putData("Place to Score #" + (i), placeChooser);
-
-            SendableChooser<Supplier<Command>> heightChooser = new SendableChooser<>();
-            configureHeightChooser(heightChooser);
-            scoringHeightsChooser.add(heightChooser);
-            SmartDashboard.putData("Height to Score #" + (i), heightChooser);
+            // Filter any autos with the "comp" prefix
+            autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+            (stream) -> isCompetition
+            ? stream.filter(auto -> auto.getName().startsWith("comp"))
+            : stream
+            );
+    
+            autoChooser = AutoBuilder.buildAutoChooser();
+    
+            SmartDashboard.putData("Auto Chooser", autoChooser);
         }
-
-        pickupLocation.setDefaultOption("CLOSE", ScoringLocations.CLOSEHP.value);
-        pickupLocation.addOption("FAR", ScoringLocations.FARHP.value);
-        SmartDashboard.putData(pickupLocation);
     }
 
     private void configurePlaceChooser(SendableChooser<Pose2d> chooser) {
@@ -266,56 +306,138 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
-        for (int i = 0; i < scoringLocationsChooser.size(); i++) {
-            locations[i] = scoringLocationsChooser.get(i).getSelected();
+        if (AutonConstants.useSuperAuton) {
+            Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
+            for (int i = 0; i < scoringLocationsChooser.size(); i++) {
+                locations[i] = scoringLocationsChooser.get(i).getSelected();
+            }
+    
+            Command[] heights = new Command[scoringHeightsChooser.size()];
+            for (int i = 0; i < scoringHeightsChooser.size(); i++) {
+                heights[i] = scoringHeightsChooser.get(i).getSelected().get();
+            }
+    
+            return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
+        } else {
+            return autoChooser.getSelected();
         }
+    }
 
-        Command[] heights = new Command[scoringHeightsChooser.size()];
-        for (int i = 0; i < scoringHeightsChooser.size(); i++) {
-            heights[i] = scoringHeightsChooser.get(i).getSelected().get();
-        }
+    private void configureNamedCommands() {
+        NamedCommands.registerCommand("L1", coralScoreCommand(1));
+        NamedCommands.registerCommand("L2", coralScoreCommand(2));
+        NamedCommands.registerCommand("L3", coralScoreCommand(3));
+        NamedCommands.registerCommand("L4", coralScoreCommand(4));
+        NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
+        NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
+        NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+    }
 
-        return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::stowElevatorCommand, this::coralIntakeCommand);
+    private void configureVision() {
+        m_vision.startThread();
+        RobotObserver.setSingleTagRunnable(m_vision::setSingleTag);
+        RobotObserver.setMultiTagRunnable(m_vision::setMultitag);
     }
 
     // ********** SUBSYSTEMS **********
 
-    private Elevator elevator;
-    private Pivot pivot;
-    private Climber climber;
-    private AlgaeRollers roller;
-    private CoralRollers coral;
+    private Elevator m_elevator;
+    private Pivot m_algaePivot;
+    private Climber m_climber;
+    private AlgaeRollers m_algaeRollers;
+    private CoralRollers m_coralRollers;
 
     private void configureSubsystems() {
-        elevator = new Elevator();
-        pivot = new Pivot();
-        climber = new Climber();
-        roller = new AlgaeRollers();
-        coral = new CoralRollers();
+        m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
+        m_elevator = new Elevator();
+        m_algaePivot = new Pivot();
+        m_climber = new Climber();
+        m_algaeRollers = new AlgaeRollers();
+        m_coralRollers = new CoralRollers();
     }
 
+    // ** BUTTON BOARD HELPERS **
+    private void bindAutoCoralIntakeCommand(ReefClipLocations location, Trigger trigger) {
+        switch (location) {
+            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.FARHP.value, () -> coralIntakeCommand())));
+            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.CLOSEHP.value, () -> coralIntakeCommand())));
+        }
+    }
+
+    private void bindManualCoralIntakeCommand(Trigger trigger) {
+        trigger.whileTrue(coralIntakeCommand()); 
+    }
+
+    private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
+        switch (location) {
+            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));
+            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsRightList)));
+        }   
+    }
+
+    private void bindManualCoralScoreCommand(int level, Trigger trigger) {
+        trigger.whileTrue(coralScoreCommand(level));    
+    }
+
+    private void bindAutoAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
+        switch (type) {
+            case GROUND -> algaeIntakeCommand(AlgaeLocationPresets.GROUND);
+            case REEFLOWER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER), scoringLocationsMiddleList)));
+            case REEFUPPER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationsMiddleList)));
+            case NET -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.NET.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
+            case PROCESSOR -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
+        }
+    }
+
+    private void bindManualAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
+        switch (type) {
+            case GROUND, REEFLOWER, REEFUPPER -> trigger.whileTrue(algaeIntakeCommand(type));
+            case NET, PROCESSOR -> trigger.whileTrue(algaeScoreCommand(type));
+        }
+    }
+
+    private void bindManualElevatorCommand(Direction direction, Trigger trigger) {
+        switch (direction) {
+            case kForward -> trigger.whileTrue(new ManualElevatorCommand(m_elevator, true));
+            case kReverse -> trigger.whileTrue(new ManualElevatorCommand(m_elevator, false));
+        }
+    }
+
+    private void bindManualPivotCommand(Direction direction, Trigger trigger) {
+        switch (direction) {
+            case kForward -> trigger.whileTrue(new ManualPivotCommand(m_algaePivot, true));
+            case kReverse -> trigger.whileTrue(new ManualPivotCommand(m_algaePivot, false));
+        }
+    }
+
+    private void bindManualClimbCommand(Trigger trigger) {
+        trigger.whileTrue(new ManualClimberCommand(m_climber));
+    }
+
+    // ** SUBSYSTEM PASS IN HELPERS **
+
     private Command coralIntakeCommand() {
-        return new CoralIntakeCommand(coral, elevator);
+        return new CoralIntakeCommand(m_coralRollers, m_elevator);
     }
 
     private Command coralScoreCommand(int level) {
-        return new CoralScoreCommand(coral, elevator, level);
+        return new CoralScoreCommand(m_coralRollers, m_elevator, level);
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
-        return new AlgaeIntakeCommand(roller, elevator, pivot, drivetrain, intakeLocation);
+        return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
     }
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
-        return new AlgaeScoreCommand(roller, elevator, pivot, scoreLocation);
-    }
-
-    private Command stowElevatorCommand() {
-        return new InstantCommand(() -> elevator.setStow());
+        return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_algaePivot, scoreLocation);
     }
 
     public enum AlgaeLocationPresets {
         REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET;
+    }
+
+    public void resetReferences() {
+        m_elevator.setPosition(m_elevator.getPosition());
+        m_algaePivot.setStow();
     }
 }

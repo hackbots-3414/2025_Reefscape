@@ -10,6 +10,7 @@ import frc.robot.subsystems.Elevator;
 public class ElevatorToPointCommand extends Command {
     private final double elevatorPosition;
     private final Elevator elevator;
+    
     public ElevatorToPointCommand(double elevatorPosition, Elevator elevator) {
         this.elevatorPosition = elevatorPosition;
         this.elevator = elevator;

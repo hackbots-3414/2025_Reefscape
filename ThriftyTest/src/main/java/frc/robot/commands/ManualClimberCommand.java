@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 
 public class ManualClimberCommand extends Command {
-    private Climber climber;
+    private final Climber climber;
 
     public ManualClimberCommand(Climber climber) {
         addRequirements(climber);

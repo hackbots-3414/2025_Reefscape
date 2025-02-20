@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -23,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class VisionHandler implements AutoCloseable {
@@ -36,7 +36,7 @@ public class VisionHandler implements AutoCloseable {
 
     private final Field2d m_field;
 
-    private Optional<Integer> m_singleTag;
+    private boolean m_singleTag;
     
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
@@ -50,13 +50,13 @@ public class VisionHandler implements AutoCloseable {
         setupCameras();
         m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
-        SmartDashboard.putData("April Tag Debug Field", m_field);
-        m_singleTag = Optional.empty();
+        RobotObserver.setField(m_field);
+        m_singleTag = false;
     }
 
     private void setupAprilTagField() throws IOException {
         AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadFromResource(
-            AprilTagFields.k2025Reefscape.m_resourceFile
+            AprilTagFields.k2025ReefscapeWelded.m_resourceFile
         );
         m_visionSim.addAprilTags(tagLayout);
     }
@@ -91,13 +91,13 @@ public class VisionHandler implements AutoCloseable {
             // initialze both real and simulated cameras
             PhotonCamera realCamera = new PhotonCamera(cameraName);
             PhotonCameraSim simCamera = new PhotonCameraSim(realCamera, m_simProps);
-            // sim camera required a little more configuration
             m_visionSim.addCamera(simCamera, robotToCamera);
-            if (Robot.isSimulation()) {
-                // This is highly computer intensive and not intended for real
-                // competition use. it will boink the roborio's cpu :(
-                simCamera.enableDrawWireframe(true);
-            }
+            // This is somewhat intensive (especially the first one) so we only
+            // enable if the robot is in simulation mode.
+            simCamera.enableRawStream(Robot.isSimulation());
+            simCamera.enableProcessedStream(Robot.isSimulation());
+            simCamera.enableDrawWireframe(Robot.isSimulation());
+            // we always need to add a vision estimator
             SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
                 realCamera,
                 robotToCamera,
@@ -115,7 +115,6 @@ public class VisionHandler implements AutoCloseable {
             estimator.run();
         }
         m_visionSim.update(m_drivetrain.getPose());
-        m_field.getObject("*TARGET POSE").setPose(m_drivetrain.getTargetPose());
     }
 
     public void startThread() {
@@ -130,20 +129,18 @@ public class VisionHandler implements AutoCloseable {
         m_drivetrain.addPoseEstimate(estimate);
     }
 
-    private Optional<Integer> getSingleTag() {
+    private boolean getSingleTag() {
         return m_singleTag;
     }
 
     public void setMultitag() {
-        m_singleTag = Optional.empty();
+        m_singleTag = false;
+        SmartDashboard.putBoolean("single tag", m_singleTag);
     }
 
-    public void setSingleTag(int tagId) {
-        m_singleTag = Optional.of(tagId);
-    }
-
-    public void addPose(String name, Pose2d pose) {
-        m_field.getObject(name).setPose(pose);
+    public void setSingleTag() {
+        m_singleTag = true;
+        SmartDashboard.putBoolean("single tag", m_singleTag);
     }
 
     @Override

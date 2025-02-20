@@ -15,17 +15,12 @@ public class ManualElevatorCommand extends Command {
     }
 
     @Override
-    public void initialize() {
-        elevator.disableStateSpace();
-    }
-
-    @Override
     public void execute() {
         elevator.setSpeed(isUp ? ElevatorConstants.manualUpSpeed : ElevatorConstants.manualDownSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        elevator.enableStateSpace();
+        elevator.stop();
     }
 }

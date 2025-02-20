@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeRollers;
 
 public class AlgaeEjectCommand extends Command {
-  private AlgaeRollers rollers;
+  private final AlgaeRollers rollers;
   
   public AlgaeEjectCommand(AlgaeRollers rollers) {
    this.rollers = rollers;
