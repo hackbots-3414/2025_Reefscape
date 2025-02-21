@@ -9,6 +9,7 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.LarsonAnimation;
+import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation;
@@ -39,19 +40,20 @@ public class LedSubsystem extends SubsystemBase {
   private int ledStripStartIndex = 0;
   private boolean inAuton = false;
   private boolean inTeleop = false;
+  private boolean climbedTest = false;
   private Coral coral;
 
   private static enum LED_MODE {
     CORAL_ONBOARD, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
-    BADCONTROLLER, CORAL_INTAKE, ALIGNED;
+    BADCONTROLLER, CORAL_INTAKE, ALIGNED, IN_RANGE, CLIMBED, TELEOP_DEFAULT;
   };
 
   private static enum LED_COLOR {
-    RED, YELLOW, GREEN, PURPLE, BLUE;
+    RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF;
   };
 
   private static enum LED_PATTERN {
-    TWINKLE, STROBE, LARSON, FLASH, SOLID, NOCHANGE;
+    TWINKLE, STROBE, LARSON, FLASH, SOLID, NOCHANGE, RAINBOW;
   };
 
   private static LED_MODE chosenMode = null;
@@ -63,6 +65,7 @@ public class LedSubsystem extends SubsystemBase {
     this.coral = coral;
     SmartDashboard.putBoolean("coralOnBoardTest", true);
     SmartDashboard.putBoolean("isInRangeTest", true);
+    SmartDashboard.putBoolean("ClimbedTest", false);
 
     CANdleConfiguration config = new CANdleConfiguration();
     config.stripType = LEDStripType.RGB; // set the strip type to RGB
@@ -95,9 +98,8 @@ public class LedSubsystem extends SubsystemBase {
     // setColor("DEFAULT", 0, 2, "SOLID");
     // }
     coralOnBoardTest = SmartDashboard.getBoolean("coralOnBoardTest", true);
-    System.out.println(coralOnBoardTest);
     isInRangeTest = SmartDashboard.getBoolean("isInRangeTest", true);
-    System.out.println(isInRangeTest);
+    climbedTest = SmartDashboard.getBoolean("ClimbedTest", false);
 
     SmartDashboard.putBoolean("Bad Controller", badController());
     // SmartDashboard.putBoolean("In Auton", inAuton);
@@ -107,61 +109,66 @@ public class LedSubsystem extends SubsystemBase {
     if (badController()) {
       if (chosenMode != LED_MODE.BADCONTROLLER) {
         chosenMode = LED_MODE.BADCONTROLLER;
-        setColor(LED_COLOR.RED, 0, 2, LED_PATTERN.STROBE);
+        setColor(LED_COLOR.RED, 0, 1, LED_PATTERN.STROBE);
       }
     } else if (inTeleop || inAuton) {
       if (inTeleop) {
-        if (matchTime <= LEDConstants.endgameWarning && matchTime > 0) {
-          ledStripEndIndex = 0;
+        // FIXME: Climber Logic
+        if (climbedTest == true) {
           ledStripStartIndex = 0;
-          if (matchTime <= LEDConstants.endgameAlert && matchTime > 0) {
-            if (chosenMode != LED_MODE.END_GAME_ALERT){
+          ledStripEndIndex = 1;
+          if (chosenMode != LED_MODE.CLIMBED && matchTime > 0) {
+            chosenMode = LED_MODE.CLIMBED;
+            setColor(LED_COLOR.OFF, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.RAINBOW);
+          }
+        } else if (matchTime <= LEDConstants.endgameWarning) { // If we're in endgame
+          if (matchTime <= LEDConstants.endgameAlert) { // If it's the last 10 seconds of endgame and we haven't climbed
+            if (chosenMode != LED_MODE.END_GAME_ALERT) {
+              ledStripEndIndex = 0;
+              ledStripStartIndex = 1;
               chosenMode = LED_MODE.END_GAME_ALERT;
-            setColor(LED_COLOR.YELLOW, 0, 1, LED_PATTERN.STROBE); // Changed
+              setColor(LED_COLOR.RED, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.STROBE);
             }
-          } else if (matchTime <= LEDConstants.endgameWarning) {
-            if(chosenMode != LED_MODE.END_GAME_WARNING){
+          } else if (matchTime <= LEDConstants.endgameAlert) { // If it's endgame, but not the last 10 seconds and we haven't climbed
+            if (chosenMode != LED_MODE.END_GAME_WARNING) {
+              ledStripEndIndex = 0;
+              ledStripStartIndex = 1;
               chosenMode = LED_MODE.END_GAME_WARNING;
-              setColor(LED_COLOR.YELLOW, 0, 1, LED_PATTERN.SOLID); // Changed             
+              setColor(LED_COLOR.RED, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.SOLID);
+            }
+          } else {
+            if (chosenMode != LED_MODE.TELEOP_DEFAULT) {
+              ledStripStartIndex = 0;
+              ledStripEndIndex = 1;
+              chosenMode = LED_MODE.TELEOP_DEFAULT;
+              setColor(LED_COLOR.OFF, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.NOCHANGE);
             }
           }
-        } else if (coralOnBoardTest && isInRangeTest) {
-          if (chosenMode != LED_MODE.CORAL_ONBOARD) {
-            chosenMode = LED_MODE.CORAL_ONBOARD;
-            setColor(LED_COLOR.BLUE, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.STROBE);
-          }
-        } else if (coralOnBoardTest) {
-          if (chosenMode != LED_MODE.CORAL_ONBOARD) {
-            chosenMode = LED_MODE.CORAL_ONBOARD;
-            setColor(LED_COLOR.BLUE, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.SOLID);
-          }
-        } else if (chosenMode != LED_MODE.DEFAULT) {
-          chosenMode = LED_MODE.DEFAULT;
-          setColor(LED_COLOR.PURPLE, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.NOCHANGE);
         }
+       else if (coralOnBoardTest && isInRangeTest) {
+        ledStripStartIndex = 0;
+        ledStripEndIndex = 1;
+        if (chosenMode != LED_MODE.CORAL_ONBOARD) {
+          chosenMode = LED_MODE.CORAL_ONBOARD;
+          setColor(LED_COLOR.GREEN, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.FLASH);
+        }
+      } else if (coralOnBoardTest) {
+        if (chosenMode != LED_MODE.CORAL_ONBOARD) {
+          chosenMode = LED_MODE.CORAL_ONBOARD;
+          setColor(LED_COLOR.WHITE, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.SOLID);
+        }
+      } else if (chosenMode != LED_MODE.DEFAULT) {
+        ledStripStartIndex = 0;
+        ledStripEndIndex = 1;
+        chosenMode = LED_MODE.DEFAULT;
+        setColor(LED_COLOR.OFF, ledStripStartIndex, ledStripEndIndex, LED_PATTERN.NOCHANGE);
       }
+    }
     } else {
       ledStripStartIndex = 0;
-      ledStripEndIndex = 2;
+      ledStripEndIndex = 1;
     }
   }
-  // } else if (coralOnBoardTest && isInRangeTest) {
-  // if (chosenMode != LED_MODE.CORAL_ONBOARD) {
-  // chosenMode = LED_MODE.CORAL_ONBOARD;
-  // setColor(LED_COLOR.BLUE, ledStripStartIndex, ledStripEndIndex,
-  // LED_PATTERN.STROBE);
-  // }
-  // } else if (coralOnBoardTest) {
-  // if (chosenMode != LED_MODE.CORAL_ONBOARD) {
-  // chosenMode = LED_MODE.CORAL_ONBOARD;
-  // setColor(LED_COLOR.BLUE, ledStripStartIndex, ledStripEndIndex,
-  // LED_PATTERN.SOLID);
-  // }
-  // } else if (chosenMode != LED_MODE.DEFAULT) {
-  // chosenMode = LED_MODE.DEFAULT;
-  // setColor(LED_COLOR.PURPLE, ledStripStartIndex, ledStripEndIndex,
-  // LED_PATTERN.NOCHANGE);
-  // }
 
   private void defaultColors() {
     ledcontroller.clearAnimation(0);
@@ -200,29 +207,35 @@ public class LedSubsystem extends SubsystemBase {
         g = 0;
         b = 255;
         break;
-
       case GREEN:
         r = 0;
         g = 255;
         b = 0;
         break;
-
       case RED:
         r = 255;
         g = 0;
         b = 0;
         break;
-
       case YELLOW:
         r = 255;
         g = 120;
         b = 0;
         break;
-
       case PURPLE:
         r = 255;
         g = 0;
         b = 255;
+        break;
+      case WHITE:
+        r = 255;
+        g = 255;
+        b = 255;
+        break;
+      case OFF:
+        r = 0;
+        g = 0;
+        b = 0;
         break;
     }
 
@@ -233,10 +246,13 @@ public class LedSubsystem extends SubsystemBase {
           offsetLED = LEDConstants.funnelOffset;
           nbrLED = LEDConstants.funnelNumLED;
           break;
-        default:
+        case 1:
           offsetLED = LEDConstants.elevatorOffset;
           nbrLED = LEDConstants.elevatorNumLED;
           break;
+        default:
+          offsetLED = LEDConstants.funnelOffset;
+          nbrLED = LEDConstants.numLED;
       }
 
       switch (pattern) {
@@ -259,6 +275,9 @@ public class LedSubsystem extends SubsystemBase {
         case LARSON:
           ledcontroller.animate(
               new LarsonAnimation(r, g, b, 0, 0.75, LEDConstants.numLED, LarsonAnimation.BounceMode.Back, 7), x);
+          break;
+        case RAINBOW:
+          ledcontroller.animate(new RainbowAnimation(1, 0.9, nbrLED, true, offsetLED));
       }
 
     }
