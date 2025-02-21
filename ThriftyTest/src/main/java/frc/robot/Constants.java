@@ -3,44 +3,18 @@ package frc.robot;
 import java.util.List;
 import java.util.Map;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CANdiConfiguration;
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.DigitalInputsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.S1CloseStateValue;
-import com.ctre.phoenix6.signals.S2CloseStateValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.configs.*;
+import com.ctre.phoenix6.signals.*;
 import com.pathplanner.lib.config.PIDConstants;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
@@ -82,7 +56,7 @@ public class Constants {
         public static final int elevatorRight = 52;
         public static final int elevatorEncoder = 53;
 
-        public static final int pivotMotor = 57;
+        public static final int pivot = 57;
         public static final int pivotEncoder = 58;
 
         public static final int coralLeft = 55;
@@ -94,7 +68,7 @@ public class Constants {
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
 
-        public static final int algaeMotor = 60;
+        public static final int algae = 60;
     }
 
     public static class SimConstants {
@@ -122,7 +96,7 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.6076, 0.0, 0.0);
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-        public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        public static final double k_maxAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
         
@@ -137,7 +111,6 @@ public class Constants {
         public static final double k_closedLoopOverrideToleranceTranslation = 0.02;
         public static final double k_closedLoopOverrideToleranceRotation = 0.02;
     }
-
 
     public static class ButtonBindingConstants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
@@ -561,6 +534,10 @@ public class Constants {
     public static class CoralConstants {
         public static final double intakeVoltage = 6;
         public static final double ejectVoltage = 8;
+
+        public static final double l1LeftEjectVoltage = 8;
+        public static final double l1RightEjectVoltage = 6;
+
         public static final boolean rightMotorInvert = true;
 
         public static final double supplyCurrentLimit = 20;

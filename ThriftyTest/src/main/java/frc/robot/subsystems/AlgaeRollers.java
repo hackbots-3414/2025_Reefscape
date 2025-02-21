@@ -16,7 +16,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
     
-    private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algaeMotor);
+    private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algae);
 
     private double m_voltage;
     private boolean m_voltageChanged;

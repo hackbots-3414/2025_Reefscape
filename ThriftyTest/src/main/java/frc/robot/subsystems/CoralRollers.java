@@ -109,6 +109,15 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.ejectVoltage);
     }
 
+    public void setIndividualEject() {
+        m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
+        m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
+    }
+
+    public void resetFollow() {
+        m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
+    }
+
     public void stop() {
         // setVoltage(0);
         m_voltage = 0;
