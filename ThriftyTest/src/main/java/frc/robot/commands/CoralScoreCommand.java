@@ -10,7 +10,7 @@ public class CoralScoreCommand extends Command {
   private final Elevator elevator;
   private final int level;
 
-  private boolean isDone;
+  private int m_timeRemaining;
 
   public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int level) {
     this.coral = coralRollers;
@@ -21,8 +21,9 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void initialize() {
+    m_timeRemaining = 25;
     if (!CommandBounds.reefBounds.isActive()) {
-        isDone = true;
+        m_timeRemaining = 0;
         return;
     }
     switch(level) {
@@ -30,7 +31,7 @@ public class CoralScoreCommand extends Command {
       case 2 -> elevator.setL2();
       case 3 -> elevator.setL3();
       case 4 -> elevator.setL4();
-      default -> isDone = true;
+      default -> m_timeRemaining = 0;
     }
   }
 
@@ -39,16 +40,17 @@ public class CoralScoreCommand extends Command {
     if(elevator.atSetpoint()) {
       coral.setEject();
     }
+    if (!coral.presentPiece()) m_timeRemaining --;
   }
 
   @Override
   public void end(boolean interrupted) {
-    elevator.setStow();
+    // elevator.setStow();
     coral.stop();
   }
 
   @Override
   public boolean isFinished() {
-    return !coral.presentPiece() || isDone;
+    return m_timeRemaining == 0;
   }
 }
