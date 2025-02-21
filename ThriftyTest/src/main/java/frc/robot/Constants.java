@@ -254,6 +254,8 @@ public class Constants {
             public static final int manualPivotUp = Axis.kRightY.value;
             public static final int manualPivotDown = Axis.kRightY.value;
 
+            public static final double manualThresholds = 0.5;
+
             public static final int intake = Button.kL1.value; // LB
             public static final int spitPiece = Button.kL2.value; // LT
         }
