@@ -227,10 +227,10 @@ public class Constants {
             public static final int manualModeSwitch = 15; // Share button
 
             // Mutual Buttons
-            public static final int L1 = 0; // POV
+            public static final int L1 = 180; // POV
             public static final int L2 = 270; // POV
             public static final int L3 = 90; // POV
-            public static final int L4 = 180; // POV
+            public static final int L4 = 0; // POV
             
             public static final int leftReef = Button.kSquare.value;
             public static final int rightReef = Button.kCircle.value;
@@ -240,8 +240,7 @@ public class Constants {
             public static final int groundAlgae = 0; // POV
             public static final int processor = 90; // POV
             public static final int net = 180; // POV
-            public static final int algaeModeButton = Axis.kR2.value; // R2
-            public static final double algaeModeButtonThreshold = 0.7;
+            public static final int algaeModeButton = Button.kR2.value; // R2
             
             public static final int leftIntake = Button.kL1.value; // LB
             public static final int rightIntake = Button.kR1.value; // RB

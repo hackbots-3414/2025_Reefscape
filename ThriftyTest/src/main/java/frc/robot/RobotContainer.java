@@ -189,7 +189,7 @@ public class RobotContainer {
         BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
         BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
 
-        Trigger algaeOn = controller.axisGreaterThan(ButtonBoardAlternate.algaeModeButton, ButtonBoardAlternate.algaeModeButtonThreshold);
+        Trigger algaeOn = controller.button(ButtonBoardAlternate.algaeModeButton);
 
         // Manual Mode Off
         // bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
@@ -227,8 +227,8 @@ public class RobotContainer {
         bindManualPivotCommand(Direction.kReverse, controller.button(ButtonBoardAlternate.manualPivotDown).and(manualModeOn));
 
         bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOn));
-        bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(algaeOn).and(manualModeOn));
-        bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(algaeOn).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOn));
+        bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOn));
         bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
         bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
 
