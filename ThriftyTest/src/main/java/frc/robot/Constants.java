@@ -122,7 +122,7 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.6076, 0.0, 0.0);
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-        public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        public static final double k_maxAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
         
