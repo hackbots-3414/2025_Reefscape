@@ -29,6 +29,7 @@ public class AlgaeIntakeCommand extends Command {
 
   @Override
     public void initialize() {
+        rollers.intakeAlgae();
         isDone = false;
         switch (location) {
             case GROUND -> {
@@ -38,12 +39,10 @@ public class AlgaeIntakeCommand extends Command {
             case REEFLOWER -> {
                 isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefLower();
-                pivot.setReefPickup();
             }
             case REEFUPPER -> {
                 isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefUpper();
-                pivot.setReefPickup();
             }
             default -> isDone = true;
         }
@@ -51,32 +50,32 @@ public class AlgaeIntakeCommand extends Command {
 
     @Override
     public void execute() {
-        if (elevator.atSetpoint() && pivot.atSetpoint()) {
-            rollers.intakeAlgae();
+        switch (location) {
+            case GROUND -> isDone = true;
+            case REEFLOWER -> {
+                // isDone = !CommandBounds.reefBounds.isActive();
+                if (elevator.atSetpoint()) {
+                    pivot.setReefPickup();
+
+                }
+            }
+            case REEFUPPER -> {
+                // isDone = !CommandBounds.reefBounds.isActive();
+                if (elevator.atSetpoint()) {
+                    pivot.setReefPickup();
+                }
+            }
+            default -> isDone = true;
         }
-        if (rollers.hasObject()) {
-            switch (location) {
-                case GROUND -> isDone = true;
-                case REEFLOWER -> {
-                    isDone = !CommandBounds.reefBounds.isActive();
-                    pivot.setReefExtract();
-                }
-                case REEFUPPER -> {
-                    isDone = !CommandBounds.reefBounds.isActive();
-                    pivot.setReefExtract();
-                }
-                default -> isDone = true;
-            }
-            if (FlippingUtil.flipFieldPose(RobotObserver.getPose()).getTranslation()
-                    .getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
-                isDone = true;
-            }
+        if (FlippingUtil.flipFieldPose(RobotObserver.getPose()).getTranslation()
+                .getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
+            // isDone = true;
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        elevator.setStow();
+        // elevator.setStow();
         pivot.setStow();
         rollers.smartStop();
     }

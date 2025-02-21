@@ -153,10 +153,10 @@ public class Constants {
         public static class DragonReins {
             public static final int xAxis = 1;
             public static final int yAxis = 0;
-            public static final int rotAxis = 2;
+            public static final int rotAxis = 3;
 
-            public static final boolean flipX = true;
-            public static final boolean flipY = false;
+            public static final boolean flipX = false;
+            public static final boolean flipY = true;
             public static final boolean flipRot = true;
 
             public static final int enableOpenLoop = 3;
@@ -237,9 +237,9 @@ public class Constants {
 
             public static final int lowAlgae = Button.kCross.value;
             public static final int highAlgae = Button.kTriangle.value;
-            public static final int groundAlgae = 0; // POV
+            public static final int groundAlgae = 180; // POV
             public static final int processor = 90; // POV
-            public static final int net = 180; // POV
+            public static final int net = 0; // POV
             public static final int algaeModeButton = Button.kR2.value; // R2
             
             public static final int leftIntake = Button.kL1.value; // LB
@@ -412,15 +412,15 @@ public class Constants {
          * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
-        public static final double stow = 0.27;
+        public static final double stow = 0.345;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
-        public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;
+        public static final double L2 = Units.inchesToMeters(36) * metersToRotations;
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
         public static final double L4 = Units.inchesToMeters(75.5) * metersToRotations;
         public static final double net = Units.inchesToMeters(79) * metersToRotations;
-        public static final double reefLower = Units.inchesToMeters(30) * metersToRotations;
-        public static final double reefUpper = Units.inchesToMeters(60) * metersToRotations;
+        public static final double reefLower = 2;
+        public static final double reefUpper = 4.5;
 
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
@@ -472,16 +472,16 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final double encoderOffset = -0.263428;
+        public static final double encoderOffset = 0.250977;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
 
-        public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
-        public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        public static final SensorDirectionValue invertEncoder = SensorDirectionValue.Clockwise_Positive;
 
-        public static final double forwardSoftLimitThreshold = 0.462891;
-        public static final double reverseSoftLimitThreshold = 0.163818;
+        public static final double forwardSoftLimitThreshold = -0.14;
+        public static final double reverseSoftLimitThreshold = -0.49;
 
         public static final double radiansAtMax = forwardSoftLimitThreshold;
         public static final double radiansAtZero = 0;
@@ -490,14 +490,14 @@ public class Constants {
 
         public static final double supplyCurrentLimit = 40;
 
-        public static final double tolerance = forwardSoftLimitThreshold * 0.1; // 1% tolerance
+        public static final double tolerance = 0.03;
 
-        public static final double groundPickup = 0.45;
-        public static final double processor = 0.25;
-        public static final double reefPickup = 0.34;
-        public static final double reefExtract = 0.29;
-        public static final double net = 0.25;
-        public static final double stow = 0.17;
+        public static final double groundPickup = -0.41;
+        public static final double processor = -0.25;
+        public static final double reefPickup = -0.34;
+        public static final double reefExtract = -0.29;
+        public static final double net = -0.165;
+        public static final double stow = -0.165;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
@@ -524,7 +524,7 @@ public class Constants {
 
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackRemoteSensorID(IDConstants.pivotEncoder)
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
@@ -540,13 +540,13 @@ public class Constants {
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(15)
+                        .withKP(100)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
                         .withKV(1.3)
                         .withKA(0.12)
-                        .withKG(0.78))
+                        .withKG(0.625))
 
                 .withMotionMagic(new MotionMagicConfigs()
                         .withMotionMagicCruiseVelocity(maxSpeed)
@@ -557,8 +557,8 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final double intakeVoltage = 9;
-        public static final double ejectVoltage = 12;
+        public static final double intakeVoltage = 6;
+        public static final double ejectVoltage = 8;
         public static final boolean rightMotorInvert = true;
 
         public static final double supplyCurrentLimit = 20;
@@ -585,7 +585,7 @@ public class Constants {
 
     public static final class ClimberConstants {
         public static final boolean rightMotorInvert = true;
-        public static final double climberUpVolts = 1.0; //FIXME figure out actual values for the climber voltage.
+        public static final double climberUpVolts = 12.0; //FIXME figure out actual values for the climber voltage.
         public static final double climberCurrentLimit = 80.0;
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 

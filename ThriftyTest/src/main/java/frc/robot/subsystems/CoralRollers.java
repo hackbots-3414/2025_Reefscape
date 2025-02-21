@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -16,6 +19,9 @@ import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 
 public class CoralRollers extends SubsystemBase {
+    @SuppressWarnings("unused")
+    private final Logger m_logger = LoggerFactory.getLogger(CoralRollers.class);
+
     private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
     private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
 
@@ -60,11 +66,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setIntake() {
-        if (holdingPiece()) {
-            stop();
-        } else {
-            setVoltage(CoralConstants.intakeVoltage);
-        }
+        setVoltage(CoralConstants.intakeVoltage);
     }
 
     public void timeoutIntake() {
@@ -108,7 +110,10 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void stop() {
-        setVoltage(0);
+        // setVoltage(0);
+        m_voltage = 0;
+        m_voltageChanged = false;
+        m_coralLeft.setVoltage(0.0);
     }
 
     public boolean getFrontIR() {
@@ -145,7 +150,6 @@ public class CoralRollers extends SubsystemBase {
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);
             m_voltageChanged = false;
-            SmartDashboard.putNumber("* CORAL VOLTS", m_voltage);
         }
     }
 }
