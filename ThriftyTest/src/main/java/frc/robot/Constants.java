@@ -109,7 +109,7 @@ public class Constants {
     
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(1.9, 0.0, 0.0); // 0.18836
-        public static final PIDConstants k_rotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
+        public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
@@ -143,7 +143,7 @@ public class Constants {
 
             public static final boolean flipX = true;
             public static final boolean flipY = false;
-            public static final boolean flipRot = true;
+            public static final boolean flipRot = false;
 
             public static final int enableOpenLoop = 3;
             public static final int resetHeading = 1;
@@ -248,7 +248,7 @@ public class Constants {
     }
 
     public static class VisionConstants {
-        public static final boolean enableVision = false;
+        public static final boolean enableVision = true;
 
         public static final String k_estimationName = "estimation";
 
