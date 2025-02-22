@@ -184,7 +184,7 @@ public class RobotContainer {
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
-        m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers, m_elevator));
+        // m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers, m_elevator));
         
         controller.button(ButtonBoardAlternate.manualModeSwitch).onTrue(new InstantCommand(() -> RobotObserver.toggleManualMode()));
         BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
@@ -221,11 +221,11 @@ public class RobotContainer {
 
         bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake).and(manualModeOn));
 
-        bindManualElevatorCommand(Direction.kForward, controller.axisGreaterThan(ButtonBoardAlternate.manualElevatorUp, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
-        bindManualElevatorCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualElevatorDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
+        // bindManualElevatorCommand(Direction.kForward, controller.axisGreaterThan(ButtonBoardAlternate.manualElevatorUp, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
+        // bindManualElevatorCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualElevatorDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
 
-        bindManualPivotCommand(Direction.kForward, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotUp, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
-        bindManualPivotCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
+        // bindManualPivotCommand(Direction.kForward, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotUp, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
+        // bindManualPivotCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
 
         bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOn));
         bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOn));

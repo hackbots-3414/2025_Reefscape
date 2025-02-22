@@ -128,8 +128,8 @@ public class Constants {
             public static final int yAxis = 0;
             public static final int rotAxis = 3;
 
-            public static final boolean flipX = false;
-            public static final boolean flipY = true;
+            public static final boolean flipX = true;
+            public static final boolean flipY = false;
             public static final boolean flipRot = true;
 
             public static final int enableOpenLoop = 3;
@@ -387,6 +387,7 @@ public class Constants {
          * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
+        public static final double groundIntake = 0;
         public static final double stow = 0.345;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
