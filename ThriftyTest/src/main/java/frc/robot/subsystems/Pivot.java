@@ -26,7 +26,7 @@ import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 
 public class Pivot extends SubsystemBase {
-    private final TalonFX m_pivot = new TalonFX(IDConstants.pivotMotor);
+    private final TalonFX m_pivot = new TalonFX(IDConstants.pivot);
     private final CANcoder m_cancoder = new CANcoder(IDConstants.pivotEncoder);
 
     private double m_position;
