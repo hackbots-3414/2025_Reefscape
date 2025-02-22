@@ -21,6 +21,7 @@ import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
+// import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.LedSubsystem;
 import frc.robot.utils.AutonomousUtil;
 
@@ -187,13 +188,22 @@ public class RobotContainer {
         chooser.addOption("L", ScoringLocations.L.value);
     }
 
-    private LedSubsystem ledSubsystem;
+    // private LedSubsystem ledSubsystem;
+
+    // private void configureSubsystems() {
+    //     ledSubsystem = new LedSubsystem(coral); 
+    // }
+
+    // public LedSubsystem getLedSubsystem() {
+    //     return ledSubsystem;
+    // }
+    private LedSubsystem ledSubsystemTest;
 
     private void configureSubsystems() {
-        ledSubsystem = new LedSubsystem(coral); 
+        ledSubsystemTest = new LedSubsystem(coral); 
     }
 
-    public LedSubsystem getLedSubsystem() {
-        return ledSubsystem;
+    public LedSubsystem getLedSubsystemTest() {
+        return ledSubsystemTest;
     }
 }
