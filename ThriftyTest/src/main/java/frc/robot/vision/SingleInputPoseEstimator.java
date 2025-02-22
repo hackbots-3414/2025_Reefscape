@@ -75,6 +75,7 @@ public class SingleInputPoseEstimator implements Runnable {
         );
     }
 
+    @Override
     public void run() {
         // add heading data, for trig-based estimation
         m_trigEstimator.addHeadingData(
@@ -98,11 +99,16 @@ public class SingleInputPoseEstimator implements Runnable {
             time between when a result was sent and when we "see" it. This would
             mess up the timestamping logic.
             */
-            m_logger.warn("Possibly too many results: {}", results.size());
+            m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
-        for (PhotonPipelineResult result : results) {
-            handleResult(result);
-        }
+        /* take many */
+        // for (PhotonPipelineResult result : results) {
+        //     handleResult(result);
+        // }
+        /* take one */
+        if (results.size() == 0) return;
+        PhotonPipelineResult latest = results.get(results.size() - 1);
+        handleResult(latest);
     }
 
     private void handleResult(PhotonPipelineResult result) {
