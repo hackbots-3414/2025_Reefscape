@@ -9,6 +9,12 @@
           "data": {
             "pathName": "Backup1Piece"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
         }
       ]
     }

@@ -18,8 +18,8 @@ public class TeleopCommand extends Command {
     private final Supplier<Double> rotSupplier;
     private final Supplier<Boolean> useOpenLoop;
 
-    private final double MaxSpeed = DriveConstants.k_maxLinearSpeed;
-    private final double MaxAngularRate = DriveConstants.k_maxAngularSpeed;
+    private final double MaxSpeed = DriveConstants.k_maxTeleopLinearSpeed;
+    private final double MaxAngularRate = DriveConstants.k_maxTeleopAngularSpeed;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband

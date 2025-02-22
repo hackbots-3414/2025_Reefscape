@@ -56,6 +56,7 @@ public class RobotObserver {
 
     public static void toggleManualMode() {
         getInstance().m_manualModeEnabled = !getInstance().m_manualModeEnabled;
+        SmartDashboard.putBoolean("SAFETY MODE", getInstance().m_manualModeEnabled);
     }
 
     public static boolean getManualMode() {
