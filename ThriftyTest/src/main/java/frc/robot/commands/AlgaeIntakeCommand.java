@@ -1,13 +1,8 @@
 package frc.robot.commands;
 
-import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.CommandBounds;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
-import frc.robot.RobotObserver;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
@@ -52,24 +47,11 @@ public class AlgaeIntakeCommand extends Command {
     public void execute() {
         switch (location) {
             case GROUND -> isDone = true;
-            case REEFLOWER -> {
-                // isDone = !CommandBounds.reefBounds.isActive();
-                if (elevator.atSetpoint()) {
-                    pivot.setReefPickup();
-
-                }
-            }
-            case REEFUPPER -> {
-                // isDone = !CommandBounds.reefBounds.isActive();
-                if (elevator.atSetpoint()) {
-                    pivot.setReefPickup();
-                }
+            case REEFLOWER, REEFUPPER -> {
+                isDone = !CommandBounds.reefBounds.isActive();
+                if (elevator.atSetpoint()) pivot.setReefPickup();
             }
             default -> isDone = true;
-        }
-        if (FlippingUtil.flipFieldPose(RobotObserver.getPose()).getTranslation()
-                .getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
-            // isDone = true;
         }
     }
 

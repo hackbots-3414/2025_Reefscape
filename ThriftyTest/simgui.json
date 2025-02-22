@@ -272,6 +272,44 @@
           ],
           "style": "Line"
         },
+        "Red Alliance Left Intake": {
+          "arrows": false,
+          "color": [
+            0.05063295364379883,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Net": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Processor": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Reef": {
+          "arrows": false,
+          "color": [
+            0.7848100662231445,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Right Intake": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
         "Red Left Human Player Bounds": {
           "arrows": false,
           "color": [

@@ -1,5 +1,11 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.List;
 import java.util.Map;
 
@@ -36,11 +42,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
@@ -774,7 +775,12 @@ public class Constants {
             Map.entry("Blue Alliance Net", netBounds),
             Map.entry("Blue Alliance Left Intake", leftIntakeBounds),
             Map.entry("Blue Alliance Right Intake", rightIntakeBounds),
-            Map.entry("Blue Alliance Processor", processorBounds)
+            Map.entry("Blue Alliance Processor", processorBounds),
+            Map.entry("Red Alliance Reef", reefBounds.flip()),
+            Map.entry("Red Alliance Net", netBounds.flip()),
+            Map.entry("Red Alliance Left Intake", leftIntakeBounds.flip()),
+            Map.entry("Red Alliance Right Intake", rightIntakeBounds.flip()),
+            Map.entry("Red Alliance Processor", processorBounds.flip())
         );
     }
 }
