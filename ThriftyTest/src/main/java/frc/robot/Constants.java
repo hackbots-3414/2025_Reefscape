@@ -78,11 +78,8 @@ public class Constants {
     public static class RobotConstants {
         public static final Time globalCanTimeout = Milliseconds.of(20); // 20 milliseconds
 
-        public static final double k_robotX = Units.inchesToMeters(30.0);
-        public static final double k_robotY = Units.inchesToMeters(30.0);
-
-        public static final double k_cameraOffsetX = 0.75 * k_robotX / 2.0;    
-        public static final double k_cameraOffsetY = 0.75 * k_robotY / 2.0;
+        public static final double k_cameraOffsetX = 0.304;
+        public static final double k_cameraOffsetY = 0.270;
         public static final double k_cameraHeight = Units.inchesToMeters(6.0);
         public static final double k_cameraBackHeight = Units.inchesToMeters(12.0);
         public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
@@ -237,10 +234,6 @@ public class Constants {
     public static class VisionConstants {
         public static final String k_estimationName = "estimation";
         // aliases
-        private static final double x = RobotConstants.k_cameraOffsetX;
-        private static final double y = RobotConstants.k_cameraOffsetY;
-        private static final double z = RobotConstants.k_cameraHeight;
-        private static final double zBack = RobotConstants.k_cameraBackHeight;
         private static final double pitch = RobotConstants.k_cameraPitch;
         private static final double backPitch = RobotConstants.k_backCameraPitch;
 
@@ -249,38 +242,38 @@ public class Constants {
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
-            Map.entry("0", new Transform3d(
-                new Translation3d(x, y, z),
-                new Rotation3d(0, pitch, -yaw)
-            )),
             Map.entry("1", new Transform3d(
-                new Translation3d(x, y, z),
+                new Translation3d(0.302,0.266,0.175),
                 new Rotation3d(0, pitch, Math.PI - yaw)
             )),
             Map.entry("2", new Transform3d(
-                new Translation3d(-x, y, zBack),
+                new Translation3d(0.261,0.299,0.175),
                 new Rotation3d(0, pitch, yaw)
             )),
             Map.entry("3", new Transform3d(
-                new Translation3d(-x, y, zBack),
+                new Translation3d(0.259,-0.298,0.175),
                 new Rotation3d(0, backPitch, backYaw - Math.PI)
             )),
             Map.entry("4", new Transform3d(
-                new Translation3d(-x, -y, zBack),
+                new Translation3d(0.302,-0.266,0.175),
                 new Rotation3d(0, backPitch, Math.PI - backYaw)
-            )),
-            Map.entry("5", new Transform3d(
-                new Translation3d(-x, -y, zBack),
-                new Rotation3d(0, pitch, -yaw)
-            )),
-            Map.entry("6", new Transform3d(
-                new Translation3d(x, -y, z),
-                new Rotation3d(0, pitch, yaw - Math.PI)
-            )),
-            Map.entry("7", new Transform3d(
-                new Translation3d(x, -y, z),
-                new Rotation3d(0, pitch, yaw)
             ))
+            // Map.entry("5", new Transform3d(
+            //     new Translation3d(-x, -y, zBack),
+            //     new Rotation3d(0, pitch, -yaw)
+            // )),
+            // Map.entry("6", new Transform3d(
+            //     new Translation3d(x, -y, z),
+            //     new Rotation3d(0, pitch, yaw - Math.PI)
+            // )),
+            // Map.entry("7", new Transform3d(
+            //     new Translation3d(x, -y, z),
+            //     new Rotation3d(0, pitch, yaw)
+            // )),
+            // Map.entry("8", new Transform3d(
+            //     new Translation3d(x, -y, z),
+            //     new Rotation3d(0, pitch, yaw)
+            // ))
         );
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
