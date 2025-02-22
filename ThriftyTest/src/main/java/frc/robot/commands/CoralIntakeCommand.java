@@ -31,8 +31,8 @@ public class CoralIntakeCommand extends Command {
     coral.stop();
   }
 
-  @Override
-  public boolean isFinished() {
-    return coral.holdingPiece();
-  }
+  // @Override
+  // public boolean isFinished() {
+  //   return coral.holdingPiece();
+  // }
 }

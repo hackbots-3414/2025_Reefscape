@@ -122,7 +122,7 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.6076, 0.0, 0.0);
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-        public static final double k_maxAngularSpeed = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        public static final double k_maxAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
         
@@ -143,7 +143,7 @@ public class Constants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
-        public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
+        public static final DriverChoice driverChoice = DriverChoice.BACKUP;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
         public static final int driverPort = 0;
@@ -164,12 +164,12 @@ public class Constants {
         }
 
         public static class BackupDriver {
-            public static final int xAxis = Axis.kLeftY.value;
-            public static final int yAxis = Axis.kLeftX.value;
-            public static final int rotAxis = Axis.kRightY.value;
+            public static final int xAxis = 1;
+            public static final int yAxis = 0;
+            public static final int rotAxis = 3;
 
-            public static final boolean flipX = true;
-            public static final boolean flipY = false;
+            public static final boolean flipX = false;
+            public static final boolean flipY = true;
             public static final boolean flipRot = true;
 
             public static final int enableOpenLoop = Button.kSquare.value;
@@ -227,21 +227,20 @@ public class Constants {
             public static final int manualModeSwitch = 15; // Share button
 
             // Mutual Buttons
-            public static final int L1 = 0; // POV
+            public static final int L1 = 180; // POV
             public static final int L2 = 270; // POV
             public static final int L3 = 90; // POV
-            public static final int L4 = 180; // POV
+            public static final int L4 = 0; // POV
             
             public static final int leftReef = Button.kSquare.value;
             public static final int rightReef = Button.kCircle.value;
 
             public static final int lowAlgae = Button.kCross.value;
             public static final int highAlgae = Button.kTriangle.value;
-            public static final int groundAlgae = 0; // POV
+            public static final int groundAlgae = 180; // POV
             public static final int processor = 90; // POV
-            public static final int net = 180; // POV
-            public static final int algaeModeButton = Axis.kR2.value; // R2
-            public static final double algaeModeButtonThreshold = 0.7;
+            public static final int net = 0; // POV
+            public static final int algaeModeButton = Button.kR2.value; // R2
             
             public static final int leftIntake = Button.kL1.value; // LB
             public static final int rightIntake = Button.kR1.value; // RB
@@ -416,7 +415,7 @@ public class Constants {
         public static final double stow = 0.27;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
-        public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;
+        public static final double L2 = Units.inchesToMeters(35.5) * metersToRotations;
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
         public static final double L4 = Units.inchesToMeters(75.5) * metersToRotations;
         public static final double net = Units.inchesToMeters(79) * metersToRotations;
@@ -498,7 +497,7 @@ public class Constants {
         public static final double reefPickup = 0.34;
         public static final double reefExtract = 0.29;
         public static final double net = 0.25;
-        public static final double stow = 0.17;
+        public static final double stow = reverseSoftLimitThreshold;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
