@@ -7,10 +7,9 @@
  </appender>
 
  <logger name="frc.robot.commands" level="INFO"/>
- <logger name="frc.robot.vision" level="'DEBUG'"/>
- <!--logger name="frc.robot.subsystems.GamepieceFinder" level="TRACE"/-->
+ <logger name="frc.robot.vision" level="WARN"/>
 
- <root level="TRACE">
+ <root level="WARN">
    <appender-ref ref="STDOUT"/>
  </root>
 

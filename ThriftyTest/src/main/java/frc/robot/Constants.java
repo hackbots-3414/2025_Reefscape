@@ -1,5 +1,6 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
@@ -104,28 +105,16 @@ public class Constants {
 
     public static class RobotConstants {
         public static final Time globalCanTimeout = Milliseconds.of(20); // 20 milliseconds
-
-        public static final double k_cameraOffsetX = 0.304;
-        public static final double k_cameraOffsetY = 0.270;
-        public static final double k_cameraHeight = Units.inchesToMeters(6.0);
-        public static final double k_cameraBackHeight = Units.inchesToMeters(12.0);
-        public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
-        public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
-        public static final double k_cameraYaw = Units.degreesToRadians(35.0);
-        public static final double k_cameraBackYaw = Units.degreesToRadians(45.0);
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(0.18732, 0.0, 0.0);
-        public static final PIDConstants k_rotationPID = new PIDConstants(0.17119, 0.0, 0.0);
+        public static final PIDConstants k_translationPID = new PIDConstants(1.9, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_rotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
-        
-        public static final double k_maxLinearAcceleration = k_maxLinearSpeed * 2;
-        public static final double k_maxAngularAcceleration = k_maxAngularSpeed * 2;
 
         public static final double k_elevatorHeightLinearVelocityGain = -0.357; // for every 1 rotation elevator up, subtract X: 1 mps at max elevator
         public static final double k_elevatorHeightLinearAccelerationGain = k_elevatorHeightLinearVelocityGain * 2;
@@ -259,47 +248,52 @@ public class Constants {
     }
 
     public static class VisionConstants {
-        public static final boolean enableVision = true;
+        public static final boolean enableVision = false;
 
         public static final String k_estimationName = "estimation";
-        // aliases
-        private static final double pitch = RobotConstants.k_cameraPitch;
-        private static final double backPitch = RobotConstants.k_backCameraPitch;
 
-        private static final double yaw = RobotConstants.k_cameraYaw;
-        private static final double backYaw = RobotConstants.k_cameraBackYaw;
+        public static final double k_cameraOffsetX = 0.304;
+        public static final double k_cameraOffsetY = 0.270;
+        public static final double k_cameraHeight = Units.inchesToMeters(6.0);
+        public static final double k_cameraBackHeight = Units.inchesToMeters(12.0);
+        public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
+        public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
+        public static final double k_cameraYaw = Units.degreesToRadians(35.0);
+        public static final double k_cameraBackYaw = Units.degreesToRadians(45.0);
+
+        // aliases
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
-            Map.entry("1", new Transform3d(
+            Map.entry("cam1", new Transform3d(
                 new Translation3d(0.302,0.266,0.175),
-                new Rotation3d(0, pitch, Math.PI - yaw)
+                new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
             )),
-            Map.entry("2", new Transform3d(
+            Map.entry("cam2", new Transform3d(
                 new Translation3d(0.261,0.299,0.175),
-                new Rotation3d(0, pitch, yaw)
+                new Rotation3d(0, k_cameraPitch, Math.PI - k_cameraYaw)
             )),
-            Map.entry("3", new Transform3d(
+            Map.entry("cam3", new Transform3d(
                 new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, backPitch, backYaw - Math.PI)
+                new Rotation3d(0, k_cameraPitch, k_cameraYaw - Math.PI)
             )),
-            Map.entry("4", new Transform3d(
+            Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, backPitch, Math.PI - backYaw)
+                new Rotation3d(0, k_cameraPitch, k_cameraYaw)
             ))
-            // Map.entry("5", new Transform3d(
+            // Map.entry("cam5", new Transform3d(
             //     new Translation3d(-x, -y, zBack),
             //     new Rotation3d(0, pitch, -yaw)
             // )),
-            // Map.entry("6", new Transform3d(
+            // Map.entry("cam6", new Transform3d(
             //     new Translation3d(x, -y, z),
             //     new Rotation3d(0, pitch, yaw - Math.PI)
             // )),
-            // Map.entry("7", new Transform3d(
+            // Map.entry("cam7", new Transform3d(
             //     new Translation3d(x, -y, z),
             //     new Rotation3d(0, pitch, yaw)
             // )),
-            // Map.entry("8", new Transform3d(
+            // Map.entry("cam8", new Transform3d(
             //     new Translation3d(x, -y, z),
             //     new Rotation3d(0, pitch, yaw)
             // ))
@@ -308,7 +302,7 @@ public class Constants {
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera) we expect to see per tick
-        public static final int k_maxResults = 2;
+        public static final int k_maxResults = 4;
         // The maximum tolerated latency, in seconds.
         public static final double k_latencyThreshold = 0.75;
         // The maximum tolerated ambiguity value.

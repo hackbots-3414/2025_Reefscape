@@ -78,7 +78,8 @@ public class RobotContainer {
         configureButtonBoard();
         configureAutonChooser();
         configureVision();
-        addBoundsToField();
+        // addBoundsToField();
+        // configureSysId();
     }
 
     private void addBoundsToField() {
@@ -151,14 +152,15 @@ public class RobotContainer {
     // private void configureSysId() {
     //     CommandPS5Controller controller = new CommandPS5Controller(3);
 
-    //     controller.button(1).and(controller.button(3))
-    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-    //     controller.button(1).and(controller.button(4))
-    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-    //     controller.button(2).and(controller.button(3))
-    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kForward));
-    //     controller.button(2).and(controller.button(4))
-    //             .whileTrue(drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+    //     controller.povUp().whileTrue(m_drivetrain.sysIdQuasistaticTranslation(Direction.kForward));
+    //     controller.povDown().whileTrue(m_drivetrain.sysIdQuasistaticTranslation(Direction.kReverse));
+    //     controller.povRight().whileTrue(m_drivetrain.sysIdDynamicTranslation(Direction.kForward));
+    //     controller.povLeft().whileTrue(m_drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+
+    //     controller.triangle().whileTrue(m_drivetrain.sysIdQuasistaticRotation(Direction.kForward));
+    //     controller.cross().whileTrue(m_drivetrain.sysIdQuasistaticRotation(Direction.kReverse));
+    //     controller.circle().whileTrue(m_drivetrain.sysIdDynamicRotation(Direction.kForward));
+    //     controller.square().whileTrue(m_drivetrain.sysIdDynamicRotation(Direction.kReverse));
     // }
 
     private void configureButtonBoard() {

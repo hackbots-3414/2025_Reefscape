@@ -17,7 +17,7 @@ public class RobotObserver {
     }
 
     /* Pose2d to watch the pose of the robot and associated methods */
-    private Supplier<Pose2d> m_poseSupplier = () -> {return null;};
+    private Supplier<Pose2d> m_poseSupplier;
 
     public static void setPoseSupplier(Supplier<Pose2d> poseSupplier) {
         getInstance().m_poseSupplier = poseSupplier;
@@ -28,7 +28,7 @@ public class RobotObserver {
     }
 
     /* Field2d to display important details about the robot */
-    private Field2d m_field;
+    private Field2d m_field = new Field2d();
 
     public static void setField(Field2d field) {
         getInstance().m_field = field;
@@ -41,7 +41,7 @@ public class RobotObserver {
     }
 
     /* Keeps track of the latest time an april tag was seen */
-    private Supplier<Boolean> m_visionValidSupplier = () -> {return false;};
+    private Supplier<Boolean> m_visionValidSupplier;
 
     public static void setVisionValidSupplier(Supplier<Boolean> visionValidSupplier) {
         getInstance().m_visionValidSupplier = visionValidSupplier;
