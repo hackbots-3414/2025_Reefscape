@@ -119,6 +119,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         setPose(new Pose2d());
     }
 
+    public void resetHeading() {
+        setOperatorPerspectiveForward(getPose().getRotation());
+    }
+
     public void setPose(Pose2d pose) {
         super.resetPose(pose);
     }
