@@ -216,11 +216,11 @@ public class RobotContainer {
             // bindManualPivotCommand(Direction.kForward, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotUp, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
             // bindManualPivotCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
 
-            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoard.groundAlgae).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoard.lowAlgae).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoard.highAlgae).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoard.net).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoard.processor).and(manualModeOn));
 
             bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb).and(manualModeOn));
 

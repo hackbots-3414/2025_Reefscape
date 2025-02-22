@@ -288,19 +288,23 @@ public class Constants {
                 new Translation3d(0.259,-0.298,0.175),
                 new Rotation3d(0, k_cameraPitch, k_cameraYaw - Math.PI)
             )),
-            Map.entry("cam5", new Transform3d(
+            Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
+                new Rotation3d(0, k_cameraPitch, k_cameraYaw)
+            )),
+            Map.entry("cam5", new Transform3d( // special
+                new Translation3d(-0.302, 0.266, 0.175),
                 new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
             )),
-            Map.entry("cam6", new Transform3d( // special
+            Map.entry("cam6", new Transform3d(
                 new Translation3d(-0.340, 0.132, 0.483),
                 new Rotation3d(0, k_cameraPitch, k_cameraYaw)
             )),
-            Map.entry("cam7", new Transform3d(
-                new Translation3d(-0.283, 0.277, 0.483),
-                new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
+            Map.entry("cam7", new Transform3d( // special
+                new Translation3d(-0.283, -0.277, 0.483),
+                new Rotation3d(0, k_backCameraPitch, Math.PI - k_backCameraYaw)
             )),
-            Map.entry("cam8", new Transform3d( // special
+            Map.entry("cam8", new Transform3d(
                 new Translation3d(-0.340, -0.132, 0.483),
                 new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
             ))
