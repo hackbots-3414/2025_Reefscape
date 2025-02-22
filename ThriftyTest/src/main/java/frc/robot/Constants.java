@@ -163,17 +163,13 @@ public class Constants {
         }
 
         public static class ButtonBoard {
-            public static final int safetySwitch = 17;
+            public static final int manualModeSwitch = 26;
 
             // WHEN SAFETY ON - AUTOMATION BASED
-            public static final int L1Auto = 1;
-            public static final int L2Auto = 2;
-            public static final int L3Auto = 3;
-            public static final int L4Auto = 4;
-            public static final int R1Auto = 5;
-            public static final int R2Auto = 6;
-            public static final int R3Auto = 7;
-            public static final int R4Auto = 8;
+            public static final int L1 = 5;
+            public static final int L2 = 8;
+            public static final int L3 = 7;
+            public static final int L4 = 6;
 
             public static final int lowAlgaeAuto = 9;
             public static final int highAlgaeAuto = 10;

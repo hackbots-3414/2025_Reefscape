@@ -9,11 +9,17 @@
           "data": {
             "pathName": "Backup1Piece"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2"
+          }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }
