@@ -262,6 +262,8 @@ public class Constants {
     }
 
     public static class VisionConstants {
+        public static final boolean enableVision = true;
+
         public static final String k_estimationName = "estimation";
         // aliases
         private static final double x = RobotConstants.k_cameraOffsetX;
