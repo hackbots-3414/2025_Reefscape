@@ -286,23 +286,23 @@ public class Constants {
             Map.entry("4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
                 new Rotation3d(0, backPitch, Math.PI - backYaw)
+            )),
+            Map.entry("5", new Transform3d(
+                new Translation3d(-0.340, 0.132, 0.483),
+                new Rotation3d(0, pitch, -yaw)
+            )),
+            Map.entry("6", new Transform3d(
+                new Translation3d(-0.283, 0.277, 0.483),
+                new Rotation3d(0, pitch, yaw - Math.PI)
+            )),
+            Map.entry("7", new Transform3d(
+                new Translation3d(-0.340, -0.132, 0.483),
+                new Rotation3d(0, pitch, yaw)
+            )),
+            Map.entry("8", new Transform3d(
+                new Translation3d(-0.283, -0.277, 0.493),
+                new Rotation3d(0, pitch, yaw)
             ))
-            // Map.entry("5", new Transform3d(
-            //     new Translation3d(-x, -y, zBack),
-            //     new Rotation3d(0, pitch, -yaw)
-            // )),
-            // Map.entry("6", new Transform3d(
-            //     new Translation3d(x, -y, z),
-            //     new Rotation3d(0, pitch, yaw - Math.PI)
-            // )),
-            // Map.entry("7", new Transform3d(
-            //     new Translation3d(x, -y, z),
-            //     new Rotation3d(0, pitch, yaw)
-            // )),
-            // Map.entry("8", new Transform3d(
-            //     new Translation3d(x, -y, z),
-            //     new Rotation3d(0, pitch, yaw)
-            // ))
 
             );
         // The tick time for each pose estimator to run
