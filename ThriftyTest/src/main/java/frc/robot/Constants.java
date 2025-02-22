@@ -303,7 +303,8 @@ public class Constants {
             //     new Translation3d(x, -y, z),
             //     new Rotation3d(0, pitch, yaw)
             // ))
-        );
+
+            );
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera) we expect to see per tick
