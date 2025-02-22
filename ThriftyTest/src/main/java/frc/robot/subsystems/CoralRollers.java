@@ -156,6 +156,8 @@ public class CoralRollers extends SubsystemBase {
 
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
 
+        SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);
             m_voltageChanged = false;
