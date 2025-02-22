@@ -1,11 +1,12 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,11 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
@@ -111,10 +116,16 @@ public class Constants {
         public static final PIDConstants k_translationPID = new PIDConstants(1.9, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
-        public static final double k_maxLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-        public static final double k_maxAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
+        public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
-        public static final double k_maxRotationalSpeed = k_maxLinearSpeed / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
+        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
+        public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
+
+        public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1);
+        public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(1);
+
+        public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond) / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
 
         public static final double k_elevatorHeightLinearVelocityGain = -0.357; // for every 1 rotation elevator up, subtract X: 1 mps at max elevator
         public static final double k_elevatorHeightLinearAccelerationGain = k_elevatorHeightLinearVelocityGain * 2;
@@ -354,7 +365,7 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final boolean useSuperAuton = false;
+        public static final boolean useSuperAuton = true;
 
         public static final int numWaypoints = 5;
         public static double pathplannerMinRange = 0.5;
@@ -415,12 +426,12 @@ public class Constants {
          */
 
         public static final double groundIntake = 0;
-        public static final double stow = 0.345;
+        public static final double stow = 0.345 - (Units.inchesToMeters(1) * metersToRotations);
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
-        public static final double L2 = Units.inchesToMeters(36) * metersToRotations;
+        public static final double L2 = Units.inchesToMeters(35.5) * metersToRotations;
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
-        public static final double L4 = Units.inchesToMeters(75.5) * metersToRotations;
+        public static final double L4 = Units.inchesToMeters(76.0) * metersToRotations;
         public static final double net = Units.inchesToMeters(79) * metersToRotations;
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
@@ -560,8 +571,8 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final double intakeVoltage = 6;
-        public static final double ejectVoltage = 8;
+        public static final double intakeVoltage = 5;
+        public static final double ejectVoltage = 6;
 
         public static final double l1LeftEjectVoltage = 8;
         public static final double l1RightEjectVoltage = 6;
@@ -647,18 +658,24 @@ public class Constants {
     }
 
     public enum ScoringLocations {
-        A(new Pose2d(3.16, 4.19, Rotation2d.fromDegrees(0))),
-        B(new Pose2d(3.16, 3.875, Rotation2d.fromDegrees(0))),
-        C(new Pose2d(3.675, 3, Rotation2d.fromDegrees(60))),
-        D(new Pose2d(4, 2.78, Rotation2d.fromDegrees(60))),
-        E(new Pose2d(5, 2.8, Rotation2d.fromDegrees(120))),
-        F(new Pose2d(5.3, 3, Rotation2d.fromDegrees(120))),
-        G(new Pose2d(5.8, 3.85, Rotation2d.fromDegrees(180))),
-        H(new Pose2d(5.8, 4.2, Rotation2d.fromDegrees(180))),
-        I(new Pose2d(5.3, 5.1, Rotation2d.fromDegrees(-120))),
-        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))),
-        K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))),
-        L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))),
+        A(new Pose2d(3.1, 4.19, Rotation2d.fromDegrees(0))), // y
+        B(new Pose2d(3.1, 3.86, Rotation2d.fromDegrees(0))), //
+
+        C(new Pose2d(3.656, 2.928, Rotation2d.fromDegrees(60))), // 
+        D(new Pose2d(4, 2.78, Rotation2d.fromDegrees(60))), //
+
+        E(new Pose2d(5, 2.8, Rotation2d.fromDegrees(120))), //
+        F(new Pose2d(5.3, 3, Rotation2d.fromDegrees(120))), //
+
+        G(new Pose2d(5.85, 3.86, Rotation2d.fromDegrees(180))), // y
+        H(new Pose2d(5.85, 4.19, Rotation2d.fromDegrees(180))), // y
+
+        I(new Pose2d(5.3, 5.1, Rotation2d.fromDegrees(-120))), //
+        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))), //
+
+        K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))), //
+        L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))), //
+
         FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
         CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
         PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),

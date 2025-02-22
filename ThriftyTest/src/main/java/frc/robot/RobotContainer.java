@@ -67,6 +67,7 @@ import frc.robot.vision.VisionHandler;
 public class RobotContainer {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
+    @SuppressWarnings("unused")
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
@@ -393,7 +394,7 @@ public class RobotContainer {
     private CoralRollers m_coralRollers;
 
     private void configureSubsystems() {
-        m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
+        // m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
         m_elevator = new Elevator();
         m_algaePivot = new Pivot();
         m_climber = new Climber();
