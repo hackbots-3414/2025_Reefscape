@@ -11,6 +11,9 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -59,6 +62,7 @@ import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
+    private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
@@ -335,9 +339,10 @@ public class RobotContainer {
     }
 
     private void configureVision() {
-        m_vision.startThread();
-        RobotObserver.setSingleTagRunnable(m_vision::setSingleTag);
-        RobotObserver.setMultiTagRunnable(m_vision::setMultitag);
+        m_logger.warn("Disabled vision temporarily");
+        // m_vision.startThread();
+        // RobotObserver.setSingleTagRunnable(m_vision::setSingleTag);
+        // RobotObserver.setMultiTagRunnable(m_vision::setMultitag);
     }
 
     // ********** SUBSYSTEMS **********

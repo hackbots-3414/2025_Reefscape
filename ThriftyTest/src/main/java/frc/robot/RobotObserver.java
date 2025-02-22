@@ -17,7 +17,7 @@ public class RobotObserver {
     }
 
     /* Pose2d to watch the pose of the robot and associated methods */
-    private Supplier<Pose2d> m_poseSupplier;
+    private Supplier<Pose2d> m_poseSupplier = () -> {return null;};
 
     public static void setPoseSupplier(Supplier<Pose2d> poseSupplier) {
         getInstance().m_poseSupplier = poseSupplier;
@@ -41,7 +41,7 @@ public class RobotObserver {
     }
 
     /* Keeps track of the latest time an april tag was seen */
-    private Supplier<Boolean> m_visionValidSupplier;
+    private Supplier<Boolean> m_visionValidSupplier = () -> {return false;};
 
     public static void setVisionValidSupplier(Supplier<Boolean> visionValidSupplier) {
         getInstance().m_visionValidSupplier = visionValidSupplier;
@@ -72,8 +72,8 @@ public class RobotObserver {
         return getInstance().m_elevatorHeightSupplier.get();
     }
 
-    private Runnable m_setSingleTag;
-    private Runnable m_setMultiTag;
+    private Runnable m_setSingleTag = () -> {};
+    private Runnable m_setMultiTag = () -> {};
 
     public static void setSingleTag() {
         getInstance().m_setSingleTag.run();
