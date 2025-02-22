@@ -259,7 +259,7 @@ public class Constants {
         public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
         public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
-        public static final double k_cameraBackYaw = Units.degreesToRadians(45.0);
+        public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
 
         // aliases
 
@@ -277,28 +277,23 @@ public class Constants {
                 new Translation3d(0.259,-0.298,0.175),
                 new Rotation3d(0, k_cameraPitch, k_cameraYaw - Math.PI)
             )),
-            Map.entry("cam4", new Transform3d(
+            Map.entry("cam5", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
+                new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
+            )),
+            Map.entry("cam6", new Transform3d( // special
+                new Translation3d(-0.340, 0.132, 0.483),
                 new Rotation3d(0, k_cameraPitch, k_cameraYaw)
+            )),
+            Map.entry("cam7", new Transform3d(
+                new Translation3d(-0.283, 0.277, 0.483),
+                new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
+            )),
+            Map.entry("cam8", new Transform3d( // special
+                new Translation3d(-0.340, -0.132, 0.483),
+                new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
             ))
-            // Map.entry("cam5", new Transform3d(
-            //     new Translation3d(-x, -y, zBack),
-            //     new Rotation3d(0, pitch, -yaw)
-            // )),
-            // Map.entry("cam6", new Transform3d(
-            //     new Translation3d(x, -y, z),
-            //     new Rotation3d(0, pitch, yaw - Math.PI)
-            // )),
-            // Map.entry("cam7", new Transform3d(
-            //     new Translation3d(x, -y, z),
-            //     new Rotation3d(0, pitch, yaw)
-            // )),
-            // Map.entry("cam8", new Transform3d(
-            //     new Translation3d(x, -y, z),
-            //     new Rotation3d(0, pitch, yaw)
-            // ))
-
-            );
+        );
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera) we expect to see per tick
