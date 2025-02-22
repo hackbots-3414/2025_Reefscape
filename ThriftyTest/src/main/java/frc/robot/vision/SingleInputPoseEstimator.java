@@ -102,13 +102,13 @@ public class SingleInputPoseEstimator implements Runnable {
             m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
         /* take many */
-        // for (PhotonPipelineResult result : results) {
-        //     handleResult(result);
-        // }
+        for (PhotonPipelineResult result : results) {
+            handleResult(result);
+        }
         /* take one */
-        if (results.size() == 0) return;
-        PhotonPipelineResult latest = results.get(results.size() - 1);
-        handleResult(latest);
+        // if (results.size() == 0) return;
+        // PhotonPipelineResult latest = results.get(results.size() - 1);
+        // handleResult(latest);
     }
 
     private void handleResult(PhotonPipelineResult result) {
