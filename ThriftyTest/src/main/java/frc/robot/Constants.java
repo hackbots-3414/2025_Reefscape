@@ -171,16 +171,31 @@ public class Constants {
             public static final int L3 = 7;
             public static final int L4 = 6;
 
-            public static final int lowAlgaeAuto = 9;
-            public static final int highAlgaeAuto = 10;
-            public static final int groundAlgaeAuto = 11;
-            public static final int processorAuto = 12;
-            public static final int netAuto = 13;
+            public static final int A = 12;
+            public static final int B = 16;
+            public static final int C = 22;
+            public static final int D = 17;
+            public static final int E = 23;
+            public static final int F = 20;
+            public static final int G = 19;
+            public static final int H = 15;
+            public static final int I = 10;
+            public static final int J = 14;
+            public static final int K = 9;
+            public static final int L = 13;
 
-            public static final int leftIntake = 14;
-            public static final int rightIntake = 15;
+            public static final int lowAlgaeAuto = 2;
+            public static final int highAlgaeAuto = 3;
+            public static final int groundAlgaeAuto = 1;
+            public static final int processorAuto = 23;
+            public static final int netAuto = 4;
 
-            public static final int climbAuto = 16;
+            public static final int leftIntake = 11;
+            public static final int rightIntake = 18;
+
+            public static final int climbAuto = 25;
+
+            public static final int cancelAuto = 21;
 
             // WHEN SAFETY OFF - MANUAL STUFF
             public static final int l1Score = 1;
