@@ -40,6 +40,7 @@ import frc.robot.Constants.ScoringLocationsMiddle;
 import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
+import frc.robot.commands.CoralDefaultCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.ManualClimberCommand;
@@ -183,7 +184,7 @@ public class RobotContainer {
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
-        // m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers));
+        m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers, m_elevator));
         
         controller.button(ButtonBoardAlternate.manualModeSwitch).onTrue(new InstantCommand(() -> RobotObserver.toggleManualMode()));
         BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
