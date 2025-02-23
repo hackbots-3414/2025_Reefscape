@@ -45,6 +45,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
+import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.generated.TunerConstants;
 import frc.robot.utils.Shape;
 
@@ -412,16 +413,58 @@ public class Constants {
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
          * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
+        
+        public static enum ScoreLevel {
+            L1, L2, L3, L4;
+        }
 
-        public static final double stow = 0.27;
-        public static final double processor = 0.125;
-        public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
-        public static final double L2 = Units.inchesToMeters(34.5) * metersToRotations;
-        public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
-        public static final double L4 = Units.inchesToMeters(75.5) * metersToRotations;
-        public static final double net = Units.inchesToMeters(79) * metersToRotations;
-        public static final double reefLower = Units.inchesToMeters(30) * metersToRotations;
-        public static final double reefUpper = Units.inchesToMeters(60) * metersToRotations;
+        public static enum ElevatorPosition {
+            L1(Units.inchesToMeters(24) * metersToRotations),
+            L2(Units.inchesToMeters(34.5) * metersToRotations),
+            L3(Units.inchesToMeters(50.5) * metersToRotations),
+            L4(Units.inchesToMeters(75.5) * metersToRotations),
+            Net(Units.inchesToMeters(79) * metersToRotations),
+            Stow(0.27),
+            Ground(0.0),
+            ReefHigh(Units.inchesToMeters(60) * metersToRotations),
+            ReefLow(Units.inchesToMeters(30) * metersToRotations),
+            Processor(0.125);
+
+            private double m_position;
+
+            private ElevatorPosition(double position) {
+                m_position = position;
+            }
+
+            public double position() {
+                return m_position;
+            }
+
+            public static ElevatorPosition fromAlgaePreset(
+                AlgaeLocationPresets preset
+            ) {
+                ElevatorPosition position = null;
+                switch (preset) {
+                    case REEFUPPER -> position = ReefHigh;
+                    case REEFLOWER -> position = ReefLow;
+                    case PROCESSOR -> position = Processor;
+                    case NET -> position = Net;
+                    case GROUND -> position = Ground;
+                }
+                return position;
+            }
+
+            public static ElevatorPosition fromScoreLevel(ScoreLevel level) {
+                switch (level) {
+                    case L1: return L1;
+                    case L2: return L2;
+                    case L3: return L3;
+                    case L4: return L4;
+                }
+                // Technically, this is dead code. but JAVA:
+                return null;
+            }
+        }
 
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;

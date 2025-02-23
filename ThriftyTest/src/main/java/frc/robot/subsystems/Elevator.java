@@ -14,6 +14,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.controller.proto.ElevatorFeedforwardProto;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Constants.ElevatorConstants.ElevatorPosition;;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
@@ -96,9 +98,13 @@ public class Elevator extends SubsystemBase {
 
     private final MotionMagicVoltage control = new MotionMagicVoltage(0);
 
-    public void setPosition(double goal) {
+    private void setPosition(double goal) {
         m_elevatorRight.setControl(control.withPosition(goal));
         m_reference = goal;
+    }
+
+    public void setPosition(ElevatorPosition position) {
+        setPosition(position.position());
     }
 
     public void setSpeed(double speed) {
@@ -107,59 +113,15 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setStow() {
-        setPosition(ElevatorConstants.stow);
+        setPosition(ElevatorPosition.Stow);
     }
 
     public void setProcessor() {
-        setPosition(ElevatorConstants.processor);
-    }
-
-    public void setGround() {
-        setPosition(0.0); // ground is the minimum.
-                          // We don't need a constant for 0
-    }
-
-    public void setL1() {
-        setPosition(ElevatorConstants.L1);
-    }
-
-    public void setL2() {
-        setPosition(ElevatorConstants.L2);
-    }
-
-    public void setL3() {
-        setPosition(ElevatorConstants.L3);
-    }
-
-    public void setL4() {
-        setPosition(ElevatorConstants.L4);
-    }
-
-    public void setReefLower() {
-        setPosition(ElevatorConstants.reefLower);
-    }
-
-    public void setReefUpper() {
-        setPosition(ElevatorConstants.reefUpper);
-    }
-
-    public void setNet() {
-        setPosition(ElevatorConstants.net);
+        setPosition(ElevatorPosition.Processor);
     }
 
     public void stop() {
         setPosition(m_position);
-    }
-
-    public void setLevel(int level) {
-        switch (level) {
-            case 1 -> setL1();
-            case 2 -> setL2();
-            case 3 -> setL3();
-            case 4 -> setL4();
-            case 0 -> setStow();
-            default -> setStow();
-        }
     }
 
     public boolean atSetpoint() {

@@ -9,11 +9,13 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
-import frc.robot.commands.ElevatorCommand.ElevatorPosition;
-import frc.robot.commands.PivotCommand.PivotPosition;
 import frc.robot.subsystems.AlgaeRollers;
+import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.Constants.ElevatorConstants.ElevatorPosition;
+import frc.robot.Constants.ElevatorConstants.ScoreLevel;
+import frc.robot.subsystems.Pivot.PivotPosition;
 import frc.robot.utils.Shape;
 
 /*
@@ -28,7 +30,7 @@ public class CommandFactory {
      * This command does not end - rather, you have to cancel it.
      */
     public static Command algaeEject(AlgaeRollers rollers) {
-        return new AlgaeRollerEjectCommand(rollers);
+        return new AlgaeEjectCommand(rollers);
     }
 
     /**
@@ -49,17 +51,15 @@ public class CommandFactory {
         Pivot pivot,
         AlgaeLocationPresets position
     ) {
-        ElevatorPosition elevatorPosition = ElevatorPosition
-            .fromAlgaePreset(position);
-        PivotPosition pivotPosition = PivotPosition
-            .fromAlgaePreset(position);
+        ElevatorPosition elevatorPosition = ElevatorPosition.fromAlgaePreset(position);
+        PivotPosition pivotPosition = PivotPosition.fromAlgaePreset(position);
         // build a command sequence
         SequentialCommandGroup sequence = new SequentialCommandGroup(
             new ParallelCommandGroup(
                 new ElevatorCommand(elevator, elevatorPosition),
                 new PivotCommand(pivot, pivotPosition)
             ),
-            new AlgaeRollerIntakeCommand(rollers)
+            new AlgaeIntakeCommand(rollers)
         );
         // we don't want to stow right away, because we will collide with the
         // reef. However, we want to wait until we leave the reef area before
@@ -67,13 +67,12 @@ public class CommandFactory {
         if (position == AlgaeLocationPresets.REEFUPPER
             || position == AlgaeLocationPresets.REEFLOWER) {
             sequence.addCommands(
-                new WaitUntilCommand(CommandBounds.reefBounds::isActive)
+                new WaitUntilCommand(CommandBounds.reefBounds::isInactive)
             );
         }
         // final stow
-        sequence.addCommands(
-            stow(elevator, pivot)
-        );
+        sequence.finallyDo(elevator::setStow);
+        sequence.finallyDo(pivot::setStow);
         return sequence;
     }
 
@@ -87,6 +86,11 @@ public class CommandFactory {
         );
     }
 
+    /**
+     * Scores an algae in the nearest location
+     * If outside of the bounds for that location, nothing happens.
+     * The command ends when the algae is scored and the elevators are reset
+     */
     public static Command algaeScore(
         Elevator elevator,
         Pivot pivot,
@@ -115,9 +119,46 @@ public class CommandFactory {
                 new ElevatorCommand(elevator, elevatorPosition),
                 new PivotCommand(pivot, pivotPosition)
             ),
-            new AlgaeRollerEjectCommand(rollers)
-                .withTimeout(Constants.AlgaeRollerConstants.algaeEjectTime),
-            stow(elevator, pivot)
-        ).onlyIf(limiter);
+            new AlgaeEjectCommand(rollers).withTimeout(Constants.AlgaeRollerConstants.algaeEjectTime)
+        )
+            .onlyIf(limiter)
+            .finallyDo(elevator::setStow)
+            .finallyDo(pivot::setStow);
+    }
+
+    /**
+     * Creates a coral intake command.
+     * This command sets the elevator to stow, then runs the coral intake.
+     * This command finished when there is a coral on board.
+     */
+    public static Command coralIntake(
+        CoralRollers coral,
+        Elevator elevator
+    ) {
+        return new SequentialCommandGroup(
+            new ElevatorCommand(elevator, ElevatorPosition.Stow),
+            new CoralIntakeCommand(coral)
+        );
+    }
+
+    /**
+     * Creates a coral scoring command
+     * This command sets the elevator to the correct position, then runs coral
+     * eject. Finally, the elevator is stowed.
+     * This command ends after the coral is released.
+     * This command will only run if you are within bounds for the reef (as it
+     * is the only scoring location)
+     */
+    public static Command coralScore(
+        Elevator elevator,
+        CoralRollers coral,
+        ScoreLevel scorePosition
+    ) {
+        return new SequentialCommandGroup(
+            new ElevatorCommand(elevator, scorePosition),
+            new CoralEjectCommand(coral)
+        )
+            .onlyIf(CommandBounds.reefBounds::isActive)
+            .finallyDo(elevator::setStow);
     }
 }

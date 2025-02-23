@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.Robot;
 
 public class Pivot extends SubsystemBase {
@@ -84,6 +85,17 @@ public class Pivot extends SubsystemBase {
     public void setPosition(double goal) {
         m_pivot.setControl(control.withPosition(goal));
         m_reference = goal;
+    }
+
+    public void setPosition(PivotPosition position) {
+        switch (position) {
+            case Stow -> setStow();
+            case Net -> setNet();
+            case ReefPickup -> setReefPickup();
+            case ReefExtract -> setReefExtract();
+            case Ground -> setGroundPickup();
+            case Processor -> setProcessor();
+        }
     }
 
     public void setSpeed(double speed) {
@@ -179,5 +191,27 @@ public class Pivot extends SubsystemBase {
 
         // Simulate battery voltage
         RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_armSim.getCurrentDrawAmps()));
+    }
+
+    public enum PivotPosition {
+        Stow,
+        Net,
+        ReefPickup,
+        ReefExtract,
+        Ground,
+        Processor;
+
+        public static PivotPosition fromAlgaePreset(
+            AlgaeLocationPresets preset
+        ) {
+            PivotPosition position = null;
+            switch (preset) {
+                case REEFUPPER,REEFLOWER -> position = ReefPickup;
+                case PROCESSOR -> position = Processor;
+                case NET -> position = Net;
+                case GROUND -> position = Ground;
+            }
+            return position;
+        }
     }
 }

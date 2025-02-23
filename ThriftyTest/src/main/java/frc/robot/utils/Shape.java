@@ -81,6 +81,10 @@ public class Shape {
         return isInside;
     }
 
+    public boolean isInactive() {
+        return !isActive();
+    }
+
     public List<Translation2d> getVertices() {
         return m_vertices;
     }
