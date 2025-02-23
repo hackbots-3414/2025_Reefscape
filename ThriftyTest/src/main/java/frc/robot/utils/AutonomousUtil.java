@@ -65,14 +65,13 @@ public class AutonomousUtil {
         return AutoBuilder.pathfindToPoseFlipped(pose, constraints, 0);
     }
 
-    public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands) {
+    public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
-            if (i != 0) {
-                routine.addCommands(pathFinder(desiredPickupLocation));
-            }
             routine.addCommands(pathFinder(poses[i]));
             routine.addCommands(scoringCommands[i]);
+            routine.addCommands(pathFinder(desiredPickupLocation));
+            routine.addCommands(intakeCommand.get());
         }
 
         return routine;
@@ -82,7 +81,7 @@ public class AutonomousUtil {
 
     public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
         onTheFlyCommands.add(pathFinder(pose));
-        onTheFlyCommands.add(new PathPlannerOverride(pose, drivetrain));
+        // onTheFlyCommands.add(new PathPlannerOverride(pose, drivetrain));
         onTheFlyCommands.add(command.get());
     }
 

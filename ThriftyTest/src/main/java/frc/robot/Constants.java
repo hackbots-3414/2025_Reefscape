@@ -119,7 +119,7 @@ public class Constants {
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
-        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
+        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(1);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
 
         public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1);
@@ -239,6 +239,8 @@ public class Constants {
             public static final int L2 = 270; // POV
             public static final int L3 = 90; // POV
             public static final int L4 = 0; // POV
+
+            public static final int ejectCoral = Button.kL2.value;
             
             public static final int leftReef = Button.kSquare.value;
             public static final int rightReef = Button.kCircle.value;
@@ -367,7 +369,7 @@ public class Constants {
     public static final class AutonConstants {
         public static final boolean useSuperAuton = true;
 
-        public static final int numWaypoints = 5;
+        public static final int numWaypoints = 2;
         public static double pathplannerMinRange = 0.5;
         public static double overrideTolerance = 0.05;
         public static double degreeTolerance = 2;
@@ -506,7 +508,7 @@ public class Constants {
 
         public static final double tolerance = 0.03;
 
-        public static final double groundPickup = -0.41;
+        public static final double groundPickup = -0.48;
         public static final double processor = -0.25;
         public static final double reefPickup = -0.34;
         public static final double reefExtract = -0.29;
@@ -573,6 +575,8 @@ public class Constants {
     public static class CoralConstants {
         public static final double intakeVoltage = 5;
         public static final double ejectVoltage = 6;
+
+        public static final double spitOutVoltage = -8;
 
         public static final double l1LeftEjectVoltage = 8;
         public static final double l1RightEjectVoltage = 6;
@@ -658,23 +662,23 @@ public class Constants {
     }
 
     public enum ScoringLocations {
-        A(new Pose2d(3.1, 4.19, Rotation2d.fromDegrees(0))), // y
-        B(new Pose2d(3.1, 3.86, Rotation2d.fromDegrees(0))), //
+        A(new Pose2d(3.17, 4.19, Rotation2d.fromDegrees(0))), // GOOD
+        B(new Pose2d(3.17, 3.85, Rotation2d.fromDegrees(0))), // GOOD
 
-        C(new Pose2d(3.656, 2.928, Rotation2d.fromDegrees(60))), // 
-        D(new Pose2d(4, 2.78, Rotation2d.fromDegrees(60))), //
+        C(new Pose2d(3.69, 2.97, Rotation2d.fromDegrees(60))), // GOOD
+        D(new Pose2d(3.95, 2.8, Rotation2d.fromDegrees(60))), // GOOD
 
-        E(new Pose2d(5, 2.8, Rotation2d.fromDegrees(120))), //
-        F(new Pose2d(5.3, 3, Rotation2d.fromDegrees(120))), //
+        E(new Pose2d(5.01, 2.8, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.3, 2.97, Rotation2d.fromDegrees(120))), // GOOD
 
-        G(new Pose2d(5.85, 3.86, Rotation2d.fromDegrees(180))), // y
-        H(new Pose2d(5.85, 4.19, Rotation2d.fromDegrees(180))), // y
+        G(new Pose2d(5.81, 3.86, Rotation2d.fromDegrees(180))), // GOOD
+        H(new Pose2d(5.81, 4.20, Rotation2d.fromDegrees(180))), // GOOD
 
-        I(new Pose2d(5.3, 5.1, Rotation2d.fromDegrees(-120))), //
-        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))), //
+        I(new Pose2d(5.29, 5.08, Rotation2d.fromDegrees(-120))), // GOOD
+        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))), // GOOD
 
-        K(new Pose2d(4, 5.25, Rotation2d.fromDegrees(-60))), //
-        L(new Pose2d(3.675, 5.1, Rotation2d.fromDegrees(-60))), //
+        K(new Pose2d(3.98, 5.25, Rotation2d.fromDegrees(-60))), // GOOD
+        L(new Pose2d(3.68, 5.08, Rotation2d.fromDegrees(-60))), // GOOD
 
         FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
         CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),

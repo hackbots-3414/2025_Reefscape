@@ -47,6 +47,7 @@ import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
+import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.ManualClimberCommand;
@@ -196,12 +197,15 @@ public class RobotContainer {
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
-        // m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers, m_elevator));
+        // m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers));
+        // m_elevator.setDefaultCommand(new InstantCommand(() -> m_elevator.setStow()));
 
         if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
             controller.button(ButtonBoardAlternate.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
             BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
             BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
+
+            // controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
             // Manual Mode On
             bindManualCoralScoreCommand(1, controller.pov(ButtonBoard.L1).and(manualModeOn));
@@ -359,7 +363,7 @@ public class RobotContainer {
                 heights[i] = scoringHeightsChooser.get(i).getSelected().get();
             }
     
-            return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights);
+            return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::coralIntakeCommand);
         } else {
             return autoChooser.getSelected();
         }
@@ -416,8 +420,8 @@ public class RobotContainer {
 
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));
-            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsRightList)));
+            case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));
+            case RIGHT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsRightList)));
         }   
     }
 

@@ -192,6 +192,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/SendableChooser[0]": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
         "Blue Alliance Left Intake": {
           "arrows": false,
@@ -495,8 +500,5 @@
     "Server": {
       "open": true
     }
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }
