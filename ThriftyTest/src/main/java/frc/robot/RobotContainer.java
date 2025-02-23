@@ -364,7 +364,7 @@ public class RobotContainer {
                 heights[i] = scoringHeightsChooser.get(i).getSelected().get();
             }
     
-            return AutonomousUtil.generateRoutineWithCommands(pickupLocation.getSelected(), locations, heights, this::coralIntakeCommand);
+            return AutonomousUtil.generateRoutineWithCommands(m_drivetrain, pickupLocation.getSelected(), locations, heights, this::coralIntakeCommand);
         } else {
             return autoChooser.getSelected();
         }

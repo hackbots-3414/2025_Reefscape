@@ -119,11 +119,11 @@ public class Constants {
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
-        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(1);
+        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4.724);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
 
-        public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1);
-        public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(1);
+        public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1.5);
+        public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(3);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond) / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
 

@@ -52,11 +52,11 @@ public class PathPlannerOverride extends Command {
 
     @Override
     public void execute() {
-        Pose2d currPose = drivetrain.getBluePose();
+        Pose2d currPose = drivetrain.getPose();
 
-        double xVelo = xPIDController.calculate(currPose.getX(), goalX);
-        double yVelo = yPIDController.calculate(currPose.getY(), goalY);
-        double rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
+        double xVelo = -xPIDController.calculate(currPose.getX(), goalX);
+        double yVelo = -yPIDController.calculate(currPose.getY(), goalY);
+        double rotVelo = -rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
 
         drivetrain.setControl(driveClosedLoop.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
     }
