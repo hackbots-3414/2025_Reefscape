@@ -508,7 +508,7 @@ public class Constants {
 
         public static final double tolerance = 0.03;
 
-        public static final double groundPickup = -0.48;
+        public static final double groundPickup = -0.41;
         public static final double processor = -0.25;
         public static final double reefPickup = -0.34;
         public static final double reefExtract = -0.29;

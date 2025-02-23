@@ -205,7 +205,6 @@ public class RobotContainer {
             BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
             BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
 
-            // controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
             // Manual Mode On
             bindManualCoralScoreCommand(1, controller.pov(ButtonBoard.L1).and(manualModeOn));
@@ -235,6 +234,8 @@ public class RobotContainer {
             BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
 
             Trigger algaeOn = controller.button(ButtonBoardAlternate.algaeModeButton);
+
+            controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
             // Manual Mode Off
             bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));

@@ -29,7 +29,6 @@ public class AlgaeIntakeCommand extends Command {
         switch (location) {
             case GROUND -> {
                 elevator.setGroundIntake();
-                // pivot.setGroundPickup();
             }
             case REEFLOWER -> {
                 isDone = !CommandBounds.reefBounds.isActive();
@@ -47,12 +46,18 @@ public class AlgaeIntakeCommand extends Command {
     public void execute() {
         switch (location) {
             case GROUND -> {
-                if (elevator.atSetpoint()) pivot.setReefPickup();
+                if (elevator.atSetpoint()) pivot.setGroundPickup();
                 if (rollers.hasObject()) isDone = true; 
             }
             case REEFLOWER, REEFUPPER -> {
                 isDone = !CommandBounds.reefBounds.isActive();
-                if (elevator.atSetpoint()) pivot.setReefPickup();
+                if (elevator.atSetpoint()) {
+                    if (rollers.hasObject()) {
+                        pivot.setReefExtract();
+                    } else {
+                        pivot.setReefPickup();
+                    }
+                }
             }
             default -> isDone = true;
         }
@@ -60,6 +65,7 @@ public class AlgaeIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        elevator.setStow();
         pivot.setStow();
         rollers.smartStop();
     }
