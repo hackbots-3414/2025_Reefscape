@@ -1,5 +1,8 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -15,8 +18,8 @@ public class PathPlannerOverride extends Command {
     private final PIDController yPIDController = new PIDController(15, 0, 0);
     private final PIDController rotPIDController = new PIDController(Math.PI * 2, Math.PI*5, 0);
 
-    private final double MaxSpeed = DriveConstants.k_maxLinearSpeed;
-    private final double MaxAngularRate = DriveConstants.k_maxAngularSpeed;
+    private final double MaxSpeed = DriveConstants.k_maxLinearSpeed.in(MetersPerSecond);
+    private final double MaxAngularRate = DriveConstants.k_maxAngularSpeed.in(RadiansPerSecond);
 
     private static double goalX = 0.0;
     private static double goalY = 0.0;
@@ -49,11 +52,11 @@ public class PathPlannerOverride extends Command {
 
     @Override
     public void execute() {
-        Pose2d currPose = drivetrain.getBluePose();
+        Pose2d currPose = drivetrain.getPose();
 
-        double xVelo = xPIDController.calculate(currPose.getX(), goalX);
-        double yVelo = yPIDController.calculate(currPose.getY(), goalY);
-        double rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
+        double xVelo = -xPIDController.calculate(currPose.getX(), goalX);
+        double yVelo = -yPIDController.calculate(currPose.getY(), goalY);
+        double rotVelo = -rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
 
         drivetrain.setControl(driveClosedLoop.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
     }

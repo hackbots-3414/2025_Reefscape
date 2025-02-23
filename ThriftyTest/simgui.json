@@ -142,12 +142,57 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Elevator Visualization": {
+      "/SmartDashboard/Height to Score #0": {
         "window": {
           "visible": true
         }
       },
-      "/SmartDashboard/Pivot Arm Visualization": {
+      "/SmartDashboard/Height to Score #1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Height to Score #2": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Height to Score #3": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Height to Score #4": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Place to Score #0": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Place to Score #1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Place to Score #2": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Place to Score #3": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Place to Score #4": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/SendableChooser[0]": {
         "window": {
           "visible": true
         }
@@ -275,6 +320,44 @@
           ],
           "style": "Line"
         },
+        "Red Alliance Left Intake": {
+          "arrows": false,
+          "color": [
+            0.05063295364379883,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Net": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Processor": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Reef": {
+          "arrows": false,
+          "color": [
+            0.7848100662231445,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Right Intake": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
         "Red Left Human Player Bounds": {
           "arrows": false,
           "color": [
@@ -374,7 +457,6 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
@@ -405,6 +487,9 @@
       "open": false
     },
     "transitory": {
+      "PathPlanner": {
+        "open": true
+      },
       "SmartDashboard": {
         "open": true
       }

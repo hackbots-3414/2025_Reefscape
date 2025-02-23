@@ -90,13 +90,14 @@ public class VisionHandler implements AutoCloseable {
             Transform3d robotToCamera = entry.getValue();
             // initialze both real and simulated cameras
             PhotonCamera realCamera = new PhotonCamera(cameraName);
-            PhotonCameraSim simCamera = new PhotonCameraSim(realCamera, m_simProps);
-            m_visionSim.addCamera(simCamera, robotToCamera);
-            // This is somewhat intensive (especially the first one) so we only
-            // enable if the robot is in simulation mode.
-            simCamera.enableRawStream(Robot.isSimulation());
-            simCamera.enableProcessedStream(Robot.isSimulation());
-            simCamera.enableDrawWireframe(Robot.isSimulation());
+            if (Robot.isSimulation()) {
+                PhotonCameraSim simCamera = new PhotonCameraSim(realCamera, m_simProps);
+                m_visionSim.addCamera(simCamera, robotToCamera);
+            
+                // This is somewhat intensive (especially the first one) so we only
+                // enable if the robot is in simulation mode.
+                simCamera.enableDrawWireframe(true);
+            }
             // we always need to add a vision estimator
             SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
                 realCamera,

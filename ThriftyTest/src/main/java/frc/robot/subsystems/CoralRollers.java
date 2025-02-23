@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -16,6 +19,9 @@ import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 
 public class CoralRollers extends SubsystemBase {
+    @SuppressWarnings("unused")
+    private final Logger m_logger = LoggerFactory.getLogger(CoralRollers.class);
+
     private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
     private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
 
@@ -60,11 +66,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setIntake() {
-        if (holdingPiece()) {
-            stop();
-        } else {
-            setVoltage(CoralConstants.intakeVoltage);
-        }
+        setVoltage(CoralConstants.intakeVoltage);
     }
 
     public void timeoutIntake() {
@@ -107,8 +109,24 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.ejectVoltage);
     }
 
+    public void setSpitOut() {
+        setVoltage(CoralConstants.spitOutVoltage);
+    }
+
+    public void setIndividualEject() {
+        m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
+        m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
+    }
+
+    public void resetFollow() {
+        m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
+    }
+
     public void stop() {
-        setVoltage(0);
+        // setVoltage(0);
+        m_voltage = 0;
+        m_voltageChanged = false;
+        m_coralLeft.setVoltage(0.0);
     }
 
     public boolean getFrontIR() {
@@ -142,10 +160,11 @@ public class CoralRollers extends SubsystemBase {
 
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
 
+        SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);
             m_voltageChanged = false;
-            SmartDashboard.putNumber("* CORAL VOLTS", m_voltage);
         }
     }
 }

@@ -10,7 +10,6 @@ public class AlgaeIntakeCommand extends Command {
         m_rollers = rollers;
         addRequirements(m_rollers);
     }
-
     @Override
     public void execute() {
         m_rollers.intakeAlgae();

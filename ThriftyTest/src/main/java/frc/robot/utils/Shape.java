@@ -23,7 +23,7 @@ public class Shape {
 
     public static Shape fromUnsortedVertices(List<Translation2d> unsortedVertices, String name) {
         if (unsortedVertices.size() < 3) {
-            throw new IllegalArgumentException("Polygon must be atleat 3 points.");
+            throw new IllegalArgumentException("Polygon must be at leat 3 points.");
         }
 
         List<Translation2d> mutableList = new ArrayList<>(unsortedVertices);
@@ -95,5 +95,11 @@ public class Shape {
         return new Shape(shape.getVertices().stream()
             .map(oldTranslation -> new Translation2d(oldTranslation.getX(), FieldConstants.k_fieldWidth.in(Meters) - oldTranslation.getY()))
             .collect(Collectors.toList()), name);
+    }
+
+    public Shape flip() {
+        return new Shape(this.getVertices().stream()
+            .map(oldTranslation -> new Translation2d(FieldConstants.k_fieldLength.in(Meters) - oldTranslation.getX(), FieldConstants.k_fieldWidth.in(Meters) - oldTranslation.getY()))
+            .collect(Collectors.toList()), this.m_name);
     }
 }

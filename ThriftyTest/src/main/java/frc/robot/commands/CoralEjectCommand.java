@@ -4,25 +4,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralRollers;
 
 public class CoralEjectCommand extends Command {
-  private final CoralRollers coral;
+    private final CoralRollers coral;
 
-  public CoralEjectCommand(CoralRollers coralRollers) {
-    this.coral = coralRollers;
-    addRequirements(coralRollers);
-  }
+    public CoralEjectCommand(CoralRollers coralRollers) {
+        this.coral = coralRollers;
+        addRequirements(coralRollers);
+    }
 
-  @Override
-  public void initialize() {
-    coral.setEject();
-  }
+    @Override
+    public void initialize() {}
 
-  @Override
-  public void end(boolean interrupted) {
-    coral.stop();
-  }
+    @Override
+    public void execute() {
+        coral.setSpitOut();
+    }
 
-  @Override
-  public boolean isFinished() {
-      return !coral.presentPiece();
-  }
+    @Override
+    public void end(boolean interrupted) {
+        coral.stop();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return !coral.presentPiece();
+    }
 }

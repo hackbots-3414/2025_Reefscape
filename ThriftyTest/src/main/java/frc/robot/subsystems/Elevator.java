@@ -14,7 +14,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.controller.proto.ElevatorFeedforwardProto;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -104,12 +103,17 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setPosition(ElevatorPosition position) {
+        m_logger.info("position going to {}", position);
         setPosition(position.position());
     }
 
     public void setSpeed(double speed) {
         m_speedChanged = (speed != m_speed);
         m_speed = speed;
+    }
+
+    public void setGroundIntake() {
+        setPosition(ElevatorPosition.Ground);
     }
 
     public void setStow() {

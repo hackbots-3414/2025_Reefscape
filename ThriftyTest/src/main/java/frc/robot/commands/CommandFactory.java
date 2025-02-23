@@ -71,8 +71,10 @@ public class CommandFactory {
             );
         }
         // final stow
-        sequence.finallyDo(elevator::setStow);
-        sequence.finallyDo(pivot::setStow);
+        sequence.finallyDo(() -> {
+            elevator.setStow();
+            pivot.setStow();
+        });
         return sequence;
     }
 
@@ -138,6 +140,25 @@ public class CommandFactory {
         return new SequentialCommandGroup(
             new ElevatorCommand(elevator, ElevatorPosition.Stow),
             new CoralIntakeCommand(coral)
+        );
+    }
+
+    /**
+     * Creates a coral ejecting command
+     * This command runs the coral motors in reverse, to eject a coral that
+     * may have gotten stuck in the robot. First, the elevator is set to stow,
+     * and will not continue until the elevator is there.
+     * This command ends after the coral is completely out of the intake system,
+     * i.e. not seen by either IR sensor. Do not expect this command to fully
+     * remove coral from the robot.
+     */
+    public static Command coralEject(
+            CoralRollers coral,
+            Elevator elevator
+    ) {
+        return new SequentialCommandGroup(
+            new ElevatorCommand(elevator, ElevatorPosition.Stow),
+            new CoralEjectCommand(coral)
         );
     }
 

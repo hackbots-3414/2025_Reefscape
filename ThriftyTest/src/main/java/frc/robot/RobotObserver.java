@@ -28,7 +28,7 @@ public class RobotObserver {
     }
 
     /* Field2d to display important details about the robot */
-    private Field2d m_field;
+    private Field2d m_field = new Field2d();
 
     public static void setField(Field2d field) {
         getInstance().m_field = field;
@@ -56,6 +56,7 @@ public class RobotObserver {
 
     public static void toggleManualMode() {
         getInstance().m_manualModeEnabled = !getInstance().m_manualModeEnabled;
+        SmartDashboard.putBoolean("SAFETY MODE", getInstance().m_manualModeEnabled);
     }
 
     public static boolean getManualMode() {
@@ -72,8 +73,8 @@ public class RobotObserver {
         return getInstance().m_elevatorHeightSupplier.get();
     }
 
-    private Runnable m_setSingleTag;
-    private Runnable m_setMultiTag;
+    private Runnable m_setSingleTag = () -> {};
+    private Runnable m_setMultiTag = () -> {};
 
     public static void setSingleTag() {
         getInstance().m_setSingleTag.run();

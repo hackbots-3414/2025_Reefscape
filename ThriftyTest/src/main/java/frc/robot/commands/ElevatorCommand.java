@@ -11,6 +11,7 @@ public class ElevatorCommand extends Command {
 
     public ElevatorCommand(Elevator elevator, ElevatorPosition position) {
         m_elevator = elevator;
+        m_position = position;
         addRequirements(m_elevator);
     }
 

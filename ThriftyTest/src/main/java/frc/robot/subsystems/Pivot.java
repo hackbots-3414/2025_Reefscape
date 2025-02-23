@@ -27,7 +27,7 @@ import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.Robot;
 
 public class Pivot extends SubsystemBase {
-    private final TalonFX m_pivot = new TalonFX(IDConstants.pivotMotor);
+    private final TalonFX m_pivot = new TalonFX(IDConstants.pivot);
     private final CANcoder m_cancoder = new CANcoder(IDConstants.pivotEncoder);
 
     private double m_position;
@@ -174,6 +174,9 @@ public class Pivot extends SubsystemBase {
             m_pivot.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
+
+        SmartDashboard.putNumber("REFERENCE FOR PIVOT", getReference());
+        SmartDashboard.putNumber("POSITION FOR PIVOT", getPosition());
 
         SmartDashboard.putBoolean("PIVOT AT POSITION", atSetpoint());
     }

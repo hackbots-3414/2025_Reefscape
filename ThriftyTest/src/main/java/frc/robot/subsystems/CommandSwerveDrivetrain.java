@@ -94,6 +94,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
         RobotObserver.setVisionValidSupplier(this::getVisionValid);
+        RobotObserver.setPoseSupplier(this::getPose);
     }
 
     public void initializeSetpointGenerator(RobotConfig config) {
@@ -117,6 +118,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public void zeroPose() {
         setPose(new Pose2d());
+    }
+
+    public void resetHeading() {
+        setOperatorPerspectiveForward(getPose().getRotation());
     }
 
     public void setPose(Pose2d pose) {
@@ -144,7 +149,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
         m_estimatedPose = this.getState().Pose;
-        RobotObserver.setPoseSupplier(this::getPose);
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
@@ -159,6 +163,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AutonomousUtil.handleQueue();
 
         handleVisionToggle();
+
+        SmartDashboard.putString("ROBOT POSE", getPose().toString());
     }
 
     private void startSimThread() {

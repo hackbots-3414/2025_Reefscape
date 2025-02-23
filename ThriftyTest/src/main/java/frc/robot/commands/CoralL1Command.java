@@ -6,17 +6,15 @@ import frc.robot.Constants.ElevatorConstants.ElevatorPosition;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
-public class CoralScoreCommand extends Command {
+public class CoralL1Command extends Command {
   private final CoralRollers coral;
   private final Elevator elevator;
-  private final int level;
 
   private int m_timeRemaining;
 
-  public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int level) {
+  public CoralL1Command(CoralRollers coralRollers, Elevator elevator) {
     this.coral = coralRollers;
     this.elevator = elevator;
-    this.level = level;
     addRequirements(coralRollers, elevator);
   }
 
@@ -27,26 +25,20 @@ public class CoralScoreCommand extends Command {
         m_timeRemaining = 0;
         return;
     }
-    switch(level) {
-      case 1 -> elevator.setPosition(ElevatorPosition.L1);
-      case 2 -> elevator.setPosition(ElevatorPosition.L2);
-      case 3 -> elevator.setPosition(ElevatorPosition.L3);
-      case 4 -> elevator.setPosition(ElevatorPosition.L4);
-      default -> m_timeRemaining = 0;
-    }
+    elevator.setPosition(ElevatorPosition.L1);
   }
 
   @Override
   public void execute() {
     if(elevator.atSetpoint()) {
-      coral.setEject();
+      coral.setIndividualEject();
     }
     if (!coral.presentPiece()) m_timeRemaining --;
   }
 
   @Override
   public void end(boolean interrupted) {
-    elevator.setPosition(ElevatorPosition.Stow);
+    coral.resetFollow();
     coral.stop();
   }
 
