@@ -29,12 +29,13 @@ import frc.robot.generated.TunerConstants;
 
 public class LedSubsystem extends SubsystemBase {
   private static double matchTime = 0;
-  private Supplier<Boolean> isInRange;
-  private boolean coralOnBoard = false;
+  // private Supplier<Boolean> isInRange;
+  // private boolean coralOnBoard = false;
   // private boolean algaeOnBoard = false;
   private boolean climbed = false;
-  // private boolean coralOnBoardTest = false;
-  // private boolean isInRangeTest = false;
+  private boolean coralOnBoardTest = false;
+  private boolean isInRangeTest = false;
+  private boolean climbedTest = false;
   private int r = 0;
   private int g = 0;
   private int b = 0;
@@ -101,14 +102,14 @@ public class LedSubsystem extends SubsystemBase {
     // Hackbot Purple Code : [0x67, 0x2C, 0x91]
     // #672C91
 
-    this.isInRange = isInRange;
-    this.coralOnBoard = coralOnBoard;
+    // this.isInRange = isInRange;
+    // this.coralOnBoard = coralOnBoard;
   }
 
   @Override
   public void periodic() {
 
-    coralOnBoard = coral.holdingPiece(); //  Maybe need to add more
+    // coralOnBoardTest = coral.holdingPiece(); //  Maybe need to add more
   //algaeOnBoard = algae.hasObject();  
   
     matchTime = DriverStation.getMatchTime();
@@ -120,9 +121,9 @@ public class LedSubsystem extends SubsystemBase {
     // setColor("DEFAULT", 0, 2, "SOLID");
     // }
 
-    // coralOnBoardTest = SmartDashboard.getBoolean("coralOnBoardTest", true);
-    // isInRangeTest = SmartDashboard.getBoolean("isInRangeTest", true);
-    // climbedTest = SmartDashboard.getBoolean("ClimbedTest", false);
+    coralOnBoardTest = SmartDashboard.getBoolean("coralOnBoardTest", true);
+    isInRangeTest = SmartDashboard.getBoolean("isInRangeTest", true);
+    climbedTest = SmartDashboard.getBoolean("ClimbedTest", false);
 
     SmartDashboard.putBoolean("Bad Controller", badController());
     // SmartDashboard.putBoolean("In Auton", inAuton);
@@ -160,12 +161,12 @@ public class LedSubsystem extends SubsystemBase {
             funnelMode = LED_MODE.CLIMBED;
             setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW);
           }
-        } else if (coralOnBoard && isInRange.get()) {
+        } else if (coralOnBoardTest && isInRangeTest) {
           if (funnelMode != LED_MODE.CORAL_READY) {
             funnelMode = LED_MODE.CORAL_READY;
             setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.FLASH);
           }
-        } else if (coralOnBoard) {
+        } else if (coralOnBoardTest) {
           if (funnelMode != LED_MODE.CORAL_ON_BOARD) {
             funnelMode = LED_MODE.CORAL_ON_BOARD;
             setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID);
@@ -209,16 +210,11 @@ public class LedSubsystem extends SubsystemBase {
     String joystick1Name = DriverStation.getJoystickName(1).toLowerCase();
 
     return !DriverStation.getJoystickName(0).contains("InterLinkDX") &&
-        !((DriverConstants.operatorController == JoystickChoice.XBOX &&
-            (joystick1Name.contains("xbox")) ||
-            (joystick1Name.contains("gamepad"))) ||
-            (DriverConstants.operatorController == JoystickChoice.PS5 &&
+        !( (DriverConstants.operatorController == JoystickChoice.PS5 &&
                 joystick1Name.contains("dualsense")));
   }
 
   public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern) {
-    // ledcontroller.clearAnimation(ledStripEndIndex);
-    // ledcontroller.clearAnimation(ledStripStartIndex);
 
     switch (color) {
       case BLUE:
