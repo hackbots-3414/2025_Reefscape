@@ -44,6 +44,7 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
+      "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
@@ -457,7 +458,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
@@ -492,6 +493,9 @@
         "open": true
       },
       "SmartDashboard": {
+        "Testing Command": {
+          "open": true
+        },
         "open": true
       }
     }
@@ -499,6 +503,7 @@
   "NetworkTables Info": {
     "Server": {
       "open": true
-    }
+    },
+    "visible": true
   }
 }

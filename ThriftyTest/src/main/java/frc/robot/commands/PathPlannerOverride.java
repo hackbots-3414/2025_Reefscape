@@ -8,6 +8,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
@@ -27,7 +28,7 @@ public class PathPlannerOverride extends Command {
 
     private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity);
 
     private final Pose2d goal;
     private final CommandSwerveDrivetrain drivetrain;
@@ -45,9 +46,9 @@ public class PathPlannerOverride extends Command {
         goalY = goal.getY();
         goalRot = goal.getRotation().getRadians();
 
-        if (goalRot > Math.PI || goalRot < -Math.PI) {
-            goalRot = -goalRot;
-        }
+        //if (goalRot > Math.PI || goalRot < -Math.PI) {
+        //    goalRot = -goalRot;
+        //}
     }
 
     @Override
@@ -56,9 +57,12 @@ public class PathPlannerOverride extends Command {
 
         double xVelo = -xPIDController.calculate(currPose.getX(), goalX);
         double yVelo = -yPIDController.calculate(currPose.getY(), goalY);
-        double rotVelo = -rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
+        double rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
 
         drivetrain.setControl(driveClosedLoop.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
+        // error
+        double error = Math.hypot(currPose.getX() - goalX, currPose.getY() - goalY);
+        SmartDashboard.putNumber("Closed-loop position error", error);
     }
 
     @Override

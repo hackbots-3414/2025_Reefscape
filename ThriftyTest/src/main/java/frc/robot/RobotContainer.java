@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -53,6 +54,7 @@ import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.ManualElevatorCommand;
 import frc.robot.commands.ManualPivotCommand;
+import frc.robot.commands.PathPlannerOverride;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
@@ -84,6 +86,16 @@ public class RobotContainer {
         configureVision();
         // addBoundsToField();
         // configureSysId();
+        configureTesting();
+    }
+
+    private void configureTesting() {
+        Command goToOrigin = new PathPlannerOverride(
+            new Pose2d(8.0, 4.0, new Rotation2d(0)),
+            m_drivetrain
+        );
+        SmartDashboard.putData("Testing Command", goToOrigin);
+
     }
 
     private void addBoundsToField() {
