@@ -59,7 +59,7 @@ public class AutonomousUtil {
         }
     }
 
-    private static PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
+    private static final PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
 
     public static Command pathFinder(Pose2d pose) {
         return AutoBuilder.pathfindToPoseFlipped(pose, constraints, 0);
@@ -92,8 +92,6 @@ public class AutonomousUtil {
     }
 
     public static Pose2d clip(List<Pose2d> list) {
-        
-
         return FieldUtils.flipPose(RobotObserver.getPose()).nearest(list);
     }
 

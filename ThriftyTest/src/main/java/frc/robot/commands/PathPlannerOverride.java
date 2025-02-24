@@ -3,6 +3,9 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -14,8 +17,11 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class PathPlannerOverride extends Command {
-    private final PIDController xPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
-    private final PIDController yPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
+    @SuppressWarnings("unused")
+    private final Logger m_logger = LoggerFactory.getLogger(PathPlannerOverride.class);
+
+    private final PIDController xPIDController = new PIDController(15, 0, 0);
+    private final PIDController yPIDController = new PIDController(15, 0, 0);
     private final PIDController rotPIDController = new PIDController(DriveConstants.k_rotationPID.kP, 0, 0);
 
     private final double MaxSpeed = DriveConstants.k_maxLinearSpeed.in(MetersPerSecond);
@@ -63,6 +69,10 @@ public class PathPlannerOverride extends Command {
 
     @Override
     public boolean isFinished() {
+        m_logger.warn("X ERROR: {}", Math.abs(xPIDController.getError()));
+        m_logger.warn("Y ERROR: {}", Math.abs(yPIDController.getError()));
+        m_logger.warn("ROT ERROR: {}", Math.abs(rotPIDController.getError()));
+
         return  (Math.abs(xPIDController.getError()) < AutonConstants.overrideTolerance)
             &&  (Math.abs(yPIDController.getError()) < AutonConstants.overrideTolerance)
             &&  (Math.abs(rotPIDController.getError()) < AutonConstants.degreeTolerance);
