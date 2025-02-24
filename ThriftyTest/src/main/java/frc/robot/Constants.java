@@ -640,23 +640,23 @@ public class Constants {
     }
 
     public enum ScoringLocations {
-        A(new Pose2d(3.17, 4.19, Rotation2d.fromDegrees(0))), // GOOD
-        B(new Pose2d(3.17, 3.85, Rotation2d.fromDegrees(0))), // GOOD
+        A(new Pose2d(3.188, 4.191, Rotation2d.fromDegrees(0))), // GOOD
+        B(new Pose2d(3.188, 3.861, Rotation2d.fromDegrees(0))), // GOOD
 
-        C(new Pose2d(3.69, 2.97, Rotation2d.fromDegrees(60))), // GOOD
-        D(new Pose2d(3.95, 2.8, Rotation2d.fromDegrees(60))), // GOOD
+        C(new Pose2d(3.696, 2.981, Rotation2d.fromDegrees(60))), // GOOD
+        D(new Pose2d(3.951, 2.816, Rotation2d.fromDegrees(60))), // GOOD
 
-        E(new Pose2d(5.01, 2.8, Rotation2d.fromDegrees(120))), // GOOD
-        F(new Pose2d(5.3, 2.97, Rotation2d.fromDegrees(120))), // GOOD
+        E(new Pose2d(4.998, 2.816, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.283, 2.981, Rotation2d.fromDegrees(120))), // GOOD
 
-        G(new Pose2d(5.81, 3.86, Rotation2d.fromDegrees(180))), // GOOD
-        H(new Pose2d(5.81, 4.20, Rotation2d.fromDegrees(180))), // GOOD
+        G(new Pose2d(5.791, 3.861, Rotation2d.fromDegrees(180))), // GOOD
+        H(new Pose2d(5.791, 4.191, Rotation2d.fromDegrees(180))), // GOOD
 
-        I(new Pose2d(5.29, 5.08, Rotation2d.fromDegrees(-120))), // GOOD
-        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))), // GOOD
+        I(new Pose2d(5.283, 5.071, Rotation2d.fromDegrees(-120))), // GOOD
+        J(new Pose2d(4.998, 5.236, Rotation2d.fromDegrees(-120))), // GOOD
 
-        K(new Pose2d(3.98, 5.25, Rotation2d.fromDegrees(-60))), // GOOD
-        L(new Pose2d(3.68, 5.08, Rotation2d.fromDegrees(-60))), // GOOD
+        K(new Pose2d(3.951, 5.236, Rotation2d.fromDegrees(-60))), // GOOD
+        L(new Pose2d(3.696, 5.071, Rotation2d.fromDegrees(-60))), // GOOD
 
         RIGHTHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
         LEFTHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
