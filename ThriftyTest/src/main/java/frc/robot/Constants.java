@@ -346,11 +346,10 @@ public class Constants {
 
     public static final class AutonConstants {
         public static final boolean useSuperAuton = true;
-
         public static final int numWaypoints = 2;
-        public static double pathplannerMinRange = 0.5;
-        public static double overrideTolerance = 0.05;
-        public static double degreeTolerance = 2;
+
+        public static double translationTolerance = 0.02; // m
+        public static double rotationTolerance = Units.degreesToRadians(2);
     }
 
     public static final class CanRangeConstants {

@@ -1,8 +1,5 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,29 +13,25 @@ import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-public class PathPlannerOverride extends Command {
+public class DriveToPointCommand extends Command {
     @SuppressWarnings("unused")
-    private final Logger m_logger = LoggerFactory.getLogger(PathPlannerOverride.class);
+    private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
-    private final PIDController xPIDController = new PIDController(15, 0, 0);
-    private final PIDController yPIDController = new PIDController(15, 0, 0);
+    private final PIDController xPIDController = new PIDController(10, 0, 0);
+    private final PIDController yPIDController = new PIDController(10, 0, 0);
     private final PIDController rotPIDController = new PIDController(DriveConstants.k_rotationPID.kP, 0, 0);
-
-    private final double MaxSpeed = DriveConstants.k_maxLinearSpeed.in(MetersPerSecond);
-    private final double MaxAngularRate = DriveConstants.k_maxAngularSpeed.in(RadiansPerSecond);
 
     private static double goalX = 0.0;
     private static double goalY = 0.0;
     private static double goalRot = 0.0;
 
     private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
 
     private final Pose2d goal;
     private final CommandSwerveDrivetrain drivetrain;
 
-    public PathPlannerOverride(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+    public DriveToPointCommand(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         this.goal = pose;
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
@@ -68,13 +61,18 @@ public class PathPlannerOverride extends Command {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        drivetrain.stop();
+    }
+
+    @Override
     public boolean isFinished() {
         m_logger.warn("X ERROR: {}", Math.abs(xPIDController.getError()));
         m_logger.warn("Y ERROR: {}", Math.abs(yPIDController.getError()));
         m_logger.warn("ROT ERROR: {}", Math.abs(rotPIDController.getError()));
 
-        return  (Math.abs(xPIDController.getError()) < AutonConstants.overrideTolerance)
-            &&  (Math.abs(yPIDController.getError()) < AutonConstants.overrideTolerance)
-            &&  (Math.abs(rotPIDController.getError()) < AutonConstants.degreeTolerance);
+        return  (Math.abs(xPIDController.getError()) < AutonConstants.translationTolerance)
+            &&  (Math.abs(yPIDController.getError()) < AutonConstants.translationTolerance)
+            &&  (Math.abs(rotPIDController.getError()) < AutonConstants.rotationTolerance);
     }
 }
