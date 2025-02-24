@@ -29,28 +29,35 @@ import frc.robot.generated.TunerConstants;
 
 public class LedSubsystem extends SubsystemBase {
   private static double matchTime = 0;
-  // boolean coralOnBoardTest = false;
-  // private Supplier<Boolean> isInRange;
-  // private boolean coralOnBoard = false;
-  private boolean coralOnBoardTest = false;
-  private boolean isInRangeTest = false;
+  private Supplier<Boolean> isInRange;
+  private boolean coralOnBoard = false;
+  // private boolean algaeOnBoard = false;
+  private boolean climbed = false;
+  // private boolean coralOnBoardTest = false;
+  // private boolean isInRangeTest = false;
   private int r = 0;
   private int g = 0;
   private int b = 0;
   private int offsetLED = 0;
   private int nbrLED = 0;
-  private int ledStripEndIndex = 2;
-  private int ledStripStartIndex = 0;
   private boolean inAuton = false;
   private boolean inTeleop = false;
-  private boolean climbedTest = false;
+  // private boolean climbedTest = false;
   private Coral coral;
+  // private AlgaeRoller algae;  - Only If Algae is necessary
   private int selectedSlot = 0;
   private boolean initialClearRan = false;
 
+  /*
+   * After Merge What needs to happen:
+   * - Make isInRange a Supplier, and put into the Constructor (Ledsubsystem)
+   * - Make sure to get CoralOnboard from the Coral Subsystem,
+   * - Lastly Make sure that everything is working with Main code
+   */
+
   private static enum LED_MODE {
-    CORAL_ONBOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
-    BADCONTROLLER, CORAL_INTAKE, ALIGNED, IN_RANGE, CLIMBED, TELEOP_DEFAULT;
+    CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
+    BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD;
   };
 
   private static enum LED_COLOR {
@@ -71,8 +78,9 @@ public class LedSubsystem extends SubsystemBase {
   CANdle ledcontroller = new CANdle(LEDConstants.candleCanid);
   // private int currentMode = 0;
 
-  public LedSubsystem(Coral coral) {
+  public LedSubsystem(Coral coral) { // If needed Add AlgaeRollers
     this.coral = coral;
+    // this.algae = algae;
     SmartDashboard.putBoolean("coralOnBoardTest", true);
     SmartDashboard.putBoolean("isInRangeTest", true);
     SmartDashboard.putBoolean("ClimbedTest", false);
@@ -93,37 +101,41 @@ public class LedSubsystem extends SubsystemBase {
     // Hackbot Purple Code : [0x67, 0x2C, 0x91]
     // #672C91
 
-    // this.isInRange = isInRange;
-    // this.coralInView = coralInView;
+    this.isInRange = isInRange;
+    this.coralOnBoard = coralOnBoard;
   }
 
   @Override
   public void periodic() {
 
-    // coralOnBoard = coral.holdingPiece();
-
+    coralOnBoard = coral.holdingPiece(); //  Maybe need to add more
+  //algaeOnBoard = algae.hasObject();  
+  
     matchTime = DriverStation.getMatchTime();
     inAuton = DriverStation.isAutonomousEnabled();
     inTeleop = DriverStation.isTeleopEnabled();
+
+
     // if (inTeleop == false && endgameWarningStarted == false && matchTime > 0) {
     // setColor("DEFAULT", 0, 2, "SOLID");
     // }
-    coralOnBoardTest = SmartDashboard.getBoolean("coralOnBoardTest", true);
-    isInRangeTest = SmartDashboard.getBoolean("isInRangeTest", true);
-    climbedTest = SmartDashboard.getBoolean("ClimbedTest", false);
+
+    // coralOnBoardTest = SmartDashboard.getBoolean("coralOnBoardTest", true);
+    // isInRangeTest = SmartDashboard.getBoolean("isInRangeTest", true);
+    // climbedTest = SmartDashboard.getBoolean("ClimbedTest", false);
 
     SmartDashboard.putBoolean("Bad Controller", badController());
     // SmartDashboard.putBoolean("In Auton", inAuton);
     // SmartDashboard.putBoolean("In Teleop", inTeleop);
     SmartDashboard.putNumber("Match Time", matchTime);
     // SmartDashboard.putBoolean("badController", badController());
-    // if (badController()) {
-    // if (chosenMode != LED_MODE.BADCONTROLLER) {
-    // chosenMode = LED_MODE.BADCONTROLLER;
-    // setColor(LED_COLOR.RED, 0, 1, LED_PATTERN.STROBE);
-    // }
-    // } else
-    if (inTeleop || inAuton) {
+
+    if (badController()) {
+      if (elevatorMode != LED_MODE.BADCONTROLLER) {
+        elevatorMode = LED_MODE.BADCONTROLLER;
+        setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
+      }
+    } else if (inTeleop || inAuton) {
       if (!initialClearRan) {
         setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR);
         setColor(LED_COLOR.OFF, LED_SECTION.ELEVATOR, LED_PATTERN.CLEAR);
@@ -143,22 +155,31 @@ public class LedSubsystem extends SubsystemBase {
             setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.SOLID);
           }
         }
-        if (climbedTest == true) {
+        if (climbed == true) {
           if (funnelMode != LED_MODE.CLIMBED && matchTime > 0) {
             funnelMode = LED_MODE.CLIMBED;
             setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW);
           }
-        } else if (coralOnBoardTest && isInRangeTest) {
+        } else if (coralOnBoard && isInRange.get()) {
           if (funnelMode != LED_MODE.CORAL_READY) {
             funnelMode = LED_MODE.CORAL_READY;
             setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.FLASH);
           }
-        } else if (coralOnBoardTest) {
-          if (funnelMode != LED_MODE.CORAL_ONBOARD) {
-            funnelMode = LED_MODE.CORAL_ONBOARD;
+        } else if (coralOnBoard) {
+          if (funnelMode != LED_MODE.CORAL_ON_BOARD) {
+            funnelMode = LED_MODE.CORAL_ON_BOARD;
             setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID);
           }
-        } else if (funnelMode != LED_MODE.DEFAULT) {
+
+        }
+        // Just In Case we need algaeOnBoard (Not Necessary)
+        // else if (algaeOnBoard) {
+        // if (funnelMode != LED_MODE.ALGAE_ON_BOARD){
+        // funnelMode = LED_MODE.ALGAE_ON_BOARD;
+        // setColor(LED_COLOR.GREEN,LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
+        // }
+        // }
+        else if (funnelMode != LED_MODE.DEFAULT) {
           funnelMode = LED_MODE.DEFAULT;
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR);
         }
