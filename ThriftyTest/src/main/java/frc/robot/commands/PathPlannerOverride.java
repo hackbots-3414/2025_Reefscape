@@ -14,9 +14,9 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class PathPlannerOverride extends Command {
-    private final PIDController xPIDController = new PIDController(15, 0, 0);
-    private final PIDController yPIDController = new PIDController(15, 0, 0);
-    private final PIDController rotPIDController = new PIDController(Math.PI * 2, Math.PI*5, 0);
+    private final PIDController xPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
+    private final PIDController yPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
+    private final PIDController rotPIDController = new PIDController(DriveConstants.k_rotationPID.kP, 0, 0);
 
     private final double MaxSpeed = DriveConstants.k_maxLinearSpeed.in(MetersPerSecond);
     private final double MaxAngularRate = DriveConstants.k_maxAngularSpeed.in(RadiansPerSecond);
@@ -56,7 +56,7 @@ public class PathPlannerOverride extends Command {
 
         double xVelo = -xPIDController.calculate(currPose.getX(), goalX);
         double yVelo = -yPIDController.calculate(currPose.getY(), goalY);
-        double rotVelo = -rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
+        double rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
 
         drivetrain.setControl(driveClosedLoop.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
     }

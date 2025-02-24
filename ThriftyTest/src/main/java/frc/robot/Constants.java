@@ -141,7 +141,7 @@ public class Constants {
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
-        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
+        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BUTTONBOARD;
 
         public static final int driverPort = 0;
         public static final int buttonBoardPort = 1;
@@ -195,40 +195,18 @@ public class Constants {
             public static final int K = 9;
             public static final int L = 13;
 
-            public static final int lowAlgaeAuto = 2;
-            public static final int highAlgaeAuto = 3;
-            public static final int groundAlgaeAuto = 1;
-            public static final int processorAuto = 23;
-            public static final int netAuto = 4;
+            public static final int lowAlgae = 2;
+            public static final int highAlgae = 3;
+            public static final int groundAlgae = 1;
+            public static final int processor = 23;
+            public static final int net = 4;
 
             public static final int leftIntake = 11;
             public static final int rightIntake = 18;
 
-            public static final int climbAuto = 25;
+            public static final int climb = 25;
 
             public static final int cancelAuto = 21;
-
-            // WHEN SAFETY OFF - MANUAL STUFF
-            public static final int l1Score = 1;
-            public static final int l2Score = 2;
-            public static final int l3Score = 3;
-            public static final int l4Score = 4;
-
-            public static final int manualElevatorUp = 5;
-            public static final int manualElevatorDown = 6;
-            public static final int manualPivotUp = 7;
-            public static final int manualPivotDown = 8;
-
-            public static final int lowAlgae = 9;
-            public static final int highAlgae = 10;
-            public static final int groundAlgae = 11;
-            public static final int processor = 12;
-            public static final int net = 13;
-
-            public static final int intake = 14;
-            public static final int spitPiece = 15;
-
-            public static final int climb = 16;
         }
 
         public static class ButtonBoardAlternate {
@@ -680,8 +658,8 @@ public class Constants {
         K(new Pose2d(3.98, 5.25, Rotation2d.fromDegrees(-60))), // GOOD
         L(new Pose2d(3.68, 5.08, Rotation2d.fromDegrees(-60))), // GOOD
 
-        FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
+        RIGHTHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
+        LEFTHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
         PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),
         NET(new Pose2d(7.7, 6.0, Rotation2d.fromDegrees(0)));
 
