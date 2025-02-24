@@ -132,10 +132,7 @@
           "length": 0.4000000059604645,
           "width": 0.4000000059604645
         },
-        "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
+        "width": 17.54825210571289
       },
       "/SmartDashboard/Auto Chooser": {
         "window": {
@@ -457,7 +454,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
