@@ -658,9 +658,9 @@ public class Constants {
         K(new Pose2d(3.951, 5.236, Rotation2d.fromDegrees(-60))), // GOOD
         L(new Pose2d(3.696, 5.071, Rotation2d.fromDegrees(-60))), // GOOD
 
-        RIGHTHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        LEFTHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
-        PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),
+        RIGHTHP(new Pose2d(1.227, 1.048, Rotation2d.fromDegrees(55))),
+        LEFTHP(new Pose2d(1.227, 6.983, Rotation2d.fromDegrees(-55))),
+        PROCESSOR(new Pose2d(6.0, 0.6, Rotation2d.fromDegrees(-90))),
         NET(new Pose2d(7.7, 6.0, Rotation2d.fromDegrees(0)));
 
         public Pose2d value;
@@ -734,12 +734,12 @@ public class Constants {
     public static final class CommandBounds {
         // 1 robot of space around the entire reef
         public static final List<Translation2d> reef = List.of(
-            new Translation2d(5.85, 3.2),
-            new Translation2d(5.85, 4.8),
-            new Translation2d(4.46, 5.66),
-            new Translation2d(3.06, 4.8),
-            new Translation2d(3.06, 3.2),
-            new Translation2d(4.46, 2.40)
+            new Translation2d(2.729, 3.013),
+            new Translation2d(4.498, 1.975),
+            new Translation2d(6.242, 3.013),
+            new Translation2d(6.242, 5.024),
+            new Translation2d(4.498, 6.010),
+            new Translation2d(2.729, 5.024)
         );
         public static final Shape reefBounds = Shape.fromUnsortedVertices(reef, "Reef");
 
