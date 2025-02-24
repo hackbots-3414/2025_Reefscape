@@ -141,7 +141,7 @@ public class Constants {
         public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
 
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
-        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
+        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BUTTONBOARD;
 
         public static final int driverPort = 0;
         public static final int buttonBoardPort = 1;
@@ -195,40 +195,18 @@ public class Constants {
             public static final int K = 9;
             public static final int L = 13;
 
-            public static final int lowAlgaeAuto = 2;
-            public static final int highAlgaeAuto = 3;
-            public static final int groundAlgaeAuto = 1;
-            public static final int processorAuto = 23;
-            public static final int netAuto = 4;
+            public static final int lowAlgae = 2;
+            public static final int highAlgae = 3;
+            public static final int groundAlgae = 1;
+            public static final int processor = 23;
+            public static final int net = 4;
 
             public static final int leftIntake = 11;
             public static final int rightIntake = 18;
 
-            public static final int climbAuto = 25;
+            public static final int climb = 25;
 
             public static final int cancelAuto = 21;
-
-            // WHEN SAFETY OFF - MANUAL STUFF
-            public static final int l1Score = 1;
-            public static final int l2Score = 2;
-            public static final int l3Score = 3;
-            public static final int l4Score = 4;
-
-            public static final int manualElevatorUp = 5;
-            public static final int manualElevatorDown = 6;
-            public static final int manualPivotUp = 7;
-            public static final int manualPivotDown = 8;
-
-            public static final int lowAlgae = 9;
-            public static final int highAlgae = 10;
-            public static final int groundAlgae = 11;
-            public static final int processor = 12;
-            public static final int net = 13;
-
-            public static final int intake = 14;
-            public static final int spitPiece = 15;
-
-            public static final int climb = 16;
         }
 
         public static class ButtonBoardAlternate {
@@ -662,27 +640,27 @@ public class Constants {
     }
 
     public enum ScoringLocations {
-        A(new Pose2d(3.17, 4.19, Rotation2d.fromDegrees(0))), // GOOD
-        B(new Pose2d(3.17, 3.85, Rotation2d.fromDegrees(0))), // GOOD
+        A(new Pose2d(3.188, 4.191, Rotation2d.fromDegrees(0))), // GOOD
+        B(new Pose2d(3.188, 3.861, Rotation2d.fromDegrees(0))), // GOOD
 
-        C(new Pose2d(3.69, 2.97, Rotation2d.fromDegrees(60))), // GOOD
-        D(new Pose2d(3.95, 2.8, Rotation2d.fromDegrees(60))), // GOOD
+        C(new Pose2d(3.696, 2.981, Rotation2d.fromDegrees(60))), // GOOD
+        D(new Pose2d(3.951, 2.816, Rotation2d.fromDegrees(60))), // GOOD
 
-        E(new Pose2d(5.01, 2.8, Rotation2d.fromDegrees(120))), // GOOD
-        F(new Pose2d(5.3, 2.97, Rotation2d.fromDegrees(120))), // GOOD
+        E(new Pose2d(4.998, 2.816, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.283, 2.981, Rotation2d.fromDegrees(120))), // GOOD
 
-        G(new Pose2d(5.81, 3.86, Rotation2d.fromDegrees(180))), // GOOD
-        H(new Pose2d(5.81, 4.20, Rotation2d.fromDegrees(180))), // GOOD
+        G(new Pose2d(5.791, 3.861, Rotation2d.fromDegrees(180))), // GOOD
+        H(new Pose2d(5.791, 4.191, Rotation2d.fromDegrees(180))), // GOOD
 
-        I(new Pose2d(5.29, 5.08, Rotation2d.fromDegrees(-120))), // GOOD
-        J(new Pose2d(5, 5.25, Rotation2d.fromDegrees(-120))), // GOOD
+        I(new Pose2d(5.283, 5.071, Rotation2d.fromDegrees(-120))), // GOOD
+        J(new Pose2d(4.998, 5.236, Rotation2d.fromDegrees(-120))), // GOOD
 
-        K(new Pose2d(3.98, 5.25, Rotation2d.fromDegrees(-60))), // GOOD
-        L(new Pose2d(3.68, 5.08, Rotation2d.fromDegrees(-60))), // GOOD
+        K(new Pose2d(3.951, 5.236, Rotation2d.fromDegrees(-60))), // GOOD
+        L(new Pose2d(3.696, 5.071, Rotation2d.fromDegrees(-60))), // GOOD
 
-        FARHP(new Pose2d(1.194, 1.026, Rotation2d.fromDegrees(55))),
-        CLOSEHP(new Pose2d(1.217, 7.012, Rotation2d.fromDegrees(-55))),
-        PROCESSOR(new Pose2d(6.0, 0.5, Rotation2d.fromDegrees(-90))),
+        RIGHTHP(new Pose2d(1.227, 1.048, Rotation2d.fromDegrees(55))),
+        LEFTHP(new Pose2d(1.227, 6.983, Rotation2d.fromDegrees(-55))),
+        PROCESSOR(new Pose2d(6.0, 0.6, Rotation2d.fromDegrees(-90))),
         NET(new Pose2d(7.7, 6.0, Rotation2d.fromDegrees(0)));
 
         public Pose2d value;
@@ -756,12 +734,12 @@ public class Constants {
     public static final class CommandBounds {
         // 1 robot of space around the entire reef
         public static final List<Translation2d> reef = List.of(
-            new Translation2d(5.85, 3.2),
-            new Translation2d(5.85, 4.8),
-            new Translation2d(4.46, 5.66),
-            new Translation2d(3.06, 4.8),
-            new Translation2d(3.06, 3.2),
-            new Translation2d(4.46, 2.40)
+            new Translation2d(2.729, 3.013),
+            new Translation2d(4.498, 1.975),
+            new Translation2d(6.242, 3.013),
+            new Translation2d(6.242, 5.024),
+            new Translation2d(4.498, 6.010),
+            new Translation2d(2.729, 5.024)
         );
         public static final Shape reefBounds = Shape.fromUnsortedVertices(reef, "Reef");
 

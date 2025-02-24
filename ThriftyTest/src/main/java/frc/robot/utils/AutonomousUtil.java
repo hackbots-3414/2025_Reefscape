@@ -92,6 +92,8 @@ public class AutonomousUtil {
     }
 
     public static Pose2d clip(List<Pose2d> list) {
+        
+
         return FieldUtils.flipPose(RobotObserver.getPose()).nearest(list);
     }
 
