@@ -486,6 +486,7 @@ public class Constants {
 
     public class LEDConstants {
         public static final int candleCanid = 5;
+        public static final int candle2Canid = 6;
         public static final int numLED = 85;
         public static final double flashSpeed = 0.75;
         public static final double strobeSpeed = 0.1;

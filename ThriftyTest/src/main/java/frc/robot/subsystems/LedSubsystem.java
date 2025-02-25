@@ -32,7 +32,7 @@ public class LedSubsystem extends SubsystemBase {
   // private Supplier<Boolean> isInRange;
   // private boolean coralOnBoard = false;
   // private boolean algaeOnBoard = false;
-  private boolean climbed = false;
+  // private boolean climbed = false;
   private boolean coralOnBoardTest = false;
   private boolean isInRangeTest = false;
   private boolean climbedTest = false;
@@ -45,7 +45,7 @@ public class LedSubsystem extends SubsystemBase {
   private boolean inTeleop = false;
   // private boolean climbedTest = false;
   private Coral coral;
-  // private AlgaeRoller algae;  - Only If Algae is necessary
+  // private AlgaeRoller algae; - Only If Algae is necessary
   private int selectedSlot = 0;
   private boolean initialClearRan = false;
 
@@ -77,20 +77,21 @@ public class LedSubsystem extends SubsystemBase {
   private static LED_MODE elevatorMode = null;
 
   CANdle ledcontroller = new CANdle(LEDConstants.candleCanid);
+  CANdle ledcontroller2 = new CANdle(LEDConstants.candle2Canid);
   // private int currentMode = 0;
-
   public LedSubsystem(Coral coral) { // If needed Add AlgaeRollers
     this.coral = coral;
     // this.algae = algae;
     SmartDashboard.putBoolean("coralOnBoardTest", true);
     SmartDashboard.putBoolean("isInRangeTest", true);
     SmartDashboard.putBoolean("ClimbedTest", false);
-
     CANdleConfiguration config = new CANdleConfiguration();
     config.stripType = LEDStripType.RGB; // set the strip type to RGB
     config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
     ledcontroller.configAllSettings(config);
-    defaultColors();
+    ledcontroller2.configAllSettings(config);
+    defaultColors(ledcontroller);
+    defaultColors(ledcontroller2);
 
     // uncomment to test LED strips
     // ledcontroller.setLEDs(255, 0, 0, 0, LEDConstants.funnelOffset,
@@ -109,13 +110,12 @@ public class LedSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // coralOnBoardTest = coral.holdingPiece(); //  Maybe need to add more
-  //algaeOnBoard = algae.hasObject();  
-  
+    // coralOnBoardTest = coral.holdingPiece(); // Maybe need to add more
+    // algaeOnBoard = algae.hasObject();
+
     matchTime = DriverStation.getMatchTime();
     inAuton = DriverStation.isAutonomousEnabled();
     inTeleop = DriverStation.isTeleopEnabled();
-
 
     // if (inTeleop == false && endgameWarningStarted == false && matchTime > 0) {
     // setColor("DEFAULT", 0, 2, "SOLID");
@@ -132,14 +132,17 @@ public class LedSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("badController", badController());
 
     if (badController()) {
-      if (elevatorMode != LED_MODE.BADCONTROLLER) {
-        elevatorMode = LED_MODE.BADCONTROLLER;
-        setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
-      }
-    } else if (inTeleop || inAuton) {
+    if (elevatorMode != LED_MODE.BADCONTROLLER) {
+    elevatorMode = LED_MODE.BADCONTROLLER;
+    setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE , ledcontroller);
+    setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE , ledcontroller2);
+    
+    }
+    } else
+    if (inTeleop || inAuton) {
       if (!initialClearRan) {
-        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR);
-        setColor(LED_COLOR.OFF, LED_SECTION.ELEVATOR, LED_PATTERN.CLEAR);
+        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR, ledcontroller);
+        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR, ledcontroller2);
         initialClearRan = true;
       }
       if (inTeleop) {
@@ -149,27 +152,38 @@ public class LedSubsystem extends SubsystemBase {
           if (matchTime <= LEDConstants.endgameAlert) {
             if (elevatorMode != LED_MODE.END_GAME_ALERT) {
               elevatorMode = LED_MODE.END_GAME_ALERT;
-              setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
+              setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE, ledcontroller);
+              setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE, ledcontroller2);
+
             }
           } else if (elevatorMode != LED_MODE.END_GAME_WARNING) {
             elevatorMode = LED_MODE.END_GAME_WARNING;
-            setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.SOLID);
+            setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.SOLID, ledcontroller);
+            setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.SOLID, ledcontroller2);
+
           }
         }
-        if (climbed == true) {
+        if (climbedTest) {
           if (funnelMode != LED_MODE.CLIMBED && matchTime > 0) {
             funnelMode = LED_MODE.CLIMBED;
-            setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW);
+            setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW, ledcontroller);
+            setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW, ledcontroller2);
+
           }
         } else if (coralOnBoardTest && isInRangeTest) {
           if (funnelMode != LED_MODE.CORAL_READY) {
             funnelMode = LED_MODE.CORAL_READY;
-            setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.FLASH);
+            setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.FLASH, ledcontroller);
+            setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.FLASH, ledcontroller2);
+
           }
         } else if (coralOnBoardTest) {
           if (funnelMode != LED_MODE.CORAL_ON_BOARD) {
             funnelMode = LED_MODE.CORAL_ON_BOARD;
-            setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID);
+            setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
+            setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
+
+
           }
 
         }
@@ -180,23 +194,31 @@ public class LedSubsystem extends SubsystemBase {
         // setColor(LED_COLOR.GREEN,LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
         // }
         // }
-        else if (funnelMode != LED_MODE.DEFAULT) {
+        else if (funnelMode != LED_MODE.DEFAULT && matchTime > LEDConstants.endgameWarning) {
           funnelMode = LED_MODE.DEFAULT;
-          setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR);
+          setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
+          setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
+          setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller);
+          setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller2);
+
         }
+        // if (elevatorMode != LED_MODE.DEFAULT) {
+        //   elevatorMode = LED_MODE.DEFAULT;
+        //   setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller);
+        //   setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller2);
+        // }
 
       }
     }
   }
 
-  private void defaultColors() {
+  private void defaultColors(CANdle ledcontroller) {
     ledcontroller.clearAnimation(0);
-    ledcontroller.clearAnimation(1);
-    ledcontroller.clearAnimation(2);
-    ledcontroller.clearAnimation(3);
-    setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH);
+    // ledcontroller.clearAnimation(1);
+    setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller);
+
     ledcontroller.animate(
-        new LarsonAnimation(255, 0, 255, 0, 0.75, LEDConstants.numLED, LarsonAnimation.BounceMode.Back, 14), 0);
+        new LarsonAnimation(255, 0, 255, 0, 0.75, LEDConstants.elevatorOffset, LarsonAnimation.BounceMode.Back, 14), 0);
     // ledcontroller.animate(
     // new LarsonAnimation(255, 0, 255, 0, 0.50, LEDConstants.numLED,
     // LarsonAnimation.BounceMode.Back, 7), 1);
@@ -210,11 +232,13 @@ public class LedSubsystem extends SubsystemBase {
     String joystick1Name = DriverStation.getJoystickName(1).toLowerCase();
 
     return !DriverStation.getJoystickName(0).contains("InterLinkDX") &&
-        !( (DriverConstants.operatorController == JoystickChoice.PS5 &&
-                joystick1Name.contains("dualsense")));
+
+         !((DriverConstants.operatorController == JoystickChoice.XBOX &&
+            (joystick1Name.contains("xbox")) ||
+            (joystick1Name.contains("gamepad"))));
   }
 
-  public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern) {
+  public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern, CANdle ledcontroller) {
 
     switch (color) {
       case BLUE:
@@ -291,7 +315,6 @@ public class LedSubsystem extends SubsystemBase {
         break;
       case LARSON:
         ledcontroller.animate(
-
             new LarsonAnimation(r, g, b, 0, 0.75, LEDConstants.numLED, LarsonAnimation.BounceMode.Back, 7),
             selectedSlot);
         break;
