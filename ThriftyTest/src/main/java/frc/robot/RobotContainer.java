@@ -49,6 +49,7 @@ import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -81,6 +82,8 @@ public class RobotContainer {
         configureVision();
         addBoundsToField();
         // configureSysId();
+        Command driveToCenter = new DriveToPointCommand(new Pose2d(8.0, 4.0, new Rotation2d()), m_drivetrain);
+        SmartDashboard.putData("runme hehe", driveToCenter);
     }
 
     private void addBoundsToField() {
@@ -135,8 +138,7 @@ public class RobotContainer {
         Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
         Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
         Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
-        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop)
-            .getAsBoolean();
+        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop).getAsBoolean();
 
         m_drivetrain.setDefaultCommand(
             new TeleopCommand(m_drivetrain, xSup, ySup, rSup, openLoopSup)

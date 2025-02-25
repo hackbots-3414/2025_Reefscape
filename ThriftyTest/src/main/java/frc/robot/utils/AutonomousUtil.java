@@ -82,8 +82,8 @@ public class AutonomousUtil {
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
     public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
-        // onTheFlyCommands.add(pathFinder(pose));
-        onTheFlyCommands.add(new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain));
+        onTheFlyCommands.add(pathFinder(pose));
+        // onTheFlyCommands.add(new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain));
         onTheFlyCommands.add(command.get());
     }
 

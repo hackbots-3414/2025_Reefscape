@@ -8,6 +8,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
@@ -17,8 +18,8 @@ public class DriveToPointCommand extends Command {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
-    private final PIDController xPIDController = new PIDController(10, 0, 0);
-    private final PIDController yPIDController = new PIDController(10, 0, 0);
+    private final PIDController xPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
+    private final PIDController yPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
     private final PIDController rotPIDController = new PIDController(DriveConstants.k_rotationPID.kP, 0, 0);
 
     private static double goalX = 0.0;
@@ -26,7 +27,7 @@ public class DriveToPointCommand extends Command {
     private static double goalRot = 0.0;
 
     private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
-            .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity);
 
     private final Pose2d goal;
     private final CommandSwerveDrivetrain drivetrain;
@@ -56,6 +57,11 @@ public class DriveToPointCommand extends Command {
         double xVelo = -xPIDController.calculate(currPose.getX(), goalX);
         double yVelo = -yPIDController.calculate(currPose.getY(), goalY);
         double rotVelo = rotPIDController.calculate(currPose.getRotation().getRadians(), goalRot);
+
+        double xErr = currPose.getX() - goalX;
+        double yErr = currPose.getY() - goalY;
+        double err = Math.hypot(xErr, yErr);
+        SmartDashboard.putNumber("closed looop error", err);
 
         drivetrain.setControl(driveClosedLoop.withVelocityX(xVelo).withVelocityY(yVelo).withRotationalRate(rotVelo));
     }

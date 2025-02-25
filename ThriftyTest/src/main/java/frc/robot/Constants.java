@@ -158,6 +158,8 @@ public class Constants {
 
             public static final int enableOpenLoop = 3;
             public static final int resetHeading = 1;
+
+            public static final double deadband = 0.05;
         }
 
         public static class BackupDriver {
