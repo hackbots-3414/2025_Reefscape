@@ -109,6 +109,22 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.ejectVoltage);
     }
 
+    public void setL1Eject() {
+        setVoltage(CoralConstants.l1EjectVoltage);
+    }
+
+    public void setL2Eject() {
+        setVoltage(CoralConstants.l2EjectVoltage);
+    }
+
+    public void setL3Eject() {
+        setVoltage(CoralConstants.l3EjectVoltage);
+    }
+
+    public void setL4Eject() {
+        setVoltage(CoralConstants.l4EjectVoltage);
+    }
+
     public void setSpitOut() {
         setVoltage(CoralConstants.spitOutVoltage);
     }

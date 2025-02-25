@@ -555,6 +555,11 @@ public class Constants {
         public static final double intakeVoltage = 5;
         public static final double ejectVoltage = 6;
 
+        public static final double l1EjectVoltage = 3;
+        public static final double l2EjectVoltage = 4;
+        public static final double l3EjectVoltage = 6;
+        public static final double l4EjectVoltage = 6;
+
         public static final double spitOutVoltage = -8;
 
         public static final double l1LeftEjectVoltage = 8;
