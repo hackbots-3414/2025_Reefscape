@@ -141,6 +141,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         setControl(autoRequest.withSpeeds(previousSetpoint.robotRelativeSpeeds()));
     }
+    
+    public void stop() {
+        setControl(new SwerveRequest.SwerveDriveBrake());
+    }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));

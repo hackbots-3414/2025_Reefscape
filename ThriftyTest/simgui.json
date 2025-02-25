@@ -44,8 +44,8 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
-      "/SmartDashboard/Testing Command": "Command",
-      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/runme hehe": "Command"
     },
     "windows": {
       "/SmartDashboard/April Tag Debug Field": {

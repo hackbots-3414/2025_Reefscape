@@ -19,11 +19,12 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
-import frc.robot.commands.PathPlannerOverride;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
@@ -59,7 +60,7 @@ public class AutonomousUtil {
         }
     }
 
-    private static PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
+    private static final PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
 
     public static Command pathFinder(Pose2d pose) {
         return AutoBuilder.pathfindToPoseFlipped(pose, constraints, 0);
@@ -69,10 +70,10 @@ public class AutonomousUtil {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < poses.length; i++) {
             routine.addCommands(pathFinder(poses[i]));
-            routine.addCommands(new PathPlannerOverride(FieldUtils.flipPose(poses[i]), drivetrain));
+            routine.addCommands(new DriveToPointCommand(FieldUtils.flipPose(poses[i]), drivetrain));
             routine.addCommands(scoringCommands[i]);
             routine.addCommands(pathFinder(desiredPickupLocation));
-            routine.addCommands(new PathPlannerOverride(FieldUtils.flipPose(poses[i]), drivetrain));
+            routine.addCommands(new DriveToPointCommand(FieldUtils.flipPose(poses[i]), drivetrain));
             routine.addCommands(intakeCommand.get());
         }
 
@@ -82,8 +83,10 @@ public class AutonomousUtil {
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
     public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
+        // onTheFlyCommands.add(new InstantCommand(RobotObserver::setSingleTag));
         onTheFlyCommands.add(pathFinder(pose));
-        onTheFlyCommands.add(new PathPlannerOverride(FieldUtils.flipPose(pose), drivetrain));
+        // onTheFlyCommands.add(new InstantCommand(RobotObserver::setMultiTag));
+        // onTheFlyCommands.add(new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain));
         onTheFlyCommands.add(command.get());
     }
 
