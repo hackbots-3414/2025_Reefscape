@@ -339,7 +339,7 @@ public class RobotContainer {
 
             Trigger algaeOn = controller.button(ButtonBoardAlternate.algaeModeButton);
 
-            controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
+            controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_superstructure));
 
             // Manual Mode Off
             /* TEMPORARY COMMENT BECAUSE IAN WANTED IT */
@@ -514,7 +514,7 @@ public class RobotContainer {
         m_algaeRollers = new AlgaeRollers();
         m_coralRollers = new CoralRollers();
 
-        m_superstructure = new Superstructure(m_elevator, m_pivot);
+        m_superstructure = new Superstructure(m_elevator, m_pivot, m_coralRollers, m_algaeRollers);
     }
 
     // ** BUTTON BOARD HELPERS **

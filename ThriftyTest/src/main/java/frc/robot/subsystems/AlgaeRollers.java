@@ -14,28 +14,30 @@ import frc.robot.Robot;
 import frc.robot.utils.RunOnChange;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
+    public enum AlgaeRollerSpeeds {STOP, INTAKE, HOLD, EJECT}
+
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
     
     private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algae);
-
-    private final Notifier m_notifier;
-
+    private Notifier m_notifier;
     private boolean m_hasObject;
-
     private RunOnChange<Double> changeVolts;
 
     public AlgaeRollers() {
-        configIntakeMotor();
-        m_notifier = new Notifier(this::updateObjectState);
-        m_notifier.startPeriodic(AlgaeRollerConstants.k_updateObjectPeriodSeconds);
-
+        configMotor();
+        configNotifier();
         changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
     }
 
-    private void configIntakeMotor() {
+    private void configMotor() {
         m_algaeRoller.clearStickyFaults();
         m_algaeRoller.getConfigurator().apply(AlgaeRollerConstants.motorConfig);
+    }
+
+    private void configNotifier() {
+        m_notifier = new Notifier(this::updateObjectState);
+        m_notifier.startPeriodic(AlgaeRollerConstants.k_updateObjectPeriodSeconds);
     }
 
     private void writeToMotors(double voltage) {
@@ -50,19 +52,40 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         return m_hasObject;
     }
 
+    private void hold() {
+        setMotor(AlgaeRollerConstants.holdVoltage);
+    }
+
+    private void intake() {
+        setMotor(AlgaeRollerConstants.intakeVoltage);
+    }
+
+    private void stop() {
+        setMotor(0.0);
+    }
+
     public void intakeAlgae() {
         if (hasObject()) {
-            setMotor(AlgaeRollerConstants.holdVoltage);
+            hold();
         } else {
-            setMotor(AlgaeRollerConstants.intakeVoltage);
+            intake();
         }
     }
 
     public void smartStop() {
         if (hasObject()) {
-            setMotor(AlgaeRollerConstants.holdVoltage);
+            hold();
         } else {
-            stopMotor();
+            stop();
+        }
+    }
+
+    public void set(AlgaeRollerSpeeds speed) {
+        switch (speed) {
+            case INTAKE -> intake();
+            case HOLD -> hold();
+            case EJECT -> eject();
+            case STOP -> smartStop();
         }
     }
 
@@ -70,12 +93,8 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         return m_algaeRoller.getTorqueCurrent().getValueAsDouble();
     }
 
-    public void ejectAlgae() {
+    public void eject() {
         setMotor(AlgaeRollerConstants.ejectVoltage);
-    }
-
-    public void stopMotor() {
-        changeVolts.accept(0.0);
     }
 
     private void updateObjectState() {
@@ -105,5 +124,4 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         m_algaeRoller.close();
         m_notifier.close();
     }
-
 }

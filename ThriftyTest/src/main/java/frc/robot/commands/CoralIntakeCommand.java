@@ -33,7 +33,7 @@ public class CoralIntakeCommand extends Command {
   @Override
   public void execute() {
     if(elevator.atSetpoint()) {
-      coral.setIntake();
+      coral.intake();
     }
     if (coral.holdingPiece()) timer.start();
   }

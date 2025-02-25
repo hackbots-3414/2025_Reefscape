@@ -40,7 +40,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         changeVolts.accept(voltage);
     }
 
-    public void setClimbUpVolts() {
+    public void climb() {
         setMotor(ClimberConstants.climberUpVolts);
     }
 

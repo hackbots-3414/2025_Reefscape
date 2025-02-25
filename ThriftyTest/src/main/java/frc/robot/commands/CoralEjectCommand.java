@@ -1,38 +1,28 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CoralRollers;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Superstructure;
 
 public class CoralEjectCommand extends Command {
-  private final CoralRollers coral;
-  private final Elevator elevator;
+  private final Superstructure superstructure;
 
-  public CoralEjectCommand(CoralRollers coralRollers, Elevator elevator) {
-    this.coral = coralRollers;
-    this.elevator = elevator;
-    addRequirements(coralRollers, elevator);
+  public CoralEjectCommand(Superstructure superstructure) {
+    this.superstructure = superstructure;
+    addRequirements(superstructure);
   }
 
   @Override
   public void initialize() {
-    elevator.setStow();
-  }
-
-  @Override
-  public void execute() {
-    if (elevator.atSetpoint()) {
-      coral.setSpitOut();
-    }
+    superstructure.intake();
   }
 
   @Override
   public void end(boolean interrupted) {
-    coral.stop();
+    superstructure.stow();
   }
 
   @Override
   public boolean isFinished() {
-    return !coral.presentPiece();
+    return !superstructure.hasCoral();
   }
 }

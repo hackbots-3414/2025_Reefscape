@@ -47,7 +47,7 @@ public class AlgaeScoreCommand extends Command {
   @Override
   public void execute() {
     if (elevator.atSetpoint() && pivot.atSetpoint()) {
-      rollers.ejectAlgae();
+      rollers.eject();
     } else {
       initialTime = Utils.getCurrentTimeSeconds();
     }

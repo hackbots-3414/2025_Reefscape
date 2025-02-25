@@ -561,7 +561,7 @@ public class Constants {
         public static final double l3EjectVoltage = 6;
         public static final double l4EjectVoltage = 6;
 
-        public static final double spitOutVoltage = -8;
+        public static final double unjamVoltage = -8;
 
         public static final double l1LeftEjectVoltage = 8;
         public static final double l1RightEjectVoltage = 6;

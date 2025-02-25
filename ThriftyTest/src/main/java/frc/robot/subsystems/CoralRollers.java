@@ -11,6 +11,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +21,8 @@ import frc.robot.Robot;
 import frc.robot.utils.RunOnChange;
 
 public class CoralRollers extends SubsystemBase {
+    public enum CoralRollerSpeeds {INTAKE, L1, L2, L3, L4, UNJAM, L1_SEPERATE, STOP}
+
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(CoralRollers.class);
 
@@ -33,8 +36,8 @@ public class CoralRollers extends SubsystemBase {
     private boolean m_backSensorValue = false;
 
     private RunOnChange<Double> changeVolts;
-
-    private double m_voltage;
+    private RunOnChange<Pair<Double, Double>> changeIndividualVolts;
+    
     private double m_stoppedTime;
     private boolean m_stoppedTimeChanged;
 
@@ -42,6 +45,7 @@ public class CoralRollers extends SubsystemBase {
         configMotors();
         configDashboard();
         changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
+        changeIndividualVolts = new RunOnChange<Pair<Double, Double>>(this::writeIndividual, Pair.of(0.0, 0.0));
     }
 
     private void configMotors() {
@@ -67,17 +71,24 @@ public class CoralRollers extends SubsystemBase {
         m_coralLeft.setVoltage(voltage);
     }
 
+    private void writeIndividual(Pair<Double, Double> individualSpeeds) {
+        m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
+        m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
+    }
+
     public void setVoltage(double voltage) {
         changeVolts.accept(voltage);
     }
 
-    public void setIntake() {
+    public void setIndividualEject() {
+        changeIndividualVolts.accept(new Pair<Double,Double>(CoralConstants.l1LeftEjectVoltage, CoralConstants.l1RightEjectVoltage));
+    }
+
+    public void intake() {
         setVoltage(CoralConstants.intakeVoltage);
     }
 
     public void timeoutIntake() {
-        // a whole lotta logic that essentially allows u to stop the motor in default command
-        // when you leave the yay zone after intakeTimeout seconds automatically (max process time) or when coral detected
         if (!m_stoppedTimeChanged) {
             m_stoppedTimeChanged = true;
             m_stoppedTime = Utils.getCurrentTimeSeconds();
@@ -89,7 +100,7 @@ public class CoralRollers extends SubsystemBase {
         }
 
         if (presentPiece()) {
-            setIntake();
+            set(CoralRollerSpeeds.INTAKE);
             return;
         }
 
@@ -111,29 +122,17 @@ public class CoralRollers extends SubsystemBase {
         m_stoppedTimeChanged = false;
     }
 
-    public void setL1Eject() {
-        setVoltage(CoralConstants.l1EjectVoltage);
-    }
-
-    public void setL2Eject() {
-        setVoltage(CoralConstants.l2EjectVoltage);
-    }
-
-    public void setL3Eject() {
-        setVoltage(CoralConstants.l3EjectVoltage);
-    }
-
-    public void setL4Eject() {
-        setVoltage(CoralConstants.l4EjectVoltage);
-    }
-
-    public void setSpitOut() {
-        setVoltage(CoralConstants.spitOutVoltage);
-    }
-
-    public void setIndividualEject() {
-        m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
-        m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
+    public void set(CoralRollerSpeeds speed) {
+        switch (speed) {
+            case INTAKE -> setVoltage(CoralConstants.intakeVoltage);
+            case L1 -> setVoltage(CoralConstants.l1EjectVoltage);
+            case L2 -> setVoltage(CoralConstants.l2EjectVoltage);
+            case L3 -> setVoltage(CoralConstants.l3EjectVoltage);
+            case L4 -> setVoltage(CoralConstants.l4EjectVoltage);
+            case UNJAM -> setVoltage(CoralConstants.unjamVoltage);
+            case L1_SEPERATE -> setIndividualEject();
+            case STOP -> setVoltage(0.0);
+        }
     }
 
     public void resetFollow() {
@@ -174,13 +173,14 @@ public class CoralRollers extends SubsystemBase {
         SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
         SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
-        SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+        SmartDashboard.putNumber("CORAL VOLTAGE", changeVolts.getValue());
     }
 
     @Override
     public void periodic() {
         update();
         changeVolts.resolveIfChange();
+        changeIndividualVolts.resolveIfChange();
         log();
     }
 }
