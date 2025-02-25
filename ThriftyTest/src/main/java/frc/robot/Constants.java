@@ -553,7 +553,8 @@ public class Constants {
 
     public static class CoralConstants {
         public static final double intakeVoltage = 5;
-        public static final double ejectVoltage = 6;
+
+        public static final double ejectTime = 0.06; // 3 ticks
 
         public static final double l1EjectVoltage = 3;
         public static final double l2EjectVoltage = 4;

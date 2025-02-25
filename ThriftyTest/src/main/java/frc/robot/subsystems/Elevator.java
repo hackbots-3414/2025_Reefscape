@@ -8,13 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -25,9 +26,11 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.utils.RunOnChange;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
@@ -51,13 +54,15 @@ public class Elevator extends SubsystemBase {
     private MechanismRoot2d m_mechRoot;
     private MechanismLigament2d m_elevatorArm;
 
-    private double m_speed;
-    private boolean m_speedChanged;
+    private RunOnChange<Double> changeVolts;
+    private RunOnChange<Boolean> setBrake;
 
     public Elevator() {
         configEncoder();
         configMotor();
         configSim();
+        changeVolts = new RunOnChange<Double>(this::writeToMotors, 0.0);
+        setBrake = new RunOnChange<>(this::setBrakeMode, true);
     }
 
     private void configEncoder() {
@@ -94,6 +99,14 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    private void writeToMotors(double voltage) {
+        m_elevatorRight.setVoltage(voltage);
+    }
+
+    private void setBrakeMode(boolean isEnabled) {
+        m_elevatorRight.getConfigurator().apply(CoralConstants.motorConfig.MotorOutput.withNeutralMode(isEnabled ? NeutralModeValue.Brake : NeutralModeValue.Coast));
+    }
+
     private final MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
@@ -101,9 +114,8 @@ public class Elevator extends SubsystemBase {
         m_reference = goal;
     }
 
-    public void setSpeed(double speed) {
-        m_speedChanged = (speed != m_speed);
-        m_speed = speed;
+    public void setVoltage(double speed) {
+        changeVolts.accept(speed);
     }
 
     public void setGroundIntake() {
@@ -193,23 +205,27 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    @Override
-    public void periodic() {
-        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
-
+    private void update() {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
 
-        if (m_speedChanged) {
-            m_elevatorRight.setControl(new DutyCycleOut(m_speed));
-            m_speedChanged = false;
-        }
+        setBrake.run(DriverStation.isEnabled());
+    }
 
+    private void log() {
         SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
     }
 
     @Override
+    public void periodic() {
+        update();
+        changeVolts.resolveIfChange();
+        log();
+    }
+
+    @Override
     public void simulationPeriodic() {
+        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
         // Update the simulation with the motor voltage
         double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage();
         double current = m_elevatorRight.getSupplyCurrent().getValueAsDouble();

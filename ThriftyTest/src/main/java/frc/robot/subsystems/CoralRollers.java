@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
+import frc.robot.utils.RunOnChange;
 
 public class CoralRollers extends SubsystemBase {
     @SuppressWarnings("unused")
@@ -31,14 +32,16 @@ public class CoralRollers extends SubsystemBase {
     private boolean m_frontSensorValue = false;
     private boolean m_backSensorValue = false;
 
+    private RunOnChange<Double> changeVolts;
+
     private double m_voltage;
-    private boolean m_voltageChanged;
     private double m_stoppedTime;
     private boolean m_stoppedTimeChanged;
 
     public CoralRollers() {
         configMotors();
         configDashboard();
+        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
     }
 
     private void configMotors() {
@@ -60,9 +63,12 @@ public class CoralRollers extends SubsystemBase {
         }
     }
 
+    private void writeToMotors(double voltage) {
+        m_coralLeft.setVoltage(voltage);
+    }
+
     public void setVoltage(double voltage) {
-        m_voltageChanged = (voltage != m_voltage);
-        m_voltage = voltage;
+        changeVolts.accept(voltage);
     }
 
     public void setIntake() {
@@ -105,10 +111,6 @@ public class CoralRollers extends SubsystemBase {
         m_stoppedTimeChanged = false;
     }
 
-    public void setEject() {
-        setVoltage(CoralConstants.ejectVoltage);
-    }
-
     public void setL1Eject() {
         setVoltage(CoralConstants.l1EjectVoltage);
     }
@@ -139,10 +141,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void stop() {
-        // setVoltage(0);
-        m_voltage = 0;
-        m_voltageChanged = false;
-        m_coralLeft.setVoltage(0.0);
+        changeVolts.run(0.0);
     }
 
     public boolean getFrontIR() {
@@ -161,8 +160,7 @@ public class CoralRollers extends SubsystemBase {
         return getFrontIR() || getBackIR();
     }
 
-    @Override
-    public void periodic() {
+    private void update() {
         if (Robot.isReal()) {
             m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
             m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
@@ -170,17 +168,19 @@ public class CoralRollers extends SubsystemBase {
             m_frontSensorValue = SmartDashboard.getBoolean("Front IR", false);
             m_backSensorValue = SmartDashboard.getBoolean("Back IR", false);
         }
+    }
 
+    private void log() {
         SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
         SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
-
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
-
         SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+    }
 
-        if (m_voltageChanged) {
-            m_coralLeft.setVoltage(m_voltage);
-            m_voltageChanged = false;
-        }
+    @Override
+    public void periodic() {
+        update();
+        changeVolts.resolveIfChange();
+        log();
     }
 }

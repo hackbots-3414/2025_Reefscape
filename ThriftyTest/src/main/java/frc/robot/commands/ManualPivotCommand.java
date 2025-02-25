@@ -16,7 +16,7 @@ public class ManualPivotCommand extends Command {
 
     @Override
     public void execute() {
-        pivot.setSpeed(isUp ? PivotConstants.manualUpSpeed : PivotConstants.manualDownSpeed);
+        pivot.setVoltage(isUp ? PivotConstants.manualUpSpeed : PivotConstants.manualDownSpeed);
     }
 
     @Override

@@ -8,9 +8,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.Robot;
+import frc.robot.utils.RunOnChange;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     @SuppressWarnings("unused")
@@ -18,17 +19,18 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     
     private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algae);
 
-    private double m_voltage;
-    private boolean m_voltageChanged;
-
     private final Notifier m_notifier;
 
     private boolean m_hasObject;
+
+    private RunOnChange<Double> changeVolts;
 
     public AlgaeRollers() {
         configIntakeMotor();
         m_notifier = new Notifier(this::updateObjectState);
         m_notifier.startPeriodic(AlgaeRollerConstants.k_updateObjectPeriodSeconds);
+
+        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
     }
 
     private void configIntakeMotor() {
@@ -36,11 +38,12 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         m_algaeRoller.getConfigurator().apply(AlgaeRollerConstants.motorConfig);
     }
 
-    private void setMotor(double voltage) {
-        if (voltage != m_voltage) {
-            m_voltageChanged = true;
-        }
-        m_voltage = voltage;
+    private void writeToMotors(double voltage) {
+        m_algaeRoller.setVoltage(voltage);
+    }
+
+    public void setMotor(double voltage) {
+        changeVolts.accept(voltage);
     }
 
     public boolean hasObject() {
@@ -72,7 +75,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     }
 
     public void stopMotor() {
-        setMotor(0);
+        changeVolts.accept(0.0);
     }
 
     private void updateObjectState() {
@@ -81,17 +84,20 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         } else {
             m_hasObject = SmartDashboard.getBoolean("Algae Holding Object", false);
         }
+    }
 
+    private void update() {}
+
+    private void log() {
+        SmartDashboard.putNumber("ALGAE VOLTS", changeVolts.getValue());
         SmartDashboard.putBoolean("Algae Holding Object", m_hasObject);
     }
 
     @Override
     public void periodic() {
-        if (m_voltageChanged) {
-            m_algaeRoller.setVoltage(m_voltage);
-            m_voltageChanged = false;
-            SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
-        }
+        update();
+        changeVolts.resolve();
+        log();
     }
 
     @Override

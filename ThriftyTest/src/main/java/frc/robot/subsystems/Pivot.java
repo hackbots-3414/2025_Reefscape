@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -24,6 +23,7 @@ import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
+import frc.robot.utils.RunOnChange;
 
 public class Pivot extends SubsystemBase {
     private final TalonFX m_pivot = new TalonFX(IDConstants.pivot);
@@ -41,13 +41,13 @@ public class Pivot extends SubsystemBase {
     private MechanismRoot2d m_mechRoot;
     private MechanismLigament2d m_armLigament;
 
-    private double m_speed;
-    private boolean m_speedChanged;
+    private RunOnChange<Double> changeVolts;
 
     public Pivot() {
         configSim();
         configEncoder();
         configMotor();
+        changeVolts = new RunOnChange<Double>(this::writeToMotors, 0.0);
     }
 
     private void configEncoder() {
@@ -79,6 +79,10 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putData("Pivot Arm Visualization", m_mechVisual);
     }
 
+    public void writeToMotors(double voltage) {
+        m_pivot.setVoltage(voltage);
+    }
+
     MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
@@ -86,9 +90,8 @@ public class Pivot extends SubsystemBase {
         m_reference = goal;
     }
 
-    public void setSpeed(double speed) {
-        m_speedChanged = (speed != m_speed);
-        m_speed = speed;
+    public void setVoltage(double voltage) {
+        changeVolts.accept(voltage);
     }
 
     public void setStow() {
@@ -151,26 +154,27 @@ public class Pivot extends SubsystemBase {
         }
     }
 
-    @Override
-    public void periodic() {
-        m_armLigament.setAngle(Math.toDegrees(m_position));
-
+    private void update() {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
+    }
 
-        if (m_speedChanged) {
-            m_pivot.setControl(new DutyCycleOut(m_speed));
-            m_speedChanged = false;
-        }
-
+    private void log() {
         SmartDashboard.putNumber("REFERENCE FOR PIVOT", getReference());
         SmartDashboard.putNumber("POSITION FOR PIVOT", getPosition());
-
         SmartDashboard.putBoolean("PIVOT AT POSITION", atSetpoint());
     }
 
     @Override
+    public void periodic() {
+        update();
+        changeVolts.resolveIfChange();
+        log();
+    }
+
+    @Override
     public void simulationPeriodic() {
+        m_armLigament.setAngle(Math.toDegrees(m_position));
         // Update the simulation with the motor voltage
         double appliedVolts = m_pivot.get() * RobotController.getBatteryVoltage();
         m_armSim.setInput(appliedVolts);

@@ -9,17 +9,19 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.utils.RunOnChange;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
     private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
     private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
 
-    private double m_voltage;
-    private boolean m_voltageChanged;
+    private RunOnChange<Double> changeVolts;
 
     public Climber() {
         configMotors();
+        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
     }
 
     private void configMotors() {
@@ -30,29 +32,28 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         m_rightClimbMotor.setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
     }
 
+    private void writeToMotors(double voltage) {
+        m_leftClimbMotor.setVoltage(voltage);
+    }
+
     private void setMotor(double voltage) {
-        m_voltageChanged = (m_voltage != voltage);
-        m_voltage = voltage;
+        changeVolts.accept(voltage);
     }
 
     public void setClimbUpVolts() {
-        m_logger.warn("Climber motor voltages for real bot not set, set voltages in Constants.ClimberConstants.climberUpVolts");
         setMotor(ClimberConstants.climberUpVolts);
     }
 
     public void stopMotor() {
-        m_leftClimbMotor.stopMotor();
+        changeVolts.instantRun(0.0);
     }
 
     @Override
     public void periodic() {
-        if (m_voltageChanged) {
-            m_leftClimbMotor.setVoltage(m_voltage);
-            m_voltageChanged = false;
-        }
+        changeVolts.resolve();
     }
 
-   @Override
+    @Override
     public void close() throws Exception {
         m_leftClimbMotor.close();
         m_rightClimbMotor.close();
