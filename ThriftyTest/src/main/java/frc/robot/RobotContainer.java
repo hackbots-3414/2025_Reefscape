@@ -570,6 +570,8 @@ public class RobotContainer {
         trigger.onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
+    // might want to use in the future, currently is unbound
+    @SuppressWarnings("unused")
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
             case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));
