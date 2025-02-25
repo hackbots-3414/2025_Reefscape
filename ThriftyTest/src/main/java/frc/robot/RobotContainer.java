@@ -59,6 +59,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.utils.AutonomousUtil;
 import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
@@ -498,18 +499,22 @@ public class RobotContainer {
     // ********** SUBSYSTEMS **********
 
     private Elevator m_elevator;
-    private Pivot m_algaePivot;
+    private Pivot m_pivot;
     private Climber m_climber;
     private AlgaeRollers m_algaeRollers;
     private CoralRollers m_coralRollers;
 
+    private Superstructure m_superstructure;
+
     private void configureSubsystems() {
         // m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
         m_elevator = new Elevator();
-        m_algaePivot = new Pivot();
+        m_pivot = new Pivot();
         m_climber = new Climber();
         m_algaeRollers = new AlgaeRollers();
         m_coralRollers = new CoralRollers();
+
+        m_superstructure = new Superstructure(m_elevator, m_pivot);
     }
 
     // ** BUTTON BOARD HELPERS **
@@ -631,11 +636,11 @@ public class RobotContainer {
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
-        return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
+        return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_pivot, intakeLocation);
     }
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
-        return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_algaePivot, scoreLocation);
+        return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_pivot, scoreLocation);
     }
 
     public enum AlgaeLocationPresets {
@@ -644,6 +649,6 @@ public class RobotContainer {
 
     public void resetReferences() {
         m_elevator.setPosition(m_elevator.getPosition());
-        m_algaePivot.setStow();
+        m_pivot.setStow();
     }
 }
