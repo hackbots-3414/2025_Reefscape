@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -52,9 +51,8 @@ import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ManualClimberCommand;
-import frc.robot.commands.ManualElevatorCommand;
-import frc.robot.commands.ManualPivotCommand;
 import frc.robot.commands.TeleopCommand;
+import frc.robot.commands.TestingCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
@@ -93,7 +91,10 @@ public class RobotContainer {
             new Pose2d(8.0, 4.0, new Rotation2d(0)),
             m_drivetrain
         );
-        SmartDashboard.putData("Testing Command", goToOrigin);
+        SmartDashboard.putData("Drive To Center Command", goToOrigin);
+
+        Command testCommand = new TestingCommand(m_drivetrain);
+        SmartDashboard.putData("Testing Command", testCommand);
 
     }
 

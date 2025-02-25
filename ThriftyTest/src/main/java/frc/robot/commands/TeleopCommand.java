@@ -6,7 +6,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -30,10 +29,6 @@ public class TeleopCommand extends Command {
     private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
             .withDeadband(maxTranslationalVelocity * DragonReins.deadband).withRotationalDeadband(maxRotationalVelocity * DragonReins.deadband) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
-
-    private double xVelo = 0.0;
-    private double yVelo = 0.0;
-    private double rotVelo = 0.0;
 
     public TeleopCommand(CommandSwerveDrivetrain drivetrain, Supplier<Double> xSupplier, Supplier<Double> ySupplier,
             Supplier<Double> rotSupplier, Supplier<Boolean> useOpenLoop) {

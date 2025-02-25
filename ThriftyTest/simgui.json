@@ -22,6 +22,7 @@
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/April Tag Debug Field": "Field2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Height to Score #0": "String Chooser",
@@ -44,6 +45,7 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
+      "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/runme hehe": "Command"
     },
@@ -138,62 +140,7 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Auto Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #0": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #1": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #2": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #3": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #4": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #0": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #1": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #2": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #3": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #4": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/SendableChooser[0]": {
+      "/SmartDashboard/Drive To Center Command": {
         "window": {
           "visible": true
         }
@@ -481,6 +428,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Testing Command": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -493,9 +445,6 @@
         "open": true
       },
       "SmartDashboard": {
-        "Testing Command": {
-          "open": true
-        },
         "open": true
       }
     }
