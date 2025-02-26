@@ -404,8 +404,6 @@ public class RobotContainer {
 
     // ********** AUTONOMOUS **********
 
-    // private final SendableChooser<Command> autoChooser;
-
     private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
     private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
@@ -493,6 +491,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
         NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
         NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+        NamedCommands.registerCommand("Intake", coralIntakeCommand());
     }
 
     private void configureVision() {
