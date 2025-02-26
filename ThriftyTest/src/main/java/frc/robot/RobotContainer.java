@@ -86,12 +86,6 @@ public class RobotContainer {
     }
 
     private void configureTesting() {
-        Command goToOrigin = new DriveToPointCommand(
-            new Pose2d(8.0, 4.0, new Rotation2d(0)),
-            m_drivetrain
-        );
-        SmartDashboard.putData("Drive To Center Command", goToOrigin);
-
         SmartDashboard.putData("Single Tag", new InstantCommand(RobotObserver::setSingleTag));
         SmartDashboard.putData("Multi Tag", new InstantCommand(RobotObserver::setMultiTag));
     }
