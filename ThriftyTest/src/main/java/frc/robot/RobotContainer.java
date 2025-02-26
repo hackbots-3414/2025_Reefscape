@@ -52,7 +52,6 @@ import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.TeleopCommand;
-import frc.robot.commands.TestingCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
@@ -93,9 +92,8 @@ public class RobotContainer {
         );
         SmartDashboard.putData("Drive To Center Command", goToOrigin);
 
-        Command testCommand = new TestingCommand(m_drivetrain);
-        SmartDashboard.putData("Testing Command", testCommand);
-
+        SmartDashboard.putData("Single Tag", new InstantCommand(RobotObserver::setSingleTag));
+        SmartDashboard.putData("Multi Tag", new InstantCommand(RobotObserver::setMultiTag));
     }
 
     private void addBoundsToField() {

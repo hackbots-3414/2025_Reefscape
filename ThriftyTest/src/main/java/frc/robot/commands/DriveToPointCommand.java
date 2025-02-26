@@ -77,10 +77,11 @@ public class DriveToPointCommand extends Command {
         double errY = yPIDController.getError();
         double err = Math.hypot(errX, errY);
 
-        double errRotation = m_drivetrain.getRotation3d()
-            .toRotation2d()
+        double errRotation = Math.abs(m_drivetrain.getPose()
+            .getRotation()
             .minus(m_targetRotation)
-            .getRadians();
+            .getRadians()
+        );
 
         return err < AutonConstants.translationTolerance && errRotation < AutonConstants.rotationTolerance;
     }

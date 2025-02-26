@@ -34,6 +34,7 @@
       "/SmartDashboard/Module 1": "Mechanism2d",
       "/SmartDashboard/Module 2": "Mechanism2d",
       "/SmartDashboard/Module 3": "Mechanism2d",
+      "/SmartDashboard/Multi Tag": "Command",
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
       "/SmartDashboard/Place to Score #0": "String Chooser",
       "/SmartDashboard/Place to Score #1": "String Chooser",
@@ -43,6 +44,7 @@
       "/SmartDashboard/Raise Elevator": "Command",
       "/SmartDashboard/Raise Pivot": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Single Tag": "Command",
       "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Testing Command": "Command",
@@ -141,6 +143,16 @@
         }
       },
       "/SmartDashboard/Drive To Center Command": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Multi Tag": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Single Tag": {
         "window": {
           "visible": true
         }
@@ -425,11 +437,6 @@
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Testing Command": {
         "window": {
           "visible": true
         }
