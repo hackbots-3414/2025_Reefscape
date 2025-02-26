@@ -58,7 +58,7 @@ public class LedSubsystem extends SubsystemBase {
 
   private static enum LED_MODE {
     CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
-    BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD ,  DEFAULT_ENDGAME;
+    BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME;
   };
 
   private static enum LED_COLOR {
@@ -78,6 +78,7 @@ public class LedSubsystem extends SubsystemBase {
 
   CANdle ledcontroller = new CANdle(LEDConstants.candleCanid);
   CANdle ledcontroller2 = new CANdle(LEDConstants.candle2Canid);
+
   // private int currentMode = 0;
   public LedSubsystem(Coral coral) { // If needed Add AlgaeRollers
     this.coral = coral;
@@ -112,6 +113,7 @@ public class LedSubsystem extends SubsystemBase {
 
     // coralOnBoardTest = coral.holdingPiece(); // Maybe need to add more
     // algaeOnBoard = algae.hasObject();
+    // Set Climber Logic
 
     matchTime = DriverStation.getMatchTime();
     inAuton = DriverStation.isAutonomousEnabled();
@@ -131,15 +133,15 @@ public class LedSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Match Time", matchTime);
     // SmartDashboard.putBoolean("badController", badController());
 
-    if (badController()) {
-    if (elevatorMode != LED_MODE.BADCONTROLLER) {
-    elevatorMode = LED_MODE.BADCONTROLLER;
-    setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE , ledcontroller);
-    setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE , ledcontroller2);
-    
-    }
-    } else
-    if (inTeleop || inAuton) {
+    // if (badController()) {
+    //   if (elevatorMode != LED_MODE.BADCONTROLLER) {
+    //     elevatorMode = LED_MODE.BADCONTROLLER;
+    //     setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE, ledcontroller);
+    //     setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE, ledcontroller2);
+
+    //   }
+    // } else
+     if (inTeleop || inAuton) {
       if (!initialClearRan) {
         setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR, ledcontroller);
         setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR, ledcontroller2);
@@ -182,10 +184,7 @@ public class LedSubsystem extends SubsystemBase {
             funnelMode = LED_MODE.CORAL_ON_BOARD;
             setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
             setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
-
-
           }
-
         }
         // Just In Case we need algaeOnBoard (Not Necessary)
         // else if (algaeOnBoard) {
@@ -194,12 +193,13 @@ public class LedSubsystem extends SubsystemBase {
         // setColor(LED_COLOR.GREEN,LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
         // }
         // }
-        else if (funnelMode != LED_MODE.DEFAULT_ENDGAME && matchTime < LEDConstants.endgameWarning) {
-          funnelMode = LED_MODE.DEFAULT_ENDGAME;
+        else if (matchTime < LEDConstants.endgameWarning)  {
+          if (funnelMode != LED_MODE.DEFAULT_ENDGAME) {
+            funnelMode = LED_MODE.DEFAULT_ENDGAME;
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
-          
-         } else if (elevatorMode != LED_MODE.DEFAULT) {
+          }
+        } else if (elevatorMode != LED_MODE.DEFAULT) {
           elevatorMode = LED_MODE.DEFAULT;
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
@@ -214,6 +214,8 @@ public class LedSubsystem extends SubsystemBase {
   private void defaultColors(CANdle ledcontroller) {
     ledcontroller.clearAnimation(0);
     ledcontroller.clearAnimation(1);
+    ledcontroller2.clearAnimation(0);
+    ledcontroller2 .clearAnimation(1);
     setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller);
 
     ledcontroller.animate(
@@ -229,12 +231,13 @@ public class LedSubsystem extends SubsystemBase {
     }
 
     String joystick1Name = DriverStation.getJoystickName(1).toLowerCase();
-
+    
     return !DriverStation.getJoystickName(0).contains("InterLinkDX") &&
-
-         !((DriverConstants.operatorController == JoystickChoice.XBOX &&
-            (joystick1Name.contains("xbox")) ||
-            (joystick1Name.contains("gamepad"))));
+    !((DriverConstants.operatorController == JoystickChoice.XBOX &&
+        (joystick1Name.contains("xbox")) ||
+        (joystick1Name.contains("gamepad"))) ||
+        (DriverConstants.operatorController == JoystickChoice.PS5 &&
+            joystick1Name.contains("dualsense")));
   }
 
   public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern, CANdle ledcontroller) {
