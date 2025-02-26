@@ -20,7 +20,6 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
-      "/SmartDashboard/April Tag Debug Field": "Field2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
@@ -139,7 +138,7 @@
         },
         "width": 17.54825210571289,
         "window": {
-          "visible": true
+          "visible": false
         }
       },
       "/SmartDashboard/Drive To Center Command": {
