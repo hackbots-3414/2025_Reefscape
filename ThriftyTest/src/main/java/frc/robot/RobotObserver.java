@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -89,4 +90,25 @@ public class RobotObserver {
     public static void setMultiTagRunnable(Runnable multiTag) {
         getInstance().m_setMultiTag = multiTag;
     }
+
+    private BooleanSupplier m_pieceHeldSupplier;
+
+    public static void setPieceHeldSupplier(BooleanSupplier pieceHeldSupplier) {
+        getInstance().m_pieceHeldSupplier = pieceHeldSupplier;
+    }
+
+    public static boolean getPieceHeld() {
+        return getInstance().m_pieceHeldSupplier.getAsBoolean();
+    }
+
+    private boolean m_climbed = false;
+
+    public static void setClimbed(boolean climbed) {
+        getInstance().m_climbed = climbed;
+    }
+
+    public static boolean getClimbed() {
+        return getInstance().m_climbed;
+    }
+
 }

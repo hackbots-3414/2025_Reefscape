@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 
 public class CoralRollers extends SubsystemBase {
     @SuppressWarnings("unused")
@@ -39,6 +40,7 @@ public class CoralRollers extends SubsystemBase {
     public CoralRollers() {
         configMotors();
         configDashboard();
+        RobotObserver.setPieceHeldSupplier(this::holdingPiece);
     }
 
     private void configMotors() {

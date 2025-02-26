@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.Climber;
 
 public class ManualClimberCommand extends Command {
@@ -19,5 +20,6 @@ public class ManualClimberCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         climber.stopMotor();
+        RobotObserver.setClimbed(true);
     }
 }
