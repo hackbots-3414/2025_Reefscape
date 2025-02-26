@@ -20,8 +20,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
-      "/SmartDashboard/April Tag Debug Field": "Field2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Height to Score #0": "String Chooser",
@@ -33,6 +33,7 @@
       "/SmartDashboard/Module 1": "Mechanism2d",
       "/SmartDashboard/Module 2": "Mechanism2d",
       "/SmartDashboard/Module 3": "Mechanism2d",
+      "/SmartDashboard/Multi Tag": "Command",
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
       "/SmartDashboard/Place to Score #0": "String Chooser",
       "/SmartDashboard/Place to Score #1": "String Chooser",
@@ -42,8 +43,10 @@
       "/SmartDashboard/Raise Elevator": "Command",
       "/SmartDashboard/Raise Pivot": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Single Tag": "Command",
       "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
+      "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/runme hehe": "Command"
     },
@@ -135,65 +138,20 @@
         },
         "width": 17.54825210571289,
         "window": {
-          "visible": true
+          "visible": false
         }
       },
-      "/SmartDashboard/Auto Chooser": {
+      "/SmartDashboard/Drive To Center Command": {
         "window": {
           "visible": true
         }
       },
-      "/SmartDashboard/Height to Score #0": {
+      "/SmartDashboard/Multi Tag": {
         "window": {
           "visible": true
         }
       },
-      "/SmartDashboard/Height to Score #1": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #2": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #3": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Height to Score #4": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #0": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #1": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #2": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #3": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Place to Score #4": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/SendableChooser[0]": {
+      "/SmartDashboard/Single Tag": {
         "window": {
           "visible": true
         }

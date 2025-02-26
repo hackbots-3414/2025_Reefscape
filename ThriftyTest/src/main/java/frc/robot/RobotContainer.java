@@ -82,8 +82,12 @@ public class RobotContainer {
         configureVision();
         addBoundsToField();
         // configureSysId();
-        Command driveToCenter = new DriveToPointCommand(new Pose2d(8.0, 4.0, new Rotation2d()), m_drivetrain);
-        SmartDashboard.putData("runme hehe", driveToCenter);
+        configureTesting();
+    }
+
+    private void configureTesting() {
+        SmartDashboard.putData("Single Tag", new InstantCommand(RobotObserver::setSingleTag));
+        SmartDashboard.putData("Multi Tag", new InstantCommand(RobotObserver::setMultiTag));
     }
 
     private void addBoundsToField() {

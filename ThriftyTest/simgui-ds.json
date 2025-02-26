@@ -18,24 +18,25 @@
     {
       "axisConfig": [
         {
+          "decKey": 263,
+          "decayRate": 0.8999999761581421,
+          "incKey": 262,
+          "keyRate": 0.20000000298023224
+        },
+        {
           "decKey": 264,
           "decayRate": 0.8999999761581421,
           "incKey": 265,
           "keyRate": 0.20000000298023224
         },
         {
-          "decKey": 262,
-          "decayRate": 0.8999999761581421,
-          "incKey": 263,
-          "keyRate": 0.20000000298023224
-        },
-        {
           "decayRate": 0.8999999761581421,
           "keyRate": 0.20000000298023224
         },
         {
-          "decKey": 93,
-          "incKey": 91
+          "decKey": 91,
+          "decayRate": 1.0,
+          "incKey": 93
         }
       ],
       "axisCount": 4,
