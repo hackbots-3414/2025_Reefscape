@@ -44,12 +44,14 @@ public class Pivot extends SubsystemBase {
     private MechanismLigament2d m_armLigament;
 
     private RunOnChange<Double> changeVolts;
+    private RunOnChange<Double> changeSetpoint;
 
     public Pivot() {
         configSim();
         configEncoder();
         configMotor();
-        changeVolts = new RunOnChange<Double>(this::writeToMotors, 0.0);
+        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
+        changeSetpoint = new RunOnChange<>(this::writePositionToMotors, PivotConstants.stow);
     }
 
     private void configEncoder() {
@@ -81,15 +83,18 @@ public class Pivot extends SubsystemBase {
         SmartDashboard.putData("Pivot Arm Visualization", m_mechVisual);
     }
 
-    public void writeToMotors(double voltage) {
+    private void writeToMotors(double voltage) {
         m_pivot.setVoltage(voltage);
     }
 
     MotionMagicVoltage control = new MotionMagicVoltage(0);
 
+    private void writePositionToMotors(double setpoint) {
+        m_pivot.setControl(control.withPosition(setpoint));
+    }
+
     public void setPosition(double goal) {
-        m_pivot.setControl(control.withPosition(goal));
-        m_reference = goal;
+        changeSetpoint.accept(goal);
     }
 
     public void setVoltage(double voltage) {
@@ -150,6 +155,9 @@ public class Pivot extends SubsystemBase {
     private void update() {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
+
+        changeVolts.resolveIfChange();
+        changeSetpoint.resolveIfChange();
     }
 
     private void log() {
@@ -161,7 +169,6 @@ public class Pivot extends SubsystemBase {
     @Override
     public void periodic() {
         update();
-        changeVolts.resolveIfChange();
         log();
     }
 

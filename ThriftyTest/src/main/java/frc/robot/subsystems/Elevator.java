@@ -195,6 +195,9 @@ public class Elevator extends SubsystemBase {
         m_velocity = getVelocityUncached();
 
         setBrake.run(DriverStation.isEnabled());
+
+        changeVolts.resolveIfChange();
+        changeSetpoint.resolveIfChange();
     }
 
     private void log() {
@@ -204,8 +207,6 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         update();
-        changeVolts.resolveIfChange();
-        changeSetpoint.resolveIfChange();
         log();
     }
 
