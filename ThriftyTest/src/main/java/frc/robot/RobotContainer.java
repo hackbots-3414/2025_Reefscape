@@ -49,6 +49,7 @@ import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -81,6 +82,12 @@ public class RobotContainer {
         configureVision();
         addBoundsToField();
         // configureSysId();
+        configureTesting();
+    }
+
+    private void configureTesting() {
+        SmartDashboard.putData("Single Tag", new InstantCommand(RobotObserver::setSingleTag));
+        SmartDashboard.putData("Multi Tag", new InstantCommand(RobotObserver::setMultiTag));
     }
 
     private void addBoundsToField() {
@@ -135,8 +142,7 @@ public class RobotContainer {
         Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
         Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
         Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
-        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop)
-            .getAsBoolean();
+        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop).getAsBoolean();
 
         m_drivetrain.setDefaultCommand(
             new TeleopCommand(m_drivetrain, xSup, ySup, rSup, openLoopSup)
@@ -392,8 +398,6 @@ public class RobotContainer {
 
     // ********** AUTONOMOUS **********
 
-    // private final SendableChooser<Command> autoChooser;
-
     private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
     private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
@@ -481,6 +485,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
         NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
         NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+        NamedCommands.registerCommand("Intake", coralIntakeCommand());
     }
 
     private void configureVision() {
@@ -568,6 +573,8 @@ public class RobotContainer {
         trigger.onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
+    // might want to use in the future, currently is unbound
+    @SuppressWarnings("unused")
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
             case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));

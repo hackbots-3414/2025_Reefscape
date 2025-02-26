@@ -38,7 +38,13 @@ public class CoralScoreCommand extends Command {
   @Override
   public void execute() {
     if(elevator.atSetpoint()) {
-      coral.setEject();
+      switch(level) {
+        case 1 -> coral.setL1Eject();
+        case 2 -> coral.setL2Eject();
+        case 3 -> coral.setL3Eject();
+        case 4 -> coral.setL4Eject();
+        default -> m_timeRemaining = 0;
+      }
     }
     if (!coral.presentPiece()) m_timeRemaining --;
   }

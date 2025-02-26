@@ -117,7 +117,7 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(1.9, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -164,10 +164,12 @@ public class Constants {
 
             public static final boolean flipX = true;
             public static final boolean flipY = false;
-            public static final boolean flipRot = false;
+            public static final boolean flipRot = true;
 
             public static final int enableOpenLoop = 3;
             public static final int resetHeading = 1;
+
+            public static final double deadband = 0.05;
         }
 
         public static class BackupDriver {
@@ -355,8 +357,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final boolean useSuperAuton = true;
-        public static final int numWaypoints = 2;
+        public static final boolean useSuperAuton = false;
+        public static final int numWaypoints = 5;
 
         public static double translationTolerance = 0.02; // m
         public static double rotationTolerance = Units.degreesToRadians(2);
@@ -563,6 +565,11 @@ public class Constants {
         public static final double intakeVoltage = 5;
         public static final double ejectVoltage = 6;
 
+        public static final double l1EjectVoltage = 3;
+        public static final double l2EjectVoltage = 4;
+        public static final double l3EjectVoltage = 6;
+        public static final double l4EjectVoltage = 6;
+
         public static final double spitOutVoltage = -8;
 
         public static final double l1LeftEjectVoltage = 8;
@@ -656,7 +663,7 @@ public class Constants {
         D(new Pose2d(3.951, 2.816, Rotation2d.fromDegrees(60))), // GOOD
 
         E(new Pose2d(4.998, 2.816, Rotation2d.fromDegrees(120))), // GOOD
-        F(new Pose2d(5.283, 2.981, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.283 + Math.cos(120)*(-0.02), 2.981 + Math.sin(120)*(-0.02), Rotation2d.fromDegrees(120))), // GOOD
 
         G(new Pose2d(5.791, 3.861, Rotation2d.fromDegrees(180))), // GOOD
         H(new Pose2d(5.791, 4.191, Rotation2d.fromDegrees(180))), // GOOD
