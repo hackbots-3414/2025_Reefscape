@@ -194,7 +194,7 @@ public class LedSubsystem extends SubsystemBase {
         // setColor(LED_COLOR.GREEN,LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
         // }
         // }
-        else if (funnelMode != LED_MODE.DEFAULT_ENDGAME && matchTime > LEDConstants.endgameWarning) {
+        else if (funnelMode != LED_MODE.DEFAULT_ENDGAME && matchTime < LEDConstants.endgameWarning) {
           funnelMode = LED_MODE.DEFAULT_ENDGAME;
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
