@@ -483,6 +483,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
         NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
         NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+        NamedCommands.registerCommand("Intake", coralIntakeCommand());
     }
 
     private void configureVision() {

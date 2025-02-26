@@ -347,7 +347,7 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final boolean useSuperAuton = true;
+        public static final boolean useSuperAuton = false;
         public static final int numWaypoints = 2;
 
         public static double translationTolerance = 0.02; // m
