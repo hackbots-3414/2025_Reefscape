@@ -4,7 +4,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.AlgaeRollers.AlgaeRollerSpeeds;
 import frc.robot.subsystems.CoralRollers.CoralRollerSpeeds;
-import frc.robot.utils.RunOnChange;
+import frc.robot.subsystems.Elevator.ElevatorSetpoints;
+import frc.robot.subsystems.Pivot.PivotSetpoints;
 
 public class Superstructure extends SubsystemBase {
     public enum Goal {STOW, INTAKE, CORAL_L1, CORAL_L2, CORAL_L3, CORAL_L4, ALGAE_L2, ALGAE_L3, PROCESSOR, NET, CLIMB, GROUND_PICKUP}
@@ -14,9 +15,6 @@ public class Superstructure extends SubsystemBase {
     private final CoralRollers coralRollers;
     private final AlgaeRollers algaeRollers;
 
-    private final RunOnChange<CoralRollerSpeeds> runCoral;
-    private final RunOnChange<AlgaeRollerSpeeds> runAlgae;
-
     private final Goal currState = Goal.STOW;
 
     public Superstructure(Elevator elevator, Pivot pivot, CoralRollers coralRollers, AlgaeRollers algaeRollers) {
@@ -24,84 +22,81 @@ public class Superstructure extends SubsystemBase {
         this.pivot = pivot;
         this.coralRollers = coralRollers;
         this.algaeRollers = algaeRollers;
-
-        this.runCoral = new RunOnChange<CoralRollers.CoralRollerSpeeds>(this.coralRollers::set, CoralRollerSpeeds.STOP);
-        this.runAlgae = new RunOnChange<AlgaeRollers.AlgaeRollerSpeeds>(this.algaeRollers::set, AlgaeRollerSpeeds.STOP);
     }
 
     public void setState(Goal state) {
         switch (state) {
             case STOW -> {
-                elevator.setStow();
-                pivot.setStow();
-                runCoral.accept(CoralRollerSpeeds.STOP);
-                runAlgae.accept(AlgaeRollerSpeeds.STOP);
+                elevator.stow();;
+                pivot.stow();
+                coralRollers.stop();
+                algaeRollers.smartStop();
             }
             case INTAKE -> {
-                elevator.setStow();
-                pivot.setStow();
-                runCoral.accept(CoralRollerSpeeds.INTAKE);
-                runAlgae.accept(AlgaeRollerSpeeds.STOP);
+                elevator.stow();
+                pivot.stow();
+                coralRollers.set(CoralRollerSpeeds.INTAKE);
+                algaeRollers.set(AlgaeRollerSpeeds.STOP);
             }
             case CORAL_L1 -> {
-                elevator.setL1();
-                pivot.setStow();
-                runCoral.accept(CoralRollerSpeeds.L1);
-                runAlgae.accept(AlgaeRollerSpeeds.STOP);
+                elevator.setLevel(1);
+                pivot.stow();
+                coralRollers.set(CoralRollerSpeeds.L1);
+                algaeRollers.set(AlgaeRollerSpeeds.STOP);
             }
             case CORAL_L2 -> {
-                elevator.setL2();
-                pivot.setStow();
-                runCoral.accept(CoralRollerSpeeds.L2);
-                runAlgae.accept(AlgaeRollerSpeeds.STOP);
+                elevator.setLevel(2);
+                pivot.stow();
+                coralRollers.set(CoralRollerSpeeds.L2);
+                algaeRollers.set(AlgaeRollerSpeeds.STOP);
             }
             case CORAL_L3 -> {
-                elevator.setL3();
-                pivot.setStow();
-                runCoral.accept(CoralRollerSpeeds.L3);
-                runAlgae.accept(AlgaeRollerSpeeds.STOP);
+                elevator.setLevel(3);
+                pivot.stow();
+                coralRollers.set(CoralRollerSpeeds.L3);
+                algaeRollers.set(AlgaeRollerSpeeds.STOP);
             }
             case CORAL_L4 -> {
-                elevator.setL4();
-                pivot.setStow();
-                runCoral.accept(CoralRollerSpeeds.L4);
-                runAlgae.accept(AlgaeRollerSpeeds.STOP);
+                elevator.setLevel(4);
+                pivot.stow();
+                coralRollers.set(CoralRollerSpeeds.L4);
+                algaeRollers.set(AlgaeRollerSpeeds.STOP);
             }
             case ALGAE_L2 -> {
-                elevator.setReefLower();
-                pivot.setReefPickup();
-                runCoral.accept(CoralRollerSpeeds.STOP);
-                runAlgae.accept(AlgaeRollerSpeeds.INTAKE);
+                elevator.set(ElevatorSetpoints.ALGAE_L2);
+                pivot.set(PivotSetpoints.REEF_PICKUP);
+                coralRollers.set(CoralRollerSpeeds.STOP);
+                algaeRollers.set(AlgaeRollerSpeeds.INTAKE);
             }
             case ALGAE_L3 -> {
-                elevator.setReefUpper();
-                pivot.setReefPickup();
-                runCoral.accept(CoralRollerSpeeds.STOP);
-                runAlgae.accept(AlgaeRollerSpeeds.INTAKE);
+                elevator.set(ElevatorSetpoints.ALGAE_L3);
+                pivot.set(PivotSetpoints.REEF_PICKUP);
+                coralRollers.set(CoralRollerSpeeds.STOP);
+                algaeRollers.set(AlgaeRollerSpeeds.INTAKE);
             }
             case GROUND_PICKUP -> {
-                elevator.setGroundIntake();
-                pivot.setGroundPickup();
-                runCoral.accept(CoralRollerSpeeds.STOP);
-                runAlgae.accept(AlgaeRollerSpeeds.INTAKE);
+                elevator.set(ElevatorSetpoints.GROUND);
+                pivot.set(PivotSetpoints.GROUND);
+                coralRollers.set(CoralRollerSpeeds.STOP);
+                algaeRollers.set(AlgaeRollerSpeeds.INTAKE);
             }
             case PROCESSOR -> {
-                elevator.setStow();
-                pivot.setProcessor();
-                runCoral.accept(CoralRollerSpeeds.STOP);
-                runAlgae.accept(AlgaeRollerSpeeds.EJECT);
+                elevator.stow();
+                pivot.set(PivotSetpoints.PROCESSOR);
+                coralRollers.set(CoralRollerSpeeds.STOP);
+                algaeRollers.set(AlgaeRollerSpeeds.EJECT);
             }
             case NET -> {
-                elevator.setNet();
-                pivot.setNet();
-                runCoral.accept(CoralRollerSpeeds.STOP);
-                runAlgae.accept(AlgaeRollerSpeeds.EJECT);
+                elevator.set(ElevatorSetpoints.NET);
+                pivot.set(PivotSetpoints.NET);
+                coralRollers.set(CoralRollerSpeeds.STOP);
+                algaeRollers.set(AlgaeRollerSpeeds.EJECT);
             }
             case CLIMB -> {
-                elevator.setStow();
-                pivot.setStow();
-                runCoral.accept(CoralRollerSpeeds.STOP);
-                runAlgae.accept(AlgaeRollerSpeeds.STOP);
+                elevator.stow();
+                pivot.stow();
+                coralRollers.set(CoralRollerSpeeds.STOP);
+                algaeRollers.set(AlgaeRollerSpeeds.STOP);
             }
         }
     }

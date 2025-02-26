@@ -28,10 +28,7 @@ public class CoralScoreCommand extends Command {
         return;
     }
     switch(level) {
-      case 1 -> elevator.setL1();
-      case 2 -> elevator.setL2();
-      case 3 -> elevator.setL3();
-      case 4 -> elevator.setL4();
+      case 1, 2, 3, 4 -> elevator.setLevel(level);
       default -> m_timeRemaining = 0;
     }
   }
@@ -52,7 +49,7 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    elevator.setStow();
+    elevator.stow();
     coral.stop();
   }
 

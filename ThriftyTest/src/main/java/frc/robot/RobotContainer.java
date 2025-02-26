@@ -323,8 +323,8 @@ public class RobotContainer {
             bindManualCoralIntakeCommand(controller.button(ButtonBoard.leftIntake).and(manualModeOn));
 
             bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoard.groundAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoard.lowAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoard.highAlgae).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.ALGAE_L2, controller.button(ButtonBoard.lowAlgae).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.ALGAE_L3, controller.button(ButtonBoard.highAlgae).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoard.processor).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoard.net).and(manualModeOn));
         
@@ -359,8 +359,8 @@ public class RobotContainer {
             bindAutoCoralIntakeCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightIntake).and(manualModeOff));
 
             bindAutoAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOff));
+            bindAutoAlgaeCommand(AlgaeLocationPresets.ALGAE_L2, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOff));
+            bindAutoAlgaeCommand(AlgaeLocationPresets.ALGAE_L3, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOff));
             bindAutoAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOff));
             bindAutoAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOff));
 
@@ -379,8 +379,8 @@ public class RobotContainer {
             // bindManualPivotCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
 
             bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.ALGAE_L2, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.ALGAE_L3, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
 
@@ -481,8 +481,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("L2", coralScoreCommand(2));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));
         NamedCommands.registerCommand("L4", coralScoreCommand(4));
-        NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
-        NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
+        NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2));
+        NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3));
         NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
     }
 
@@ -550,21 +550,21 @@ public class RobotContainer {
 
         if (level == 5) {
             switch (location) {
-                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
+                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
+                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
+                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
+                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
+                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
+                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
             }
         } else if (level == 6) {
             switch (location) {
-                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
+                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
+                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
+                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
+                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
+                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
+                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
             }
         } else {
             trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, () -> coralScoreCommand(level))));
@@ -591,8 +591,8 @@ public class RobotContainer {
     private void bindAutoAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
             case GROUND -> trigger.whileTrue(algaeIntakeCommand(AlgaeLocationPresets.GROUND));
-            case REEFLOWER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER), scoringLocationsMiddleList)));
-            case REEFUPPER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationsMiddleList)));
+            case ALGAE_L2 -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2), scoringLocationsMiddleList)));
+            case ALGAE_L3 -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3), scoringLocationsMiddleList)));
             case NET -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.NET.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
             case PROCESSOR -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
         }
@@ -600,7 +600,7 @@ public class RobotContainer {
 
     private void bindManualAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
-            case GROUND, REEFLOWER, REEFUPPER -> trigger.whileTrue(algaeIntakeCommand(type));
+            case GROUND, ALGAE_L2, ALGAE_L3 -> trigger.whileTrue(algaeIntakeCommand(type));
             case NET, PROCESSOR -> trigger.whileTrue(algaeScoreCommand(type));
         }
     }
@@ -644,11 +644,11 @@ public class RobotContainer {
     }
 
     public enum AlgaeLocationPresets {
-        REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET;
+        ALGAE_L2, ALGAE_L3, PROCESSOR, GROUND, NET;
     }
 
     public void resetReferences() {
         m_elevator.setPosition(m_elevator.getPosition());
-        m_pivot.setStow();
+        m_pivot.stow();
     }
 }

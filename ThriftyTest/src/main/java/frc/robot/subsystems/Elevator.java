@@ -33,6 +33,8 @@ import frc.robot.Constants.SimConstants;
 import frc.robot.utils.RunOnChange;
 
 public class Elevator extends SubsystemBase {
+    public enum ElevatorSetpoints {GROUND, STOW, PROCESSOR, L1, L2, ALGAE_L2, L3, ALGAE_L3, L4, NET}
+
     // we want to have a logger, even if we're not using it... yet
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
@@ -55,13 +57,15 @@ public class Elevator extends SubsystemBase {
     private MechanismLigament2d m_elevatorArm;
 
     private RunOnChange<Double> changeVolts;
+    private RunOnChange<Double> changeSetpoint;
     private RunOnChange<Boolean> setBrake;
 
     public Elevator() {
         configEncoder();
         configMotor();
         configSim();
-        changeVolts = new RunOnChange<Double>(this::writeToMotors, 0.0);
+        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
+        changeSetpoint = new RunOnChange<>(this::writePositionToMotors, ElevatorConstants.stow);
         setBrake = new RunOnChange<>(this::setBrakeMode, true);
     }
 
@@ -103,59 +107,41 @@ public class Elevator extends SubsystemBase {
         m_elevatorRight.setVoltage(voltage);
     }
 
+    private final MotionMagicVoltage control = new MotionMagicVoltage(0);
+
+    private void writePositionToMotors(double setpoint) {
+        m_elevatorRight.setControl(control.withPosition(setpoint));
+    }
+
     private void setBrakeMode(boolean isEnabled) {
         m_elevatorRight.getConfigurator().apply(CoralConstants.motorConfig.MotorOutput.withNeutralMode(isEnabled ? NeutralModeValue.Brake : NeutralModeValue.Coast));
     }
 
-    private final MotionMagicVoltage control = new MotionMagicVoltage(0);
-
     public void setPosition(double goal) {
-        m_elevatorRight.setControl(control.withPosition(goal));
-        m_reference = goal;
+        changeSetpoint.accept(goal);
     }
 
     public void setVoltage(double speed) {
         changeVolts.accept(speed);
     }
 
-    public void setGroundIntake() {
-        setPosition(ElevatorConstants.groundIntake);
+    public void set(ElevatorSetpoints setpoint) {
+        switch (setpoint) {
+            case GROUND -> setPosition(ElevatorConstants.groundIntake);
+            case STOW -> setPosition(ElevatorConstants.stow);
+            case PROCESSOR -> setPosition(ElevatorConstants.processor);
+            case L1 -> setPosition(ElevatorConstants.L1);
+            case L2 -> setPosition(ElevatorConstants.L2);
+            case ALGAE_L2 -> setPosition(ElevatorConstants.algaeL2);
+            case L3 -> setPosition(ElevatorConstants.L3);
+            case ALGAE_L3 -> setPosition(ElevatorConstants.algaeL3);
+            case L4 -> setPosition(ElevatorConstants.L4);
+            case NET-> setPosition(ElevatorConstants.net);
+        }
     }
 
-    public void setStow() {
+    public void stow() {
         setPosition(ElevatorConstants.stow);
-    }
-
-    public void setProcessor() {
-        setPosition(ElevatorConstants.processor);
-    }
-
-    public void setL1() {
-        setPosition(ElevatorConstants.L1);
-    }
-
-    public void setL2() {
-        setPosition(ElevatorConstants.L2);
-    }
-
-    public void setL3() {
-        setPosition(ElevatorConstants.L3);
-    }
-
-    public void setL4() {
-        setPosition(ElevatorConstants.L4);
-    }
-
-    public void setReefLower() {
-        setPosition(ElevatorConstants.reefLower);
-    }
-
-    public void setReefUpper() {
-        setPosition(ElevatorConstants.reefUpper);
-    }
-
-    public void setNet() {
-        setPosition(ElevatorConstants.net);
     }
 
     public void stop() {
@@ -164,12 +150,11 @@ public class Elevator extends SubsystemBase {
 
     public void setLevel(int level) {
         switch (level) {
-            case 1 -> setL1();
-            case 2 -> setL2();
-            case 3 -> setL3();
-            case 4 -> setL4();
-            case 0 -> setStow();
-            default -> setStow();
+            case 1 -> set(ElevatorSetpoints.L1);
+            case 2 -> set(ElevatorSetpoints.L2);
+            case 3 -> set(ElevatorSetpoints.L3);
+            case 4 -> set(ElevatorSetpoints.L4);
+            default -> set(ElevatorSetpoints.STOW);
         }
     }
 
@@ -220,6 +205,7 @@ public class Elevator extends SubsystemBase {
     public void periodic() {
         update();
         changeVolts.resolveIfChange();
+        changeSetpoint.resolveIfChange();
         log();
     }
 

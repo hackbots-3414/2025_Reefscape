@@ -27,7 +27,7 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void initialize() {
-    elevator.setStow();
+    elevator.stow();
   }
 
   @Override

@@ -6,6 +6,8 @@ import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Elevator.ElevatorSetpoints;
+import frc.robot.subsystems.Pivot.PivotSetpoints;
 
 public class AlgaeIntakeCommand extends Command {
   private final AlgaeRollers rollers;
@@ -28,15 +30,15 @@ public class AlgaeIntakeCommand extends Command {
         isDone = false;
         switch (location) {
             case GROUND -> {
-                elevator.setGroundIntake();
+                elevator.set(ElevatorSetpoints.GROUND);
             }
-            case REEFLOWER -> {
+            case ALGAE_L2 -> {
                 isDone = !CommandBounds.reefBounds.isActive();
-                elevator.setReefLower();
+                elevator.set(ElevatorSetpoints.ALGAE_L2);
             }
-            case REEFUPPER -> {
+            case ALGAE_L3 -> {
                 isDone = !CommandBounds.reefBounds.isActive();
-                elevator.setReefUpper();
+                elevator.set(ElevatorSetpoints.ALGAE_L3);
             }
             default -> isDone = true;
         }
@@ -46,16 +48,16 @@ public class AlgaeIntakeCommand extends Command {
     public void execute() {
         switch (location) {
             case GROUND -> {
-                if (elevator.atSetpoint()) pivot.setGroundPickup();
+                if (elevator.atSetpoint()) pivot.set(PivotSetpoints.GROUND);;
                 if (rollers.hasObject()) isDone = true; 
             }
-            case REEFLOWER, REEFUPPER -> {
+            case ALGAE_L2, ALGAE_L3 -> {
                 isDone = !CommandBounds.reefBounds.isActive();
                 if (elevator.atSetpoint()) {
                     if (rollers.hasObject()) {
-                        pivot.setReefExtract();
+                        pivot.set(PivotSetpoints.REEF_EXTRACT);
                     } else {
-                        pivot.setReefPickup();
+                        pivot.set(PivotSetpoints.REEF_PICKUP);
                     }
                 }
             }
@@ -65,8 +67,8 @@ public class AlgaeIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        elevator.setStow();
-        pivot.setStow();
+        elevator.stow();
+        pivot.stow();
         rollers.smartStop();
     }
 

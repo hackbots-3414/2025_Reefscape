@@ -24,7 +24,7 @@ public class CoralL1Command extends Command {
         m_timeRemaining = 0;
         return;
     }
-    elevator.setL1();
+    elevator.setLevel(1);
   }
 
   @Override

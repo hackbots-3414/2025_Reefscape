@@ -26,6 +26,8 @@ import frc.robot.Robot;
 import frc.robot.utils.RunOnChange;
 
 public class Pivot extends SubsystemBase {
+    public enum PivotSetpoints {GROUND, STOW, PROCESSOR, REEF_PICKUP, REEF_EXTRACT, NET}
+
     private final TalonFX m_pivot = new TalonFX(IDConstants.pivot);
     private final CANcoder m_cancoder = new CANcoder(IDConstants.pivotEncoder);
 
@@ -94,28 +96,19 @@ public class Pivot extends SubsystemBase {
         changeVolts.accept(voltage);
     }
 
-    public void setStow() {
+    public void set(PivotSetpoints setpoint) {
+        switch (setpoint) {
+            case GROUND -> setPosition(PivotConstants.groundPickup);
+            case STOW -> setPosition(PivotConstants.stow);
+            case PROCESSOR -> setPosition(PivotConstants.processor);
+            case REEF_PICKUP -> setPosition(PivotConstants.reefPickup);
+            case REEF_EXTRACT -> setPosition(PivotConstants.reefExtract);
+            case NET-> setPosition(PivotConstants.net);
+        }
+    }
+
+    public void stow() {
         setPosition(PivotConstants.stow);
-    }
-
-    public void setProcessor() {
-        setPosition(PivotConstants.processor);
-    }
-
-    public void setNet() {
-        setPosition(PivotConstants.net);
-    }
-
-    public void setGroundPickup() {
-        setPosition(PivotConstants.groundPickup);
-    }
-
-    public void setReefPickup() {
-        setPosition(PivotConstants.reefPickup);
-    }
-
-    public void setReefExtract() {
-        setPosition(PivotConstants.reefExtract);
     }
     
     public void stop() {

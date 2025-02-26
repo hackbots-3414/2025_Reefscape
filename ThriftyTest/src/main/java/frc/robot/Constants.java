@@ -414,8 +414,8 @@ public class Constants {
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
         public static final double L4 = Units.inchesToMeters(76.0) * metersToRotations;
         public static final double net = Units.inchesToMeters(79) * metersToRotations;
-        public static final double reefLower = 2;
-        public static final double reefUpper = 4.5;
+        public static final double algaeL2 = 2;
+        public static final double algaeL3 = 4.5;
 
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;

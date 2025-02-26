@@ -26,8 +26,8 @@ public class RunOnChange<T> {
      * @param newValue setpoint
      */
     public void accept(T newValue) {
+        changed = currValue != newValue;
         currValue = newValue;
-        changed = true;
     }
 
     /**

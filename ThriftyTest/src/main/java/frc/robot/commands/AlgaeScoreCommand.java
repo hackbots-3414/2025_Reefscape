@@ -9,6 +9,8 @@ import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Elevator.ElevatorSetpoints;
+import frc.robot.subsystems.Pivot.PivotSetpoints;
 
 public class AlgaeScoreCommand extends Command {
   private final AlgaeRollers rollers;
@@ -32,13 +34,13 @@ public class AlgaeScoreCommand extends Command {
     switch (location) {
       case NET -> {
         isDone = !CommandBounds.netBounds.isActive();
-        elevator.setNet();
-        pivot.setNet();
+        elevator.set(ElevatorSetpoints.NET);
+        pivot.set(PivotSetpoints.NET);
       }
       case PROCESSOR -> {
         isDone = !CommandBounds.processorBounds.isActive();
-        elevator.setProcessor();
-        pivot.setProcessor();
+        elevator.set(ElevatorSetpoints.PROCESSOR);
+        pivot.set(PivotSetpoints.PROCESSOR);
       }
       default -> isDone = true;
     }
@@ -55,8 +57,8 @@ public class AlgaeScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    elevator.setStow();
-    pivot.setStow();
+    elevator.stow();
+    pivot.stow();
     rollers.smartStop();
   }
 
