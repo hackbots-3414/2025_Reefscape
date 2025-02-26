@@ -394,8 +394,6 @@ public class RobotContainer {
 
     // ********** AUTONOMOUS **********
 
-    // private final SendableChooser<Command> autoChooser;
-
     private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
     private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
     private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();

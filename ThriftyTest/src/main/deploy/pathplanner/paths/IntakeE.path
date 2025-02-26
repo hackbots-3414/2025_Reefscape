@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 3.951,
+        "x": 4.998,
         "y": 2.816
       },
       "prevControl": {
-        "x": 3.5486713194104613,
-        "y": 2.1191462838767685
+        "x": 5.601897321428571,
+        "y": 1.419921875
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "D"
+      "linkedName": "E"
     }
   ],
   "rotationTargets": [],
@@ -56,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "IntakeX",

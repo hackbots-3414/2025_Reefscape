@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
-import frc.robot.commands.DriveToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
@@ -67,13 +66,13 @@ public class AutonomousUtil {
 
     public static Command generateRoutineWithCommands(CommandSwerveDrivetrain drivetrain, Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
-        for (int i = 0; i < poses.length; i++) {
+        for (int i = 0; i < scoringCommands.length; i++) {
+            if (i != 0) {
+                routine.addCommands(pathFinder(desiredPickupLocation));
+                routine.addCommands(intakeCommand.get());
+            }
             routine.addCommands(pathFinder(poses[i]));
-            routine.addCommands(new DriveToPointCommand(FieldUtils.flipPose(poses[i]), drivetrain));
             routine.addCommands(scoringCommands[i]);
-            routine.addCommands(pathFinder(desiredPickupLocation));
-            routine.addCommands(new DriveToPointCommand(FieldUtils.flipPose(poses[i]), drivetrain));
-            routine.addCommands(intakeCommand.get());
         }
 
         return routine;
@@ -82,10 +81,7 @@ public class AutonomousUtil {
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
     public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
-        // onTheFlyCommands.add(new InstantCommand(RobotObserver::setSingleTag));
         onTheFlyCommands.add(pathFinder(pose));
-        // onTheFlyCommands.add(new InstantCommand(RobotObserver::setMultiTag));
-        // onTheFlyCommands.add(new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain));
         onTheFlyCommands.add(command.get());
     }
 
