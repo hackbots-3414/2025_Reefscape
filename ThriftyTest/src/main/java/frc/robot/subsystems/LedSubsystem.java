@@ -58,7 +58,7 @@ public class LedSubsystem extends SubsystemBase {
 
   private static enum LED_MODE {
     CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
-    BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD;
+    BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD ,  DEFAULT_ENDGAME;
   };
 
   private static enum LED_COLOR {
@@ -194,19 +194,18 @@ public class LedSubsystem extends SubsystemBase {
         // setColor(LED_COLOR.GREEN,LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
         // }
         // }
-        else if (funnelMode != LED_MODE.DEFAULT && matchTime > LEDConstants.endgameWarning) {
-          funnelMode = LED_MODE.DEFAULT;
+        else if (funnelMode != LED_MODE.DEFAULT_ENDGAME && matchTime > LEDConstants.endgameWarning) {
+          funnelMode = LED_MODE.DEFAULT_ENDGAME;
+          setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
+          setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
+          
+         } else if (elevatorMode != LED_MODE.DEFAULT) {
+          elevatorMode = LED_MODE.DEFAULT;
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller2);
           setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller);
           setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller);
           setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller2);
-
         }
-        // if (elevatorMode != LED_MODE.DEFAULT) {
-        //   elevatorMode = LED_MODE.DEFAULT;
-        //   setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller);
-        //   setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller2);
-        // }
 
       }
     }
@@ -214,7 +213,7 @@ public class LedSubsystem extends SubsystemBase {
 
   private void defaultColors(CANdle ledcontroller) {
     ledcontroller.clearAnimation(0);
-    // ledcontroller.clearAnimation(1);
+    ledcontroller.clearAnimation(1);
     setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller);
 
     ledcontroller.animate(
