@@ -102,6 +102,11 @@ public class Constants {
         public static final int climbRight = 2;
 
         public static final int algae = 60;
+
+        public static final int candle1 = 5; 
+        public static final int candle2 = 6;
+
+        public static final int servo = 9;
     }
 
     public static class SimConstants {
@@ -142,6 +147,12 @@ public class Constants {
 
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
+
+        public static final String dragonReinsName = "dragon";
+        public static final String driverBackupName = "interlink";
+
+        public static final String buttonBoardName = "dragon";
+        public static final String operatorBackupName = "dual";
 
         public static final int driverPort = 0;
         public static final int buttonBoardPort = 1;
@@ -347,8 +358,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final boolean useSuperAuton = true;
-        public static final int numWaypoints = 2;
+        public static final boolean useSuperAuton = false;
+        public static final int numWaypoints = 5;
 
         public static double translationTolerance = 0.02; // m
         public static double rotationTolerance = Units.degreesToRadians(2);
@@ -488,7 +499,7 @@ public class Constants {
         public static final double tolerance = 0.03;
 
         public static final double groundPickup = -0.41;
-        public static final double processor = -0.25;
+        public static final double processor = -0.29;
         public static final double reefPickup = -0.34;
         public static final double reefExtract = -0.29;
         public static final double net = -0.165;
@@ -593,6 +604,7 @@ public class Constants {
     public static final class ClimberConstants {
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0;
+        public static final double climbDownVolts = -2.0;
         public static final double climberCurrentLimit = 80.0;
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
@@ -604,6 +616,9 @@ public class Constants {
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(climberCurrentLimit));
+            
+        public static final double k_servoPosition = 0.0;
+        public static final double k_servoTolerance = 0.01;
     }
 
     public static final class AlgaeRollerConstants {
@@ -792,5 +807,17 @@ public class Constants {
             Map.entry("Red Alliance Right Intake", rightIntakeBounds.flip()),
             Map.entry("Red Alliance Processor", processorBounds.flip())
         );
+    }
+
+    public static class LedConstants {
+        public static final int numLED = 85;
+        public static final double flashSpeed = 0.75;
+        public static final double strobeSpeed = 0.1;
+        public static final double endgameWarning = 20;
+        public static final double endgameAlert = 15;
+        public static final int funnelOffset = 8;
+        public static final int elevatorOffset = 53 ;
+        public static final int funnelNumLED = 45;
+        public static final int elevatorNumLED = 40;
     }
 }

@@ -159,7 +159,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+        // return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+        return true;
     }
 
     public double getReference() {

@@ -19,6 +19,7 @@ import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.utils.RunOnChange;
+import frc.robot.RobotObserver;
 
 public class CoralRollers extends SubsystemBase {
     public enum CoralRollerSpeeds {INTAKE, L1, L2, L3, L4, UNJAM, L1_SEPERATE, STOP}
@@ -46,6 +47,7 @@ public class CoralRollers extends SubsystemBase {
         configDashboard();
         changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
         changeIndividualVolts = new RunOnChange<Pair<Double, Double>>(this::writeIndividual, Pair.of(0.0, 0.0));
+        RobotObserver.setPieceHeldSupplier(this::holdingPiece);
     }
 
     private void configMotors() {
