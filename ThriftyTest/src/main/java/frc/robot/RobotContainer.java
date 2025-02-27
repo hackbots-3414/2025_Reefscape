@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutonConstants;
@@ -478,14 +479,16 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("L1", coralScoreCommand(1));
-        NamedCommands.registerCommand("L2", coralScoreCommand(2));
-        NamedCommands.registerCommand("L3", coralScoreCommand(3));
-        NamedCommands.registerCommand("L4", coralScoreCommand(4));
-        NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
-        NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
-        NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
-        NamedCommands.registerCommand("Intake", coralIntakeCommand());
+        // NamedCommands.registerCommand("L1", coralScoreCommand(1));
+        // NamedCommands.registerCommand("L2", coralScoreCommand(2));
+        // NamedCommands.registerCommand("L3", coralScoreCommand(3));
+        // NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
+        NamedCommands.registerCommand("L4", new InstantCommand());
+        // NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
+        // NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
+        // NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+        NamedCommands.registerCommand("Intake", new InstantCommand());
+        // NamedCommands.registerCommand("Intake", coralIntakeCommand());
     }
 
     private void configureVision() {
