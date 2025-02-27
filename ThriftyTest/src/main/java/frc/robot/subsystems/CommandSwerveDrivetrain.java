@@ -7,6 +7,9 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -150,8 +153,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public void setCurrentLimit(double current) {
+        for (SwerveModule<TalonFX, TalonFX, CANcoder> module : getModules()) {
+            module.getDriveMotor().getConfigurator().apply(new CurrentLimitsConfigs()
+                .withStatorCurrentLimit(current), 0.05);
+        }
+    }
+    
     @Override
     public void periodic() {
+        setCurrentLimit(80 - 6 * RobotObserver.getElevatorHeightSupplier());
+        
         m_estimatedPose = this.getState().Pose;
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
