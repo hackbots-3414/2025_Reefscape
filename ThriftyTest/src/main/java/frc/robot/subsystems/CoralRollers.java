@@ -57,8 +57,7 @@ public class CoralRollers extends SubsystemBase {
         if (Robot.isReal()) {
             // NOTHING YET
         } else {
-            SmartDashboard.putBoolean("Front IR", false);
-            SmartDashboard.putBoolean("Back IR", false);
+            SmartDashboard.putBoolean("Coral Override", false);
         }
     }
 
@@ -169,8 +168,7 @@ public class CoralRollers extends SubsystemBase {
             m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
             m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
         } else {
-            m_frontSensorValue = SmartDashboard.getBoolean("Front IR", false);
-            m_backSensorValue = SmartDashboard.getBoolean("Back IR", false);
+            m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
         }
 
         SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);

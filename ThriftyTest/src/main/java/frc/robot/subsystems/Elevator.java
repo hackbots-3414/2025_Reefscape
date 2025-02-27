@@ -97,7 +97,7 @@ public class Elevator extends SubsystemBase {
     private final MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
-        // m_elevatorRight.setControl(control.withPosition(goal));
+        m_elevatorRight.setControl(control.withPosition(goal));
         m_reference = goal;
     }
 
@@ -162,8 +162,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        // return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
-        return true;
+        return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
     }
 
     public double getReference() {
@@ -202,7 +201,7 @@ public class Elevator extends SubsystemBase {
         m_velocity = getVelocityUncached();
 
         if (m_speedChanged) {
-            // m_elevatorRight.setControl(new DutyCycleOut(m_speed));
+            m_elevatorRight.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
 

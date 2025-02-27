@@ -46,14 +46,12 @@ import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsMiddle;
 import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
-import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.StowCommand;
@@ -491,13 +489,12 @@ public class RobotContainer {
         // NamedCommands.registerCommand("L1", coralScoreCommand(1));
         // NamedCommands.registerCommand("L2", coralScoreCommand(2));
         // NamedCommands.registerCommand("L3", coralScoreCommand(3));
-        // NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
-        NamedCommands.registerCommand("L4", new InstantCommand());
+        NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
+        // NamedCommands.registerCommand("L4", new InstantCommand());
         // NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
         // NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
         // NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
-        NamedCommands.registerCommand("Intake", new InstantCommand());
-        // NamedCommands.registerCommand("Intake", coralIntakeCommand());
+        NamedCommands.registerCommand("Intake", coralIntakeCommand());
     }
 
     private void configureVision() {
