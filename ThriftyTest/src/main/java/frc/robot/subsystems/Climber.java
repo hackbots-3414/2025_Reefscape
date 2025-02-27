@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IDConstants;
@@ -14,6 +16,8 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
     private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
     private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
+
+    private final Servo m_servo = new Servo(IDConstants.servo);
 
     private double m_voltage;
     private boolean m_voltageChanged;
@@ -30,6 +34,10 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         m_rightClimbMotor.setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
     }
 
+    public void openFunnel() {
+        m_servo.set(ClimberConstants.k_servoPosition);
+    }
+
     private void setMotor(double voltage) {
         m_voltageChanged = (m_voltage != voltage);
         m_voltage = voltage;
@@ -40,8 +48,14 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         setMotor(ClimberConstants.climberUpVolts);
     }
 
+    public void setDownVolts() {
+        setMotor(ClimberConstants.climbDownVolts);
+    }
+
     public void stopMotor() {
         m_leftClimbMotor.stopMotor();
+        m_voltage = 0.0;
+        m_voltageChanged = false;
     }
 
     @Override
@@ -50,6 +64,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
             m_leftClimbMotor.setVoltage(m_voltage);
             m_voltageChanged = false;
         }
+        SmartDashboard.putNumber("climber servo pos", m_servo.getPosition());
     }
 
    @Override

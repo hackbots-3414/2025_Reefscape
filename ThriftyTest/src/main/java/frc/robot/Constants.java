@@ -106,6 +106,7 @@ public class Constants {
         public static final int candle1 = 5; 
         public static final int candle2 = 6;
 
+        public static final int servo = 9;
     }
 
     public static class SimConstants {
@@ -602,6 +603,7 @@ public class Constants {
     public static final class ClimberConstants {
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0;
+        public static final double climbDownVolts = -2.0;
         public static final double climberCurrentLimit = 80.0;
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
@@ -613,6 +615,9 @@ public class Constants {
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(climberCurrentLimit));
+            
+        public static final double k_servoPosition = 0.0;
+        public static final double k_servoTolerance = 0.01;
     }
 
     public static final class AlgaeRollerConstants {

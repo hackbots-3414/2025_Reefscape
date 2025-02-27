@@ -6,15 +6,25 @@ import frc.robot.subsystems.Climber;
 
 public class ManualClimberCommand extends Command {
     private final Climber climber;
+    private boolean m_up;
 
     public ManualClimberCommand(Climber climber) {
+        this(climber, true);
+    }
+
+    public ManualClimberCommand(Climber climber, boolean goingUp) {
         addRequirements(climber);
         this.climber = climber;
+        m_up = goingUp;
     }
 
     @Override
     public void initialize() {
-        climber.setClimbUpVolts();
+        if (m_up) {
+            climber.setClimbUpVolts();
+        } else {
+            climber.setDownVolts();
+        }
     }
 
     @Override
