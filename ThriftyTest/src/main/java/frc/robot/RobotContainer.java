@@ -44,6 +44,8 @@ import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsMiddle;
 import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotContainer.AlgaeLocationPresets;
+import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralEjectCommand;
@@ -51,6 +53,7 @@ import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ManualClimberCommand;
+import frc.robot.commands.StowCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
@@ -226,7 +229,6 @@ public class RobotContainer {
             Trigger L3 = controller.button(ButtonBoard.L3);
             Trigger L4 = controller.button(ButtonBoard.L4);
 
-
             bindButtonBoardAuto(ScoringLocations.A, 1, A.and(L1).and(manualModeOff));
             bindButtonBoardAuto(ScoringLocations.B, 1, B.and(L1).and(manualModeOff));
             bindButtonBoardAuto(ScoringLocations.C, 1, C.and(L1).and(manualModeOff));
@@ -279,6 +281,7 @@ public class RobotContainer {
             bindButtonBoardAuto(ScoringLocations.K, 4, K.and(L4).and(manualModeOff));
             bindButtonBoardAuto(ScoringLocations.L, 4, L.and(L4).and(manualModeOff));
 
+            
             
             Trigger algaeLow = controller.button(ButtonBoard.lowAlgae);
             Trigger algaeHigh = controller.button(ButtonBoard.highAlgae);
@@ -388,6 +391,8 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
 
             bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb));
+
+            controller.PS().onTrue(new StowCommand(m_elevator, m_algaePivot));
         }
     }
 
@@ -592,14 +597,21 @@ public class RobotContainer {
             case REEFLOWER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER), scoringLocationsMiddleList)));
             case REEFUPPER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationsMiddleList)));
             case NET -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.NET.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
-            case PROCESSOR -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
+            case PROCESSOR -> {
+                trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
+                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, true));
+            }
         }
     }
 
     private void bindManualAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
             case GROUND, REEFLOWER, REEFUPPER -> trigger.whileTrue(algaeIntakeCommand(type));
-            case NET, PROCESSOR -> trigger.whileTrue(algaeScoreCommand(type));
+            case NET -> trigger.whileTrue(algaeScoreCommand(type));
+            case PROCESSOR -> {
+                trigger.whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, true));
+            }
         }
     }
 
