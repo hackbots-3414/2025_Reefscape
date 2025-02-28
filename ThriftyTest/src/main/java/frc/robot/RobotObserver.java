@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,7 +29,7 @@ public class RobotObserver {
     }
 
     /* Field2d to display important details about the robot */
-    private Field2d m_field;
+    private Field2d m_field = new Field2d();
 
     public static void setField(Field2d field) {
         getInstance().m_field = field;
@@ -56,6 +57,7 @@ public class RobotObserver {
 
     public static void toggleManualMode() {
         getInstance().m_manualModeEnabled = !getInstance().m_manualModeEnabled;
+        SmartDashboard.putBoolean("SAFETY MODE", getInstance().m_manualModeEnabled);
     }
 
     public static boolean getManualMode() {
@@ -72,8 +74,8 @@ public class RobotObserver {
         return getInstance().m_elevatorHeightSupplier.get();
     }
 
-    private Runnable m_setSingleTag;
-    private Runnable m_setMultiTag;
+    private Runnable m_setSingleTag = () -> {};
+    private Runnable m_setMultiTag = () -> {};
 
     public static void setSingleTag() {
         getInstance().m_setSingleTag.run();
@@ -88,4 +90,25 @@ public class RobotObserver {
     public static void setMultiTagRunnable(Runnable multiTag) {
         getInstance().m_setMultiTag = multiTag;
     }
+
+    private BooleanSupplier m_pieceHeldSupplier;
+
+    public static void setPieceHeldSupplier(BooleanSupplier pieceHeldSupplier) {
+        getInstance().m_pieceHeldSupplier = pieceHeldSupplier;
+    }
+
+    public static boolean getPieceHeld() {
+        return getInstance().m_pieceHeldSupplier.getAsBoolean();
+    }
+
+    private boolean m_climbed = false;
+
+    public static void setClimbed(boolean climbed) {
+        getInstance().m_climbed = climbed;
+    }
+
+    public static boolean getClimbed() {
+        return getInstance().m_climbed;
+    }
+
 }

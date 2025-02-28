@@ -1,13 +1,8 @@
 package frc.robot.commands;
 
-import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.CommandBounds;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
-import frc.robot.RobotObserver;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
@@ -29,21 +24,19 @@ public class AlgaeIntakeCommand extends Command {
 
   @Override
     public void initialize() {
+        rollers.intakeAlgae();
         isDone = false;
         switch (location) {
             case GROUND -> {
-                elevator.setStow();
-                pivot.setGroundPickup();
+                elevator.setGroundIntake();
             }
             case REEFLOWER -> {
                 isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefLower();
-                pivot.setReefPickup();
             }
             case REEFUPPER -> {
                 isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefUpper();
-                pivot.setReefPickup();
             }
             default -> isDone = true;
         }
@@ -51,26 +44,22 @@ public class AlgaeIntakeCommand extends Command {
 
     @Override
     public void execute() {
-        if (elevator.atSetpoint() && pivot.atSetpoint()) {
-            rollers.intakeAlgae();
-        }
-        if (rollers.hasObject()) {
-            switch (location) {
-                case GROUND -> isDone = true;
-                case REEFLOWER -> {
-                    isDone = !CommandBounds.reefBounds.isActive();
-                    pivot.setReefExtract();
-                }
-                case REEFUPPER -> {
-                    isDone = !CommandBounds.reefBounds.isActive();
-                    pivot.setReefExtract();
-                }
-                default -> isDone = true;
+        switch (location) {
+            case GROUND -> {
+                if (elevator.atSetpoint()) pivot.setGroundPickup();
+                if (rollers.hasObject()) isDone = true; 
             }
-            if (FlippingUtil.flipFieldPose(RobotObserver.getPose()).getTranslation()
-                    .getDistance(FieldConstants.reefCenter) >= AlgaeRollerConstants.reefPickupSafetyDistance) {
-                isDone = true;
+            case REEFLOWER, REEFUPPER -> {
+                isDone = !CommandBounds.reefBounds.isActive();
+                if (elevator.atSetpoint()) {
+                    if (rollers.hasObject()) {
+                        pivot.setReefExtract();
+                    } else {
+                        pivot.setReefPickup();
+                    }
+                }
             }
+            default -> isDone = true;
         }
     }
 

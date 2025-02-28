@@ -92,4 +92,10 @@ public class Shape {
             .map(oldTranslation -> new Translation2d(oldTranslation.getX(), FieldConstants.k_fieldWidth.in(Meters) - oldTranslation.getY()))
             .collect(Collectors.toList()), name);
     }
+
+    public Shape flip() {
+        return new Shape(this.getVertices().stream()
+            .map(oldTranslation -> new Translation2d(FieldConstants.k_fieldLength.in(Meters) - oldTranslation.getX(), FieldConstants.k_fieldWidth.in(Meters) - oldTranslation.getY()))
+            .collect(Collectors.toList()), this.m_name);
+    }
 }

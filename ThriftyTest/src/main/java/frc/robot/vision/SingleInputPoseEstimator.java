@@ -1,5 +1,7 @@
 package frc.robot.vision;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
@@ -75,12 +78,8 @@ public class SingleInputPoseEstimator implements Runnable {
         );
     }
 
+    @Override
     public void run() {
-        // add heading data, for trig-based estimation
-        m_trigEstimator.addHeadingData(
-            Utils.getCurrentTimeSeconds(),
-            RobotObserver.getPose().getRotation()
-        );
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
         if (results.size() > VisionConstants.k_maxResults) {
@@ -98,11 +97,19 @@ public class SingleInputPoseEstimator implements Runnable {
             time between when a result was sent and when we "see" it. This would
             mess up the timestamping logic.
             */
-            m_logger.warn("Possibly too many results: {}", results.size());
+            m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
+        /* take many */
         for (PhotonPipelineResult result : results) {
+            m_logger.debug("photon time: {}", result.getTimestampSeconds());
+            m_logger.debug("fpga time:   {}", RobotController.getMeasureTime().in(Seconds));
+            m_logger.debug("ctre time:   {}", Utils.getCurrentTimeSeconds());
             handleResult(result);
         }
+        /* take one */
+        // if (results.size() == 0) return;
+        // PhotonPipelineResult latest = results.get(results.size() - 1);
+        // handleResult(latest);
     }
 
     private void handleResult(PhotonPipelineResult result) {
@@ -111,6 +118,11 @@ public class SingleInputPoseEstimator implements Runnable {
         // By this point the result is valid.
         PhotonPoseEstimator estimator;
         if (m_singleTag.getAsBoolean()) {
+            // Update heading data
+            m_trigEstimator.addHeadingData(
+                RobotController.getMeasureTime().in(Seconds),
+                RobotObserver.getPose().getRotation()
+            );
             estimator = m_trigEstimator;
         } else {
             estimator = m_pnpEstimator;
@@ -136,11 +148,11 @@ public class SingleInputPoseEstimator implements Runnable {
         PhotonPipelineResult result,
         EstimatedRobotPose estimation
     ) {
-        double timestamp = Utils.getCurrentTimeSeconds()
-            - result.metadata.getLatencyMillis() / 1.0e+3;
+        double latency = result.metadata.getLatencyMillis() / 1.0e+3;
+        double timestamp = Utils.getCurrentTimeSeconds() - latency;
         Pose3d pose = estimation.estimatedPose;
         double ambiguity = getAmbiguity(result);
-        Matrix<N3, N1> stdDevs = calculateStdDevs(result, timestamp);
+        Matrix<N3, N1> stdDevs = calculateStdDevs(result, latency);
         // check validity again
         if (!checkValidity(pose, ambiguity)) return Optional.empty();
         return Optional.of(

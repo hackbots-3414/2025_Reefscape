@@ -20,8 +20,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
-      "/SmartDashboard/April Tag Debug Field": "Field2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Height to Score #0": "String Chooser",
@@ -29,10 +29,12 @@
       "/SmartDashboard/Height to Score #2": "String Chooser",
       "/SmartDashboard/Height to Score #3": "String Chooser",
       "/SmartDashboard/Height to Score #4": "String Chooser",
+      "/SmartDashboard/ManualClimberCommand": "Command",
       "/SmartDashboard/Module 0": "Mechanism2d",
       "/SmartDashboard/Module 1": "Mechanism2d",
       "/SmartDashboard/Module 2": "Mechanism2d",
       "/SmartDashboard/Module 3": "Mechanism2d",
+      "/SmartDashboard/Multi Tag": "Command",
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
       "/SmartDashboard/Place to Score #0": "String Chooser",
       "/SmartDashboard/Place to Score #1": "String Chooser",
@@ -42,9 +44,13 @@
       "/SmartDashboard/Raise Elevator": "Command",
       "/SmartDashboard/Raise Pivot": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Single Tag": "Command",
       "/SmartDashboard/Stow Elevator": "Command",
       "/SmartDashboard/Super Field": "Field2d",
-      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
+      "/SmartDashboard/Testing Command": "Command",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/open funnel": "Command",
+      "/SmartDashboard/runme hehe": "Command"
     },
     "windows": {
       "/SmartDashboard/April Tag Debug Field": {
@@ -134,20 +140,10 @@
         },
         "width": 17.54825210571289,
         "window": {
-          "visible": true
+          "visible": false
         }
       },
       "/SmartDashboard/Auto Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Elevator Visualization": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Pivot Arm Visualization": {
         "window": {
           "visible": true
         }
@@ -275,6 +271,44 @@
           ],
           "style": "Line"
         },
+        "Red Alliance Left Intake": {
+          "arrows": false,
+          "color": [
+            0.05063295364379883,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Net": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Processor": {
+          "arrows": false,
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Reef": {
+          "arrows": false,
+          "color": [
+            0.7848100662231445,
+            0.0,
+            1.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
+        "Red Alliance Right Intake": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.0,
+            255.0
+          ],
+          "style": "Line (Closed)"
+        },
         "Red Left Human Player Bounds": {
           "arrows": false,
           "color": [
@@ -374,7 +408,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
@@ -405,6 +439,9 @@
       "open": false
     },
     "transitory": {
+      "PathPlanner": {
+        "open": true
+      },
       "SmartDashboard": {
         "open": true
       }
@@ -413,7 +450,9 @@
   "NetworkTables Info": {
     "Server": {
       "open": true
-    },
-    "visible": true
+    }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

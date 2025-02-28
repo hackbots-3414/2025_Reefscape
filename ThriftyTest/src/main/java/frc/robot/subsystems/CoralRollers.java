@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -14,8 +17,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 
 public class CoralRollers extends SubsystemBase {
+    @SuppressWarnings("unused")
+    private final Logger m_logger = LoggerFactory.getLogger(CoralRollers.class);
+
     private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
     private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
 
@@ -33,6 +40,7 @@ public class CoralRollers extends SubsystemBase {
     public CoralRollers() {
         configMotors();
         configDashboard();
+        RobotObserver.setPieceHeldSupplier(this::holdingPiece);
     }
 
     private void configMotors() {
@@ -49,8 +57,7 @@ public class CoralRollers extends SubsystemBase {
         if (Robot.isReal()) {
             // NOTHING YET
         } else {
-            SmartDashboard.putBoolean("Front IR", false);
-            SmartDashboard.putBoolean("Back IR", false);
+            SmartDashboard.putBoolean("Coral Override", false);
         }
     }
 
@@ -60,11 +67,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setIntake() {
-        if (holdingPiece()) {
-            stop();
-        } else {
-            setVoltage(CoralConstants.intakeVoltage);
-        }
+        setVoltage(CoralConstants.intakeVoltage);
     }
 
     public void timeoutIntake() {
@@ -107,8 +110,40 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.ejectVoltage);
     }
 
+    public void setL1Eject() {
+        setVoltage(CoralConstants.l1EjectVoltage);
+    }
+
+    public void setL2Eject() {
+        setVoltage(CoralConstants.l2EjectVoltage);
+    }
+
+    public void setL3Eject() {
+        setVoltage(CoralConstants.l3EjectVoltage);
+    }
+
+    public void setL4Eject() {
+        setVoltage(CoralConstants.l4EjectVoltage);
+    }
+
+    public void setSpitOut() {
+        setVoltage(CoralConstants.spitOutVoltage);
+    }
+
+    public void setIndividualEject() {
+        m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
+        m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
+    }
+
+    public void resetFollow() {
+        m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
+    }
+
     public void stop() {
-        setVoltage(0);
+        // setVoltage(0);
+        m_voltage = 0;
+        m_voltageChanged = false;
+        m_coralLeft.setVoltage(0.0);
     }
 
     public boolean getFrontIR() {
@@ -133,8 +168,7 @@ public class CoralRollers extends SubsystemBase {
             m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
             m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
         } else {
-            m_frontSensorValue = SmartDashboard.getBoolean("Front IR", false);
-            m_backSensorValue = SmartDashboard.getBoolean("Back IR", false);
+            m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
         }
 
         SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
@@ -142,10 +176,11 @@ public class CoralRollers extends SubsystemBase {
 
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
 
+        SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);
             m_voltageChanged = false;
-            SmartDashboard.putNumber("* CORAL VOLTS", m_voltage);
         }
     }
 }

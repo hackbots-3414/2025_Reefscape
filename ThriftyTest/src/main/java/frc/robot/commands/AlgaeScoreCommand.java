@@ -31,7 +31,7 @@ public class AlgaeScoreCommand extends Command {
     isDone = false;
     switch (location) {
       case NET -> {
-        // isDone = !CommandBounds.netBounds.isActive();
+        isDone = !CommandBounds.netBounds.isActive();
         elevator.setNet();
         pivot.setNet();
       }

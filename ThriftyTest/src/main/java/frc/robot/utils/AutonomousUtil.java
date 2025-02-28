@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
@@ -19,11 +21,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
-import frc.robot.commands.PathPlannerOverride;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
+    @SuppressWarnings("unused")
+    private static final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
+
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
         try {
@@ -53,16 +58,18 @@ public class AutonomousUtil {
         }
     }
 
+    private static final PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
+
     public static Command pathFinder(Pose2d pose) {
-        return AutoBuilder.pathfindToPoseFlipped(pose, PathConstraints.unlimitedConstraints(12.0), 0);
+        return AutoBuilder.pathfindToPoseFlipped(pose, constraints, 0);
     }
 
-    public static Command generateRoutineWithCommands(Pose2d desiredPickupLocation, Pose2d[] poses,
-            Command[] scoringCommands) {
+    public static Command generateRoutineWithCommands(CommandSwerveDrivetrain drivetrain, Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
-        for (int i = 0; i < poses.length; i++) {
+        for (int i = 0; i < scoringCommands.length; i++) {
             if (i != 0) {
                 routine.addCommands(pathFinder(desiredPickupLocation));
+                routine.addCommands(intakeCommand.get());
             }
             routine.addCommands(pathFinder(poses[i]));
             routine.addCommands(scoringCommands[i]);
@@ -75,7 +82,6 @@ public class AutonomousUtil {
 
     public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
         onTheFlyCommands.add(pathFinder(pose));
-        onTheFlyCommands.add(new PathPlannerOverride(pose, drivetrain));
         onTheFlyCommands.add(command.get());
     }
 

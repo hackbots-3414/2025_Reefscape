@@ -4,20 +4,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeRollers;
 
 public class AlgaeEjectCommand extends Command {
-  private final AlgaeRollers rollers;
+  private final AlgaeRollers m_rollers;
   
   public AlgaeEjectCommand(AlgaeRollers rollers) {
-   this.rollers = rollers;
-   addRequirements(rollers);
+    m_rollers = rollers;
+    addRequirements(rollers);
   }
 
   @Override
   public void initialize() {
-    rollers.ejectAlgae();
+    m_rollers.ejectAlgae();
   }
 
   @Override
   public void end(boolean interrupted) {
-    rollers.stopMotor();
+    m_rollers.stopMotor();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return !m_rollers.hasObject();
   }
 }

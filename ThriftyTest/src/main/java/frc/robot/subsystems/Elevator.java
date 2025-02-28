@@ -106,6 +106,10 @@ public class Elevator extends SubsystemBase {
         m_speed = speed;
     }
 
+    public void setGroundIntake() {
+        setPosition(ElevatorConstants.groundIntake);
+    }
+
     public void setStow() {
         setPosition(ElevatorConstants.stow);
     }
