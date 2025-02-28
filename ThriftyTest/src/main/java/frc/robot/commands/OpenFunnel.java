@@ -15,14 +15,12 @@ public class OpenFunnel extends Command {
   public OpenFunnel(Climber climber) {
     m_climber = climber;
     addRequirements(climber);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     m_climber.openFunnel();
-    timeRemaining = 3;
+    timeRemaining = 75;
   }
 
   @Override
@@ -30,7 +28,6 @@ public class OpenFunnel extends Command {
     timeRemaining --;
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return timeRemaining == 0;

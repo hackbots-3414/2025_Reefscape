@@ -162,7 +162,7 @@ public class LedFeedback extends SubsystemBase {
     private void defaultColors(CANdle ledcontroller, LED_SECTION section, int offset) {
         ledcontroller.clearAnimation(0);
         ledcontroller.clearAnimation(1);
-        setColor(LED_COLOR.PURPLE, section, LED_PATTERN.FLASH, ledcontroller);
+        setColor(LED_COLOR.PURPLE, section, LED_PATTERN.FLASH, ledcontroller, LedConstants.funnelNumLED, LedConstants.funnelOffset);
 
         ledcontroller.animate(
                 new LarsonAnimation(255, 0, 255, 0, 0.75, offset, LarsonAnimation.BounceMode.Back,

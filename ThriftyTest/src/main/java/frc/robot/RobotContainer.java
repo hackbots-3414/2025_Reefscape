@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -396,7 +397,8 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
 
-            bindClimbSetupCommand(controller.button(ButtonBoardAlternate.climb));
+            bindClimbSetupCommand(controller.button(ButtonBoardAlternate.climbReady));
+            controller.button(ButtonBoardAlternate.climb).whileTrue(new ClimberCommand(m_climber));
 
             controller.PS().onTrue(new StowCommand(m_elevator, m_algaePivot));
         }
