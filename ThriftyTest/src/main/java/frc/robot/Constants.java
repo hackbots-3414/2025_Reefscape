@@ -277,6 +277,7 @@ public class Constants {
         public static final double k_cameraHeight = Units.inchesToMeters(6.0);
         public static final double k_cameraBackHeight = Units.inchesToMeters(12.0);
         public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
+        public static final double k_cameraPitchFront = -Units.degreesToRadians(22.5);
         public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
@@ -287,19 +288,19 @@ public class Constants {
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d(
                 new Translation3d(0.302,0.266,0.175),
-                new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
+                new Rotation3d(0, k_cameraPitchFront, -k_cameraYaw)
             )),
             Map.entry("cam2", new Transform3d(
                 new Translation3d(0.261,0.299,0.175),
-                new Rotation3d(0, k_cameraPitch, Math.PI - k_cameraYaw)
+                new Rotation3d(0, k_cameraPitchFront, Math.PI - k_cameraYaw)
             )),
             Map.entry("cam3", new Transform3d(
                 new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw - Math.PI)
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI)
             )),
             Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw)
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
             )),
             Map.entry("cam5", new Transform3d( // special
                 new Translation3d(-0.302, 0.266, 0.175),
