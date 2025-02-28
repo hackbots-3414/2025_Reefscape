@@ -832,5 +832,10 @@ public class Constants {
         public static final int elevatorOffset = 53 ;
         public static final int funnelNumLED = 45;
         public static final int elevatorNumLED = 40;
+        public static final int funnelOffset2 = 8;
+        public static final int elevatorOffset2 = 89 ;
+        public static final int funnelNumLED2 = 88;
+        public static final int elevatorNumLED2 = 50;
+        
     }
 }
