@@ -603,7 +603,7 @@ public class RobotContainer {
             case NET -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.NET.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
             case PROCESSOR -> {
                 trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
-                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, true));
+                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers));
             }
         }
     }
@@ -614,7 +614,7 @@ public class RobotContainer {
             case NET -> trigger.whileTrue(algaeScoreCommand(type));
             case PROCESSOR -> {
                 trigger.whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
-                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, true));
+                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers));
             }
         }
     }
