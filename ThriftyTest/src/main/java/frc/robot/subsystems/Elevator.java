@@ -62,7 +62,6 @@ public class Elevator extends SubsystemBase {
 
     private void configEncoder() {
         m_cancoder.clearStickyFaults();
-        m_cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
         m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
     }
 

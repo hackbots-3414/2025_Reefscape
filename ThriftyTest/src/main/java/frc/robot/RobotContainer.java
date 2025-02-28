@@ -52,7 +52,7 @@ import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
-import frc.robot.commands.ManualClimberCommand;
+import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.StowCommand;
@@ -63,6 +63,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
 import frc.robot.utils.Shape;
@@ -94,7 +95,7 @@ public class RobotContainer {
         SmartDashboard.putData("Single Tag", new InstantCommand(RobotObserver::setSingleTag));
         SmartDashboard.putData("Multi Tag", new InstantCommand(RobotObserver::setMultiTag));
         SmartDashboard.putData("open funnel", new OpenFunnel(m_climber));
-        SmartDashboard.putData("LIFT CLIMB", new ManualClimberCommand(m_climber, false));
+        SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
     }
 
@@ -342,7 +343,7 @@ public class RobotContainer {
             bindAutoCancelButton(controller.button(ButtonBoard.cancelAuto));
             
 
-            bindManualClimbCommand(controller.button(ButtonBoard.climb));
+            bindClimbSetupCommand(controller.button(ButtonBoard.climb));
         } else {
             controller.button(ButtonBoardAlternate.manualModeSwitch).onTrue(new InstantCommand(() -> RobotObserver.toggleManualMode()));
             BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
@@ -395,7 +396,7 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
 
-            bindManualClimbCommand(controller.button(ButtonBoardAlternate.climb));
+            bindClimbSetupCommand(controller.button(ButtonBoardAlternate.climb));
 
             controller.PS().onTrue(new StowCommand(m_elevator, m_algaePivot));
         }
@@ -516,6 +517,7 @@ public class RobotContainer {
     private Climber m_climber;
     private AlgaeRollers m_algaeRollers;
     private CoralRollers m_coralRollers;
+    private LedFeedback m_ledFeedback;
 
     private void configureSubsystems() {
         // m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
@@ -524,6 +526,7 @@ public class RobotContainer {
         m_climber = new Climber();
         m_algaeRollers = new AlgaeRollers();
         m_coralRollers = new CoralRollers();
+        m_ledFeedback = new LedFeedback();
     }
 
     // ** BUTTON BOARD HELPERS **
@@ -637,10 +640,10 @@ public class RobotContainer {
     //     }
     // }
 
-    private void bindManualClimbCommand(Trigger trigger) {
+    private void bindClimbSetupCommand(Trigger trigger) {
         trigger.whileTrue(new SequentialCommandGroup(
             new OpenFunnel(m_climber),
-            new ManualClimberCommand(m_climber)
+            new ClimberCommand(m_climber, false)
         ));
     }
 

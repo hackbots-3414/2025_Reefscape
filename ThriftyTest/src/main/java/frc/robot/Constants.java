@@ -414,13 +414,13 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.427979;
+        public static final double encoderOffset = -0.014160; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
         /* Please note:
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
-         * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
+         * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
         public static final double groundIntake = 0;
@@ -453,7 +453,7 @@ public class Constants {
 
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
