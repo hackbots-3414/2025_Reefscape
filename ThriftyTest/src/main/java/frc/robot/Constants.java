@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -100,6 +101,9 @@ public class Constants {
 
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
+
+        public static final int climbReadyHardLimit = 0;
+        public static final int climbedHardLimit = 1;
 
         public static final int algae = 60;
 
@@ -246,7 +250,8 @@ public class Constants {
             public static final int leftIntake = Button.kL1.value; // LB
             public static final int rightIntake = Button.kR1.value; // RB
             
-            public static final int climb = Button.kCreate.value;
+            public static final int climbReady = Button.kCreate.value;
+            public static final int climb = Button.kOptions.value;
 
             // Safety Mode "swaps"
 
@@ -604,6 +609,8 @@ public class Constants {
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0;
         public static final double climbDownVolts = -2.0;
+        public static final double climbRollVolts = 2;
+
         public static final double climberCurrentLimit = 80.0;
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
@@ -614,7 +621,13 @@ public class Constants {
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(climberCurrentLimit));
+                        .withSupplyCurrentLimit(climberCurrentLimit))
+                        
+                .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
+                        .withForwardLimitEnable(true)
+                        .withForwardLimitRemoteSensorID(IDConstants.climbedHardLimit)
+                        .withReverseLimitEnable(true)
+                        .withReverseLimitRemoteSensorID(IDConstants.climbReadyHardLimit));
             
         public static final double k_servoPosition = 0.0;
         public static final double k_servoTolerance = 0.01;

@@ -54,6 +54,7 @@ import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.OpenFunnel;
+import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.StowCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -93,7 +94,8 @@ public class RobotContainer {
         SmartDashboard.putData("Single Tag", new InstantCommand(RobotObserver::setSingleTag));
         SmartDashboard.putData("Multi Tag", new InstantCommand(RobotObserver::setMultiTag));
         SmartDashboard.putData("open funnel", new OpenFunnel(m_climber));
-        SmartDashboard.putData(new ManualClimberCommand(m_climber, false));
+        SmartDashboard.putData("LIFT CLIMB", new ManualClimberCommand(m_climber, false));
+        SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
     }
 
     private void addBoundsToField() {
