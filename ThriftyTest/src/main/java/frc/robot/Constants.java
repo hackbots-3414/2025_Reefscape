@@ -369,6 +369,8 @@ public class Constants {
 
         public static double translationTolerance = 0.02; // m
         public static double rotationTolerance = Units.degreesToRadians(2);
+
+        public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
     }
 
     public static final class CanRangeConstants {
