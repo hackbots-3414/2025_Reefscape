@@ -296,11 +296,11 @@ public class Constants {
             )),
             Map.entry("cam3", new Transform3d(
                 new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI)
+                new Rotation3d(0, k_cameraPitch, k_cameraYaw - Math.PI) // TODO MUUST CHANGE
             )),
             Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
+                new Rotation3d(0, k_cameraPitch, k_cameraYaw) // TODO MUUST CHANGE
             )),
             Map.entry("cam5", new Transform3d( // special
                 new Translation3d(-0.302, 0.266, 0.175),
@@ -424,7 +424,7 @@ public class Constants {
          */
 
         public static final double groundIntake = 0;
-        public static final double stow = 0.345 - (Units.inchesToMeters(1) * metersToRotations);
+        public static final double stow = 0.232;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
         public static final double L2 = Units.inchesToMeters(35.5) * metersToRotations;
@@ -484,7 +484,7 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final double encoderOffset = 0.250977;
+        public static final double encoderOffset = 0.126465; //0.250977;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
@@ -569,13 +569,13 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final double intakeVoltage = 5;
+        public static final double intakeVoltage = 6;
         public static final double ejectVoltage = 6;
 
         public static final double l1EjectVoltage = 3;
-        public static final double l2EjectVoltage = 4;
-        public static final double l3EjectVoltage = 6;
-        public static final double l4EjectVoltage = 6;
+        public static final double l2EjectVoltage = 5;
+        public static final double l3EjectVoltage = 7;
+        public static final double l4EjectVoltage = 7;
 
         public static final double spitOutVoltage = -8;
 
