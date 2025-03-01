@@ -281,7 +281,7 @@ public class Constants {
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
 
-        public static final String k_logPath = "/var/log/vision.log";
+        public static final String k_logPath = "vision.log";
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(

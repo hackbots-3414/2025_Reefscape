@@ -38,7 +38,7 @@ public class VisionHandler implements AutoCloseable {
 
     private boolean m_singleTag;
 
-    private LogBuilder m_visionLogger;
+    private LogBuilder m_logBuilder;
 
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
@@ -113,7 +113,7 @@ public class VisionHandler implements AutoCloseable {
 
     private void updateEstimators() {
         // logging
-        m_visionLogger = new LogBuilder();
+        m_logBuilder = new LogBuilder();
         // clear previous output from the estimators.
         m_field.getObject(VisionConstants.k_estimationName).setPoses();
         for (SingleInputPoseEstimator estimator : m_estimators) {
@@ -122,8 +122,8 @@ public class VisionHandler implements AutoCloseable {
         Pose2d currPose = m_drivetrain.getPose();
         m_visionSim.update(currPose);
         // finish logging
-        m_visionLogger.setResult(currPose);
-        m_visionLogger.log();
+        m_logBuilder.setResult(currPose);
+        m_logBuilder.log();
     }
 
     public void startThread() {
@@ -137,7 +137,7 @@ public class VisionHandler implements AutoCloseable {
         m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
         m_drivetrain.addPoseEstimate(estimate);
         // pose logging
-        m_visionLogger.addEstimate(estimate);
+        m_logBuilder.addEstimate(estimate);
     }
 
     private boolean getSingleTag() {
