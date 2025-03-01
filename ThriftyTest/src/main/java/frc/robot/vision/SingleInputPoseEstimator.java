@@ -28,6 +28,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
@@ -105,7 +106,7 @@ public class SingleInputPoseEstimator implements Runnable {
         /* take many */
         for (PhotonPipelineResult result : results) {
             m_logger.debug("photon time: {}", result.getTimestampSeconds());
-            m_logger.debug("fpga time:   {}", RobotController.getMeasureTime().in(Seconds));
+            m_logger.debug("fpga time:   {}", Timer.getFPGATimestamp());
             m_logger.debug("ctre time:   {}", Utils.getCurrentTimeSeconds());
             handleResult(result);
         }
@@ -152,7 +153,7 @@ public class SingleInputPoseEstimator implements Runnable {
         EstimatedRobotPose estimation
     ) {
         double latency = result.metadata.getLatencyMillis() / 1.0e+3;
-        double timestamp = Utils.getCurrentTimeSeconds() - latency;
+        double timestamp = Timer.getFPGATimestamp() - latency;
         Pose3d pose = estimation.estimatedPose;
         double ambiguity = getAmbiguity(result);
         Matrix<N3, N1> stdDevs = calculateStdDevs(result, latency);
