@@ -155,8 +155,8 @@ public class Constants {
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
-        public static final String dragonReinsName = "dragon";
-        public static final String driverBackupName = "interlink";
+        public static final String dragonReinsName = "interlink";
+        public static final String driverBackupName = "dual";
 
         public static final String buttonBoardName = "dragon";
         public static final String operatorBackupName = "dual";
@@ -285,7 +285,7 @@ public class Constants {
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
 
-        // aliases
+        public static final String k_logPath = "vision.log";
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
@@ -299,11 +299,11 @@ public class Constants {
             )),
             Map.entry("cam3", new Transform3d(
                 new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw - Math.PI) // TODO MUUST CHANGE
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI) // TODO MUUST CHANGE
             )),
             Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw) // TODO MUUST CHANGE
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw) // TODO MUUST CHANGE
             )),
             Map.entry("cam5", new Transform3d( // special
                 new Translation3d(-0.302, 0.266, 0.175),
@@ -641,7 +641,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -3;
+        public static final double ejectVoltage = -2;
 
         public static final double torqueCurrentThreshold = 30;
 
@@ -831,10 +831,10 @@ public class Constants {
         public static final int numLED = 85;
         public static final double flashSpeed = 0.75;
         public static final double strobeSpeed = 0.1;
-        public static final double endgameWarning = 20;
+        public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8;
-        public static final int elevatorOffset = 53 ;
+        public static final int elevatorOffset = 53;
         public static final int funnelNumLED = 45;
         public static final int elevatorNumLED = 40;
         public static final int funnelOffset2 = 8;
