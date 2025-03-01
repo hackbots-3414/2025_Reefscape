@@ -246,6 +246,7 @@ public class Constants {
             public static final int highAlgae = Button.kTriangle.value;
             public static final int groundAlgae = 180; // POV
             public static final int processor = 90; // POV
+            public static final int highGround = 270; // POV
             public static final int net = 0; // POV
             public static final int algaeModeButton = Button.kR2.value; // R2
             
@@ -428,6 +429,7 @@ public class Constants {
          */
 
         public static final double groundIntake = 0;
+        public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.232;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;

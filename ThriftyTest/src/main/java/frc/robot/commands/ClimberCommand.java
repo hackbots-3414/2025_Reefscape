@@ -36,7 +36,11 @@ public class ClimberCommand extends Command {
     @Override
     public boolean isFinished() {
         if (m_up) {
-            return climber.climbed();
+            if (climber.ready()) {
+                return climber.climbed();
+            } else {
+                return true;
+            }
         } else {
             return climber.ready();
         }

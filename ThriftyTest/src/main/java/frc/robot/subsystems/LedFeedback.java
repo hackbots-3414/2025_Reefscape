@@ -257,7 +257,7 @@ public class LedFeedback extends SubsystemBase {
             case STROBE -> candle.animate(new StrobeAnimation(r, g, b, 0, LedConstants.strobeSpeed, nbrLED, offsetLED), selectedSlot);
             case TWINKLE -> candle.animate(new TwinkleAnimation(r, g, b, 0, 0.5, nbrLED, TwinklePercent.Percent42, offsetLED), selectedSlot);
             case CLEAR -> candle.setLEDs(0, 0, 0, 0, offsetLED, nbrLED);
-            case LARSON -> candle.animate(new LarsonAnimation(r, g, b, 0, 0.75, nbrLED, BounceMode.Back, 7, offsetLED), selectedSlot);
+            case LARSON -> candle.animate(new LarsonAnimation(r, g, b, 0, 0.5, nbrLED, BounceMode.Back, 7, offsetLED), selectedSlot);
             case RAINBOW -> candle.animate(new RainbowAnimation(1, 0.9, nbrLED, true, offsetLED), selectedSlot);
         }
     }

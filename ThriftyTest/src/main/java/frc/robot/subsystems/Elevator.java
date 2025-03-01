@@ -108,6 +108,10 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.groundIntake);
     }
 
+    public void setHighGroundIntake() {
+        setPosition(ElevatorConstants.highGroundIntake);
+    }
+
     public void setStow() {
         setPosition(ElevatorConstants.stow);
     }

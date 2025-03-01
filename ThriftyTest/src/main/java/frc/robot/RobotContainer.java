@@ -376,6 +376,7 @@ public class RobotContainer {
             bindAutoAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOff));
             bindAutoAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOff));
             bindAutoAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOff));
+            bindAutoAlgaeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(ButtonBoardAlternate.highGround).and(algaeOn).and(manualModeOff));
 
             // Manual Mode On
             bindManualCoralScoreCommand(1, controller.pov(ButtonBoardAlternate.L1)/*.and(manualModeOn)*/);
@@ -396,6 +397,7 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
             bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(ButtonBoardAlternate.highGround).and(algaeOn).and(manualModeOn));
 
             bindClimbSetupCommand(controller.button(ButtonBoardAlternate.climbReady));
             controller.button(ButtonBoardAlternate.climb).whileTrue(new ClimberCommand(m_climber));
@@ -612,12 +614,13 @@ public class RobotContainer {
                 trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
                 trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers));
             }
+            case HIGHGROUND -> {trigger.whileTrue(algaeIntakeCommand(AlgaeLocationPresets.HIGHGROUND));}
         }
     }
 
     private void bindManualAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
-            case GROUND, REEFLOWER, REEFUPPER -> trigger.whileTrue(algaeIntakeCommand(type));
+            case GROUND, REEFLOWER, REEFUPPER, HIGHGROUND -> trigger.whileTrue(algaeIntakeCommand(type));
             case NET -> trigger.whileTrue(algaeScoreCommand(type));
             case PROCESSOR -> {
                 trigger.whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
@@ -659,7 +662,12 @@ public class RobotContainer {
         return new CoralScoreCommand(m_coralRollers, m_elevator, level);
     }
 
-    private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
+    private Command 
+    
+    
+    
+    
+    algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
         return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
     }
 
@@ -668,7 +676,7 @@ public class RobotContainer {
     }
 
     public enum AlgaeLocationPresets {
-        REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET;
+        REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET, HIGHGROUND;
     }
 
     public void resetReferences() {

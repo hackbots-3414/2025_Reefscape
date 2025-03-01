@@ -38,6 +38,9 @@ public class AlgaeIntakeCommand extends Command {
                 isDone = !CommandBounds.reefBounds.isActive();
                 elevator.setReefUpper();
             }
+            case HIGHGROUND -> {
+                elevator.setHighGroundIntake();
+            }
             default -> isDone = true;
         }
     }
@@ -45,7 +48,7 @@ public class AlgaeIntakeCommand extends Command {
     @Override
     public void execute() {
         switch (location) {
-            case GROUND -> {
+            case GROUND, HIGHGROUND -> {
                 if (elevator.atSetpoint()) pivot.setGroundPickup();
                 if (rollers.hasObject()) isDone = true; 
             }
