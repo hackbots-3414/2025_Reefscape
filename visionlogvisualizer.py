@@ -1,6 +1,8 @@
 import csv
 from os import sep
+import sys
 from matplotlib import pyplot as plt
+from matplotlib.scale import ScaleBase
 
 class LogEntry:
     def withTimestamp(self, timestamp):
@@ -74,22 +76,39 @@ class VisionLog:
             logs.append(log) 
         return logs
 
-logs = VisionLog.from_csv("vision.log")
+if len(sys.argv) != 2:
+    print(f"usage: {sys.argv[0]} <filename>")
+    exit()
+
+filepath = sys.argv[1]
+
+logs = VisionLog.from_csv(filepath)
 separated = logs.split_sources()
-for log in separated:
-    source = log.sources
-    timestamp = []
-    err = []
-    for entry in log.logs:
-        err.append(entry.err)
-        timestamp.append(entry.timestamp)
-    plt.plot(timestamp, err, label=str(source))
 
-# add a recommendation
-plt.axhline(0.2, label="acceptable range", color="gray")
+def graph_error():
+    for log in separated:
+        source = log.sources
+        timestamp = []
+        err = []
+        for entry in log.logs:
+            err.append(entry.err)
+            timestamp.append(entry.timestamp)
+        plt.plot(timestamp, err, label=str(source))
 
-plt.xlabel("FPGA time")
-plt.ylabel("Error")
-plt.legend()
-plt.show()
+    # add a recommendation
+    plt.axhline(0.2, label="acceptable range", color="gray")
 
+    plt.xlabel("FPGA time")
+    plt.ylabel("Error")
+    plt.legend()
+    plt.show()
+
+def graph_positions():
+    x = [entry.x for entry in logs.logs]
+    y = [entry.y for entry in logs.logs]
+    plt.scatter(x, y)
+
+    plt.show()
+
+graph_error()
+graph_positions()
