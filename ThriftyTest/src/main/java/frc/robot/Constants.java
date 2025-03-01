@@ -128,6 +128,9 @@ public class Constants {
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
+        public static final double k_driveToPointSpeed = 2.0;
+        public static final double k_driveToPointAcceleration = 3.0;
+
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4.724);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
 

@@ -22,10 +22,12 @@ public class DriveToPointCommand extends Command {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
-    private final Constraints constraints = new Constraints(DriveConstants.k_maxTeleopLinearSpeed, DriveConstants.k_maxTeleopAngularSpeed);
+    private final Constraints constraints = new Constraints(DriveConstants.k_driveToPointSpeed, DriveConstants.k_driveToPointAcceleration);
 
-    private final ProfiledPIDController xPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
-    private final ProfiledPIDController yPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
+    // private final ProfiledPIDController xPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
+    // private final ProfiledPIDController yPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
+    private final ProfiledPIDController xPIDController = new ProfiledPIDController(15, 0, 0, constraints);
+    private final ProfiledPIDController yPIDController = new ProfiledPIDController(15, 0, 0, constraints);
 
     private static double m_targetX = 0.0;
     private static double m_targetY = 0.0;
@@ -54,9 +56,11 @@ public class DriveToPointCommand extends Command {
 
         m_targetRotation = goal.getRotation();
 
+        Pose2d currPose = m_drivetrain.getPose();
+
         // so first is finished run doesn't break
-        xPIDController.setGoal(m_targetX);
-        yPIDController.setGoal(m_targetY);
+        xPIDController.reset(currPose.getX());
+        yPIDController.reset(currPose.getY());
     }
 
     @Override
