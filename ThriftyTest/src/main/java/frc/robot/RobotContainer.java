@@ -97,6 +97,7 @@ public class RobotContainer {
         SmartDashboard.putData("open funnel", new OpenFunnel(m_climber));
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
+        SmartDashboard.putBoolean("SAFETY MODE", false);
     }
 
     private void addBoundsToField() {

@@ -284,7 +284,7 @@ public class Constants {
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
 
-        public static final String k_logPath = "logs/vision";
+        public static final String k_logPath = "/home/lvuser/logs/vision";
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
@@ -613,7 +613,7 @@ public class Constants {
     public static final class ClimberConstants {
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0;
-        public static final double climbDownVolts = -2.0;
+        public static final double climbDownVolts = -12.0;
         public static final double climbRollVolts = 2;
 
         public static final double climberCurrentLimit = 80.0;
@@ -629,7 +629,7 @@ public class Constants {
                         .withSupplyCurrentLimit(climberCurrentLimit));
 
         public static final double climbReadyRangeValue = 0.08;
-        public static final double climbedRangeValue = 0.19;
+        public static final double climbedRangeValue = 0.16;
             
         public static final double k_servoPosition = 0.0;
         public static final double k_servoTolerance = 0.01;
