@@ -579,8 +579,8 @@ public class Constants {
         public static final double ejectVoltage = 6;
 
         public static final double l1EjectVoltage = 3;
-        public static final double l2EjectVoltage = 5;
-        public static final double l3EjectVoltage = 7;
+        public static final double l2EjectVoltage = 4.4;
+        public static final double l3EjectVoltage = 5;
         public static final double l4EjectVoltage = 7;
 
         public static final double spitOutVoltage = -8;
@@ -619,7 +619,7 @@ public class Constants {
         public static final double climbRollVolts = 2;
 
         public static final double climberCurrentLimit = 80.0;
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
@@ -633,7 +633,8 @@ public class Constants {
         public static final double climbReadyRangeValue = 0.08;
         public static final double climbedRangeValue = 0.16;
             
-        public static final double k_servoPosition = 0.0;
+        public static final double k_openServoPosition = 0.0;
+        public static final double k_closedServoPosition = 1.0;
         public static final double k_servoTolerance = 0.01;
     }
 

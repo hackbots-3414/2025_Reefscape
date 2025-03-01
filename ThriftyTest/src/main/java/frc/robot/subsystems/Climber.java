@@ -45,7 +45,11 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     public void openFunnel() {
-        m_servo.set(ClimberConstants.k_servoPosition);
+        m_servo.set(ClimberConstants.k_openServoPosition);
+    }
+
+    public void closeFunnel() {
+        m_servo.set(ClimberConstants.k_closedServoPosition);
     }
 
     private void setMotor(double voltage) {

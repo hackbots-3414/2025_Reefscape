@@ -8,6 +8,8 @@ public class ClimberCommand extends Command {
     private final Climber climber;
     private boolean m_up;
 
+    private boolean finish;
+
     public ClimberCommand(Climber climber) {
         this(climber, true);
     }
@@ -20,8 +22,13 @@ public class ClimberCommand extends Command {
 
     @Override
     public void initialize() {
+        finish = false;
         if (m_up) {
-            climber.setClimbUpVolts();
+            if (climber.ready()) {
+                climber.setClimbUpVolts();
+            } else {
+                finish = true;
+            }
         } else {
             climber.setDownVolts();
         }
@@ -30,17 +37,15 @@ public class ClimberCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         climber.stopMotor();
+        climber.closeFunnel();
         RobotObserver.setClimbed(true);
     }
 
     @Override
     public boolean isFinished() {
+        if (finish) return true;
         if (m_up) {
-            if (climber.ready()) {
-                return climber.climbed();
-            } else {
-                return true;
-            }
+            return climber.climbed();
         } else {
             return climber.ready();
         }
