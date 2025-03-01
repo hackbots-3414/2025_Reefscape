@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,6 +27,17 @@ public class RobotObserver {
 
     public static Pose2d getPose() {
         return getInstance().m_poseSupplier.get();
+    }
+
+    /* the velocity of the robot */
+    private DoubleSupplier m_veloSupplier;
+
+    public static void setVelocitySupplier(DoubleSupplier veloSupplier) {
+        getInstance().m_veloSupplier = veloSupplier;
+    }
+
+    public static double getVelocity() {
+        return getInstance().m_veloSupplier.getAsDouble();
     }
 
     /* Field2d to display important details about the robot */
