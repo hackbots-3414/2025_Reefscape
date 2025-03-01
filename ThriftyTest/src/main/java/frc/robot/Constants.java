@@ -102,8 +102,7 @@ public class Constants {
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
 
-        public static final int climbReadyHardLimit = 0;
-        public static final int climbedHardLimit = 1;
+        public static final int canRange = 3;
 
         public static final int algae = 60;
 
@@ -627,13 +626,10 @@ public class Constants {
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(climberCurrentLimit))
-                        
-                .withHardwareLimitSwitch(new HardwareLimitSwitchConfigs()
-                        .withForwardLimitEnable(true)
-                        .withForwardLimitRemoteSensorID(IDConstants.climbedHardLimit)
-                        .withReverseLimitEnable(true)
-                        .withReverseLimitRemoteSensorID(IDConstants.climbReadyHardLimit));
+                        .withSupplyCurrentLimit(climberCurrentLimit));
+
+        public static final double climbReadyRangeValue = 0.08;
+        public static final double climbedRangeValue = 0.19;
             
         public static final double k_servoPosition = 0.0;
         public static final double k_servoTolerance = 0.01;

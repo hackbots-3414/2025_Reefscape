@@ -80,10 +80,7 @@ public class LedFeedback extends SubsystemBase {
         config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
         ledcontroller.configAllSettings(config);
         ledcontroller2.configAllSettings(config);
-        defaultColors(ledcontroller, LED_SECTION.ELEVATOR, LedConstants.elevatorOffset);
-        defaultColors(ledcontroller2, LED_SECTION.ELEVATOR2, LedConstants.elevatorOffset2);
-        defaultColors(ledcontroller, LED_SECTION.FUNNEL, LedConstants.funnelOffset);
-        defaultColors(ledcontroller2, LED_SECTION.FUNNEL2, LedConstants.funnelOffset2);
+        defaultColors();
     }
 
     @Override
@@ -187,20 +184,16 @@ public class LedFeedback extends SubsystemBase {
 
             }
         } else {
-            defaultColors(ledcontroller, LED_SECTION.ELEVATOR, LedConstants.elevatorOffset);
-            defaultColors(ledcontroller2, LED_SECTION.ELEVATOR2, LedConstants.elevatorOffset2);
-            defaultColors(ledcontroller, LED_SECTION.FUNNEL, LedConstants.funnelOffset);
-            defaultColors(ledcontroller2, LED_SECTION.FUNNEL2, LedConstants.funnelOffset2);
+            defaultColors();
+            elevatorMode = LED_MODE.DEFAULT;
         }
     }
 
-    private void defaultColors(CANdle controller, LED_SECTION section, int offset) {
-        controller.clearAnimation(0);
-        controller.clearAnimation(1);
-        setColor(LED_COLOR.PURPLE, section, LED_PATTERN.LARSON, controller, LedConstants.funnelNumLED,
-                LedConstants.funnelOffset);
-
-        controller.animate(new LarsonAnimation(255, 0, 255, 0, 0.75, offset, LarsonAnimation.BounceMode.Back, 14), 0);
+    private void defaultColors() {
+        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.LARSON, ledcontroller, LedConstants.elevatorNumLED, LedConstants.elevatorOffset);
+        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR2, LED_PATTERN.LARSON, ledcontroller2, LedConstants.elevatorNumLED2, LedConstants.elevatorOffset2);
+        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL, LED_PATTERN.LARSON, ledcontroller, LedConstants.funnelNumLED, LedConstants.funnelOffset);
+        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL2, LED_PATTERN.LARSON, ledcontroller2, LedConstants.funnelNumLED2, LedConstants.funnelOffset2);        
     }
 
     private boolean badController() {
@@ -219,8 +212,6 @@ public class LedFeedback extends SubsystemBase {
         boolean operatorOk = (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD)
                 ? operatorName.contains(ButtonBindingConstants.buttonBoardName)
                 : operatorName.contains(ButtonBindingConstants.operatorBackupName);
-
-        m_logger.warn("driver status {}, operator status {}", driverOk, operatorOk);
 
         return !(driverOk && operatorOk);
     }

@@ -32,4 +32,13 @@ public class ClimberCommand extends Command {
         climber.stopMotor();
         RobotObserver.setClimbed(true);
     }
+
+    @Override
+    public boolean isFinished() {
+        if (m_up) {
+            return climber.climbed();
+        } else {
+            return climber.ready();
+        }
+    }
 }
