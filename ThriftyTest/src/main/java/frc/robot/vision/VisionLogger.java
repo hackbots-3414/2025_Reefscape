@@ -1,7 +1,6 @@
 package frc.robot.vision;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.vision.LogBuilder.VisionLog;
-import jdk.internal.org.commonmark.node.BulletList;
 
 public class VisionLogger implements AutoCloseable {
     private static VisionLogger instance;
