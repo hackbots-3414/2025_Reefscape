@@ -167,8 +167,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AutonomousUtil.handleQueue();
 
         handleVisionToggle();
-
-        SmartDashboard.putString("ROBOT POSE", getPose().toString());
     }
 
     private void startSimThread() {

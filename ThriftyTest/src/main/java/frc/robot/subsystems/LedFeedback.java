@@ -35,9 +35,7 @@ public class LedFeedback extends SubsystemBase {
     private final Logger m_logger = LoggerFactory.getLogger(LedFeedback.class);
     private static double matchTime = 0;
     // private Supplier<Boolean> isInRange;
-    // private boolean coralOnBoard = false;
     // private boolean algaeOnBoard = false;
-    // private boolean climbed = false;
     private boolean coralOnBoard = false;
     private boolean inRange = false;
     private boolean climbed = false;
@@ -49,7 +47,6 @@ public class LedFeedback extends SubsystemBase {
     private boolean inTeleop = false;
 
     private int selectedSlot = 0;
-    private boolean initialClearRan = false;
 
     private static enum LED_MODE {
         CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
@@ -68,8 +65,7 @@ public class LedFeedback extends SubsystemBase {
         FUNNEL, ELEVATOR, FUNNEL2, ELEVATOR2;
     }
 
-    private static LED_MODE funnelMode = null;
-    private static LED_MODE elevatorMode = null;
+    private static LED_MODE mode = null;
 
     private CANdle ledcontroller = new CANdle(IDConstants.candle1);
     private CANdle ledcontroller2 = new CANdle(IDConstants.candle2);
@@ -94,106 +90,75 @@ public class LedFeedback extends SubsystemBase {
         climbed = RobotObserver.getClimbed();
 
         if (badController()) {
-            if (elevatorMode != LED_MODE.BADCONTROLLER) {
-                elevatorMode = LED_MODE.BADCONTROLLER;
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE, ledcontroller,
-                        LedConstants.elevatorNumLED, LedConstants.elevatorOffset);
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE, ledcontroller2,
-                        LedConstants.elevatorNumLED2, LedConstants.elevatorOffset2);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL, LED_PATTERN.STROBE, ledcontroller,
-                        LedConstants.elevatorNumLED, LedConstants.elevatorOffset);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL2, LED_PATTERN.STROBE, ledcontroller2,
-                        LedConstants.elevatorNumLED2, LedConstants.elevatorOffset2);
+            if (mode != LED_MODE.BADCONTROLLER) {
+                mode = LED_MODE.BADCONTROLLER;
+                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
+                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE);
+                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
+                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL2, LED_PATTERN.STROBE);
             }
         } else if (inTeleop || inAuton) {
-            if (!initialClearRan) {
-                setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.CLEAR, ledcontroller, LedConstants.funnelNumLED,
-                        LedConstants.funnelOffset);
-                setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL2, LED_PATTERN.CLEAR, ledcontroller2,
-                        LedConstants.funnelNumLED2, LedConstants.funnelOffset2);
-                initialClearRan = true;
-            }
             if (inTeleop) {
                 if (matchTime <= LedConstants.endgameWarning) {
                     if (matchTime <= LedConstants.endgameAlert) {
-                        if (elevatorMode != LED_MODE.END_GAME_ALERT) {
-                            elevatorMode = LED_MODE.END_GAME_ALERT;
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE, ledcontroller,
-                                    LedConstants.elevatorNumLED, LedConstants.elevatorOffset);
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE, ledcontroller2,
-                                    LedConstants.elevatorNumLED2, LedConstants.elevatorOffset2);
+                        if (mode != LED_MODE.END_GAME_ALERT) {
+                            mode = LED_MODE.END_GAME_ALERT;
+                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
+                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE);
                         }
                     } else {
-                        if (elevatorMode != LED_MODE.END_GAME_WARNING) {
-                            elevatorMode = LED_MODE.END_GAME_WARNING;
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE, ledcontroller,
-                                    LedConstants.elevatorNumLED, LedConstants.elevatorOffset);
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE, ledcontroller2,
-                                    LedConstants.elevatorNumLED2, LedConstants.elevatorOffset2);
+                        if (mode != LED_MODE.END_GAME_WARNING) {
+                            mode = LED_MODE.END_GAME_WARNING;
+                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
+                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE);
                         }
                     }
                 }
 
-
                 if (climbed) {
-                    if (funnelMode != LED_MODE.CLIMBED && matchTime > 0) {
-                        funnelMode = LED_MODE.CLIMBED;
-                        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW, ledcontroller,
-                                LedConstants.funnelNumLED, LedConstants.funnelOffset);
-                        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL2, LED_PATTERN.RAINBOW, ledcontroller2,
-                                LedConstants.funnelNumLED2, LedConstants.funnelOffset2);
+                    if (mode != LED_MODE.CLIMBED && matchTime > 0) {
+                        mode = LED_MODE.CLIMBED;
+                        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW);
+                        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL2, LED_PATTERN.RAINBOW);
+                        setColor(LED_COLOR.OFF, LED_SECTION.ELEVATOR, LED_PATTERN.RAINBOW);
+                        setColor(LED_COLOR.OFF, LED_SECTION.ELEVATOR2, LED_PATTERN.RAINBOW);
 
                     }
                 } else if (coralOnBoard && inRange) {
-                    if (funnelMode != LED_MODE.CORAL_READY) {
-                        funnelMode = LED_MODE.CORAL_READY;
-                        setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.FLASH, ledcontroller,
-                                LedConstants.funnelNumLED, LedConstants.funnelOffset);
-                        setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL2, LED_PATTERN.FLASH, ledcontroller2,
-                                LedConstants.funnelNumLED2, LedConstants.funnelOffset2);
+                    if (mode != LED_MODE.CORAL_READY) {
+                        mode = LED_MODE.CORAL_READY;
+                        setColor(LED_COLOR.BLUE, LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
+                        setColor(LED_COLOR.BLUE, LED_SECTION.FUNNEL2, LED_PATTERN.STROBE);
 
                     }
                 } else if (coralOnBoard) {
-                    if (funnelMode != LED_MODE.CORAL_ON_BOARD) {
-                        funnelMode = LED_MODE.CORAL_ON_BOARD;
-                        setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller,
-                                LedConstants.funnelNumLED, LedConstants.funnelOffset);
-                        setColor(LED_COLOR.WHITE, LED_SECTION.FUNNEL2, LED_PATTERN.SOLID, ledcontroller2,
-                                LedConstants.funnelNumLED2, LedConstants.funnelOffset2);
-
+                    if (mode != LED_MODE.CORAL_ON_BOARD) {
+                        mode = LED_MODE.CORAL_ON_BOARD;
+                        setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.SOLID);
+                        setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL2, LED_PATTERN.SOLID);
                     }
-
-                } else if (funnelMode != LED_MODE.DEFAULT_ENDGAME && matchTime < LedConstants.endgameWarning) {
-                    funnelMode = LED_MODE.DEFAULT_ENDGAME;
-                    setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller,
-                            LedConstants.funnelNumLED, LedConstants.funnelOffset);
-                    setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL2, LED_PATTERN.SOLID, ledcontroller2,
-                            LedConstants.funnelNumLED2, LedConstants.funnelOffset2);
-
-                } else if (elevatorMode != LED_MODE.DEFAULT) {
-                    elevatorMode = LED_MODE.DEFAULT;
-                    setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.SOLID, ledcontroller,
-                            LedConstants.funnelNumLED, LedConstants.funnelOffset);
-                    setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL2, LED_PATTERN.SOLID, ledcontroller2,
-                            LedConstants.funnelNumLED2, LedConstants.funnelOffset2);
-                    setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH, ledcontroller,
-                            LedConstants.funnelNumLED, LedConstants.funnelOffset);
-                    setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR2, LED_PATTERN.FLASH, ledcontroller2,
-                            LedConstants.funnelNumLED2, LedConstants.funnelOffset2);
+                } else {
+                    if (mode != LED_MODE.DEFAULT) {
+                        defaultColors();
+                        mode = LED_MODE.DEFAULT;
+                    }
                 }
 
             }
         } else {
-            defaultColors();
-            elevatorMode = LED_MODE.DEFAULT;
+            if (mode != LED_MODE.DEFAULT) {
+                defaultColors();
+                mode = LED_MODE.DEFAULT;
+            }
+            
         }
     }
 
     private void defaultColors() {
-        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.LARSON, ledcontroller, LedConstants.elevatorNumLED, LedConstants.elevatorOffset);
-        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR2, LED_PATTERN.LARSON, ledcontroller2, LedConstants.elevatorNumLED2, LedConstants.elevatorOffset2);
-        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL, LED_PATTERN.LARSON, ledcontroller, LedConstants.funnelNumLED, LedConstants.funnelOffset);
-        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL2, LED_PATTERN.LARSON, ledcontroller2, LedConstants.funnelNumLED2, LedConstants.funnelOffset2);        
+        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.LARSON);
+        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR2, LED_PATTERN.LARSON);
+        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL, LED_PATTERN.LARSON);
+        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL2, LED_PATTERN.LARSON);      
     }
 
     private boolean badController() {
@@ -216,7 +181,12 @@ public class LedFeedback extends SubsystemBase {
         return !(driverOk && operatorOk);
     }
 
-    public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern, CANdle ledcontroller, int nbrLED, int offsetLED) {
+    public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern) {
+        int nbrLED = 0;
+        int offsetLED = 0;
+
+        CANdle candle = null;
+
         switch (color) {
             case BLUE:
                 r = 0;
@@ -260,35 +230,35 @@ public class LedFeedback extends SubsystemBase {
                 offsetLED = LedConstants.funnelOffset;
                 nbrLED = LedConstants.funnelNumLED;
                 selectedSlot = 0;
-                ledcontroller.clearAnimation(0);
+                candle = ledcontroller;
                 break;
             case ELEVATOR:
                 offsetLED = LedConstants.elevatorOffset;
                 nbrLED = LedConstants.elevatorNumLED;
                 selectedSlot = 1;
-                ledcontroller.clearAnimation(1);
+                candle = ledcontroller;
                 break;
             case FUNNEL2:
                 offsetLED = LedConstants.funnelOffset2;
                 nbrLED = LedConstants.funnelNumLED2;
                 selectedSlot = 0;
-                ledcontroller.clearAnimation(0);
+                candle = ledcontroller2;
                 break;
             case ELEVATOR2:
                 offsetLED = LedConstants.elevatorOffset2;
                 nbrLED = LedConstants.elevatorNumLED2;
                 selectedSlot = 1;
-                ledcontroller.clearAnimation(1);
+                candle = ledcontroller2;
         }
 
         switch (pattern) {
-            case SOLID -> ledcontroller.setLEDs(r, g, b, 0, offsetLED, nbrLED);
-            case FLASH -> ledcontroller.animate(new SingleFadeAnimation(r, g, b, 0, LedConstants.flashSpeed, nbrLED, offsetLED), selectedSlot);
-            case STROBE -> ledcontroller.animate(new StrobeAnimation(r, g, b, 0, LedConstants.strobeSpeed, nbrLED, offsetLED), selectedSlot);
-            case TWINKLE -> ledcontroller.animate(new TwinkleAnimation(r, g, b, 0, 0.5, nbrLED, TwinklePercent.Percent42, offsetLED), selectedSlot);
-            case CLEAR -> ledcontroller.setLEDs(0, 0, 0, 0, offsetLED, nbrLED);
-            case LARSON -> ledcontroller.animate(new LarsonAnimation(r, g, b, 0, 0.75, nbrLED, BounceMode.Back, 7, offsetLED), selectedSlot);
-            case RAINBOW -> ledcontroller.animate(new RainbowAnimation(1, 0.9, nbrLED, true, offsetLED), selectedSlot);
+            case SOLID -> candle.setLEDs(r, g, b, 0, offsetLED, nbrLED);
+            case FLASH -> candle.animate(new SingleFadeAnimation(r, g, b, 0, LedConstants.flashSpeed, nbrLED, offsetLED), selectedSlot);
+            case STROBE -> candle.animate(new StrobeAnimation(r, g, b, 0, LedConstants.strobeSpeed, nbrLED, offsetLED), selectedSlot);
+            case TWINKLE -> candle.animate(new TwinkleAnimation(r, g, b, 0, 0.5, nbrLED, TwinklePercent.Percent42, offsetLED), selectedSlot);
+            case CLEAR -> candle.setLEDs(0, 0, 0, 0, offsetLED, nbrLED);
+            case LARSON -> candle.animate(new LarsonAnimation(r, g, b, 0, 0.75, nbrLED, BounceMode.Back, 7, offsetLED), selectedSlot);
+            case RAINBOW -> candle.animate(new RainbowAnimation(1, 0.9, nbrLED, true, offsetLED), selectedSlot);
         }
     }
 }

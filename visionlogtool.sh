@@ -11,4 +11,4 @@ mkdir -p $DOWNLOAD_PATH
 scp lvuser@10.34.14.2:~/logs/* $DOWNLOAD_PATH
 
 # NUKE IT
-# ssh -c "rm ~/logs/*" lvuser@10.34.14.2
+ssh lvuser@10.34.14.2 "rm ~/logs/*"
