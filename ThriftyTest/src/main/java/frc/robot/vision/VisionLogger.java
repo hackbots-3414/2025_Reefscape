@@ -70,6 +70,7 @@ public class VisionLogger implements AutoCloseable {
 
         try {
             m_buffer.write(builder.toString());
+            m_buffer.flush();
         } catch (IOException e) {
             logger.error("Failed writing to vision log file: {}", e.toString());
         }

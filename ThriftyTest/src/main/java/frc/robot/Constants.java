@@ -346,7 +346,7 @@ public class Constants {
         public static final double k_targetMultiplier = 10;
         public static final double k_differenceThreshold = 0.4;
         // this value is so high because we want to strongly punish far away poses.
-        public static final double k_differenceMultiplier = 2000.0;
+        public static final double k_differenceMultiplier = 100.0;
         // Stats about the camera for simulation
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
@@ -636,7 +636,7 @@ public class Constants {
                         .withSupplyCurrentLimit(climberCurrentLimit));
 
         public static final double climbReadyRangeValue = 0.08;
-        public static final double climbedRangeValue = 0.16;
+        public static final double climbedRangeValue = 0;
             
         public static final double k_openServoPosition = 0.0;
         public static final double k_closedServoPosition = 1.0;

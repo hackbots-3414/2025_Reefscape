@@ -234,7 +234,7 @@ public class SingleInputPoseEstimator implements Runnable {
         // distance from last pose
         double poseDifferenceError = Math.max(0,
             RobotObserver.getPose().minus(pose).getTranslation().getNorm()
-                - VisionConstants.k_differenceThreshold
+                - VisionConstants.k_differenceThreshold * RobotObserver.getVelocity()
         );
         double diffMultiplier = Math.max(1,
             poseDifferenceError * VisionConstants.k_differenceMultiplier
