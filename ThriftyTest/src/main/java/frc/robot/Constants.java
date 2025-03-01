@@ -152,8 +152,8 @@ public class Constants {
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
-        public static final String dragonReinsName = "dragon";
-        public static final String driverBackupName = "interlink";
+        public static final String dragonReinsName = "interlink";
+        public static final String driverBackupName = "dual";
 
         public static final String buttonBoardName = "dragon";
         public static final String operatorBackupName = "dual";
@@ -636,7 +636,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -3;
+        public static final double ejectVoltage = -2;
 
         public static final double torqueCurrentThreshold = 30;
 
@@ -826,10 +826,10 @@ public class Constants {
         public static final int numLED = 85;
         public static final double flashSpeed = 0.75;
         public static final double strobeSpeed = 0.1;
-        public static final double endgameWarning = 20;
+        public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8;
-        public static final int elevatorOffset = 53 ;
+        public static final int elevatorOffset = 53;
         public static final int funnelNumLED = 45;
         public static final int elevatorNumLED = 40;
         public static final int funnelOffset2 = 8;
