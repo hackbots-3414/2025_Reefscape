@@ -36,9 +36,7 @@ public class LogBuilder {
 
     public void log() {
         buildLogs();
-        for (VisionLog log : m_logs) {
-            VisionLogger.record(log);
-        }
+        VisionLogger.record(m_logs);
     }
 
     /* a helper record to handle logs */
