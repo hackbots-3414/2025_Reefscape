@@ -122,7 +122,6 @@ public class VisionHandler implements AutoCloseable {
         Pose2d currPose = m_drivetrain.getPose();
         m_visionSim.update(currPose);
         // finish logging
-        m_logBuilder.setResult(currPose);
         m_logBuilder.log();
     }
 
