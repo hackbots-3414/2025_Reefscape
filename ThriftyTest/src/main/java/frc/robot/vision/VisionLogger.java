@@ -8,6 +8,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctre.phoenix6.Utils;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.vision.LogBuilder.VisionLog;
@@ -29,12 +31,18 @@ public class VisionLogger implements AutoCloseable {
 
     private VisionLogger() {
         try {
-            m_writer = new FileWriter(VisionConstants.k_logPath);
+            m_writer = new FileWriter(VisionConstants.k_logPath + Long.toHexString(Math.round(Utils.getCurrentTimeSeconds())) + ".log");
         } catch (IOException e) {
             logger.error("failed to open vision log file : {}", e.toString());
             return;
         }
         m_buffer = new BufferedWriter(m_writer);
+
+        try {
+            m_buffer.write("time, source, x, y, err\n");
+        } catch (IOException e) {
+            logger.error("failed to write to vision log: {}", e.toString());
+        }
     }
 
     private synchronized void recordLogs(List<VisionLog> logs) {
@@ -48,7 +56,13 @@ public class VisionLogger implements AutoCloseable {
         StringBuilder builder = new StringBuilder();
 
         for (VisionLog log : logs) {
+            builder.append(log.estimate().timestamp());
+            builder.append(", ");
             builder.append(log.estimate().source());
+            builder.append(", ");
+            builder.append(log.robot().getX());
+            builder.append(", ");
+            builder.append(log.robot().getY());
             builder.append(", ");
             builder.append(log.error());
             builder.append("\n");
@@ -56,7 +70,6 @@ public class VisionLogger implements AutoCloseable {
 
         try {
             m_buffer.write(builder.toString());
-            m_buffer.flush();
         } catch (IOException e) {
             logger.error("Failed writing to vision log file: {}", e.toString());
         }
@@ -68,6 +81,10 @@ public class VisionLogger implements AutoCloseable {
     }
 
     public void close() {
-
+        try {
+            m_buffer.close();
+        } catch (IOException e) {
+            logger.error("failed closing file: {}", e.toString());
+        }
     }
 }
