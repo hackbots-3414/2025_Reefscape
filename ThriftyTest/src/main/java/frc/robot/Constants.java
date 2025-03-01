@@ -281,8 +281,6 @@ public class Constants {
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
 
-        // aliases
-
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d(

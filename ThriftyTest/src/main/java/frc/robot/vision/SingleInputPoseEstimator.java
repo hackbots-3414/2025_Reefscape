@@ -44,6 +44,8 @@ public class SingleInputPoseEstimator implements Runnable {
 
     private BooleanSupplier m_singleTag;
 
+    private String m_name;
+
     public SingleInputPoseEstimator(
         PhotonCamera camera,
         Transform3d robotToCamera,
@@ -51,6 +53,7 @@ public class SingleInputPoseEstimator implements Runnable {
         BooleanSupplier singleTagSupplier
     ) {
         m_camera = camera;
+        m_name = camera.getName();
         m_reporter = updateCallback;
         m_singleTag = singleTagSupplier;
         AprilTagFieldLayout layout = null;
@@ -156,7 +159,7 @@ public class SingleInputPoseEstimator implements Runnable {
         // check validity again
         if (!checkValidity(pose, ambiguity)) return Optional.empty();
         return Optional.of(
-            new TimestampedPoseEstimate(pose.toPose2d(), timestamp, stdDevs)
+            new TimestampedPoseEstimate(pose.toPose2d(), m_name, timestamp, stdDevs)
         );
     }
 
