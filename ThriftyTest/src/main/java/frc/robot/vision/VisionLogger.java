@@ -49,7 +49,7 @@ public class VisionLogger implements AutoCloseable {
 
         for (VisionLog log : logs) {
             builder.append(log.estimate().source());
-            builder.append(" : ");
+            builder.append(", ");
             builder.append(log.error());
             builder.append("\n");
         }
