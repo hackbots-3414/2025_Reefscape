@@ -29,6 +29,8 @@
       "/SmartDashboard/Height to Score #2": "String Chooser",
       "/SmartDashboard/Height to Score #3": "String Chooser",
       "/SmartDashboard/Height to Score #4": "String Chooser",
+      "/SmartDashboard/LIFT CLIMB": "Command",
+      "/SmartDashboard/LOWER CLIMB": "Command",
       "/SmartDashboard/ManualClimberCommand": "Command",
       "/SmartDashboard/Module 0": "Mechanism2d",
       "/SmartDashboard/Module 1": "Mechanism2d",
@@ -408,7 +410,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
@@ -450,9 +452,7 @@
   "NetworkTables Info": {
     "Server": {
       "open": true
-    }
-  },
-  "NetworkTables View": {
-    "visible": false
+    },
+    "visible": true
   }
 }
