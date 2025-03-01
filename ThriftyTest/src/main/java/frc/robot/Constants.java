@@ -344,7 +344,7 @@ public class Constants {
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
         public static final double k_targetMultiplier = 10;
-        public static final double k_differenceThreshold = 0.4;
+        public static final double k_differenceThreshold = 0.07;
         // this value is so high because we want to strongly punish far away poses.
         public static final double k_differenceMultiplier = 100.0;
         // Stats about the camera for simulation
