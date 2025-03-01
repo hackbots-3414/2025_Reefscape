@@ -153,7 +153,7 @@ public class SingleInputPoseEstimator implements Runnable {
         EstimatedRobotPose estimation
     ) {
         double latency = result.metadata.getLatencyMillis() / 1.0e+3;
-        double timestamp = Timer.getFPGATimestamp() - latency;
+        double timestamp = Utils.getCurrentTimeSeconds() - latency;
         Pose3d pose = estimation.estimatedPose;
         double ambiguity = getAmbiguity(result);
         Matrix<N3, N1> stdDevs = calculateStdDevs(result, latency);
