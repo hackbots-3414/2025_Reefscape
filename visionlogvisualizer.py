@@ -107,6 +107,7 @@ def graph_positions():
     x = [entry.x for entry in logs.logs]
     y = [entry.y for entry in logs.logs]
     plt.scatter(x, y)
+    plt.plot(x, y)
 
     plt.show()
 

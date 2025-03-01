@@ -299,11 +299,11 @@ public class Constants {
             )),
             Map.entry("cam3", new Transform3d(
                 new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI) // TODO MUUST CHANGE
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI)
             )),
             Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw) // TODO MUUST CHANGE
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
             )),
             Map.entry("cam5", new Transform3d( // special
                 new Translation3d(-0.302, 0.266, 0.175),
@@ -322,6 +322,7 @@ public class Constants {
                 new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
             ))
         );
+
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera) we expect to see per tick
@@ -335,6 +336,7 @@ public class Constants {
         public static final Distance k_XYMargin = Meters.of(0.5);
         // The maximum distance from 0 that a camera's pose can report
         public static final Distance k_ZMargin = Meters.of(1.5);
+
         // Some configuration variables:
         public static final boolean k_useStdDevs = true;
         public static final double k_distanceMultiplier = 7.0;
@@ -342,6 +344,9 @@ public class Constants {
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
         public static final double k_targetMultiplier = 10;
+        public static final double k_differenceThreshold = 0.4;
+        // this value is so high because we want to strongly punish far away poses.
+        public static final double k_differenceMultiplier = 2000.0;
         // Stats about the camera for simulation
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;

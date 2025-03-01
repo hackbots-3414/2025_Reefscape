@@ -23,6 +23,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
@@ -156,11 +157,12 @@ public class SingleInputPoseEstimator implements Runnable {
         double timestamp = Timer.getFPGATimestamp() - latency;
         Pose3d pose = estimation.estimatedPose;
         double ambiguity = getAmbiguity(result);
-        Matrix<N3, N1> stdDevs = calculateStdDevs(result, latency);
+        Pose2d flatPose = pose.toPose2d();
+        Matrix<N3, N1> stdDevs = calculateStdDevs(result, latency, flatPose);
         // check validity again
         if (!checkValidity(pose, ambiguity)) return Optional.empty();
         return Optional.of(
-            new TimestampedPoseEstimate(pose.toPose2d(), m_name, timestamp, stdDevs)
+            new TimestampedPoseEstimate(flatPose, m_name, timestamp, stdDevs)
         );
     }
 
@@ -193,16 +195,18 @@ public class SingleInputPoseEstimator implements Runnable {
 
     private Matrix<N3, N1> calculateStdDevs(
         PhotonPipelineResult result,
-        double latency
+        double latency,
+        Pose2d pose
     ) {
-        double multiplier = calculateStdDevMultiplier(result, latency);
+        double multiplier = calculateStdDevMultiplier(result, latency, pose);
         Matrix<N3, N1> stdDevs = VecBuilder.fill(1.0, 1.0, Math.PI);
         return stdDevs.times(multiplier);
     }
 
     private double calculateStdDevMultiplier(
         PhotonPipelineResult result,
-        double latency
+        double latency,
+        Pose2d pose
     ) {
         double averageTagDistance = 0;
         for (PhotonTrackedTarget tag : result.getTargets()) {
@@ -227,8 +231,19 @@ public class SingleInputPoseEstimator implements Runnable {
         // tag divisor
         double tags = result.getTargets().size();
         double tagDivisor = 1 + (tags - 1) * VisionConstants.k_targetMultiplier;
+        // distance from last pose
+        double poseDifferenceError = Math.max(0,
+            RobotObserver.getPose().minus(pose).getTranslation().getNorm()
+                - VisionConstants.k_differenceThreshold
+        );
+        double diffMultiplier = Math.max(1,
+            poseDifferenceError * VisionConstants.k_differenceMultiplier
+        );
         // final calculation
-        double stdDevMultiplier = ambiguityFactor * distanceFactor / tagDivisor;
+        double stdDevMultiplier = ambiguityFactor
+            * distanceFactor
+            * diffMultiplier
+            / tagDivisor;
         return stdDevMultiplier;
     }
 
