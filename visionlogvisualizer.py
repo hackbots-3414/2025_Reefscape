@@ -93,7 +93,7 @@ def graph_error():
         for entry in log.logs:
             err.append(entry.err)
             timestamp.append(entry.timestamp)
-        plt.plot(timestamp, err, label=str(source))
+        plt.scatter(timestamp, err, label=str(source))
 
     # add a recommendation
     plt.axhline(0.2, label="acceptable range", color="gray")
