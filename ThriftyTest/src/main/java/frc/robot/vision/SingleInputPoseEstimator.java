@@ -130,7 +130,7 @@ public class SingleInputPoseEstimator implements Runnable {
         // too old -> don't count it
         if (latency > VisionConstants.k_latencyThreshold) {
             // this is interesting, so let's report it
-            m_logger.warn("Refused old vision data, latency of {}", latency);
+            m_logger.warn("({}) Refused old vision data, latency of {}", m_name, latency);
             return false;
         }
         // no targets -> no pose
