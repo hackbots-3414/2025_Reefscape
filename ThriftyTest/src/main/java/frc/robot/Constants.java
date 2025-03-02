@@ -432,7 +432,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.211670; // -0.427979;
+        public static final double encoderOffset = -0.167480; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
@@ -670,7 +670,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -2;
+        public static final double ejectVoltage = -1.8;
 
         public static final double torqueCurrentThreshold = 30;
 

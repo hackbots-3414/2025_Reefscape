@@ -25,6 +25,7 @@ public class ClimberCommand extends Command {
 
     @Override
     public void initialize() {
+        climber.setClosedLoop(false);
         initialEncoderValue = climber.getEncoderValue();
         finish = false;
         if (m_up) {
@@ -43,7 +44,7 @@ public class ClimberCommand extends Command {
         climber.stopMotor();
         climber.closeFunnel();
         RobotObserver.setClimbed(true);
-        // climber.setClosedLoop(!interrupted); // only stay if we did it right.
+        climber.setClosedLoop(!interrupted); // only stay if we did it right.
     }
 
     @Override
