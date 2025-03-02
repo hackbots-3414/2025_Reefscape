@@ -97,18 +97,20 @@ public class Elevator extends SubsystemBase {
     private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
 
     public void setPosition(double goal) {
-        if (goal >= m_reference) {
+        if (goal >= getPosition()) {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
                 .withVelocity(ElevatorConstants.maxSpeedUp)
                 .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10));
+                .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withSlot(0));
         } else {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
                 .withVelocity(ElevatorConstants.maxSpeedDown)
                 .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10));
+                .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withSlot(1));
         }
         m_reference = goal;
     }

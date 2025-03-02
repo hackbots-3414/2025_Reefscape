@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.DriveToPointCommand;
@@ -63,8 +64,10 @@ public class AutonomousUtil {
 
     public static Command pathFinder(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         return new SequentialCommandGroup(
+            new InstantCommand(() -> RobotObserver.setReefMode(true)),
             // AutoBuilder.pathfindToPoseFlipped(pose, constraints, 0),
-            new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain)
+            new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
+            new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
     }
 

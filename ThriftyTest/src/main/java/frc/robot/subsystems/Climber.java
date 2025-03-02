@@ -95,6 +95,10 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         return climbReady;
     }
 
+    public double getEncoderValue() {
+        return m_leftClimbMotor.getPosition().getValueAsDouble();
+    }
+
     @Override
     public void periodic() {
         rangeLocation = range.getDistance().getValueAsDouble();

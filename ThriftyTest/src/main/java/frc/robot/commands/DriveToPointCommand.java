@@ -81,7 +81,7 @@ public class DriveToPointCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_drivetrain.stop();
+        if (!interrupted) m_drivetrain.stop();
     }
 
     @Override

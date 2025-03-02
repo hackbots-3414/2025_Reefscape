@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotObserver;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.subsystems.Climber;
 
 public class ClimberCommand extends Command {
@@ -9,6 +10,8 @@ public class ClimberCommand extends Command {
     private boolean m_up;
 
     private boolean finish;
+
+    private double initialEncoderValue;
 
     public ClimberCommand(Climber climber) {
         this(climber, true);
@@ -22,6 +25,7 @@ public class ClimberCommand extends Command {
 
     @Override
     public void initialize() {
+        initialEncoderValue = climber.getEncoderValue();
         finish = false;
         if (m_up) {
             if (climber.ready()) {
@@ -46,6 +50,9 @@ public class ClimberCommand extends Command {
     public boolean isFinished() {
         if (finish) return true;
         if (m_up) {
+            if (Math.abs(climber.getEncoderValue() - initialEncoderValue) > ClimberConstants.climbMaxEncoderValue) {
+                return true;
+            }
             return climber.climbed();
         } else {
             return climber.ready();

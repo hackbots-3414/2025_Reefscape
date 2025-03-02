@@ -122,7 +122,7 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_translationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -383,8 +383,8 @@ public class Constants {
         public static final boolean useSuperAuton = false;
         public static final int numWaypoints = 5;
 
-        public static double translationTolerance = 0.02; // m
-        public static double rotationTolerance = Units.degreesToRadians(2);
+        public static double translationTolerance = 0.01; // m
+        public static double rotationTolerance = Units.degreesToRadians(0.5);
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
     }
@@ -432,7 +432,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.19555 ; // -0.427979;
+        public static final double encoderOffset = -0.211670; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
@@ -492,6 +492,16 @@ public class Constants {
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Elevator_Static)
                         .withKP(5)
+                        .withKI(0)
+                        .withKD(0)
+                        .withKS(0)
+                        .withKV(3.59 * (drumRadius * 2 * Math.PI))
+                        .withKA(0.05 * (drumRadius * 2 * Math.PI))
+                        .withKG(0.42))
+
+                .withSlot1(new Slot1Configs()
+                        .withGravityType(GravityTypeValue.Elevator_Static)
+                        .withKP(7)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
@@ -649,7 +659,9 @@ public class Constants {
                         .withSupplyCurrentLimit(climberCurrentLimit));
 
         public static final double climbReadyRangeValue = 0.08;
-        public static final double climbedRangeValue = 0;
+        public static final double climbedRangeValue = 0.145;
+
+        public static final double climbMaxEncoderValue = 63.833;
             
         public static final double k_openServoPosition = 0.0;
         public static final double k_closedServoPosition = 1.0;
