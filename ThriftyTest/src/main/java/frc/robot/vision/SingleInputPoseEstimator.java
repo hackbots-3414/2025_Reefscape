@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import org.photonvision.EstimatedRobotPose;
@@ -29,7 +28,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
@@ -44,20 +42,16 @@ public class SingleInputPoseEstimator implements Runnable {
     private PhotonPoseEstimator m_pnpEstimator;
     private PhotonPoseEstimator m_trigEstimator;
 
-    private BooleanSupplier m_singleTag;
-
     private String m_name;
 
     public SingleInputPoseEstimator(
         PhotonCamera camera,
         Transform3d robotToCamera,
-        Consumer<TimestampedPoseEstimate> updateCallback,
-        BooleanSupplier singleTagSupplier
+        Consumer<TimestampedPoseEstimate> updateCallback
     ) {
         m_camera = camera;
         m_name = camera.getName();
         m_reporter = updateCallback;
-        m_singleTag = singleTagSupplier;
         AprilTagFieldLayout layout = null;
         try {
             layout = AprilTagFieldLayout.loadFromResource(
@@ -106,15 +100,9 @@ public class SingleInputPoseEstimator implements Runnable {
         }
         /* take many */
         for (PhotonPipelineResult result : results) {
-            m_logger.debug("photon time: {}", result.getTimestampSeconds());
-            m_logger.debug("fpga time:   {}", Timer.getFPGATimestamp());
-            m_logger.debug("ctre time:   {}", Utils.getCurrentTimeSeconds());
             handleResult(result);
         }
         /* take one */
-        // if (results.size() == 0) return;
-        // PhotonPipelineResult latest = results.get(results.size() - 1);
-        // handleResult(latest);
     }
 
     private void handleResult(PhotonPipelineResult result) {
@@ -122,7 +110,7 @@ public class SingleInputPoseEstimator implements Runnable {
         if (!isValid) return;
         // By this point the result is valid.
         PhotonPoseEstimator estimator;
-        if (m_singleTag.getAsBoolean()) {
+        if (RobotObserver.getReefMode()) {
             // Update heading data
             m_trigEstimator.addHeadingData(
                 RobotController.getMeasureTime().in(Seconds),
@@ -159,6 +147,13 @@ public class SingleInputPoseEstimator implements Runnable {
         double ambiguity = getAmbiguity(result);
         Pose2d flatPose = pose.toPose2d();
         Matrix<N3, N1> stdDevs = calculateStdDevs(result, latency, flatPose);
+        // if in reef mode, disregard data that doesn't use the reef.
+        if (RobotObserver.getReefMode()) {
+            int id = result.getBestTarget().getFiducialId();
+            if (!VisionConstants.k_reefIds.contains(id)) {
+                return Optional.empty();
+            }
+        }
         // check validity again
         if (!checkValidity(pose, ambiguity)) return Optional.empty();
         return Optional.of(

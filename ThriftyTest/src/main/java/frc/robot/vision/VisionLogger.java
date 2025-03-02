@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.vision.LogBuilder.VisionLog;
 
@@ -30,8 +31,13 @@ public class VisionLogger implements AutoCloseable {
     private BufferedWriter m_buffer;
 
     private VisionLogger() {
+        String filepath = VisionConstants.k_logPath + Long.toHexString(Math.round(Utils.getCurrentTimeSeconds())) + ".log";
+        if (Robot.isSimulation()) {
+            logger.trace("Simulation detected, using local logging path");
+            filepath = VisionConstants.k_simLogPath + Long.toHexString(Math.round(Utils.getCurrentTimeSeconds())) + ".log";
+        }
         try {
-            m_writer = new FileWriter(VisionConstants.k_logPath + Long.toHexString(Math.round(Utils.getCurrentTimeSeconds())) + ".log");
+            m_writer = new FileWriter(filepath);
         } catch (IOException e) {
             logger.error("failed to open vision log file : {}", e.toString());
             return;

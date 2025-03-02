@@ -86,21 +86,14 @@ public class RobotObserver {
         return getInstance().m_elevatorHeightSupplier.get();
     }
 
-    private Runnable m_setSingleTag = () -> {};
-    private Runnable m_setMultiTag = () -> {};
+    private boolean m_reefMode = false;
 
-    public static void setSingleTag() {
-        getInstance().m_setSingleTag.run();
-    }
-    public static void setMultiTag() {
-        getInstance().m_setMultiTag.run();
+    public static void setReefMode(boolean enabled) {
+        getInstance().m_reefMode = enabled;
     }
 
-    public static void setSingleTagRunnable(Runnable singleTag) {
-        getInstance().m_setSingleTag = singleTag;
-    }
-    public static void setMultiTagRunnable(Runnable multiTag) {
-        getInstance().m_setMultiTag = multiTag;
+    public static boolean getReefMode() {
+        return getInstance().m_reefMode;
     }
 
     private BooleanSupplier m_pieceHeldSupplier;

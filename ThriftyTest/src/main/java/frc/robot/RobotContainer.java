@@ -94,12 +94,18 @@ public class RobotContainer {
     }
 
     private void configureTesting() {
-        SmartDashboard.putData("Single Tag", new InstantCommand(RobotObserver::setSingleTag));
-        SmartDashboard.putData("Multi Tag", new InstantCommand(RobotObserver::setMultiTag));
         SmartDashboard.putData("open funnel", new OpenFunnel(m_climber));
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
         SmartDashboard.putBoolean("SAFETY MODE", false);
+
+        SmartDashboard.putData("Reef mode on", new InstantCommand(() -> {
+            RobotObserver.setReefMode(true);
+        }));
+
+        SmartDashboard.putData("Reef mode off", new InstantCommand(() -> {
+            RobotObserver.setReefMode(false);
+        }));
     }
 
     private void addBoundsToField() {
@@ -510,8 +516,6 @@ public class RobotContainer {
     private void configureVision() {
         if (VisionConstants.enableVision) {
             m_vision.startThread();
-            RobotObserver.setSingleTagRunnable(m_vision::setSingleTag);
-            RobotObserver.setMultiTagRunnable(m_vision::setMultitag);
         } else {
             m_logger.warn("Disabled vision temporarily");
         }
@@ -666,9 +670,6 @@ public class RobotContainer {
     }
 
     private Command 
-    
-    
-    
     
     algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
         return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
