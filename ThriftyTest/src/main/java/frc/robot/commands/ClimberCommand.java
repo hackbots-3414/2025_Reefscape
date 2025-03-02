@@ -39,6 +39,7 @@ public class ClimberCommand extends Command {
         climber.stopMotor();
         climber.closeFunnel();
         RobotObserver.setClimbed(true);
+        // climber.setClosedLoop(!interrupted); // only stay if we did it right.
     }
 
     @Override

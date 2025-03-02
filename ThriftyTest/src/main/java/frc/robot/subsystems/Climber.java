@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,6 +19,12 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
     private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
     private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
+
+    private final PIDController m_controller = new PIDController(ClimberConstants.kP, 0, 0);
+
+    private boolean m_closedLoop = false;
+
+    private double m_setpoint;
 
     private final CANrange range = new CANrange(IDConstants.canRange);
     
@@ -34,6 +41,11 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     public Climber() {
         configMotors();
+    }
+
+    public void setClosedLoop(boolean enable) {
+        m_closedLoop = enable;
+        m_setpoint = m_leftClimbMotor.getPosition().getValueAsDouble();
     }
 
     private void configMotors() {
@@ -102,6 +114,12 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
         SmartDashboard.putBoolean("Climb Ready", climbReady);
         SmartDashboard.putBoolean("Climbed", climbed);
+
+        if (m_closedLoop) {
+            double position = m_leftClimbMotor.getPosition().getValueAsDouble();
+            double output = m_controller.calculate(position, m_setpoint);
+            setMotor(output);
+        }
     }
 
    @Override

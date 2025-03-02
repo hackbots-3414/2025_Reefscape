@@ -121,7 +121,7 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -345,9 +345,9 @@ public class Constants {
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
         public static final double k_targetMultiplier = 10;
-        public static final double k_differenceThreshold = 0.4;
+        public static final double k_differenceThreshold = 0.14;
         // this value is so high because we want to strongly punish far away poses.
-        public static final double k_differenceMultiplier = 2000.0;
+        public static final double k_differenceMultiplier = 100.0;
         // Stats about the camera for simulation
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
@@ -431,7 +431,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.014160; // -0.427979;
+        public static final double encoderOffset = -0.19555 ; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
@@ -455,7 +455,7 @@ public class Constants {
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeed = 10; // cancoder rotations per second
+        public static final double maxSpeed = 5; // was 10 cancoder rotations per second
         public static final double accelerationMultiplier = 3;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
@@ -591,8 +591,8 @@ public class Constants {
         public static final double ejectVoltage = 6;
 
         public static final double l1EjectVoltage = 3;
-        public static final double l2EjectVoltage = 4.4;
-        public static final double l3EjectVoltage = 5;
+        public static final double l2EjectVoltage = 5.1;
+        public static final double l3EjectVoltage = 5.1;
         public static final double l4EjectVoltage = 7;
 
         public static final double spitOutVoltage = -8;
@@ -630,6 +630,8 @@ public class Constants {
         public static final double climbDownVolts = -12.0;
         public static final double climbRollVolts = 2;
 
+        public static final double kP = 2.0;
+
         public static final double climberCurrentLimit = 80.0;
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
 
@@ -643,7 +645,7 @@ public class Constants {
                         .withSupplyCurrentLimit(climberCurrentLimit));
 
         public static final double climbReadyRangeValue = 0.08;
-        public static final double climbedRangeValue = 0.16;
+        public static final double climbedRangeValue = 0;
             
         public static final double k_openServoPosition = 0.0;
         public static final double k_closedServoPosition = 1.0;
