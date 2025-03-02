@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
@@ -17,7 +18,6 @@ import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -286,6 +286,7 @@ public class Constants {
         public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
 
         public static final String k_logPath = "/home/lvuser/logs/vision";
+        public static final String k_simLogPath = "logs/vision";
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
@@ -358,6 +359,12 @@ public class Constants {
         public static final double k_errStdDev = 0.02;
         // Stop using vision after X time
         public static final double k_visionTimeout = 0.5;
+
+        // reef tag ids (single tag only)
+        public static final Set<Integer> k_reefIds = Set.of(
+            6,  7,  8,  9,  10, 11, // red tags
+            17, 18, 19, 20, 21, 22 // blue tags
+        );
     }
 
     public static class FieldConstants {
@@ -845,6 +852,5 @@ public class Constants {
         public static final int elevatorOffset2 = 89 ;
         public static final int funnelNumLED2 = 88;
         public static final int elevatorNumLED2 = 50;
-        
     }
 }

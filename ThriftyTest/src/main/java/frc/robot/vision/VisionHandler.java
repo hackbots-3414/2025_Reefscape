@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -36,8 +35,6 @@ public class VisionHandler implements AutoCloseable {
 
     private final Field2d m_field;
 
-    private boolean m_singleTag;
-
     private LogBuilder m_logBuilder;
 
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
@@ -53,7 +50,6 @@ public class VisionHandler implements AutoCloseable {
         m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
         RobotObserver.setField(m_field);
-        m_singleTag = false;
     }
 
     private void setupAprilTagField() throws IOException {
@@ -104,8 +100,7 @@ public class VisionHandler implements AutoCloseable {
             SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
                 realCamera,
                 robotToCamera,
-                this::addEstimate,
-                this::getSingleTag
+                this::addEstimate
             );
             m_estimators.add(estimator);
         }
@@ -137,20 +132,6 @@ public class VisionHandler implements AutoCloseable {
         m_drivetrain.addPoseEstimate(estimate);
         // pose logging
         m_logBuilder.addEstimate(estimate);
-    }
-
-    private boolean getSingleTag() {
-        return m_singleTag;
-    }
-
-    public void setMultitag() {
-        m_singleTag = false;
-        SmartDashboard.putBoolean("single tag", m_singleTag);
-    }
-
-    public void setSingleTag() {
-        m_singleTag = true;
-        SmartDashboard.putBoolean("single tag", m_singleTag);
     }
 
     @Override
