@@ -22,6 +22,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -448,8 +449,11 @@ public class Constants {
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeed = 5; // was 10 cancoder rotations per second
-        public static final double accelerationMultiplier = 3;
+        public static final double maxSpeedUp = 7.5; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierUp = 2.25;
+
+        public static final double maxSpeedDown = 5; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierDown = 1.5;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -489,9 +493,9 @@ public class Constants {
                         .withKG(0.42))
 
                 .withMotionMagic(new MotionMagicConfigs()
-                        .withMotionMagicCruiseVelocity(maxSpeed)
-                        .withMotionMagicAcceleration(maxSpeed * accelerationMultiplier)
-                        .withMotionMagicJerk(maxSpeed * accelerationMultiplier * 10));
+                        .withMotionMagicCruiseVelocity(maxSpeedUp)
+                        .withMotionMagicAcceleration(maxSpeedUp * accelerationMultiplierUp)
+                        .withMotionMagicJerk(maxSpeedUp * accelerationMultiplierUp * 10));
     }
 
     public static final class PivotConstants {
