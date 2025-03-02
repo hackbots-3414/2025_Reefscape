@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -57,6 +56,7 @@ import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
+import frc.robot.commands.ProcessorCommand;
 import frc.robot.commands.StowCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -568,7 +568,7 @@ public class RobotContainer {
             case LEFTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, this::coralIntakeCommand)));
             case RIGHTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, this::coralIntakeCommand)));
             case NET -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, () -> algaeScoreCommand(AlgaeLocationPresets.NET))));
-            case PROCESSOR -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
+            case PROCESSOR -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, () -> processorCommand())));
         }
 
         if (level == 5) {
@@ -618,7 +618,7 @@ public class RobotContainer {
             case REEFUPPER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationsMiddleList)));
             case NET -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.NET.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
             case PROCESSOR -> {
-                trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
+                trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, this::processorCommand)));
                 trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers));
             }
             case HIGHGROUND -> {trigger.whileTrue(algaeIntakeCommand(AlgaeLocationPresets.HIGHGROUND));}
@@ -630,7 +630,7 @@ public class RobotContainer {
             case GROUND, REEFLOWER, REEFUPPER, HIGHGROUND -> trigger.whileTrue(algaeIntakeCommand(type));
             case NET -> trigger.whileTrue(algaeScoreCommand(type));
             case PROCESSOR -> {
-                trigger.whileTrue(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+                trigger.whileTrue(processorCommand());
                 trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers));
             }
         }
@@ -677,6 +677,10 @@ public class RobotContainer {
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
         return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_algaePivot, scoreLocation);
+    }
+
+    private Command processorCommand() {
+        return new ProcessorCommand(m_elevator, m_algaeRollers, m_algaePivot);
     }
 
     public enum AlgaeLocationPresets {
