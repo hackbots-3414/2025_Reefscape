@@ -95,6 +95,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         RobotObserver.setVisionValidSupplier(this::getVisionValid);
         RobotObserver.setPoseSupplier(this::getPose);
+        RobotObserver.setVelocitySupplier(this::getVelocity);
     }
 
     public void initializeSetpointGenerator(RobotConfig config) {
@@ -105,10 +106,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         previousSetpoint = new SwerveSetpoint(currSpeeds, currStates, DriveFeedforwards.zeros(config.numModules));
     }
 
+    public double getVelocity() {
+        double vx = getRobotRelativeSpeeds().vxMetersPerSecond;
+        double vy = getRobotRelativeSpeeds().vyMetersPerSecond;
+        return Math.hypot(vx, vy);
+    }
+
     public Pose2d getPose() {
         return m_estimatedPose;
     }
-    
+
     /**
      * returns the current pose, with red side poses flipped
      */
@@ -167,8 +174,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AutonomousUtil.handleQueue();
 
         handleVisionToggle();
-
-        SmartDashboard.putString("ROBOT POSE", getPose().toString());
     }
 
     private void startSimThread() {

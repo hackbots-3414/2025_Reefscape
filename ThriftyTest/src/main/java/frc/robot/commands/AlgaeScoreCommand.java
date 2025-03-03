@@ -49,7 +49,9 @@ public class AlgaeScoreCommand extends Command {
   @Override
   public void execute() {
     if (elevator.atSetpoint() && pivot.atSetpoint()) {
-      rollers.eject();
+      if (location != AlgaeLocationPresets.PROCESSOR) {
+        rollers.eject();
+      }
     } else {
       initialTime = Utils.getCurrentTimeSeconds();
     }
@@ -57,8 +59,8 @@ public class AlgaeScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    elevator.stow();
-    pivot.stow();
+    if (location != AlgaeLocationPresets.PROCESSOR) elevator.setStow();
+    if (location != AlgaeLocationPresets.PROCESSOR) pivot.stow();
     rollers.smartStop();
   }
 

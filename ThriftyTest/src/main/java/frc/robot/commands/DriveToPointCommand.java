@@ -8,9 +8,11 @@ import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
@@ -20,8 +22,10 @@ public class DriveToPointCommand extends Command {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
-    private final PIDController xPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
-    private final PIDController yPIDController = new PIDController(DriveConstants.k_translationPID.kP, 0, 0);
+    private final Constraints constraints = new Constraints(DriveConstants.k_driveToPointSpeed, DriveConstants.k_driveToPointAcceleration);
+
+    private final ProfiledPIDController xPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
+    private final ProfiledPIDController yPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
 
     private static double m_targetX = 0.0;
     private static double m_targetY = 0.0;
@@ -49,6 +53,12 @@ public class DriveToPointCommand extends Command {
         m_targetY = goal.getY();
 
         m_targetRotation = goal.getRotation();
+
+        Pose2d currPose = m_drivetrain.getPose();
+
+        // so first is finished run doesn't break
+        xPIDController.reset(currPose.getX());
+        yPIDController.reset(currPose.getY());
     }
 
     @Override
@@ -57,6 +67,9 @@ public class DriveToPointCommand extends Command {
 
         double xVelo = xPIDController.calculate(currPose.getX(), m_targetX);
         double yVelo = yPIDController.calculate(currPose.getY(), m_targetY);
+
+        SmartDashboard.putNumber("XVELO", xVelo);
+        SmartDashboard.putNumber("YVELO", yVelo);
 
         m_drivetrain.setControl(
             m_request
@@ -68,13 +81,13 @@ public class DriveToPointCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_drivetrain.stop();
+        if (!interrupted) m_drivetrain.stop();
     }
 
     @Override
     public boolean isFinished() {
-        double errX = xPIDController.getError();
-        double errY = yPIDController.getError();
+        double errX = xPIDController.getPositionError();
+        double errY = yPIDController.getPositionError();
         double err = Math.hypot(errX, errY);
 
         double errRotation = Math.abs(m_drivetrain.getPose()
@@ -83,6 +96,6 @@ public class DriveToPointCommand extends Command {
             .getRadians()
         );
 
-        return err < AutonConstants.translationTolerance && errRotation < AutonConstants.rotationTolerance;
+        return (err < AutonConstants.translationTolerance && errRotation < AutonConstants.rotationTolerance);
     }
 }

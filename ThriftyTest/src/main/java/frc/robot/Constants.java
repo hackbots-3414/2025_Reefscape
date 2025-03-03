@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
@@ -21,6 +22,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -101,6 +103,8 @@ public class Constants {
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
 
+        public static final int canRange = 3;
+
         public static final int algae = 60;
 
         public static final int candle1 = 5; 
@@ -118,11 +122,14 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_translationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
+
+        public static final double k_driveToPointSpeed = 2.0;
+        public static final double k_driveToPointAcceleration = 3.0;
 
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4.724);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
@@ -148,8 +155,8 @@ public class Constants {
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
-        public static final String dragonReinsName = "dragon";
-        public static final String driverBackupName = "interlink";
+        public static final String dragonReinsName = "interlink";
+        public static final String driverBackupName = "dual";
 
         public static final String buttonBoardName = "dragon";
         public static final String operatorBackupName = "dual";
@@ -240,13 +247,15 @@ public class Constants {
             public static final int highAlgae = Button.kTriangle.value;
             public static final int groundAlgae = 180; // POV
             public static final int processor = 90; // POV
+            public static final int highGround = 270; // POV
             public static final int net = 0; // POV
             public static final int algaeModeButton = Button.kR2.value; // R2
             
             public static final int leftIntake = Button.kL1.value; // LB
             public static final int rightIntake = Button.kR1.value; // RB
             
-            public static final int climb = Button.kCreate.value;
+            public static final int climbReady = Button.kCreate.value;
+            public static final int climb = Button.kOptions.value;
 
             // Safety Mode "swaps"
 
@@ -272,29 +281,31 @@ public class Constants {
         public static final double k_cameraHeight = Units.inchesToMeters(6.0);
         public static final double k_cameraBackHeight = Units.inchesToMeters(12.0);
         public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
+        public static final double k_cameraPitchFront = -Units.degreesToRadians(22.5);
         public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
         public static final double k_cameraYaw = Units.degreesToRadians(35.0);
         public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
 
-        // aliases
+        public static final String k_logPath = "/home/lvuser/logs/vision";
+        public static final String k_simLogPath = "logs/vision";
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d(
                 new Translation3d(0.302,0.266,0.175),
-                new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
+                new Rotation3d(0, k_cameraPitchFront, -k_cameraYaw)
             )),
             Map.entry("cam2", new Transform3d(
                 new Translation3d(0.261,0.299,0.175),
-                new Rotation3d(0, k_cameraPitch, Math.PI - k_cameraYaw)
+                new Rotation3d(0, k_cameraPitchFront, Math.PI - k_cameraYaw)
             )),
             Map.entry("cam3", new Transform3d(
                 new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw - Math.PI)
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI)
             )),
             Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw)
+                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
             )),
             Map.entry("cam5", new Transform3d( // special
                 new Translation3d(-0.302, 0.266, 0.175),
@@ -313,6 +324,7 @@ public class Constants {
                 new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
             ))
         );
+
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera) we expect to see per tick
@@ -326,6 +338,7 @@ public class Constants {
         public static final Distance k_XYMargin = Meters.of(0.5);
         // The maximum distance from 0 that a camera's pose can report
         public static final Distance k_ZMargin = Meters.of(1.5);
+
         // Some configuration variables:
         public static final boolean k_useStdDevs = true;
         public static final double k_distanceMultiplier = 7.0;
@@ -333,6 +346,9 @@ public class Constants {
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
         public static final double k_targetMultiplier = 10;
+        public static final double k_differenceThreshold = 0.14;
+        // this value is so high because we want to strongly punish far away poses.
+        public static final double k_differenceMultiplier = 100.0;
         // Stats about the camera for simulation
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
@@ -344,6 +360,12 @@ public class Constants {
         public static final double k_errStdDev = 0.02;
         // Stop using vision after X time
         public static final double k_visionTimeout = 0.5;
+
+        // reef tag ids (single tag only)
+        public static final Set<Integer> k_reefIds = Set.of(
+            6,  7,  8,  9,  10, 11, // red tags
+            17, 18, 19, 20, 21, 22 // blue tags
+        );
     }
 
     public static class FieldConstants {
@@ -361,8 +383,10 @@ public class Constants {
         public static final boolean useSuperAuton = false;
         public static final int numWaypoints = 5;
 
-        public static double translationTolerance = 0.02; // m
-        public static double rotationTolerance = Units.degreesToRadians(2);
+        public static double translationTolerance = 0.01; // m
+        public static double rotationTolerance = Units.degreesToRadians(0.5);
+
+        public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
     }
 
     public static final class CanRangeConstants {
@@ -408,17 +432,18 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.427979;
+        public static final double encoderOffset = -0.167480; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
         /* Please note:
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
-         * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
+         * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
         public static final double groundIntake = 0;
-        public static final double stow = 0.345 - (Units.inchesToMeters(1) * metersToRotations);
+        public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
+        public static final double stow = 0.232;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
         public static final double L2 = Units.inchesToMeters(35.5) * metersToRotations;
@@ -431,8 +456,11 @@ public class Constants {
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeed = 10; // cancoder rotations per second
-        public static final double accelerationMultiplier = 3;
+        public static final double maxSpeedUp = 7.5; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierUp = 2.25;
+
+        public static final double maxSpeedDown = 5; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierDown = 1.5;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -447,7 +475,7 @@ public class Constants {
 
                 .withFeedback(new FeedbackConfigs()
                         .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                         .withRotorToSensorRatio(rotorToSensorRatio)
                         .withSensorToMechanismRatio(sensorToMechanismRatio))
 
@@ -471,14 +499,24 @@ public class Constants {
                         .withKA(0.05 * (drumRadius * 2 * Math.PI))
                         .withKG(0.42))
 
+                .withSlot1(new Slot1Configs()
+                        .withGravityType(GravityTypeValue.Elevator_Static)
+                        .withKP(7)
+                        .withKI(0)
+                        .withKD(0)
+                        .withKS(0)
+                        .withKV(3.59 * (drumRadius * 2 * Math.PI))
+                        .withKA(0.05 * (drumRadius * 2 * Math.PI))
+                        .withKG(0.42))
+
                 .withMotionMagic(new MotionMagicConfigs()
-                        .withMotionMagicCruiseVelocity(maxSpeed)
-                        .withMotionMagicAcceleration(maxSpeed * accelerationMultiplier)
-                        .withMotionMagicJerk(maxSpeed * accelerationMultiplier * 10));
+                        .withMotionMagicCruiseVelocity(maxSpeedUp)
+                        .withMotionMagicAcceleration(maxSpeedUp * accelerationMultiplierUp)
+                        .withMotionMagicJerk(maxSpeedUp * accelerationMultiplierUp * 10));
     }
 
     public static final class PivotConstants {
-        public static final double encoderOffset = 0.250977;
+        public static final double encoderOffset = 0.126465; //0.250977;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
@@ -499,7 +537,7 @@ public class Constants {
         public static final double tolerance = 0.03;
 
         public static final double groundPickup = -0.41;
-        public static final double processor = -0.29;
+        public static final double processor = -0.365;
         public static final double reefPickup = -0.34;
         public static final double reefExtract = -0.29;
         public static final double net = -0.165;
@@ -565,12 +603,12 @@ public class Constants {
     public static class CoralConstants {
         public static final double intakeVoltage = 5;
 
-        public static final double ejectTime = 0.06; // 3 ticks
+        public static final double ejectTime = 0.06;
 
         public static final double l1EjectVoltage = 3;
-        public static final double l2EjectVoltage = 4;
-        public static final double l3EjectVoltage = 6;
-        public static final double l4EjectVoltage = 6;
+        public static final double l2EjectVoltage = 5.1;
+        public static final double l3EjectVoltage = 5.1;
+        public static final double l4EjectVoltage = 7;
 
         public static final double unjamVoltage = -8;
 
@@ -604,9 +642,13 @@ public class Constants {
     public static final class ClimberConstants {
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0;
-        public static final double climbDownVolts = -2.0;
+        public static final double climbDownVolts = -12.0;
+        public static final double climbRollVolts = 2;
+
+        public static final double kP = 2.0;
+
         public static final double climberCurrentLimit = 80.0;
-        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
+        public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
@@ -616,14 +658,20 @@ public class Constants {
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
                         .withSupplyCurrentLimit(climberCurrentLimit));
+
+        public static final double climbReadyRangeValue = 0.08;
+        public static final double climbedRangeValue = 0.145;
+
+        public static final double climbMaxEncoderValue = 63.833;
             
-        public static final double k_servoPosition = 0.0;
+        public static final double k_openServoPosition = 0.0;
+        public static final double k_closedServoPosition = 1.0;
         public static final double k_servoTolerance = 0.01;
     }
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -3;
+        public static final double ejectVoltage = -1.8;
 
         public static final double torqueCurrentThreshold = 30;
 
@@ -813,11 +861,15 @@ public class Constants {
         public static final int numLED = 85;
         public static final double flashSpeed = 0.75;
         public static final double strobeSpeed = 0.1;
-        public static final double endgameWarning = 20;
+        public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8;
-        public static final int elevatorOffset = 53 ;
+        public static final int elevatorOffset = 53;
         public static final int funnelNumLED = 45;
         public static final int elevatorNumLED = 40;
+        public static final int funnelOffset2 = 8;
+        public static final int elevatorOffset2 = 89 ;
+        public static final int funnelNumLED2 = 88;
+        public static final int elevatorNumLED2 = 50;
     }
 }
