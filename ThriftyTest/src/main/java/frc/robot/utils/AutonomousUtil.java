@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
@@ -76,11 +77,18 @@ public class AutonomousUtil {
         return AutoBuilder.pathfindThenFollowPath(path, constraints);
     }
     
-    public static Command pathFinder(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+    public static Command pathFinder(Pose2d pose) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
             pathFindThenPreciseAlign(pose),
-            // new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
+            new InstantCommand(() -> RobotObserver.setReefMode(false))
+        );
+    }
+
+    public static Command driveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> RobotObserver.setReefMode(true)),
+            new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
             new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
     }
@@ -89,10 +97,10 @@ public class AutonomousUtil {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < scoringCommands.length; i++) {
             if (i != 0) {
-                routine.addCommands(pathFinder(desiredPickupLocation, drivetrain));
+                routine.addCommands(pathFinder(desiredPickupLocation));
                 routine.addCommands(intakeCommand.get());
             }
-            routine.addCommands(pathFinder(poses[i], drivetrain));
+            routine.addCommands(pathFinder(poses[i]));
             routine.addCommands(scoringCommands[i]);
         }
 
@@ -101,13 +109,13 @@ public class AutonomousUtil {
 
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
-    public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
-        onTheFlyCommands.add(pathFinder(pose, drivetrain));
+    public static void queuePathWithCommand(Pose2d pose, Supplier<Command> command) {
+        onTheFlyCommands.add(pathFinder(pose));
         onTheFlyCommands.add(command.get());
     }
 
-    public static void queueClosest(CommandSwerveDrivetrain drivetrain, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
-        queuePathWithCommand(drivetrain, clip(scoringLocationList), scoreSupplier);
+    public static void queueClosest(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        queuePathWithCommand(clip(scoringLocationList), scoreSupplier);
     }
 
     public static Pose2d clip(List<Pose2d> list) {
