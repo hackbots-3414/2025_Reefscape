@@ -54,7 +54,6 @@ import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
-import frc.robot.commands.ManualClimberCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
@@ -68,13 +67,11 @@ import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
-import frc.robot.subsystems.Superstructure;
 import frc.robot.utils.AutonomousUtil;
 import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
-    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
     @SuppressWarnings("unused")
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));

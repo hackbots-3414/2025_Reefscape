@@ -59,7 +59,7 @@ public class AlgaeScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    if (location != AlgaeLocationPresets.PROCESSOR) elevator.setStow();
+    if (location != AlgaeLocationPresets.PROCESSOR) elevator.stow();
     if (location != AlgaeLocationPresets.PROCESSOR) pivot.stow();
     rollers.smartStop();
   }
