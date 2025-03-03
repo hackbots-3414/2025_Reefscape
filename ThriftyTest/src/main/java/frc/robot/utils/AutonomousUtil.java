@@ -12,8 +12,11 @@ import org.slf4j.LoggerFactory;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.DriveToPointCommand;
 import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -62,11 +64,23 @@ public class AutonomousUtil {
 
     private static final PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
 
+    private static Command pathFindThenPreciseAlign(Pose2d pose) {
+        Pose2d startPose = new Pose2d(
+            (Math.cos(pose.getRotation().getRadians()) * -0.5) + pose.getX(),
+            (Math.sin(pose.getRotation().getRadians()) * -0.5) + pose.getY(),
+            pose.getRotation()
+        );
+        
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPose, pose);
+        PathPlannerPath path = new PathPlannerPath(waypoints, constraints, new IdealStartingState(1, pose.getRotation()), new GoalEndState(0, pose.getRotation()));
+        return AutoBuilder.pathfindThenFollowPath(path, constraints);
+    }
+    
     public static Command pathFinder(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
-            // AutoBuilder.pathfindToPoseFlipped(pose, constraints, 0),
-            new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
+            pathFindThenPreciseAlign(pose),
+            // new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
             new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
     }
