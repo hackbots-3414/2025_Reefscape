@@ -670,7 +670,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -1.8;
+        public static final double ejectVoltage = -1.7;
 
         public static final double torqueCurrentThreshold = 30;
 
@@ -681,7 +681,7 @@ public class Constants {
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.3;
-        public static final double reefPickupSafetyDistance = 1.75;
+        public static final double reefPickupSafetyDistance = 1.75; 
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
