@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.Utils;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -31,6 +29,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class SingleInputPoseEstimator implements Runnable {
     private Logger m_logger = LoggerFactory.getLogger(SingleInputPoseEstimator.class);
@@ -52,18 +51,8 @@ public class SingleInputPoseEstimator implements Runnable {
         m_camera = camera;
         m_name = camera.getName();
         m_reporter = updateCallback;
-        AprilTagFieldLayout layout = null;
-        try {
-            layout = AprilTagFieldLayout.loadFromResource(
-                AprilTagFields.k2025ReefscapeWelded.m_resourceFile
-            );
-        } catch (IOException e) {
-            m_logger.error("failed to load resource file: {}", e);
-            System.exit(1);
-            // no need to worry about null exceptions if we just terminate now!
-        }
         m_pnpEstimator = new PhotonPoseEstimator(
-            layout,
+            VisionConstants.k_layout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             robotToCamera
         );
@@ -71,7 +60,7 @@ public class SingleInputPoseEstimator implements Runnable {
             PoseStrategy.LOWEST_AMBIGUITY
         );
         m_trigEstimator = new PhotonPoseEstimator(
-            layout,
+            VisionConstants.k_layout,
             PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
             robotToCamera
         );
@@ -156,8 +145,12 @@ public class SingleInputPoseEstimator implements Runnable {
         }
         // check validity again
         if (!checkValidity(pose, ambiguity)) return Optional.empty();
+        EstimationAlgorithm algorithm = (RobotObserver.getReefMode()) ?
+            EstimationAlgorithm.Trig
+            :
+            EstimationAlgorithm.PnP;
         return Optional.of(
-            new TimestampedPoseEstimate(flatPose, m_name, timestamp, stdDevs)
+            new TimestampedPoseEstimate(flatPose, m_name, timestamp, stdDevs, algorithm)
         );
     }
 

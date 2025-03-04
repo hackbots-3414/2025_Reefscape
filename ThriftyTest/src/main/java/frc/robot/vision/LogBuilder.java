@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.RobotObserver;
+import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class LogBuilder {
     private List<TimestampedPoseEstimate> m_estimates;
