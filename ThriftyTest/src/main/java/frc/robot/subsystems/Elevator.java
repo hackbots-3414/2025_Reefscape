@@ -7,13 +7,20 @@ package frc.robot.subsystems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -29,76 +36,83 @@ import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Robot;
 import frc.robot.utils.RunOnChange;
 
 public class Elevator extends SubsystemBase {
-    public enum ElevatorSetpoints {GROUND, STOW, PROCESSOR, L1, L2, ALGAE_L2, L3, ALGAE_L3, L4, NET}
+    public enum ElevatorSetpoints {
+        GROUND(ElevatorConstants.ground), 
+        STOW(ElevatorConstants.stow), 
+        PROCESSOR(ElevatorConstants.processor), 
+        HIGHGROUND(ElevatorConstants.highGround), 
+        L1(ElevatorConstants.L1), 
+        L2(ElevatorConstants.L2), 
+        ALGAE_L2(ElevatorConstants.algaeL2), 
+        L3(ElevatorConstants.L3), 
+        ALGAE_L3(ElevatorConstants.algaeL3), 
+        L4(ElevatorConstants.L4), 
+        NET(ElevatorConstants.net);
 
-    // we want to have a logger, even if we're not using it... yet
+        private double value;
+
+        private ElevatorSetpoints(double value) {
+            this.value = value;
+        }
+    }
+
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
 
-    private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
-    private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*");
-
+    private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*"); // CANivore
+    private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*"); // CANivore
     private final CANcoder m_cancoder = new CANcoder(IDConstants.elevatorEncoder);
 
-    private double m_position;
-    private double m_velocity;
-
-    private double m_reference;
-
-    private ElevatorSim m_elevatorSim;
-    private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
-
-    private Mechanism2d m_mechVisual;
-    private MechanismRoot2d m_mechRoot;
-    private MechanismLigament2d m_elevatorArm;
+    private StatusSignal<Angle> m_position;
+    private StatusSignal<AngularVelocity> m_velocity;
+    
+    private ElevatorSetpoints m_reference;
 
     private RunOnChange<Double> changeVolts;
     private RunOnChange<Double> changeSetpoint;
     private RunOnChange<Boolean> setBrake;
 
+    private Alert encoderNotConfigured = new Alert("Elevator Cancoder on ID " + IDConstants.elevatorEncoder + " did not successfully connect", AlertType.kError);
+
     public Elevator() {
         configEncoder();
         configMotor();
         configSim();
+        m_reference = ElevatorSetpoints.STOW;
         changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
         changeSetpoint = new RunOnChange<>(this::writePositionToMotors, ElevatorConstants.stow);
         setBrake = new RunOnChange<>(this::setBrakeMode, true);
+        // Disables status signals communicated that don't need to be
+        ParentDevice.optimizeBusUtilizationForAll(m_elevatorLeft, m_elevatorRight, m_cancoder);
+        BaseStatusSignal.waitForAll(0.02, m_position, m_velocity);
     }
 
     private void configEncoder() {
         m_cancoder.clearStickyFaults();
-        m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
+        // If cancoder.apply returns an error, throw SmartDashboard alert
+        encoderNotConfigured.set(!m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2).isOK());
     }
 
     private void configMotor() {
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+
+        // Enabling so we can get positino and velocity values
+        m_position = m_elevatorRight.getPosition();
+        m_position.setUpdateFrequency(0.02);
+        m_velocity = m_elevatorRight.getVelocity();
+        m_velocity.setUpdateFrequency(0.02);
+        // Required for master motor
+        m_elevatorRight.getDutyCycle().setUpdateFrequency(0.02);
+        m_elevatorRight.getMotorVoltage().setUpdateFrequency(0.02);
+        m_elevatorRight.getTorqueCurrent().setUpdateFrequency(0.02);
+
         Follower follower = new Follower(IDConstants.elevatorRight, ElevatorConstants.invertLeftMotorFollower);
         m_elevatorLeft.setControl(follower);
-    }
-
-    private void configSim() {
-        m_elevatorSim = new ElevatorSim(
-                ElevatorConstants.stateSpacePlant,
-                m_elevatorGearbox,
-                ElevatorConstants.reverseSoftLimit,
-                ElevatorConstants.forwardSoftLimit,
-                true,
-                ElevatorConstants.reverseSoftLimit
-        );
-
-        m_mechVisual = new Mechanism2d(1, 12); // Width/height in meters
-        m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
-        m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.0, 90)); // Start at 0.1m height
-        SmartDashboard.putData("Elevator Visualization", m_mechVisual);
-        if (RobotBase.isSimulation()) {
-            // in simulation, we want to emulate the effect produced by
-            // using an encoder offset (i.e. we start at 0).
-            m_cancoder.setPosition(0.0);
-        }
     }
 
     private void writeToMotors(double voltage) {
@@ -132,7 +146,7 @@ public class Elevator extends SubsystemBase {
         m_elevatorRight.getConfigurator().apply(CoralConstants.motorConfig.MotorOutput.withNeutralMode(isEnabled ? NeutralModeValue.Brake : NeutralModeValue.Coast));
     }
 
-    public void setPosition(double goal) {
+    private void setPosition(double goal) {
         changeSetpoint.accept(goal);        
     }
 
@@ -141,22 +155,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void set(ElevatorSetpoints setpoint) {
-        switch (setpoint) {
-            case GROUND -> setPosition(ElevatorConstants.groundIntake);
-            case STOW -> setPosition(ElevatorConstants.stow);
-            case PROCESSOR -> setPosition(ElevatorConstants.processor);
-            case L1 -> setPosition(ElevatorConstants.L1);
-            case L2 -> setPosition(ElevatorConstants.L2);
-            case ALGAE_L2 -> setPosition(ElevatorConstants.algaeL2);
-            case L3 -> setPosition(ElevatorConstants.L3);
-            case ALGAE_L3 -> setPosition(ElevatorConstants.algaeL3);
-            case L4 -> setPosition(ElevatorConstants.L4);
-            case NET-> setPosition(ElevatorConstants.net);
-        }
-    }
-
-    public void setHighGroundIntake() {
-        setPosition(ElevatorConstants.highGroundIntake);
+        m_reference = setpoint;
+        setPosition(setpoint.value);
     }
 
     public void stow() {
@@ -164,7 +164,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void stop() {
-        setPosition(m_position);
+        setPosition(getPosition());
     }
 
     public void setLevel(int level) {
@@ -178,49 +178,39 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+        return Math.abs(m_reference.value - getPosition()) < ElevatorConstants.tolerance;
     }
 
-    public double getReference() {
+    public ElevatorSetpoints getReference() {
         return m_reference;
     }
 
     public double getPosition() {
-        return m_position;
+        return m_position.getValueAsDouble();
+    }
+
+    public double getLatencyCompensatedPosition() {
+        return BaseStatusSignal.getLatencyCompensatedValueAsDouble(m_position, m_velocity);
     }
 
     public double getVelocity() {
-        return m_velocity;
-    }
-
-    private double getPositionUncached() {
-        if (RobotBase.isReal()) {
-            return m_elevatorRight.getPosition().getValueAsDouble();
-        } else {
-            return m_elevatorSim.getPositionMeters();
-        }
-    }
-
-    private double getVelocityUncached() {
-        if (RobotBase.isReal()) {
-            return m_elevatorRight.getVelocity().getValueAsDouble();
-        } else {
-            return m_elevatorSim.getVelocityMetersPerSecond();
-        }
+        return m_velocity.getValueAsDouble();
     }
 
     private void update() {
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
+        if (Robot.isReal()) {
+            BaseStatusSignal.refreshAll(m_position, m_velocity);
+        }
 
         setBrake.run(DriverStation.isEnabled());
-
         changeVolts.resolveIfChange();
         changeSetpoint.resolveIfChange();
     }
 
     private void log() {
-        SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
+        SmartDashboard.putString("Elevator Goal", m_reference.toString());
+        SmartDashboard.putBoolean("Elevator At Setpoint", atSetpoint());
+        SmartDashboard.putNumber("Elevator Position", getPosition());
     }
 
     @Override
@@ -229,30 +219,50 @@ public class Elevator extends SubsystemBase {
         log();
     }
 
+
+    // SIMULATION  
+
+    private ElevatorSim m_elevatorSim;
+    private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
+
+    private Mechanism2d m_mechVisual;
+    private MechanismRoot2d m_mechRoot;
+    private MechanismLigament2d m_elevatorArm;
+
+    private void configSim() {
+        m_elevatorSim = new ElevatorSim(
+                ElevatorConstants.stateSpacePlant,
+                m_elevatorGearbox,
+                ElevatorConstants.reverseSoftLimit,
+                ElevatorConstants.forwardSoftLimit,
+                true,
+                ElevatorConstants.reverseSoftLimit
+        );
+
+        m_mechVisual = new Mechanism2d(1, 12); // Width/height in meters
+        m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
+        m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.0, 90)); // Start at 0.1m height
+        SmartDashboard.putData("Elevator Visualization", m_mechVisual);
+        if (RobotBase.isSimulation()) {
+            m_elevatorRight.getSimState().setRawRotorPosition(0.0);
+        }
+    }  
+
     @Override
     public void simulationPeriodic() {
-        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
-        // Update the simulation with the motor voltage
-        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage();
-        double current = m_elevatorRight.getSupplyCurrent().getValueAsDouble();
-        SmartDashboard.putNumber("Elevator Voltage", appliedVolts);
-        SmartDashboard.putNumber("Elevator Supply Current", current);
+        update();
 
-        double speed = m_elevatorRight.get();
-        SmartDashboard.putNumber("Elevator Speed", speed);
+        m_elevatorArm.setLength(getPosition() + 0.1); // Offset to avoid overlapping with root
+        // Update the simulation with the motor voltage
+        double appliedVolts = m_elevatorRight.get() * 12;
 
         m_elevatorSim.setInput(appliedVolts);
         m_elevatorSim.update(SimConstants.k_simPeriodic);
 
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
-
         // Update the simulated encoder values
-        m_cancoder.getSimState().setRawPosition(m_position);
-        m_cancoder.getSimState().setVelocity(m_velocity);
+        m_elevatorRight.getSimState().setRawRotorPosition(m_elevatorSim.getPositionMeters());
+        m_elevatorRight.getSimState().setRotorVelocity(m_elevatorSim.getVelocityMetersPerSecond());
 
-        // Simulate battery voltage
-        double volts = BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps());
-        RoboRioSim.setVInVoltage(volts);
+        RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
     }
 }

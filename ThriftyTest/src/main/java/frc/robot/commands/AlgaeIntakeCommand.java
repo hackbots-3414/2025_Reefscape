@@ -41,7 +41,7 @@ public class AlgaeIntakeCommand extends Command {
                 elevator.set(ElevatorSetpoints.ALGAE_L3);
             }
             case HIGHGROUND -> {
-                elevator.setHighGroundIntake();
+                elevator.set(ElevatorSetpoints.HIGHGROUND);
             }
             default -> isDone = true;
         }

@@ -441,8 +441,8 @@ public class Constants {
          * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
-        public static final double groundIntake = 0;
-        public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
+        public static final double ground = 0;
+        public static final double highGround = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.232;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;

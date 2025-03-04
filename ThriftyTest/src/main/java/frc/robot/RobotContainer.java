@@ -685,7 +685,7 @@ public class RobotContainer {
     }
 
     public void resetReferences() {
-        m_elevator.setPosition(m_elevator.getPosition());
+        m_elevator.stop();
         m_pivot.stow();
     }
 }
