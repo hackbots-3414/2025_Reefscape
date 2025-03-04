@@ -166,6 +166,7 @@ public class CoralRollers extends SubsystemBase {
             m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
         } else {
             m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
+            m_backSensorValue = SmartDashboard.getBoolean("Coral Override", false);
         }
     }
 
