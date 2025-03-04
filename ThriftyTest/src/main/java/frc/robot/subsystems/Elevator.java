@@ -22,11 +22,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -101,11 +97,13 @@ public class Elevator extends SubsystemBase {
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
 
-        // Enabling so we can get positino and velocity values
+        // Enabling so we can get position and velocity values
         m_position = m_elevatorRight.getPosition();
         m_position.setUpdateFrequency(0.02);
+        
         m_velocity = m_elevatorRight.getVelocity();
         m_velocity.setUpdateFrequency(0.02);
+
         // Required for master motor
         m_elevatorRight.getDutyCycle().setUpdateFrequency(0.02);
         m_elevatorRight.getMotorVoltage().setUpdateFrequency(0.02);
@@ -177,8 +175,12 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    public double getError() {
+        return m_reference.value - getPosition();
+    }
+
     public boolean atSetpoint() {
-        return Math.abs(m_reference.value - getPosition()) < ElevatorConstants.tolerance;
+        return Math.abs(getError()) < ElevatorConstants.tolerance;
     }
 
     public ElevatorSetpoints getReference() {
@@ -186,7 +188,11 @@ public class Elevator extends SubsystemBase {
     }
 
     public double getPosition() {
-        return m_position.getValueAsDouble();
+        if (Robot.isReal()) {
+            return m_position.getValueAsDouble();
+        } else {
+            return m_elevatorSim.getPositionMeters();
+        }
     }
 
     public double getLatencyCompensatedPosition() {
@@ -194,7 +200,11 @@ public class Elevator extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return m_velocity.getValueAsDouble();
+        if (Robot.isReal()) {
+            return m_velocity.getValueAsDouble();
+        } else {
+            return m_elevatorSim.getVelocityMetersPerSecond();
+        }
     }
 
     private void update() {
@@ -209,6 +219,7 @@ public class Elevator extends SubsystemBase {
 
     private void log() {
         SmartDashboard.putString("Elevator Goal", m_reference.toString());
+        SmartDashboard.putNumber("Elevator Goal Value", m_reference.value);
         SmartDashboard.putBoolean("Elevator At Setpoint", atSetpoint());
         SmartDashboard.putNumber("Elevator Position", getPosition());
     }
@@ -236,33 +247,25 @@ public class Elevator extends SubsystemBase {
                 ElevatorConstants.reverseSoftLimit,
                 ElevatorConstants.forwardSoftLimit,
                 true,
-                ElevatorConstants.reverseSoftLimit
+                0.0
         );
 
         m_mechVisual = new Mechanism2d(1, 12); // Width/height in meters
         m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
         m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.0, 90)); // Start at 0.1m height
         SmartDashboard.putData("Elevator Visualization", m_mechVisual);
-        if (RobotBase.isSimulation()) {
-            m_elevatorRight.getSimState().setRawRotorPosition(0.0);
-        }
     }  
 
     @Override
     public void simulationPeriodic() {
         update();
-
-        m_elevatorArm.setLength(getPosition() + 0.1); // Offset to avoid overlapping with root
-        // Update the simulation with the motor voltage
-        double appliedVolts = m_elevatorRight.get() * 12;
+        
+        double appliedVolts = getError() * 24;
 
         m_elevatorSim.setInput(appliedVolts);
         m_elevatorSim.update(SimConstants.k_simPeriodic);
+        m_elevatorArm.setLength(getPosition());
 
-        // Update the simulated encoder values
-        m_elevatorRight.getSimState().setRawRotorPosition(m_elevatorSim.getPositionMeters());
-        m_elevatorRight.getSimState().setRotorVelocity(m_elevatorSim.getVelocityMetersPerSecond());
-
-        RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps()));
+        log();
     }
 }

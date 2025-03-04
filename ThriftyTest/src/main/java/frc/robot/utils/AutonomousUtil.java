@@ -63,7 +63,8 @@ public class AutonomousUtil {
         }
     }
 
-    private static final PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
+    private static final PathConstraints pathFindConstraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
+    private static final PathConstraints finalAlignConstraints = new PathConstraints(DriveConstants.k_maxAlignLinearSpeed, DriveConstants.k_maxAlignLinearAcceleration, DriveConstants.k_maxAlignAngularSpeed, DriveConstants.k_maxAlignAngularAcceleration);
 
     private static Command pathFindThenPreciseAlign(Pose2d pose) {
         Pose2d startPose = new Pose2d(
@@ -73,8 +74,8 @@ public class AutonomousUtil {
         );
         
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPose, pose);
-        PathPlannerPath path = new PathPlannerPath(waypoints, constraints, new IdealStartingState(1, pose.getRotation()), new GoalEndState(0, pose.getRotation()));
-        return AutoBuilder.pathfindThenFollowPath(path, constraints);
+        PathPlannerPath path = new PathPlannerPath(waypoints, finalAlignConstraints, new IdealStartingState(1, pose.getRotation()), new GoalEndState(0, pose.getRotation()));
+        return AutoBuilder.pathfindThenFollowPath(path, pathFindConstraints);
     }
     
     public static Command pathFinder(Pose2d pose) {
