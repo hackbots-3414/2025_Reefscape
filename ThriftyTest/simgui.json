@@ -29,6 +29,8 @@
       "/SmartDashboard/Height to Score #2": "String Chooser",
       "/SmartDashboard/Height to Score #3": "String Chooser",
       "/SmartDashboard/Height to Score #4": "String Chooser",
+      "/SmartDashboard/LIFT CLIMB": "Command",
+      "/SmartDashboard/LOWER CLIMB": "Command",
       "/SmartDashboard/ManualClimberCommand": "Command",
       "/SmartDashboard/Module 0": "Mechanism2d",
       "/SmartDashboard/Module 1": "Mechanism2d",
@@ -43,6 +45,8 @@
       "/SmartDashboard/Place to Score #4": "String Chooser",
       "/SmartDashboard/Raise Elevator": "Command",
       "/SmartDashboard/Raise Pivot": "Command",
+      "/SmartDashboard/Reef mode off": "Command",
+      "/SmartDashboard/Reef mode on": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/Single Tag": "Command",
       "/SmartDashboard/Stow Elevator": "Command",
@@ -50,7 +54,8 @@
       "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/open funnel": "Command",
-      "/SmartDashboard/runme hehe": "Command"
+      "/SmartDashboard/runme hehe": "Command",
+      "/SmartDashboard/teleport": "Command"
     },
     "windows": {
       "/SmartDashboard/April Tag Debug Field": {
@@ -143,7 +148,12 @@
           "visible": false
         }
       },
-      "/SmartDashboard/Auto Chooser": {
+      "/SmartDashboard/Reef mode off": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Reef mode on": {
         "window": {
           "visible": true
         }
@@ -400,9 +410,9 @@
         "estimation": {
           "arrows": false,
           "color": [
-            0.3094233274459839,
-            0.3333333134651184,
-            0.3094233274459839,
+            0.9873417615890503,
+            1.0,
+            0.0,
             255.0
           ],
           "selectable": false
@@ -450,7 +460,8 @@
   "NetworkTables Info": {
     "Server": {
       "open": true
-    }
+    },
+    "visible": true
   },
   "NetworkTables View": {
     "visible": false

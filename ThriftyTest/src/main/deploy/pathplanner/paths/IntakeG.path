@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6565051020408166,
-        "y": 0.7530293367346929
+        "x": 1.1449835526315788,
+        "y": 0.9652960526315791
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.466908482142857,
-        "y": 1.6157924107142856
+        "x": 2.955386932733619,
+        "y": 1.8280591266111719
       },
       "isLocked": false,
       "linkedName": "RightIntake"
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 2852.0,
     "nominalVoltage": 12.0,

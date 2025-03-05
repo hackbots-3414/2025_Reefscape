@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartE"
+            "pathName": "StartF"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "EIntake"
+                  "pathName": "FIntake"
                 }
               },
               {
@@ -44,7 +44,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L4"
+            "name": "Interrupt"
           }
         },
         {
