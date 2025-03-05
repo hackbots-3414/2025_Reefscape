@@ -2,13 +2,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Pivot;
-import frc.robot.subsystems.Pivot.PivotPosition;
+import frc.robot.subsystems.Pivot.PivotSetpoints;
 
 public class PivotCommand extends Command {
     private Pivot m_pivot;
-    private PivotPosition m_position;
+    private PivotSetpoints m_position;
 
-    public PivotCommand(Pivot pivot, PivotPosition position) {
+    public PivotCommand(Pivot pivot, PivotSetpoints position) {
         m_pivot = pivot;
         m_position = position;
         addRequirements(m_pivot);
@@ -16,7 +16,7 @@ public class PivotCommand extends Command {
 
     @Override
     public void initialize() {
-        m_pivot.setPosition(m_position);
+        m_pivot.set(m_position);
     }
 
     @Override

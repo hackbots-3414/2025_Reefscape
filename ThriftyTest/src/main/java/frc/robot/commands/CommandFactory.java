@@ -5,6 +5,7 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.CommandBounds;
@@ -15,6 +16,7 @@ import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorSetpoints;
 import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.CoralRollers.CoralRollerSpeeds;
 import frc.robot.subsystems.Pivot.PivotSetpoints;
 import frc.robot.utils.Shape;
 
@@ -150,7 +152,7 @@ public class CommandFactory {
      * i.e. not seen by either IR sensor. Do not expect this command to fully
      * remove coral from the robot.
      */
-    public static Command coralEject(
+    public static Command coralUnjam(
             CoralRollers coral,
             Elevator elevator
     ) {
@@ -175,7 +177,8 @@ public class CommandFactory {
     ) {
         return new SequentialCommandGroup(
             new ElevatorCommand(elevator, ElevatorSetpoints.fromCoralPreset(scorePosition)),
-            new CoralUnjamCommand(coral)
+            new CoralScoreCommand(coral, CoralRollerSpeeds.fromCoralPreset(scorePosition)),
+            new WaitCommand(0.5)
         )
             .onlyIf(CommandBounds.reefBounds::isActive)
             .finallyDo(elevator::stow);

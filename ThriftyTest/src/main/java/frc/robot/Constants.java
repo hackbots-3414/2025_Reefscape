@@ -435,12 +435,8 @@ public class Constants {
 
         /* Please note:
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
-         * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
+         * Accounting for error, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
-        
-        public static enum ScoreLevel {
-            L1, L2, L3, L4;
-        }
 
         public static final double ground = 0;
         public static final double highGround = Units.inchesToMeters(12.0) * metersToRotations;

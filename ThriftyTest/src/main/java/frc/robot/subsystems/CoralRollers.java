@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer.CoralLocationPresets;
 import frc.robot.RobotObserver;
 import frc.robot.utils.RunOnChange;
 
@@ -36,6 +37,18 @@ public class CoralRollers extends SubsystemBase {
             this.value = value;
         }
 
+        public static CoralRollerSpeeds fromCoralPreset(CoralLocationPresets preset) {
+            CoralRollerSpeeds setpoint = CoralRollerSpeeds.STOP;
+            switch (preset) {
+                case L1 -> setpoint = CoralRollerSpeeds.L1;
+                case L2 -> setpoint = CoralRollerSpeeds.L2;
+                case L3 -> setpoint = CoralRollerSpeeds.L3;
+                case L4 -> setpoint = CoralRollerSpeeds.L4;
+                case LEFT_INTAKE -> setpoint = CoralRollerSpeeds.INTAKE;
+                case RIGHT_INTAKE -> setpoint = CoralRollerSpeeds.INTAKE;
+            }
+            return setpoint;
+        }
     }
 
 

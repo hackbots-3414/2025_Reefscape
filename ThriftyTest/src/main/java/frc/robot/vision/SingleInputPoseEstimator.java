@@ -2,7 +2,6 @@ package frc.robot.vision;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -26,9 +25,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotObserver;
 import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class SingleInputPoseEstimator implements Runnable {

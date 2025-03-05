@@ -25,6 +25,7 @@ import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
+import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.utils.RunOnChange;
 
 public class Pivot extends SubsystemBase {
@@ -40,6 +41,19 @@ public class Pivot extends SubsystemBase {
 
         private PivotSetpoints(double value) {
             this.value = value;
+        }
+
+        public static PivotSetpoints fromAlgaePreset(AlgaeLocationPresets preset) {
+            PivotSetpoints setpoint = PivotSetpoints.STOW;
+            switch (preset) {
+                case ALGAE_L2 -> setpoint = PivotSetpoints.REEF_PICKUP;
+                case ALGAE_L3 -> setpoint = PivotSetpoints.REEF_PICKUP;
+                case GROUND -> setpoint = PivotSetpoints.GROUND;
+                case NET -> setpoint = PivotSetpoints.NET;
+                case PROCESSOR -> setpoint = PivotSetpoints.PROCESSOR;
+                case HIGHGROUND -> setpoint = PivotSetpoints.GROUND;
+            }
+            return setpoint;
         }
     }
 

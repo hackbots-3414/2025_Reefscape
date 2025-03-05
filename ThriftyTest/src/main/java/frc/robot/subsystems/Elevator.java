@@ -32,6 +32,8 @@ import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.RobotContainer.AlgaeLocationPresets;
+import frc.robot.RobotContainer.CoralLocationPresets;
 import frc.robot.Robot;
 import frc.robot.utils.RunOnChange;
 
@@ -53,6 +55,32 @@ public class Elevator extends SubsystemBase {
 
         private ElevatorSetpoints(double value) {
             this.value = value;
+        }
+
+        public static ElevatorSetpoints fromAlgaePreset(AlgaeLocationPresets preset) {
+            ElevatorSetpoints setpoint = ElevatorSetpoints.STOW;
+            switch (preset) {
+                case ALGAE_L2 -> setpoint = ElevatorSetpoints.ALGAE_L2;
+                case ALGAE_L3 -> setpoint = ElevatorSetpoints.ALGAE_L3;
+                case GROUND -> setpoint = ElevatorSetpoints.GROUND;
+                case NET -> setpoint = ElevatorSetpoints.NET;
+                case PROCESSOR -> setpoint = ElevatorSetpoints.PROCESSOR;
+                case HIGHGROUND -> setpoint = ElevatorSetpoints.HIGHGROUND;
+            }
+            return setpoint;
+        }
+
+        public static ElevatorSetpoints fromCoralPreset(CoralLocationPresets preset) {
+            ElevatorSetpoints setpoint = ElevatorSetpoints.STOW;
+            switch (preset) {
+                case L1 -> setpoint = ElevatorSetpoints.L1;
+                case L2 -> setpoint = ElevatorSetpoints.L2;
+                case L3 -> setpoint = ElevatorSetpoints.L3;
+                case L4 -> setpoint = ElevatorSetpoints.L4;
+                case LEFT_INTAKE -> setpoint = ElevatorSetpoints.STOW;
+                case RIGHT_INTAKE -> setpoint = ElevatorSetpoints.STOW;
+            }
+            return setpoint;
         }
     }
 

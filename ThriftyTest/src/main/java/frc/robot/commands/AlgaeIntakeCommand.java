@@ -16,6 +16,11 @@ public class AlgaeIntakeCommand extends Command {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        m_rollers.smartStop();
+    }
+
+    @Override
     public boolean isFinished() {
         return m_rollers.hasObject();
     }
