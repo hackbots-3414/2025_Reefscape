@@ -293,39 +293,25 @@ public class Constants {
         public static final String k_logPath = "/home/lvuser/logs/vision";
         public static final String k_simLogPath = "logs/vision";
 
+        private static final double k_moduleHeight = 0.175;
+
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d(
-                new Translation3d(0.302,0.266,0.175),
+                new Translation3d(0.302,0.266,k_moduleHeight),
                 new Rotation3d(0, k_cameraPitchFront, -k_cameraYaw)
             )),
             Map.entry("cam2", new Transform3d(
-                new Translation3d(0.261,0.299,0.175),
+                new Translation3d(0.261,0.299,k_moduleHeight),
                 new Rotation3d(0, k_cameraPitchFront, Math.PI - k_cameraYaw)
             )),
             Map.entry("cam3", new Transform3d(
-                new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI)
+                new Translation3d(0.259,-0.298,k_moduleHeight),
+                new Rotation3d(0, k_cameraPitchFront, Math.PI - k_cameraYaw)
             )),
             Map.entry("cam4", new Transform3d(
-                new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
-            )),
-            Map.entry("cam5", new Transform3d( // special
-                new Translation3d(-0.302, 0.266, 0.175),
-                new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
-            )),
-            Map.entry("cam6", new Transform3d(
-                new Translation3d(-0.340, 0.132, 0.483),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw)
-            )),
-            Map.entry("cam7", new Transform3d( // special
-                new Translation3d(-0.283, -0.277, 0.483),
-                new Rotation3d(0, k_backCameraPitch, Math.PI - k_backCameraYaw)
-            )),
-            Map.entry("cam8", new Transform3d(
-                new Translation3d(-0.340, -0.132, 0.483),
-                new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
+                new Translation3d(0.302,-0.266,k_moduleHeight),
+                new Rotation3d(0, k_cameraPitchFront, -k_cameraYaw)
             ))
         );
 
