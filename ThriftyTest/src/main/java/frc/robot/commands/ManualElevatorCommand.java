@@ -16,7 +16,7 @@ public class ManualElevatorCommand extends Command {
 
     @Override
     public void execute() {
-        elevator.setSpeed(isUp ? ElevatorConstants.manualUpSpeed : ElevatorConstants.manualDownSpeed);
+        elevator.setVoltage(isUp ? ElevatorConstants.manualUpSpeed : ElevatorConstants.manualDownSpeed);
     }
 
     @Override

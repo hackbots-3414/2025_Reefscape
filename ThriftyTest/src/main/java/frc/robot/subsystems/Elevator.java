@@ -7,42 +7,232 @@ package frc.robot.subsystems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Robot;
+import frc.robot.utils.RunOnChange;
 
 public class Elevator extends SubsystemBase {
-    // we want to have a logger, even if we're not using it... yet
+    public enum ElevatorSetpoints {
+        GROUND(ElevatorConstants.ground), 
+        STOW(ElevatorConstants.stow), 
+        PROCESSOR(ElevatorConstants.processor), 
+        HIGHGROUND(ElevatorConstants.highGround), 
+        L1(ElevatorConstants.L1), 
+        L2(ElevatorConstants.L2), 
+        ALGAE_L2(ElevatorConstants.algaeL2), 
+        L3(ElevatorConstants.L3), 
+        ALGAE_L3(ElevatorConstants.algaeL3), 
+        L4(ElevatorConstants.L4), 
+        NET(ElevatorConstants.net);
+
+        private double value;
+
+        private ElevatorSetpoints(double value) {
+            this.value = value;
+        }
+    }
+
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
 
-    private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
-    private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*");
-
+    private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*"); // CANivore
+    private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*"); // CANivore
     private final CANcoder m_cancoder = new CANcoder(IDConstants.elevatorEncoder);
 
-    private double m_position;
-    private double m_velocity;
+    private StatusSignal<Angle> m_position;
+    private StatusSignal<AngularVelocity> m_velocity;
+    
+    private ElevatorSetpoints m_reference;
 
-    private double m_reference;
+    private RunOnChange<Double> changeVolts;
+    private RunOnChange<Double> changeSetpoint;
+    private RunOnChange<Boolean> setBrake;
+
+    private Alert encoderNotConfigured = new Alert("Elevator Cancoder on ID " + IDConstants.elevatorEncoder + " did not successfully connect", AlertType.kError);
+
+    public Elevator() {
+        configEncoder();
+        configMotor();
+        configSim();
+        m_reference = ElevatorSetpoints.STOW;
+        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
+        changeSetpoint = new RunOnChange<>(this::writePositionToMotors, ElevatorConstants.stow);
+        setBrake = new RunOnChange<>(this::setBrakeMode, true);
+
+        // Disables status signals communicated that don't need to be
+        ParentDevice.optimizeBusUtilizationForAll(m_elevatorLeft, m_elevatorRight, m_cancoder);
+        BaseStatusSignal.waitForAll(0.02, m_position, m_velocity);
+    }
+
+    private void configEncoder() {
+        m_cancoder.clearStickyFaults();
+        // If cancoder.apply returns an error, throw SmartDashboard alert
+        encoderNotConfigured.set(!m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2).isOK());
+    }
+
+    private void configMotor() {
+        m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+        m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+
+        // Enabling so we can get position and velocity values
+        m_position = m_elevatorRight.getPosition();
+        m_position.setUpdateFrequency(0.02);
+        
+        m_velocity = m_elevatorRight.getVelocity();
+        m_velocity.setUpdateFrequency(0.02);
+
+        // Required for master motor
+        m_elevatorRight.getDutyCycle().setUpdateFrequency(0.02);
+        m_elevatorRight.getMotorVoltage().setUpdateFrequency(0.02);
+        m_elevatorRight.getTorqueCurrent().setUpdateFrequency(0.02);
+
+        Follower follower = new Follower(IDConstants.elevatorRight, ElevatorConstants.invertLeftMotorFollower);
+        m_elevatorLeft.setControl(follower);
+    }
+
+    private void writeToMotors(double voltage) {
+        m_elevatorRight.setVoltage(voltage);
+    }
+
+    // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
+    private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
+
+    private void writePositionToMotors(double setpoint) {
+        m_elevatorRight.setControl(control.withPosition(setpoint));
+        
+        if (setpoint >= getPosition()) {
+            m_elevatorRight.setControl(control
+                .withPosition(setpoint)
+                .withVelocity(ElevatorConstants.maxSpeedUp)
+                .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
+                .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withSlot(0));
+        } else {
+            m_elevatorRight.setControl(control
+                .withPosition(setpoint)
+                .withVelocity(ElevatorConstants.maxSpeedDown)
+                .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
+                .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withSlot(1));
+        }
+    }
+
+    private void setBrakeMode(boolean isEnabled) {
+        m_elevatorRight.getConfigurator().apply(CoralConstants.motorConfig.MotorOutput.withNeutralMode(isEnabled ? NeutralModeValue.Brake : NeutralModeValue.Coast));
+    }
+
+    private void setPosition(double goal) {
+        changeSetpoint.accept(goal);        
+    }
+
+    public void setVoltage(double speed) {
+        changeVolts.accept(speed);
+    }
+
+    public void set(ElevatorSetpoints setpoint) {
+        m_reference = setpoint;
+        setPosition(setpoint.value);
+    }
+
+    public void stow() {
+        setPosition(ElevatorConstants.stow);
+    }
+
+    public void stop() {
+        setPosition(getPosition());
+    }
+
+    public void setLevel(int level) {
+        switch (level) {
+            case 1 -> set(ElevatorSetpoints.L1);
+            case 2 -> set(ElevatorSetpoints.L2);
+            case 3 -> set(ElevatorSetpoints.L3);
+            case 4 -> set(ElevatorSetpoints.L4);
+            default -> set(ElevatorSetpoints.STOW);
+        }
+    }
+
+    public double getError() {
+        return getReference().value - getPosition();
+    }
+
+    public boolean atSetpoint() {
+        return Math.abs(getError()) < ElevatorConstants.tolerance;
+    }
+
+    public ElevatorSetpoints getReference() {
+        return m_reference;
+    }
+
+    public double getPosition() {
+        if (Robot.isReal()) {
+            return m_position.getValueAsDouble();
+        } else {
+            return m_elevatorSim.getPositionMeters();
+        }
+    }
+
+    public double getLatencyCompensatedPosition() {
+        return BaseStatusSignal.getLatencyCompensatedValueAsDouble(m_position, m_velocity);
+    }
+
+    public double getVelocity() {
+        if (Robot.isReal()) {
+            return m_velocity.getValueAsDouble();
+        } else {
+            return m_elevatorSim.getVelocityMetersPerSecond();
+        }
+    }
+
+    private void update() {
+        if (Robot.isReal()) {
+            BaseStatusSignal.refreshAll(m_position, m_velocity);
+        }
+
+        setBrake.run(DriverStation.isEnabled());
+        changeVolts.resolveIfChange();
+        changeSetpoint.resolveIfChange();
+    }
+
+    private void log() {
+        SmartDashboard.putString("Elevator Goal", getReference().toString());
+        SmartDashboard.putNumber("Elevator Goal Value", getReference().value);
+        SmartDashboard.putBoolean("Elevator At Setpoint", atSetpoint());
+        SmartDashboard.putNumber("Elevator Position", getPosition());
+    }
+
+    @Override
+    public void periodic() {
+        update();
+        log();
+    }
+
+
+    // SIMULATION  
 
     private ElevatorSim m_elevatorSim;
     private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
@@ -51,27 +241,6 @@ public class Elevator extends SubsystemBase {
     private MechanismRoot2d m_mechRoot;
     private MechanismLigament2d m_elevatorArm;
 
-    private double m_speed;
-    private boolean m_speedChanged;
-
-    public Elevator() {
-        configEncoder();
-        configMotor();
-        configSim();
-    }
-
-    private void configEncoder() {
-        m_cancoder.clearStickyFaults();
-        m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
-    }
-
-    private void configMotor() {
-        m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
-        m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
-        Follower follower = new Follower(IDConstants.elevatorRight, ElevatorConstants.invertLeftMotorFollower);
-        m_elevatorLeft.setControl(follower);
-    }
-
     private void configSim() {
         m_elevatorSim = new ElevatorSim(
                 ElevatorConstants.stateSpacePlant,
@@ -79,176 +248,25 @@ public class Elevator extends SubsystemBase {
                 ElevatorConstants.reverseSoftLimit,
                 ElevatorConstants.forwardSoftLimit,
                 true,
-                ElevatorConstants.reverseSoftLimit
+                0.0
         );
 
         m_mechVisual = new Mechanism2d(1, 12); // Width/height in meters
         m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
         m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.0, 90)); // Start at 0.1m height
         SmartDashboard.putData("Elevator Visualization", m_mechVisual);
-        if (RobotBase.isSimulation()) {
-            // in simulation, we want to emulate the effect produced by
-            // using an encoder offset (i.e. we start at 0).
-            m_cancoder.setPosition(0.0);
-        }
-    }
-
-    // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
-    private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
-
-    public void setPosition(double goal) {
-        if (goal >= getPosition()) {
-            m_elevatorRight.setControl(control
-                .withPosition(goal)
-                .withVelocity(ElevatorConstants.maxSpeedUp)
-                .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(0));
-        } else {
-            m_elevatorRight.setControl(control
-                .withPosition(goal)
-                .withVelocity(ElevatorConstants.maxSpeedDown)
-                .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(1));
-        }
-        m_reference = goal;
-    }
-
-    public void setSpeed(double speed) {
-        m_speedChanged = (speed != m_speed);
-        m_speed = speed;
-    }
-
-    public void setGroundIntake() {
-        setPosition(ElevatorConstants.groundIntake);
-    }
-
-    public void setHighGroundIntake() {
-        setPosition(ElevatorConstants.highGroundIntake);
-    }
-
-    public void setStow() {
-        setPosition(ElevatorConstants.stow);
-    }
-
-    public void setProcessor() {
-        setPosition(ElevatorConstants.processor);
-    }
-
-    public void setL1() {
-        setPosition(ElevatorConstants.L1);
-    }
-
-    public void setL2() {
-        setPosition(ElevatorConstants.L2);
-    }
-
-    public void setL3() {
-        setPosition(ElevatorConstants.L3);
-    }
-
-    public void setL4() {
-        setPosition(ElevatorConstants.L4);
-    }
-
-    public void setReefLower() {
-        setPosition(ElevatorConstants.reefLower);
-    }
-
-    public void setReefUpper() {
-        setPosition(ElevatorConstants.reefUpper);
-    }
-
-    public void setNet() {
-        setPosition(ElevatorConstants.net);
-    }
-
-    public void stop() {
-        setPosition(m_position);
-    }
-
-    public void setLevel(int level) {
-        switch (level) {
-            case 1 -> setL1();
-            case 2 -> setL2();
-            case 3 -> setL3();
-            case 4 -> setL4();
-            case 0 -> setStow();
-            default -> setStow();
-        }
-    }
-
-    public boolean atSetpoint() {
-        return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
-    }
-
-    public double getReference() {
-        return m_reference;
-    }
-
-    public double getPosition() {
-        return m_position;
-    }
-
-    public double getVelocity() {
-        return m_velocity;
-    }
-
-    private double getPositionUncached() {
-        if (RobotBase.isReal()) {
-            return m_elevatorRight.getPosition().getValueAsDouble();
-        } else {
-            return m_elevatorSim.getPositionMeters();
-        }
-    }
-
-    private double getVelocityUncached() {
-        if (RobotBase.isReal()) {
-            return m_elevatorRight.getVelocity().getValueAsDouble();
-        } else {
-            return m_elevatorSim.getVelocityMetersPerSecond();
-        }
-    }
-
-    @Override
-    public void periodic() {
-        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
-
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
-
-        if (m_speedChanged) {
-            m_elevatorRight.setControl(new DutyCycleOut(m_speed));
-            m_speedChanged = false;
-        }
-
-        SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
-    }
+    }  
 
     @Override
     public void simulationPeriodic() {
-        // Update the simulation with the motor voltage
-        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage();
-        double current = m_elevatorRight.getSupplyCurrent().getValueAsDouble();
-        SmartDashboard.putNumber("Elevator Voltage", appliedVolts);
-        SmartDashboard.putNumber("Elevator Supply Current", current);
-
-        double speed = m_elevatorRight.get();
-        SmartDashboard.putNumber("Elevator Speed", speed);
+        update();
+        
+        double appliedVolts = getError() * 24;
 
         m_elevatorSim.setInput(appliedVolts);
         m_elevatorSim.update(SimConstants.k_simPeriodic);
+        m_elevatorArm.setLength(getPosition());
 
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
-
-        // Update the simulated encoder values
-        m_cancoder.getSimState().setRawPosition(m_position);
-        m_cancoder.getSimState().setVelocity(m_velocity);
-
-        // Simulate battery voltage
-        double volts = BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps());
-        RoboRioSim.setVInVoltage(volts);
+        log();
     }
 }

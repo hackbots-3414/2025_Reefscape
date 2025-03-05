@@ -17,13 +17,10 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -74,20 +71,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         setup();
     }
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
-        setup();
-    }
-
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
-            Matrix<N3, N1> odometryStandardDeviation, Matrix<N3, N1> visionStandardDeviation,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
-                modules);
-        setup();
-    }
-
     private void setup() {
         AutonomousUtil.initializePathPlanner(this);
         if (Robot.isSimulation()) {
@@ -122,11 +105,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Pose2d getBluePose() {
         return FieldUtils.flipPose(m_estimatedPose);
     }
-
-    public void zeroPose() {
-        setPose(new Pose2d());
-    }
-
+    
     public void resetHeading() {
         setOperatorPerspectiveForward(getPose().getRotation());
     }
@@ -176,6 +155,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         handleVisionToggle();
     }
 
+    private boolean getVisionValid() {
+        return m_validPose;
+    }
+
+    private void handleVisionToggle() {
+        if (m_oldVisionTimestamp >= 0) {
+            m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
+        }
+        SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
+    }
+
+
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();
 
@@ -187,17 +178,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
         m_simNotifier.startPeriodic(SimConstants.k_simPeriodic);
-    }
-
-    private boolean getVisionValid() {
-        return m_validPose;
-    }
-
-    private void handleVisionToggle() {
-        if (m_oldVisionTimestamp >= 0) {
-            m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
-        }
-        SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
     }
 
     /* Swerve requests to apply during SysId characterization */

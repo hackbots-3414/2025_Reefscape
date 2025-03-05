@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.CoralRollers.CoralRollerSpeeds;
 
 public class CoralScoreCommand extends Command {
   private final CoralRollers coral;
@@ -27,10 +28,7 @@ public class CoralScoreCommand extends Command {
         return;
     }
     switch(level) {
-      case 1 -> elevator.setL1();
-      case 2 -> elevator.setL2();
-      case 3 -> elevator.setL3();
-      case 4 -> elevator.setL4();
+      case 1, 2, 3, 4 -> elevator.setLevel(level);
       default -> m_timeRemaining = 0;
     }
   }
@@ -39,10 +37,10 @@ public class CoralScoreCommand extends Command {
   public void execute() {
     if(elevator.atSetpoint()) {
       switch(level) {
-        case 1 -> coral.setL1Eject();
-        case 2 -> coral.setL2Eject();
-        case 3 -> coral.setL3Eject();
-        case 4 -> coral.setL4Eject();
+        case 1 -> coral.set(CoralRollerSpeeds.L1);
+        case 2 -> coral.set(CoralRollerSpeeds.L2);
+        case 3 -> coral.set(CoralRollerSpeeds.L3);
+        case 4 -> coral.set(CoralRollerSpeeds.L4);
         default -> m_timeRemaining = 0;
       }
     }
@@ -51,7 +49,7 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    elevator.setStow();
+    elevator.stow();
     coral.stop();
   }
 

@@ -135,9 +135,13 @@ public class Constants {
 
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4.724);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
-
         public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1.5);
         public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(3);
+
+        public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(1);
+        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(2);
+        public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
+        public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(2);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond) / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
 
@@ -445,8 +449,8 @@ public class Constants {
          * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
-        public static final double groundIntake = 0;
-        public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
+        public static final double ground = 0;
+        public static final double highGround = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.232;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
@@ -454,8 +458,8 @@ public class Constants {
         public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
         public static final double L4 = Units.inchesToMeters(76.0) * metersToRotations;
         public static final double net = Units.inchesToMeters(79) * metersToRotations;
-        public static final double reefLower = 2;
-        public static final double reefUpper = 4.5;
+        public static final double algaeL2 = 2;
+        public static final double algaeL3 = 4.5;
 
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
@@ -531,9 +535,6 @@ public class Constants {
         public static final double forwardSoftLimitThreshold = -0.14;
         public static final double reverseSoftLimitThreshold = -0.49;
 
-        public static final double radiansAtMax = forwardSoftLimitThreshold;
-        public static final double radiansAtZero = 0;
-
         public static final double absoluteSensorRange = 0.5;
 
         public static final double supplyCurrentLimit = 40;
@@ -600,20 +601,19 @@ public class Constants {
                         .withMotionMagicCruiseVelocity(maxSpeed)
                         .withMotionMagicAcceleration(maxSpeed * accelerationMultiplier)
                         .withMotionMagicJerk(maxSpeed * accelerationMultiplier * 10));
-
-        public static final double armLength = 0.443;
     }
 
     public static class CoralConstants {
-        public static final double intakeVoltage = 6;
-        public static final double ejectVoltage = 6;
+        public static final double intakeVoltage = 5;
+
+        public static final double ejectTime = 0.06;
 
         public static final double l1EjectVoltage = 3;
         public static final double l2EjectVoltage = 5.1;
         public static final double l3EjectVoltage = 5.1;
         public static final double l4EjectVoltage = 7;
 
-        public static final double spitOutVoltage = -8;
+        public static final double unjamVoltage = -8;
 
         public static final double l1LeftEjectVoltage = 8;
         public static final double l1RightEjectVoltage = 6;

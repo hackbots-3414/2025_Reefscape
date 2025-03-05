@@ -22,8 +22,8 @@ public class StowCommand extends Command {
 
   @Override
   public void initialize() {
-    m_pivot.setStow();
-    m_elevator.setStow();
+    m_pivot.stow();
+    m_elevator.stow();
   }
 
   @Override

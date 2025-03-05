@@ -13,12 +13,12 @@ public class AlgaeEjectCommand extends Command {
 
   @Override
   public void initialize() {
-    m_rollers.ejectAlgae();
+    m_rollers.eject();
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_rollers.stopMotor();
+    m_rollers.smartStop();
   }
 
   @Override
