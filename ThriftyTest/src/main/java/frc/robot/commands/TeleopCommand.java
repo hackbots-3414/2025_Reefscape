@@ -17,6 +17,7 @@ public class TeleopCommand extends Command {
     private final Supplier<Double> xSupplier;
     private final Supplier<Double> ySupplier;
     private final Supplier<Double> rotSupplier;
+
     private final Supplier<Boolean> useOpenLoop;
 
     private final double maxTranslationalVelocity = DriveConstants.k_maxTeleopLinearSpeed;
@@ -36,6 +37,7 @@ public class TeleopCommand extends Command {
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
         this.rotSupplier = rotSupplier;
+
         this.useOpenLoop = useOpenLoop;
 
         addRequirements(drivetrain);

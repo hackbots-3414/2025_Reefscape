@@ -23,7 +23,7 @@ public class Shape {
 
     public static Shape fromUnsortedVertices(List<Translation2d> unsortedVertices, String name) {
         if (unsortedVertices.size() < 3) {
-            throw new IllegalArgumentException("Polygon must be atleat 3 points.");
+            throw new IllegalArgumentException("Polygon must be at leat 3 points.");
         }
 
         List<Translation2d> mutableList = new ArrayList<>(unsortedVertices);
@@ -79,6 +79,10 @@ public class Shape {
         boolean isInside = isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());
         SmartDashboard.putBoolean("SHAPE: " + m_name + "; INSIDE?", isInside);
         return isInside;
+    }
+
+    public boolean isInactive() {
+        return !isActive();
     }
 
     public List<Translation2d> getVertices() {

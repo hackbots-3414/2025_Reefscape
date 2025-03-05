@@ -89,6 +89,9 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         }
     }
 
+    /**
+     * Only stop if there is not a currently held piece
+     */
     public void smartStop() {
         if (hasObject()) {
             hold();

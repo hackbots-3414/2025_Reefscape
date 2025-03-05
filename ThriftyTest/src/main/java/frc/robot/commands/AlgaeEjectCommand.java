@@ -7,8 +7,8 @@ public class AlgaeEjectCommand extends Command {
   private final AlgaeRollers m_rollers;
   
   public AlgaeEjectCommand(AlgaeRollers rollers) {
-    m_rollers = rollers;
-    addRequirements(rollers);
+   m_rollers = rollers;
+   addRequirements(rollers);
   }
 
   @Override
@@ -19,10 +19,5 @@ public class AlgaeEjectCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_rollers.smartStop();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return !m_rollers.hasObject();
   }
 }

@@ -103,6 +103,8 @@ public class AutonomousUtil {
             }
             routine.addCommands(pathFinder(poses[i]));
             routine.addCommands(scoringCommands[i]);
+            routine.addCommands(pathFinder(desiredPickupLocation));
+            routine.addCommands(intakeCommand.get());
         }
 
         return routine;

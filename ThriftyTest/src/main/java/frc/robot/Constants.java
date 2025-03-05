@@ -1,13 +1,19 @@
 package frc.robot;
 
-import java.io.IOException;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
-import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -41,13 +47,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -178,7 +177,7 @@ public class Constants {
 
             public static final boolean flipX = true;
             public static final boolean flipY = false;
-            public static final boolean flipRot = true;
+            public static final boolean flipRot = false;
 
             public static final int enableOpenLoop = 3;
             public static final int resetHeading = 1;
@@ -397,16 +396,6 @@ public class Constants {
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
     }
 
-    public static final class CanRangeConstants {
-
-        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
-        // .withFovParams(null)
-        // .withProximityParams(null)
-        // .withToFParams(null);
-
-        public static final int k_filterWindow = 5; // 5 measurements
-    }
-
     public static final class ElevatorConstants {
         public static final boolean invertLeftMotorFollower = true;
 
@@ -448,6 +437,10 @@ public class Constants {
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
          * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
+        
+        public static enum ScoreLevel {
+            L1, L2, L3, L4;
+        }
 
         public static final double ground = 0;
         public static final double highGround = Units.inchesToMeters(12.0) * metersToRotations;

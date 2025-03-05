@@ -41,6 +41,7 @@ import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
 import frc.robot.Constants.ClimbLocations;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.ElevatorConstants.ScoreLevel;
 import frc.robot.Constants.ReefClipLocations;
 import frc.robot.Constants.ScoringLocations;
 import frc.robot.Constants.ScoringLocationsLeft;
@@ -51,9 +52,8 @@ import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.ClimberCommand;
-import frc.robot.commands.CoralEjectCommand;
-import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.CommandFactory;
+import frc.robot.commands.CoralUnjamCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
@@ -359,7 +359,7 @@ public class RobotContainer {
 
             Trigger algaeOn = controller.button(ButtonBoardAlternate.algaeModeButton);
 
-            controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
+            controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralUnjamCommand(m_coralRollers, m_elevator));
 
             // Manual Mode Off
             bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
@@ -468,10 +468,10 @@ public class RobotContainer {
     }
 
     private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
-        chooser.addOption("L1", () -> coralScoreCommand(1));
-        chooser.addOption("L2", () -> coralScoreCommand(2));
-        chooser.addOption("L3", () -> coralScoreCommand(3));
-        chooser.setDefaultOption("L4", () -> coralScoreCommand(4));
+        chooser.addOption("L1", () -> coralScoreCommand(ScoreLevel.L1));
+        chooser.addOption("L2", () -> coralScoreCommand(ScoreLevel.L2));
+        chooser.addOption("L3", () -> coralScoreCommand(ScoreLevel.L3));
+        chooser.setDefaultOption("L4", () -> coralScoreCommand(ScoreLevel.L4));
     }
 
     public Command getAutonomousCommand() {
@@ -651,21 +651,25 @@ public class RobotContainer {
     }
 
     // ** SUBSYSTEM PASS IN HELPERS **
+    
+    private Command coralEjectCommand() {
+        return CommandFactory.coralEject(m_coralRollers, m_elevator);
+    }
 
     private Command coralIntakeCommand() {
-        return new CoralIntakeCommand(m_coralRollers, m_elevator);
+        return CommandFactory.coralIntake(m_coralRollers, m_elevator); 
     }
 
     private Command coralScoreCommand(int level) {
-        return new CoralScoreCommand(m_coralRollers, m_elevator, level);
+        return CommandFactory.coralScore(m_elevator, m_coralRollers, level);
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
-        return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_pivot, intakeLocation);
+        return CommandFactory.algaeIntake(m_elevator, m_algaeRollers, m_pivot, intakeLocation);
     }
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
-        return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_pivot, scoreLocation);
+        return CommandFactory.algaeScore(m_elevator, m_pivot, m_algaeRollers, scoreLocation);
     }
 
     private Command processorCommand() {
@@ -674,6 +678,10 @@ public class RobotContainer {
 
     public enum AlgaeLocationPresets {
         ALGAE_L2, ALGAE_L3, PROCESSOR, GROUND, NET, HIGHGROUND;
+    }
+
+    public enum CoralLocationPresets {
+        L1, L2, L3, L4, LEFT_INTAKE, RIGHT_INTAKE;
     }
 
     public void resetReferences() {
