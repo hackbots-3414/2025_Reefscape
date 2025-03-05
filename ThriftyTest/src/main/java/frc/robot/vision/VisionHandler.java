@@ -21,9 +21,9 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class VisionHandler implements AutoCloseable {
+    @SuppressWarnings("unused")
     private Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
     private CommandSwerveDrivetrain m_drivetrain;
     private final Notifier m_notifier;

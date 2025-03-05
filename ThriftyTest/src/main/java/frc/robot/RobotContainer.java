@@ -238,95 +238,95 @@ public class RobotContainer {
             Trigger L3 = controller.button(ButtonBoard.L3);
             Trigger L4 = controller.button(ButtonBoard.L4);
 
-            bindButtonBoardAuto(ScoringLocations.A, 1, A.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 1, B.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 1, C.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 1, D.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 1, E.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 1, F.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 1, G.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 1, H.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 1, I.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 1, J.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 1, K.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 1, L.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.A, CoralLocationPresets.L1, A.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.B, CoralLocationPresets.L1, B.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.C, CoralLocationPresets.L1, C.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.D, CoralLocationPresets.L1, D.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.E, CoralLocationPresets.L1, E.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.F, CoralLocationPresets.L1, F.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.G, CoralLocationPresets.L1, G.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.H, CoralLocationPresets.L1, H.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.I, CoralLocationPresets.L1, I.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.J, CoralLocationPresets.L1, J.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.K, CoralLocationPresets.L1, K.and(L1).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.L, CoralLocationPresets.L1, L.and(L1).and(manualModeOff));
             
-            bindButtonBoardAuto(ScoringLocations.A, 2, A.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 2, B.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 2, C.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 2, D.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 2, E.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 2, F.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 2, G.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 2, H.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 2, I.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 2, J.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 2, K.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 2, L.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.A, CoralLocationPresets.L2, A.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.B, CoralLocationPresets.L2, B.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.C, CoralLocationPresets.L2, C.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.D, CoralLocationPresets.L2, D.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.E, CoralLocationPresets.L2, E.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.F, CoralLocationPresets.L2, F.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.G, CoralLocationPresets.L2, G.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.H, CoralLocationPresets.L2, H.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.I, CoralLocationPresets.L2, I.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.J, CoralLocationPresets.L2, J.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.K, CoralLocationPresets.L2, K.and(L2).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.L, CoralLocationPresets.L2, L.and(L2).and(manualModeOff));
 
-            bindButtonBoardAuto(ScoringLocations.A, 3, A.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 3, B.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 3, C.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 3, D.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 3, E.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 3, F.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 3, G.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 3, H.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 3, I.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 3, J.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 3, K.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 3, L.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.A, CoralLocationPresets.L3, A.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.B, CoralLocationPresets.L3, B.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.C, CoralLocationPresets.L3, C.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.D, CoralLocationPresets.L3, D.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.E, CoralLocationPresets.L3, E.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.F, CoralLocationPresets.L3, F.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.G, CoralLocationPresets.L3, G.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.H, CoralLocationPresets.L3, H.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.I, CoralLocationPresets.L3, I.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.J, CoralLocationPresets.L3, J.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.K, CoralLocationPresets.L3, K.and(L3).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.L, CoralLocationPresets.L3, L.and(L3).and(manualModeOff));
 
-            bindButtonBoardAuto(ScoringLocations.A, 4, A.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 4, B.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 4, C.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 4, D.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 4, E.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 4, F.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 4, G.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 4, H.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 4, I.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 4, J.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 4, K.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 4, L.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.A, CoralLocationPresets.L4, A.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.B, CoralLocationPresets.L4, B.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.C, CoralLocationPresets.L4, C.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.D, CoralLocationPresets.L4, D.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.E, CoralLocationPresets.L4, E.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.F, CoralLocationPresets.L4, F.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.G, CoralLocationPresets.L4, G.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.H, CoralLocationPresets.L4, H.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.I, CoralLocationPresets.L4, I.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.J, CoralLocationPresets.L4, J.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.K, CoralLocationPresets.L4, K.and(L4).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.L, CoralLocationPresets.L4, L.and(L4).and(manualModeOff));
 
             
             
             Trigger algaeLow = controller.button(ButtonBoard.lowAlgae);
             Trigger algaeHigh = controller.button(ButtonBoard.highAlgae);
 
-            bindButtonBoardAuto(ScoringLocations.A, 5, A.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 5, B.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 5, C.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 5, D.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 5, E.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 5, F.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 5, G.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 5, H.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 5, I.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 5, J.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 5, K.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 5, L.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.A, AlgaeLocationPresets.ALGAE_L2, A.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.B, AlgaeLocationPresets.ALGAE_L2, B.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.C, AlgaeLocationPresets.ALGAE_L2, C.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.D, AlgaeLocationPresets.ALGAE_L2, D.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.E, AlgaeLocationPresets.ALGAE_L2, E.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.F, AlgaeLocationPresets.ALGAE_L2, F.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.G, AlgaeLocationPresets.ALGAE_L2, G.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.H, AlgaeLocationPresets.ALGAE_L2, H.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.I, AlgaeLocationPresets.ALGAE_L2, I.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.J, AlgaeLocationPresets.ALGAE_L2, J.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.K, AlgaeLocationPresets.ALGAE_L2, K.and(algaeLow).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.L, AlgaeLocationPresets.ALGAE_L2, L.and(algaeLow).and(manualModeOff));
 
-            bindButtonBoardAuto(ScoringLocations.A, 6, A.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 6, B.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 6, C.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 6, D.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 6, E.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 6, F.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 6, G.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 6, H.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 6, I.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 6, J.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 6, K.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 6, L.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.A, AlgaeLocationPresets.ALGAE_L3, A.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.B, AlgaeLocationPresets.ALGAE_L3, B.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.C, AlgaeLocationPresets.ALGAE_L3, C.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.D, AlgaeLocationPresets.ALGAE_L3, D.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.E, AlgaeLocationPresets.ALGAE_L3, E.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.F, AlgaeLocationPresets.ALGAE_L3, F.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.G, AlgaeLocationPresets.ALGAE_L3, G.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.H, AlgaeLocationPresets.ALGAE_L3, H.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.I, AlgaeLocationPresets.ALGAE_L3, I.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.J, AlgaeLocationPresets.ALGAE_L3, J.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.K, AlgaeLocationPresets.ALGAE_L3, K.and(algaeHigh).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.L, AlgaeLocationPresets.ALGAE_L3, L.and(algaeHigh).and(manualModeOff));
 
 
-            bindButtonBoardAuto(ScoringLocations.LEFTHP, 0, controller.button(ButtonBoard.leftIntake).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.RIGHTHP, 0, controller.button(ButtonBoard.rightIntake).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.LEFTHP, CoralLocationPresets.LEFT_INTAKE, controller.button(ButtonBoard.leftIntake).and(manualModeOff));
+            bindButtonBoardCoral(ScoringLocations.RIGHTHP, CoralLocationPresets.RIGHT_INTAKE, controller.button(ButtonBoard.rightIntake).and(manualModeOff));
 
-            bindButtonBoardAuto(ScoringLocations.PROCESSOR, 0, controller.button(ButtonBoard.processor).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.NET, 0, controller.button(ButtonBoard.net).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.PROCESSOR, AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoard.processor).and(manualModeOff));
+            bindButtonBoardAlgae(ScoringLocations.NET, AlgaeLocationPresets.NET, controller.button(ButtonBoard.net).and(manualModeOff));
 
 
             // MANUAL CORAL SCORE COMMANDS
@@ -515,6 +515,7 @@ public class RobotContainer {
     private Climber m_climber;
     private AlgaeRollers m_algaeRollers;
     private CoralRollers m_coralRollers;
+    @SuppressWarnings("unused")
     private LedFeedback m_ledFeedback;
 
     private void configureSubsystems() {
@@ -528,6 +529,7 @@ public class RobotContainer {
     }
 
     // ** BUTTON BOARD HELPERS **
+    @SuppressWarnings("unused")
     private void bindReefClipPath(ReefClipLocations location, Trigger trigger) {
         switch (location) {
             case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> new InstantCommand(), scoringLocationsListLeft)));
@@ -550,34 +552,33 @@ public class RobotContainer {
      * @param level 1, 2, 3, 4 for coral score; 5 for algae pickup low; 6 for algae pickup high; otherwise doesn't matter
      * */
     @SuppressWarnings("incomplete-switch")
-    private void bindButtonBoardAuto(ScoringLocations location, CoralLocationPresets level, Trigger trigger) {
-        switch (location) {
-            case LEFTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, this::coralIntakeCommand)));
-            case RIGHTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, this::coralIntakeCommand)));
-            case NET -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, () -> algaeScoreCommand(AlgaeLocationPresets.NET))));
-            case PROCESSOR -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, () -> processorCommand())));
-        }
-
-        if (level == 5) {
+    private void bindButtonBoardCoral(ScoringLocations location, CoralLocationPresets preset, Trigger trigger) {
+        if (preset == CoralLocationPresets.LEFT_INTAKE || preset == CoralLocationPresets.RIGHT_INTAKE) {
             switch (location) {
-                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
-                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
-                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
-                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
-                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
-                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L2))));
-            }
-        } else if (level == 6) {
-            switch (location) {
-                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
-                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
-                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
-                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
-                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
-                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.ALGAE_L3))));
+                case LEFTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, this::coralIntakeCommand)));
+                case RIGHTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, this::coralIntakeCommand)));
             }
         } else {
-            trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, () -> coralScoreCommand(level))));
+            trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, () -> coralScoreCommand(preset))));
+        }
+    }
+
+    @SuppressWarnings("incomplete-switch")
+    private void bindButtonBoardAlgae(ScoringLocations location, AlgaeLocationPresets preset, Trigger trigger) {
+        if (preset == AlgaeLocationPresets.NET || preset == AlgaeLocationPresets.PROCESSOR) {
+            switch (location) {
+                case NET -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, () -> algaeScoreCommand(AlgaeLocationPresets.NET))));
+                case PROCESSOR -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(location.value, () -> processorCommand())));
+            }
+        } else {
+            switch (location) {
+                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(preset))));
+                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(preset))));
+                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(preset))));
+                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(preset))));
+                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(preset))));
+                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(preset))));
+            }
         }
     }
 
