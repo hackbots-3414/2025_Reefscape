@@ -12,6 +12,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -92,7 +93,7 @@ public class Elevator extends SubsystemBase {
     
     private ElevatorSetpoints m_reference;
 
-    // private RunOnChange<Double> changeVolts;
+    private RunOnChange<Double> changeVolts;
     private RunOnChange<Double> changeSetpoint;
 
     private Alert encoderNotConfigured = new Alert("Elevator Cancoder on ID " + IDConstants.elevatorEncoder + " did not successfully connect", AlertType.kError);
@@ -102,11 +103,11 @@ public class Elevator extends SubsystemBase {
         configMotor();
         configSim();
         m_reference = ElevatorSetpoints.STOW;
-        // changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
+        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
         changeSetpoint = new RunOnChange<>(this::writePositionToMotors, ElevatorConstants.stow);
 
         // Disables status signals communicated that don't need to be
-        // ParentDevice.optimizeBusUtilizationForAll(m_elevatorLeft, m_elevatorRight, m_cancoder);
+        ParentDevice.optimizeBusUtilizationForAll(m_elevatorLeft, m_elevatorRight, m_cancoder);
         BaseStatusSignal.waitForAll(0.02, m_position, m_velocity);
     }
 
@@ -122,25 +123,24 @@ public class Elevator extends SubsystemBase {
 
         // Enabling so we can get position and velocity values
         m_position = m_elevatorRight.getPosition();
-        m_position.setUpdateFrequency(0.02);
+        m_position.setUpdateFrequency(50);
         
         m_velocity = m_elevatorRight.getVelocity();
-        m_velocity.setUpdateFrequency(0.02);
+        m_velocity.setUpdateFrequency(50);
 
         // Required for master motor
-        m_elevatorRight.getDutyCycle().setUpdateFrequency(0.02);
-        m_elevatorRight.getMotorVoltage().setUpdateFrequency(0.02);
-        m_elevatorRight.getTorqueCurrent().setUpdateFrequency(0.02);
+        m_elevatorRight.getDutyCycle().setUpdateFrequency(50);
+        m_elevatorRight.getMotorVoltage().setUpdateFrequency(50);
+        m_elevatorRight.getTorqueCurrent().setUpdateFrequency(50);
 
         Follower follower = new Follower(IDConstants.elevatorRight, ElevatorConstants.invertLeftMotorFollower);
         m_elevatorLeft.setControl(follower);
     }
 
-    // private void writeToMotors(double voltage) {
-    //     m_elevatorRight.setVoltage(voltage);
-    // }
+    private void writeToMotors(double voltage) {
+        m_elevatorRight.setVoltage(voltage);
+    }
 
-    // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
     private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
 
     private void writePositionToMotors(double setpoint) {
@@ -231,7 +231,7 @@ public class Elevator extends SubsystemBase {
             BaseStatusSignal.refreshAll(m_position, m_velocity);
         }
 
-        // changeVolts.resolveIfChange();
+        changeVolts.resolveIfChange();
         changeSetpoint.resolveIfChange();
     }
 

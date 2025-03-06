@@ -91,10 +91,10 @@ public class Pivot extends SubsystemBase {
 
         // Enabling so we can get position and velocity values
         m_position = m_pivot.getPosition();
-        m_position.setUpdateFrequency(0.02);
+        m_position.setUpdateFrequency(50);
         
         m_velocity = m_pivot.getVelocity();
-        m_velocity.setUpdateFrequency(0.02);
+        m_velocity.setUpdateFrequency(50);
     }
 
     private void writeToMotors(double voltage) {
