@@ -54,6 +54,7 @@ import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
@@ -106,6 +107,12 @@ public class RobotContainer {
         SmartDashboard.putData("Reef mode off", new InstantCommand(() -> {
             RobotObserver.setReefMode(false);
         }));
+
+        Pose2d point = new Pose2d(0.56, 4.0, new Rotation2d());
+        SmartDashboard.putData("drive to reef", new DriveToPointCommand(point, m_drivetrain));
+
+        Pose2d point2 = new Pose2d(11.833, 4.051, new Rotation2d());
+        SmartDashboard.putData("drive to other pose", new DriveToPointCommand(point2, m_drivetrain));
     }
 
     private void addBoundsToField() {

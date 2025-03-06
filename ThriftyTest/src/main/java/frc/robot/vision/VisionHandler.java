@@ -10,8 +10,6 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -21,10 +19,8 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class VisionHandler implements AutoCloseable {
-    private Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
     private CommandSwerveDrivetrain m_drivetrain;
     private final Notifier m_notifier;
     private List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
