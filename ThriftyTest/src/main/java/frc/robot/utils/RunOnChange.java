@@ -32,9 +32,8 @@ public class RunOnChange<T> {
 
     /**
      * Runs code at previously set value
-     * Generally used in periodic method to apply a setpoint
      */
-    public void resolve() {
+    private void resolve() {
         task.accept(currValue);
         changed = false;
     }

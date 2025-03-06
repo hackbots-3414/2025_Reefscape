@@ -59,7 +59,7 @@ public class AutonomousUtil {
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            System.exit(1);
+            // System.exit(1);
         }
     }
 

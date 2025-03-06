@@ -12,7 +12,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -93,7 +92,7 @@ public class Elevator extends SubsystemBase {
     
     private ElevatorSetpoints m_reference;
 
-    private RunOnChange<Double> changeVolts;
+    // private RunOnChange<Double> changeVolts;
     private RunOnChange<Double> changeSetpoint;
 
     private Alert encoderNotConfigured = new Alert("Elevator Cancoder on ID " + IDConstants.elevatorEncoder + " did not successfully connect", AlertType.kError);
@@ -103,11 +102,11 @@ public class Elevator extends SubsystemBase {
         configMotor();
         configSim();
         m_reference = ElevatorSetpoints.STOW;
-        changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
+        // changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
         changeSetpoint = new RunOnChange<>(this::writePositionToMotors, ElevatorConstants.stow);
 
         // Disables status signals communicated that don't need to be
-        ParentDevice.optimizeBusUtilizationForAll(m_elevatorLeft, m_elevatorRight, m_cancoder);
+        // ParentDevice.optimizeBusUtilizationForAll(m_elevatorLeft, m_elevatorRight, m_cancoder);
         BaseStatusSignal.waitForAll(0.02, m_position, m_velocity);
     }
 
@@ -137,9 +136,9 @@ public class Elevator extends SubsystemBase {
         m_elevatorLeft.setControl(follower);
     }
 
-    private void writeToMotors(double voltage) {
-        m_elevatorRight.setVoltage(voltage);
-    }
+    // private void writeToMotors(double voltage) {
+    //     m_elevatorRight.setVoltage(voltage);
+    // }
 
     // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
     private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
@@ -168,9 +167,9 @@ public class Elevator extends SubsystemBase {
         changeSetpoint.accept(goal);        
     }
 
-    public void setVoltage(double speed) {
-        changeVolts.accept(speed);
-    }
+    // public void setVoltage(double speed) {
+    //     changeVolts.accept(speed);
+    // }
 
     public void set(ElevatorSetpoints setpoint) {
         m_reference = setpoint;
@@ -232,7 +231,7 @@ public class Elevator extends SubsystemBase {
             BaseStatusSignal.refreshAll(m_position, m_velocity);
         }
 
-        changeVolts.resolveIfChange();
+        // changeVolts.resolveIfChange();
         changeSetpoint.resolveIfChange();
     }
 
