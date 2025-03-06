@@ -82,6 +82,11 @@ public class CoralRollers extends SubsystemBase {
 
         m_coralLeft.getConfigurator().apply(CoralConstants.motorConfig);
         m_coralRight.getConfigurator().apply(CoralConstants.motorConfig);
+        
+        // Required for master motor
+        m_coralLeft.getDutyCycle().setUpdateFrequency(0.02);
+        m_coralLeft.getMotorVoltage().setUpdateFrequency(0.02);
+        m_coralLeft.getTorqueCurrent().setUpdateFrequency(0.02);
 
         m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
     }
@@ -108,15 +113,6 @@ public class CoralRollers extends SubsystemBase {
 
     public void unjam() {
         setVoltage(CoralConstants.unjamVoltage);
-    }
-
-    public void setIndividualEject() {
-        m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
-        m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
-    }
-
-    public void resetFollow() {
-        m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
     }
 
     public void stop() {
