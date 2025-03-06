@@ -111,6 +111,8 @@ public class Constants {
         public static final int candle2 = 6;
 
         public static final int servo = 9;
+
+        public static final int CANrange = 1;// Placed arbitrarly 
     }
 
     public static class SimConstants {
@@ -377,6 +379,9 @@ public class Constants {
         // .withFovParams(null)
         // .withProximityParams(null)
         // .withToFParams(null);
+        public final static String kCANrangeCANbus = "canivore";
+
+
 
         public static final int k_filterWindow = 5; // 5 measurements
     }
