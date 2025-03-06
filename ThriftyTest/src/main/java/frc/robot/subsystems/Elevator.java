@@ -14,27 +14,24 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.RobotContainer.CoralLocationPresets;
-import frc.robot.Robot;
 import frc.robot.utils.RunOnChange;
 
 public class Elevator extends SubsystemBase {
@@ -98,7 +95,6 @@ public class Elevator extends SubsystemBase {
 
     private RunOnChange<Double> changeVolts;
     private RunOnChange<Double> changeSetpoint;
-    private RunOnChange<Boolean> setBrake;
 
     private Alert encoderNotConfigured = new Alert("Elevator Cancoder on ID " + IDConstants.elevatorEncoder + " did not successfully connect", AlertType.kError);
 
@@ -109,7 +105,6 @@ public class Elevator extends SubsystemBase {
         m_reference = ElevatorSetpoints.STOW;
         changeVolts = new RunOnChange<>(this::writeToMotors, 0.0);
         changeSetpoint = new RunOnChange<>(this::writePositionToMotors, ElevatorConstants.stow);
-        setBrake = new RunOnChange<>(this::setBrakeMode, true);
 
         // Disables status signals communicated that don't need to be
         ParentDevice.optimizeBusUtilizationForAll(m_elevatorLeft, m_elevatorRight, m_cancoder);
@@ -167,10 +162,6 @@ public class Elevator extends SubsystemBase {
                 .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
                 .withSlot(1));
         }
-    }
-
-    private void setBrakeMode(boolean isEnabled) {
-        m_elevatorRight.getConfigurator().apply(CoralConstants.motorConfig.MotorOutput.withNeutralMode(isEnabled ? NeutralModeValue.Brake : NeutralModeValue.Coast));
     }
 
     private void setPosition(double goal) {
@@ -241,7 +232,6 @@ public class Elevator extends SubsystemBase {
             BaseStatusSignal.refreshAll(m_position, m_velocity);
         }
 
-        setBrake.run(DriverStation.isEnabled());
         changeVolts.resolveIfChange();
         changeSetpoint.resolveIfChange();
     }
