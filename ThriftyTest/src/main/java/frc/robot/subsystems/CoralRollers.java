@@ -84,9 +84,9 @@ public class CoralRollers extends SubsystemBase {
         m_coralRight.getConfigurator().apply(CoralConstants.motorConfig);
         
         // Required for master motor
-        m_coralLeft.getDutyCycle().setUpdateFrequency(0.02);
-        m_coralLeft.getMotorVoltage().setUpdateFrequency(0.02);
-        m_coralLeft.getTorqueCurrent().setUpdateFrequency(0.02);
+        m_coralLeft.getDutyCycle().setUpdateFrequency(50);
+        m_coralLeft.getMotorVoltage().setUpdateFrequency(50);
+        m_coralLeft.getTorqueCurrent().setUpdateFrequency(50);
 
         m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
     }

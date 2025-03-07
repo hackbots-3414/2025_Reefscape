@@ -58,9 +58,9 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         m_rightClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
         
         // Required for master motor
-        m_leftClimbMotor.getDutyCycle().setUpdateFrequency(0.02);
-        m_leftClimbMotor.getMotorVoltage().setUpdateFrequency(0.02);
-        m_leftClimbMotor.getTorqueCurrent().setUpdateFrequency(0.02);
+        m_leftClimbMotor.getDutyCycle().setUpdateFrequency(50);
+        m_leftClimbMotor.getMotorVoltage().setUpdateFrequency(50);
+        m_leftClimbMotor.getTorqueCurrent().setUpdateFrequency(50);
 
         m_rightClimbMotor.setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
     }
@@ -121,7 +121,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
             setMotor(output);
         }
 
-        changeVolts.resolve();
+        changeVolts.resolveIfChange();
         
         rangeLocation = range.getDistance().getValueAsDouble();
 

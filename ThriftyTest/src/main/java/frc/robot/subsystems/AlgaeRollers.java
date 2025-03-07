@@ -135,7 +135,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     @Override
     public void periodic() {
         update();
-        changeVolts.resolve();
+        changeVolts.resolveIfChange();
         log();
     }
 
