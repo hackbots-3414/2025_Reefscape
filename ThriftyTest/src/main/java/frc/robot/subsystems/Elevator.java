@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -89,7 +88,7 @@ public class Elevator extends SubsystemBase {
         if (RobotBase.isSimulation()) {
             // in simulation, we want to emulate the effect produced by
             // using an encoder offset (i.e. we start at 0).
-            m_cancoder.setPosition(0.0);
+            m_elevatorRight.setPosition(0.0);
         }
     }
 
@@ -213,29 +212,23 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
+        if (ElevatorConstants.enable) {
+            m_position = getPositionUncached();
+            m_velocity = getVelocityUncached();
 
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
+            if (m_speedChanged) {
+                m_elevatorRight.setControl(new DutyCycleOut(m_speed));
+                m_speedChanged = false;
+            }
 
-        if (m_speedChanged) {
-            m_elevatorRight.setControl(new DutyCycleOut(m_speed));
-            m_speedChanged = false;
+            SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
         }
-
-        SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
     }
 
     @Override
     public void simulationPeriodic() {
         // Update the simulation with the motor voltage
-        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage();
-        double current = m_elevatorRight.getSupplyCurrent().getValueAsDouble();
-        SmartDashboard.putNumber("Elevator Voltage", appliedVolts);
-        SmartDashboard.putNumber("Elevator Supply Current", current);
-
-        double speed = m_elevatorRight.get();
-        SmartDashboard.putNumber("Elevator Speed", speed);
+        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage() * 10;
 
         m_elevatorSim.setInput(appliedVolts);
         m_elevatorSim.update(SimConstants.k_simPeriodic);
@@ -244,9 +237,11 @@ public class Elevator extends SubsystemBase {
         m_velocity = getVelocityUncached();
 
         // Update the simulated encoder values
-        m_cancoder.getSimState().setRawPosition(m_position);
-        m_cancoder.getSimState().setVelocity(m_velocity);
+        m_elevatorRight.getSimState().setRawRotorPosition(m_position);
+        m_elevatorRight.getSimState().setRotorVelocity(m_velocity);
 
+        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
+        
         // Simulate battery voltage
         double volts = BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps());
         RoboRioSim.setVInVoltage(volts);

@@ -137,14 +137,14 @@ public class Constants {
         public static final double k_driveToPointSpeed = 2.0;
         public static final double k_driveToPointAcceleration = 3.0;
 
-        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(3);
-        public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
+        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(2);
+        public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
 
         public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1.5);
         public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(3);
 
-        public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(1);
-        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(2);
+        public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(0.5);
+        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(1);
 
         public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
         public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(2);
@@ -406,17 +406,9 @@ public class Constants {
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
     }
 
-    public static final class CanRangeConstants {
-
-        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
-        // .withFovParams(null)
-        // .withProximityParams(null)
-        // .withToFParams(null);
-
-        public static final int k_filterWindow = 5; // 5 measurements
-    }
-
     public static final class ElevatorConstants {
+        public static final boolean enable = true;
+
         public static final boolean invertLeftMotorFollower = true;
 
         public static final double forwardSoftLimit = 11.2;
@@ -533,6 +525,8 @@ public class Constants {
     }
 
     public static final class PivotConstants {
+        public static final boolean enable = false;
+
         public static final double encoderOffset = 0.126465; //0.250977;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
@@ -618,6 +612,8 @@ public class Constants {
     }
 
     public static class CoralConstants {
+        public static final boolean enable = false;
+        
         public static final double intakeVoltage = 6;
         public static final double ejectVoltage = 6;
 
@@ -656,6 +652,8 @@ public class Constants {
     }
 
     public static final class ClimberConstants {
+        public static final boolean enable = false;
+        
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0;
         public static final double climbDownVolts = -12.0;
@@ -686,6 +684,8 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
+        public static final boolean enable = false;
+        
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = -1;
         public static final double processorEjectVoltage = -4;
@@ -884,7 +884,7 @@ public class Constants {
         public static final int funnelNumLED = 45;
         public static final int elevatorNumLED = 40;
         public static final int funnelOffset2 = 8;
-        public static final int elevatorOffset2 = 89 ;
+        public static final int elevatorOffset2 = 89;
         public static final int funnelNumLED2 = 88;
         public static final int elevatorNumLED2 = 50;
     }

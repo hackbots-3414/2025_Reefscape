@@ -153,20 +153,22 @@ public class Pivot extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_armLigament.setAngle(Math.toDegrees(m_position));
+        if (PivotConstants.enable) {
+            m_armLigament.setAngle(Math.toDegrees(m_position));
 
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
+            m_position = getPositionUncached();
+            m_velocity = getVelocityUncached();
 
-        if (m_speedChanged) {
-            m_pivot.setControl(new DutyCycleOut(m_speed));
-            m_speedChanged = false;
+            if (m_speedChanged) {
+                m_pivot.setControl(new DutyCycleOut(m_speed));
+                m_speedChanged = false;
+            }
+
+            SmartDashboard.putNumber("REFERENCE FOR PIVOT", getReference());
+            SmartDashboard.putNumber("POSITION FOR PIVOT", getPosition());
+
+            SmartDashboard.putBoolean("PIVOT AT POSITION", atSetpoint());
         }
-
-        SmartDashboard.putNumber("REFERENCE FOR PIVOT", getReference());
-        SmartDashboard.putNumber("POSITION FOR PIVOT", getPosition());
-
-        SmartDashboard.putBoolean("PIVOT AT POSITION", atSetpoint());
     }
 
     @Override
