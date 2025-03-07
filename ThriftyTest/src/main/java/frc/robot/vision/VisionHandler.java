@@ -1,6 +1,7 @@
 package frc.robot.vision;
 
-import java.io.IOException;
+import static edu.wpi.first.units.Units.Milliseconds;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,18 +13,15 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class VisionHandler implements AutoCloseable {
     private Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
@@ -36,29 +34,16 @@ public class VisionHandler implements AutoCloseable {
 
     private final Field2d m_field;
 
-    private boolean m_singleTag;
-    
+    private LogBuilder m_logBuilder = new LogBuilder();
+
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
-        try {
-            setupAprilTagField();
-        } catch (IOException e) {
-            m_logger.error("could not load april tag resource file");
-            System.exit(1);
-        }
+        m_visionSim.addAprilTags(VisionConstants.k_layout);
         setupProps();
         setupCameras();
         m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
         RobotObserver.setField(m_field);
-        m_singleTag = false;
-    }
-
-    private void setupAprilTagField() throws IOException {
-        AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadFromResource(
-            AprilTagFields.k2025ReefscapeWelded.m_resourceFile
-        );
-        m_visionSim.addAprilTags(tagLayout);
     }
 
     /**
@@ -102,8 +87,7 @@ public class VisionHandler implements AutoCloseable {
             SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
                 realCamera,
                 robotToCamera,
-                this::addEstimate,
-                this::getSingleTag
+                this::addEstimate
             );
             m_estimators.add(estimator);
         }
@@ -115,7 +99,10 @@ public class VisionHandler implements AutoCloseable {
         for (SingleInputPoseEstimator estimator : m_estimators) {
             estimator.run();
         }
-        m_visionSim.update(m_drivetrain.getPose());
+        Pose2d currPose = m_drivetrain.getPose();
+        m_visionSim.update(currPose);
+        // finish logging
+        m_logBuilder.log();
     }
 
     public void startThread() {
@@ -123,25 +110,14 @@ public class VisionHandler implements AutoCloseable {
     }
 
     private void addEstimate(TimestampedPoseEstimate estimate) {
-        List<Pose2d> poses = m_field.getObject(VisionConstants.k_estimationName)
+        String name = VisionConstants.k_estimationName;
+        List<Pose2d> poses = m_field.getObject(name)
             .getPoses();
         poses.add(estimate.pose());
-        m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
+        m_field.getObject(name).setPoses(poses);
         m_drivetrain.addPoseEstimate(estimate);
-    }
-
-    private boolean getSingleTag() {
-        return m_singleTag;
-    }
-
-    public void setMultitag() {
-        m_singleTag = false;
-        SmartDashboard.putBoolean("single tag", m_singleTag);
-    }
-
-    public void setSingleTag() {
-        m_singleTag = true;
-        SmartDashboard.putBoolean("single tag", m_singleTag);
+        // pose logging
+        m_logBuilder.addEstimate(estimate);
     }
 
     @Override

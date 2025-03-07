@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,6 +27,17 @@ public class RobotObserver {
 
     public static Pose2d getPose() {
         return getInstance().m_poseSupplier.get();
+    }
+
+    /* the velocity of the robot */
+    private DoubleSupplier m_veloSupplier;
+
+    public static void setVelocitySupplier(DoubleSupplier veloSupplier) {
+        getInstance().m_veloSupplier = veloSupplier;
+    }
+
+    public static double getVelocity() {
+        return getInstance().m_veloSupplier.getAsDouble();
     }
 
     /* Field2d to display important details about the robot */
@@ -74,21 +86,14 @@ public class RobotObserver {
         return getInstance().m_elevatorHeightSupplier.get();
     }
 
-    private Runnable m_setSingleTag = () -> {};
-    private Runnable m_setMultiTag = () -> {};
+    private boolean m_reefMode = false;
 
-    public static void setSingleTag() {
-        getInstance().m_setSingleTag.run();
-    }
-    public static void setMultiTag() {
-        getInstance().m_setMultiTag.run();
+    public static void setReefMode(boolean enabled) {
+        getInstance().m_reefMode = enabled;
     }
 
-    public static void setSingleTagRunnable(Runnable singleTag) {
-        getInstance().m_setSingleTag = singleTag;
-    }
-    public static void setMultiTagRunnable(Runnable multiTag) {
-        getInstance().m_setMultiTag = multiTag;
+    public static boolean getReefMode() {
+        return getInstance().m_reefMode;
     }
 
     private BooleanSupplier m_pieceHeldSupplier;

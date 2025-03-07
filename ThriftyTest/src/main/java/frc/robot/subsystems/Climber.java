@@ -5,9 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,11 +20,17 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
     private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
 
-    private final DigitalInput climbedHardLimit = new DigitalInput(IDConstants.climbedHardLimit);
-    private final DigitalInput climbReadyHardLimit = new DigitalInput(IDConstants.climbReadyHardLimit);
+    private final PIDController m_controller = new PIDController(ClimberConstants.kP, 0, 0);
 
-    private boolean climbedLimit = false;
-    private boolean climbReadyLimit = false;
+    private boolean m_closedLoop = false;
+
+    private double m_setpoint;
+
+    private final CANrange range = new CANrange(IDConstants.canRange);
+    
+    private double rangeLocation = 0.0;
+    private boolean climbReady = false;
+    private boolean climbed = false;
 
     private final Servo m_servo = new Servo(IDConstants.servo);
 
@@ -36,6 +43,11 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         configMotors();
     }
 
+    public void setClosedLoop(boolean enable) {
+        m_closedLoop = enable;
+        m_setpoint = m_leftClimbMotor.getPosition().getValueAsDouble();
+    }
+
     private void configMotors() {
         m_leftClimbMotor.clearStickyFaults();
         m_rightClimbMotor.clearStickyFaults();
@@ -45,7 +57,11 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     public void openFunnel() {
-        m_servo.set(ClimberConstants.k_servoPosition);
+        m_servo.set(ClimberConstants.k_openServoPosition);
+    }
+
+    public void closeFunnel() {
+        m_servo.set(ClimberConstants.k_closedServoPosition);
     }
 
     private void setMotor(double voltage) {
@@ -54,7 +70,6 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     public void setClimbUpVolts() {
-        m_logger.warn("Climber motor voltages for real bot not set, set voltages in Constants.ClimberConstants.climberUpVolts");
         setMotor(ClimberConstants.climberUpVolts);
     }
 
@@ -72,22 +87,43 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         m_voltageChanged = false;
     }
 
+    public boolean climbed() {
+        return climbed;
+    }
+
+    public boolean ready() {
+        return climbReady;
+    }
+
+    public double getEncoderValue() {
+        return m_leftClimbMotor.getPosition().getValueAsDouble();
+    }
+
     @Override
     public void periodic() {
-        climbedLimit = climbedHardLimit.get();
-        climbReadyLimit = climbReadyHardLimit.get();
+        rangeLocation = range.getDistance().getValueAsDouble();
+
+        climbReady = rangeLocation < ClimberConstants.climbReadyRangeValue;
+        climbed = rangeLocation > ClimberConstants.climbedRangeValue;
 
         if (m_voltageChanged) {
             if (m_voltage >= 0) {
-                m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withLimitForwardMotion(climbedLimit));
+                m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withLimitForwardMotion(climbed));
             } else {
-                m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withLimitReverseMotion(climbReadyLimit));
-            }
-            
-            m_leftClimbMotor.setVoltage(m_voltage);
+                m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withIgnoreHardwareLimits(climbReady));
+            }            
             m_voltageChanged = false;
         }
         SmartDashboard.putNumber("climber servo pos", m_servo.getPosition());
+
+        SmartDashboard.putBoolean("Climb Ready", climbReady);
+        SmartDashboard.putBoolean("Climbed", climbed);
+
+        if (m_closedLoop) {
+            double position = m_leftClimbMotor.getPosition().getValueAsDouble();
+            double output = m_controller.calculate(position, m_setpoint);
+            setMotor(output);
+        }
     }
 
    @Override
