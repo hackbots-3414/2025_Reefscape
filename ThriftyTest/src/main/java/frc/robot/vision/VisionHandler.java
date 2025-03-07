@@ -1,7 +1,5 @@
 package frc.robot.vision;
 
-import static edu.wpi.first.units.Units.Milliseconds;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class VisionHandler implements AutoCloseable {
     private Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);

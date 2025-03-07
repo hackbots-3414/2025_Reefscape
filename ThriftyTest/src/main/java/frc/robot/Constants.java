@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -275,6 +274,7 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
+        public static final boolean k_enableLogging = true;
 
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
@@ -310,23 +310,23 @@ public class Constants {
             Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
                 new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
-            )),
-            Map.entry("cam5", new Transform3d( // special
-                new Translation3d(-0.302, 0.266, 0.175),
-                new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
-            )),
-            Map.entry("cam6", new Transform3d(
-                new Translation3d(-0.340, 0.132, 0.483),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw)
-            )),
-            Map.entry("cam7", new Transform3d( // special
-                new Translation3d(-0.283, -0.277, 0.483),
-                new Rotation3d(0, k_backCameraPitch, Math.PI - k_backCameraYaw)
-            )),
-            Map.entry("cam8", new Transform3d(
-                new Translation3d(-0.340, -0.132, 0.483),
-                new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
             ))
+            // Map.entry("cam5", new Transform3d( // special
+            //     new Translation3d(-0.302, 0.266, 0.175),
+            //     new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
+            // )),
+            // Map.entry("cam6", new Transform3d(
+            //     new Translation3d(-0.340, 0.132, 0.483),
+            //     new Rotation3d(0, k_cameraPitch, k_cameraYaw)
+            // )),
+            // Map.entry("cam7", new Transform3d( // special
+            //     new Translation3d(-0.283, -0.277, 0.483),
+            //     new Rotation3d(0, k_backCameraPitch, Math.PI - k_backCameraYaw)
+            // )),
+            // Map.entry("cam8", new Transform3d(
+            //     new Translation3d(-0.340, -0.132, 0.483),
+            //     new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
+            // ))
         );
 
         // The tick time for each pose estimator to run
@@ -450,21 +450,21 @@ public class Constants {
         public static final double stow = 0.232;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
-        public static final double L2 = Units.inchesToMeters(35.5) * metersToRotations;
-        public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
+        public static final double L2 = Units.inchesToMeters(38) * metersToRotations; // 35.5
+        public static final double L3 = Units.inchesToMeters(54) * metersToRotations; // 50.5
         public static final double L4 = Units.inchesToMeters(76.0) * metersToRotations;
-        public static final double net = Units.inchesToMeters(79) * metersToRotations;
+        public static final double net = Units.inchesToMeters(67.0) * metersToRotations; // 67
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
 
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeedUp = 7.5; // was 10 cancoder rotations per second
-        public static final double accelerationMultiplierUp = 2.25;
+        public static final double maxSpeedUp = 10; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierUp = 3;
 
-        public static final double maxSpeedDown = 5; // was 10 cancoder rotations per second
-        public static final double accelerationMultiplierDown = 1.5;
+        public static final double maxSpeedDown = 7; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierDown = 2.25;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -541,7 +541,7 @@ public class Constants {
         public static final double tolerance = 0.03;
 
         public static final double groundPickup = -0.41;
-        public static final double processor = -0.365;
+        public static final double processor = -0.41;
         public static final double reefPickup = -0.34;
         public static final double reefExtract = -0.29;
         public static final double net = -0.165;
@@ -609,8 +609,8 @@ public class Constants {
         public static final double ejectVoltage = 6;
 
         public static final double l1EjectVoltage = 3;
-        public static final double l2EjectVoltage = 5.1;
-        public static final double l3EjectVoltage = 5.1;
+        public static final double l2EjectVoltage = 4.5; // 5.1
+        public static final double l3EjectVoltage = 4.5; // 5.1
         public static final double l4EjectVoltage = 7;
 
         public static final double spitOutVoltage = -8;
@@ -674,14 +674,14 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -1.8;
+        public static final double ejectVoltage = -1;
+        public static final double processorEjectVoltage = -4;
 
-        public static final double torqueCurrentThreshold = 30;
+        public static final double torqueCurrentThreshold = 75;
 
         public static final double supplyCurrentLimit = 20.0;
-        public static final double statorCurrentLimit = 40.0;
 
-        public static final double holdVoltage = 1;
+        public static final double holdVoltage = 1.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.3;

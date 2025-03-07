@@ -8,9 +8,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.Robot;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     @SuppressWarnings("unused")
@@ -69,6 +69,10 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
 
     public void ejectAlgae() {
         setMotor(AlgaeRollerConstants.ejectVoltage);
+    }
+
+    public void processorEjectAlgae() {
+        setMotor(AlgaeRollerConstants.processorEjectVoltage);
     }
 
     public void stopMotor() {
