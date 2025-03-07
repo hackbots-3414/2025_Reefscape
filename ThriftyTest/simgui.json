@@ -24,6 +24,7 @@
       "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Go To B": "Command",
       "/SmartDashboard/Height to Score #0": "String Chooser",
       "/SmartDashboard/Height to Score #1": "String Chooser",
       "/SmartDashboard/Height to Score #2": "String Chooser",
@@ -148,12 +149,7 @@
           "visible": false
         }
       },
-      "/SmartDashboard/Reef mode off": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Reef mode on": {
+      "/SmartDashboard/Go To B": {
         "window": {
           "visible": true
         }
@@ -418,7 +414,7 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [

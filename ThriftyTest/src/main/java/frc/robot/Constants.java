@@ -25,9 +25,12 @@ import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -125,6 +128,8 @@ public class Constants {
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
+
+        public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
@@ -395,6 +400,8 @@ public class Constants {
 
         public static double translationTolerance = 0.01; // m
         public static double rotationTolerance = Units.degreesToRadians(0.5);
+
+        public static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance));
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
     }

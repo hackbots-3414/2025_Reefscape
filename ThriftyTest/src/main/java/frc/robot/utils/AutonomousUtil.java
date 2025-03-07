@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -43,7 +42,7 @@ public class AutonomousUtil {
                     drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                     drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                     (speeds, feedforwards) -> drivetrain.driveWithChassisSpeeds(speeds),
-                    new PPHolonomicDriveController(DriveConstants.k_translationPID, DriveConstants.k_rotationPID),
+                    DriveConstants.k_pathplannerHolonomicDriveController,
                     config, // The robot configuration
                     () -> {
                         var alliance = DriverStation.getAlliance();

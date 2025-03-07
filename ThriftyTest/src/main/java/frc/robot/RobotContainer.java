@@ -54,6 +54,7 @@ import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
@@ -106,6 +107,9 @@ public class RobotContainer {
         SmartDashboard.putData("Reef mode off", new InstantCommand(() -> {
             RobotObserver.setReefMode(false);
         }));
+
+
+        SmartDashboard.putData("Go To B", new DriveToPointCommand(ScoringLocations.B.value, m_drivetrain));
     }
 
     private void addBoundsToField() {
@@ -160,7 +164,7 @@ public class RobotContainer {
         Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
         Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
         Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
-        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop).getAsBoolean();
+        BooleanSupplier openLoopSup = controller.button(openLoop);
 
         m_drivetrain.setDefaultCommand(
             new TeleopCommand(m_drivetrain, xSup, ySup, rSup, openLoopSup)
@@ -170,8 +174,8 @@ public class RobotContainer {
         controller.button(resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
 
         controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
-            .or(() -> controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation).getAsBoolean())
-            .or(() -> controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation).getAsBoolean())
+            .or(controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
+            .or(controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
             .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
 
         controller.button(13).onTrue(new InstantCommand(() -> m_drivetrain.resetPose(ScoringLocationsMiddle.EF.value)));
