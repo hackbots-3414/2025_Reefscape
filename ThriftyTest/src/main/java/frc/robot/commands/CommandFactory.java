@@ -13,10 +13,10 @@ import frc.robot.RobotContainer.AlgaeLocationPresets;
 import frc.robot.RobotContainer.CoralLocationPresets;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.CoralRollers;
+import frc.robot.subsystems.CoralRollers.CoralRollerSpeeds;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorSetpoints;
 import frc.robot.subsystems.Pivot;
-import frc.robot.subsystems.CoralRollers.CoralRollerSpeeds;
 import frc.robot.subsystems.Pivot.PivotSetpoints;
 import frc.robot.utils.Shape;
 
@@ -91,9 +91,10 @@ public class CommandFactory {
     }
 
     /**
-     * Scores an algae in the nearest location
+     * If in the zone to score algae (minus high ground and ground), 
+     * set pivot and elevator to setpoint, and then eject the motors. 
      * If outside of the bounds for that location, nothing happens.
-     * The command ends when the algae is scored and the elevators are reset
+     * Ends when "AlgaeEjectCommand" runs for more than algaeEjectTime
      */
     public static Command algaeScore(
         Elevator elevator,
@@ -106,32 +107,29 @@ public class CommandFactory {
         // get the boundaries
         Shape boundary;
         switch (position) {
-            case ALGAE_L2, ALGAE_L3 -> boundary = CommandBounds.reefBounds;
             case NET -> boundary = CommandBounds.netBounds;
             case PROCESSOR -> boundary = CommandBounds.processorBounds;
             default -> boundary = null;
         }
-        BooleanSupplier limiter = () -> { return false; };
+        BooleanSupplier boundaryActive = () -> { return false; };
         if (boundary != null) {
-            limiter = boundary::isActive;
+            boundaryActive = boundary::isActive;
         }
         // actually build a command
         return new SequentialCommandGroup(
-            new ParallelCommandGroup(
+            new SequentialCommandGroup(
                 new ElevatorCommand(elevator, elevatorPosition),
                 new PivotCommand(pivot, pivotPosition)
             ),
             new AlgaeEjectCommand(rollers).withTimeout(Constants.AlgaeRollerConstants.algaeEjectTime)
         )
-            .onlyIf(limiter)
-            .finallyDo(elevator::stow)
-            .finallyDo(pivot::stow);
+            .onlyIf(boundaryActive)
+            .andThen(stow(elevator, pivot));
     }
 
     /**
-     * Creates a coral intake command.
-     * This command sets the elevator to stow, then runs the coral intake.
-     * This command finished when there is a coral on board.
+     * Stows elevator, then runs coral intake.
+     * Ends when coral is detected by both IR
      */
     public static Command coralIntake(
         CoralRollers coral,
@@ -144,13 +142,9 @@ public class CommandFactory {
     }
 
     /**
-     * Creates a coral ejecting command
-     * This command runs the coral motors in reverse, to eject a coral that
-     * may have gotten stuck in the robot. First, the elevator is set to stow,
-     * and will not continue until the elevator is there.
-     * This command ends after the coral is completely out of the intake system,
-     * i.e. not seen by either IR sensor. Do not expect this command to fully
-     * remove coral from the robot.
+     * Stows elevator, then runs coral motors in reverse.
+     * Ends when piece not detected by any IR.
+     * Do not expect this command to fully remove coral from the robot.
      */
     public static Command coralUnjam(
             CoralRollers coral,
