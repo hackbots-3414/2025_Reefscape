@@ -112,7 +112,11 @@ public class Constants {
 
         public static final int servo = 9;
 
-        public static final int CANrange = 1;// Placed arbitrarly 
+        public static final int CANrange = 10;// Placed arbitrarly 
+        public static final int CANrange2 = 11;// Placed Arbitrarly
+        public static final int CANrange3 = 12;// TODO: figure out what the canrange ids are on the robot
+    
+
     }
 
     public static class SimConstants {
@@ -376,10 +380,14 @@ public class Constants {
     public static final class CanRangeConstants {
 
         public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
+        public static final CANrangeConfiguration k_canRangeConfig1 = new CANrangeConfiguration();
+        public static final CANrangeConfiguration k_canRangeConfig2 = new CANrangeConfiguration();
+
         // .withFovParams(null)
         // .withProximityParams(null)
         // .withToFParams(null);
         public final static String kCANrangeCANbus = "canivore";
+        public final static double canRangeAlignedDistance = 3.5; 
 
 
 
