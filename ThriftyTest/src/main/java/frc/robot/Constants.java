@@ -274,7 +274,7 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
-        public static final boolean k_enableLogging = false;
+        public static final boolean k_enableLogging = true;
 
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 

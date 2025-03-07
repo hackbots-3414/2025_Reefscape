@@ -8,11 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.Robot;
 import frc.robot.vision.LogBuilder.VisionLog;
 
 public class VisionLogger implements AutoCloseable {
@@ -27,14 +25,16 @@ public class VisionLogger implements AutoCloseable {
 
     private Logger logger = LoggerFactory.getLogger(VisionLogger.class);
 
+    private StringBuilder m_builder;
+
     private FileWriter m_writer;
     private BufferedWriter m_buffer;
 
     private VisionLogger() {
-        String filepath = VisionConstants.k_logPath + Long.toHexString(Math.round(Utils.getCurrentTimeSeconds())) + ".log";
+        String filepath = VisionConstants.k_logPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
         if (Robot.isSimulation()) {
             logger.trace("Simulation detected, using local logging path");
-            filepath = VisionConstants.k_simLogPath + Long.toHexString(Math.round(Utils.getCurrentTimeSeconds())) + ".log";
+            filepath = VisionConstants.k_simLogPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
         }
         try {
             m_writer = new FileWriter(filepath);
@@ -49,9 +49,10 @@ public class VisionLogger implements AutoCloseable {
         } catch (IOException e) {
             logger.error("failed to write to vision log: {}", e.toString());
         }
+        m_builder = new StringBuilder();
     }
 
-    private synchronized void recordLogs(List<VisionLog> logs) {
+    private synchronized void recordLogs(List<VisionLog > logs) {
         if (m_buffer == null) {
             for (VisionLog log : logs) {
                 SmartDashboard.putNumber(log.estimate().source(), log.error());
@@ -59,25 +60,25 @@ public class VisionLogger implements AutoCloseable {
             return;
         }
 
-        StringBuilder builder = new StringBuilder();
+        m_builder.setLength(0);
 
         for (VisionLog log : logs) {
-            builder.append(log.estimate().timestamp());
-            builder.append(",");
-            builder.append(log.estimate().source());
-            builder.append(",");
-            builder.append(log.robot().getX());
-            builder.append(",");
-            builder.append(log.robot().getY());
-            builder.append(",");
-            builder.append(log.error());
-            builder.append(",");
-            builder.append(log.estimate().algorithm().toString());
-            builder.append("\n");
+            m_builder.append(log.estimate().timestamp());
+            m_builder.append(",");
+            m_builder.append(log.estimate().source());
+            m_builder.append(",");
+            m_builder.append(log.robot().getX());
+            m_builder.append(",");
+            m_builder.append(log.robot().getY());
+            m_builder.append(",");
+            m_builder.append(log.error());
+            m_builder.append(",");
+            m_builder.append(log.estimate().algorithm().toString());
+            m_builder.append("\n");
         }
 
         try {
-            m_buffer.write(builder.toString());
+            m_buffer.write(m_builder.toString());
             m_buffer.flush();
         } catch (IOException e) {
             logger.error("Failed writing to vision log file: {}", e.toString());
@@ -89,6 +90,7 @@ public class VisionLogger implements AutoCloseable {
         getInstance().recordLogs(logs);
     }
 
+    @Override
     public void close() {
         try {
             m_buffer.close();

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotObserver;
 
 public class LogBuilder {
     private List<TimestampedPoseEstimate> m_estimates;
@@ -21,6 +21,7 @@ public class LogBuilder {
     }
 
     private void buildLogs() {
+        m_logs.clear();
         for (TimestampedPoseEstimate est : m_estimates) {
             Pose2d robot = RobotObserver.getPose();
             double distance = est.pose().minus(robot)
@@ -30,6 +31,8 @@ public class LogBuilder {
                 new VisionLog(est, distance, robot)
             );
         }
+        // consume each processed value
+        m_estimates.clear();
     }
     
 
