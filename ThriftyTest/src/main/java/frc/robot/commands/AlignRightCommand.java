@@ -28,9 +28,9 @@ public class AlignRightCommand extends Command {
   private ChassisSpeeds alignDriveSpeed = new ChassisSpeeds(0, -1, 0);
 
   /** Creates a new AlignCommand. */
-  public AlignRightCommand(StatusSignal<Distance> range, CommandSwerveDrivetrain m_drivetrain) {
-    this.range = range;
+  public AlignRightCommand(CommandSwerveDrivetrain m_drivetrain) {
     this.m_drivetrain = m_drivetrain;
+    addRequirements(m_drivetrain);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
