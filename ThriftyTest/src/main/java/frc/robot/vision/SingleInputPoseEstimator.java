@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
@@ -72,6 +73,7 @@ public class SingleInputPoseEstimator implements Runnable {
     public void run() {
         long newTime = System.nanoTime();
         double dt = (double)(newTime - m_lastUpdate) / 1.0e9;
+        m_logger.info("dt: {}", dt);
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
         if (results.size() > VisionConstants.k_fps * dt) {
@@ -95,7 +97,7 @@ public class SingleInputPoseEstimator implements Runnable {
         for (PhotonPipelineResult result : results) {
             handleResult(result);
         }
-        m_lastUpdate = newTime;        
+        m_lastUpdate = newTime;
     }
 
     private void handleResult(PhotonPipelineResult result) {
