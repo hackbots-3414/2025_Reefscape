@@ -125,6 +125,8 @@ public class Climber extends SubsystemBase implements AutoCloseable {
             }
             SmartDashboard.putNumber("climber servo pos", m_servo.getPosition());
 
+            SmartDashboard.putNumber("CANRange", rangeLocation);
+
             SmartDashboard.putBoolean("Climb Ready", climbReady);
             SmartDashboard.putBoolean("Climbed", climbed);
 

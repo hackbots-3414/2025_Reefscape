@@ -673,7 +673,7 @@ public class Constants {
         public static final boolean enable = true;
         
         public static final boolean rightMotorInvert = true;
-        public static final double climberUpVolts = 12.0;
+        public static final double climberUpVolts = 8.0; // 12.0
         public static final double climbDownVolts = -12.0;
         public static final double climbRollVolts = 2;
 
