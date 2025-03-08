@@ -18,6 +18,7 @@ import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -25,6 +26,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.ToFParamsConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -32,6 +34,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.S1CloseStateValue;
 import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -391,10 +394,15 @@ public class Constants {
 
     public static final class CanRangeConstants {
 
-        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration();
-        // .withFovParams(null)
+        public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration()
+        .withFovParams(new FovParamsConfigs()
+            .withFOVRangeX(7)
+            .withFOVRangeY(7)
+        )
+        .withToFParams(new ToFParamsConfigs()
+            .withUpdateMode(UpdateModeValue.ShortRange100Hz)
+        );
         // .withProximityParams(null)
-        // .withToFParams(null);
 
         public static final int k_filterWindow = 5; // 5 measurements
     }
@@ -662,6 +670,7 @@ public class Constants {
         public static final double climbedRangeValue = 0.145;
 
         public static final double climbMaxEncoderValue = 63.833;
+        public static final double climbReadyMaxEncoderValue = 90;
             
         public static final double k_openServoPosition = 0.0;
         public static final double k_closedServoPosition = 1.0;

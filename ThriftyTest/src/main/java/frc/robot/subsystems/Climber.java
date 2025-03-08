@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IDConstants;
 
@@ -41,11 +42,16 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     public Climber() {
         configMotors();
+        configCanRange();
+    }
+
+    private void configCanRange() {
+        range.getConfigurator().apply(CanRangeConstants.k_canRangeConfig);
     }
 
     public void setClosedLoop(boolean enable) {
         m_closedLoop = enable;
-        m_setpoint = m_leftClimbMotor.getPosition().getValueAsDouble();
+        m_setpoint = getEncoderValue();
     }
 
     private void configMotors() {
@@ -67,6 +73,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     private void setMotor(double voltage) {
         m_voltageChanged = (m_voltage != voltage);
         m_voltage = voltage;
+        m_closedLoop = false;
     }
 
     public void setClimbUpVolts() {
@@ -120,7 +127,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         SmartDashboard.putBoolean("Climbed", climbed);
 
         if (m_closedLoop) {
-            double position = m_leftClimbMotor.getPosition().getValueAsDouble();
+            double position = getEncoderValue();
             double output = m_controller.calculate(position, m_setpoint);
             setMotor(output);
         }
