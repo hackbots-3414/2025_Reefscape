@@ -297,7 +297,7 @@ public class Constants {
         public static final String k_logPath = "/home/lvuser/logs/vision";
         public static final String k_simLogPath = "logs/vision";
 
-        private static final double k_moduleHeight = 0.175;
+        private static final double k_moduleHeight = 0.190;
 
 
         private static final double k_offsetX = 0.302;
@@ -317,38 +317,22 @@ public class Constants {
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
-            Map.entry("cam1", new Transform3d(
-                new Translation3d(k_offsetX, k_offsetY, k_moduleHeight),
-                new Rotation3d(0, k_tightPitch, -k_tightYaw)
-            )),
-            Map.entry("cam2", new Transform3d(
-                new Translation3d(k_offsetX, k_offsetY, k_moduleHeight),
-                new Rotation3d(0, k_widePitch, -k_wideYaw)
-            )),
-            Map.entry("cam3", new Transform3d(
-                new Translation3d(k_offsetX, -k_offsetY, k_moduleHeight),
+            Map.entry("cam1", new Transform3d( // right tight
+                new Translation3d(0.337, -0.331, k_moduleHeight),
                 new Rotation3d(0, k_tightPitch, k_tightYaw)
             )),
-            Map.entry("cam4", new Transform3d(
-                new Translation3d(k_offsetX, -k_offsetY, k_moduleHeight),
+            Map.entry("cam2", new Transform3d( // right wide
+                new Translation3d(0.256, -0.289, k_moduleHeight),
                 new Rotation3d(0, k_widePitch, k_wideYaw)
+            )),
+            Map.entry("cam3", new Transform3d( // left tight
+                new Translation3d(0.256, 0.289, k_moduleHeight),
+                new Rotation3d(0, k_tightPitch, -k_tightYaw)
+            )),
+            Map.entry("cam4", new Transform3d( // left wide
+                new Translation3d(0.337, 0.331, k_moduleHeight),
+                new Rotation3d(0, k_widePitch, -k_wideYaw)
             ))
-            // Map.entry("cam5", new Transform3d( // special
-            //     new Translation3d(-0.302, 0.266, 0.175),
-            //     new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
-            // )),
-            // Map.entry("cam6", new Transform3d(
-            //     new Translation3d(-0.340, 0.132, 0.483),
-            //     new Rotation3d(0, k_cameraPitch, k_cameraYaw)
-            // )),
-            // Map.entry("cam7", new Transform3d( // special
-            //     new Translation3d(-0.283, -0.277, 0.483),
-            //     new Rotation3d(0, k_backCameraPitch, Math.PI - k_backCameraYaw)
-            // )),
-            // Map.entry("cam8", new Transform3d(
-            //     new Translation3d(-0.340, -0.132, 0.483),
-            //     new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
-            // ))
         );
 
         // The tick time for each pose estimator to run
