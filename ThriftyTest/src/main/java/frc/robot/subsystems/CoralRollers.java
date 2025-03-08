@@ -164,23 +164,26 @@ public class CoralRollers extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (Robot.isReal()) {
-            m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
-            m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
-        } else {
-            m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
+        if (CoralConstants.enable) {
+            if (Robot.isReal()) {
+                m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
+                m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
+            } else {
+                m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
+            }
+    
+            SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
+            SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
+    
+            SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
+    
+            SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+    
+            if (m_voltageChanged) {
+                m_coralLeft.setVoltage(m_voltage);
+                m_voltageChanged = false;
+            }
         }
-
-        SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
-        SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
-
-        SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
-
-        SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
-
-        if (m_voltageChanged) {
-            m_coralLeft.setVoltage(m_voltage);
-            m_voltageChanged = false;
-        }
+        
     }
 }

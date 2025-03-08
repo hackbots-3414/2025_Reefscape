@@ -17,6 +17,7 @@ import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IDConstants;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
     private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
     private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
@@ -108,7 +109,8 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     @Override
     public void periodic() {
-        rangeLocation = range.getDistance().getValueAsDouble();
+        if (ClimberConstants.enable) {
+            rangeLocation = range.getDistance().getValueAsDouble();
 
         climbReady = rangeLocation < ClimberConstants.climbReadyRangeValue;
         climbed = rangeLocation > ClimberConstants.climbedRangeValue;

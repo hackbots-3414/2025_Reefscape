@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +75,7 @@ public class AutonomousUtil {
         );
         
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPose, pose);
-        PathPlannerPath path = new PathPlannerPath(waypoints, finalAlignConstraints, new IdealStartingState(1, pose.getRotation()), new GoalEndState(0, pose.getRotation()));
+        PathPlannerPath path = new PathPlannerPath(waypoints, finalAlignConstraints, new IdealStartingState(DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond), pose.getRotation()), new GoalEndState(0, pose.getRotation()));
         return AutoBuilder.pathfindThenFollowPath(path, pathFindConstraints);
     }
     
