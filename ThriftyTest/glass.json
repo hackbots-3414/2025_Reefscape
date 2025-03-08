@@ -1,0 +1,30 @@
+{
+  "NetworkTables": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Elevator Visualization": "Mechanism2d",
+      "/SmartDashboard/Go To B": "Command",
+      "/SmartDashboard/LIFT CLIMB": "Command",
+      "/SmartDashboard/LOWER CLIMB": "Command",
+      "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
+      "/SmartDashboard/Reef mode off": "Command",
+      "/SmartDashboard/Reef mode on": "Command",
+      "/SmartDashboard/Super Field": "Field2d",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/drive to other pose": "Command",
+      "/SmartDashboard/drive to reef": "Command"
+    },
+    "windows": {
+      "/SmartDashboard/Super Field": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables View": {
+    "visible": false
+  }
+}

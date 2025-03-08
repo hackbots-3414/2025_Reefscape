@@ -71,12 +71,11 @@ public class SingleInputPoseEstimator implements Runnable {
 
     @Override
     public void run() {
-        long newTime = System.nanoTime();
-        double dt = (double)(newTime - m_lastUpdate) / 1.0e9;
-        m_logger.info("dt: {}", dt);
+        double dt = (double)(System.nanoTime() - m_lastUpdate) / 1.0e9;
+        m_logger.trace("{} dt: {}", m_name, dt);
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
-        if (results.size() > VisionConstants.k_fps * dt) {
+        if (results.size() > VisionConstants.k_expectedResults) {
             /*
             Rationale for this warning:
             This run() method should be running on a loop. It should run fast.
@@ -91,13 +90,13 @@ public class SingleInputPoseEstimator implements Runnable {
             time between when a result was sent and when we "see" it. This would
             mess up the timestamping logic.
             */
-            m_logger.warn("Possibly too many results: {} ({})", results.size(), m_camera.getName());
+            m_logger.debug("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
         /* take many */
         for (PhotonPipelineResult result : results) {
             handleResult(result);
         }
-        m_lastUpdate = newTime;
+        m_lastUpdate = System.nanoTime();
     }
 
     private void handleResult(PhotonPipelineResult result) {
@@ -193,8 +192,8 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose2d pose
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
-        Matrix<N3, N1> stdDevs = VecBuilder.fill(1.0, 1.0, Math.PI);
-        return stdDevs.times(multiplier);
+        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, multiplier / 20.0);
+        return stdDevs;
     }
 
     private double calculateStdDevMultiplier(

@@ -288,7 +288,7 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
-        public static final boolean k_enableLogging = true;
+        public static final boolean k_enableLogging = false;
 
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
@@ -299,10 +299,6 @@ public class Constants {
 
         private static final double k_moduleHeight = 0.190;
 
-
-        private static final double k_offsetX = 0.302;
-        private static final double k_offsetY = 0.266;
-
         // change these values to test different camera configurations
         private static final double k_fovMinimum = Units.degreesToRadians(2.0);
         private static final double k_crossover = Units.degreesToRadians(10.0);
@@ -312,33 +308,36 @@ public class Constants {
         private static final double k_tightPitch = -Units.degreesToRadians(25.0);
         private static final double k_widePitch = -Units.degreesToRadians(22.5);
 
-        private static final double k_tightYaw = Math.PI / 2.0 - k_fovMinimum - k_fovHorizontal / 2.0;
-        private static final double k_wideYaw = k_crossover + k_tightYaw - k_fovHorizontal;
+        // private static final double k_tightYaw = Math.PI / 2.0 - k_fovMinimum - k_fovHorizontal / 2.0;
+        // private static final double k_wideYaw = k_crossover + k_tightYaw - k_fovHorizontal;
+        private static final double k_tightYaw = Units.degreesToRadians(53.0);
+        private static final double k_wideYaw = Units.degreesToRadians(-7.0);
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
-            Map.entry("cam1", new Transform3d( // right tight
-                new Translation3d(0.337, -0.331, k_moduleHeight),
-                new Rotation3d(0, k_tightPitch, k_tightYaw)
-            )),
-            Map.entry("cam2", new Transform3d( // right wide
-                new Translation3d(0.256, -0.289, k_moduleHeight),
-                new Rotation3d(0, k_widePitch, k_wideYaw)
-            )),
-            Map.entry("cam3", new Transform3d( // left tight
+            Map.entry("cam1", new Transform3d( // left tight
                 new Translation3d(0.256, 0.289, k_moduleHeight),
                 new Rotation3d(0, k_tightPitch, -k_tightYaw)
             )),
-            Map.entry("cam4", new Transform3d( // left wide
+            Map.entry("cam2", new Transform3d( // left wide
                 new Translation3d(0.337, 0.331, k_moduleHeight),
                 new Rotation3d(0, k_widePitch, -k_wideYaw)
+            )),
+            Map.entry("cam3", new Transform3d( // right wide
+                new Translation3d(0.337, -0.331, k_moduleHeight),
+                new Rotation3d(0, k_widePitch, k_wideYaw)
+            )),
+            Map.entry("cam4", new Transform3d( // right tight
+                new Translation3d(0.256, -0.289, k_moduleHeight),
+                new Rotation3d(0, k_tightPitch, k_tightYaw)
             ))
         );
 
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera)
-        public static final double k_fps = 120;
+        public static final double k_fps = 200;
+        public static final double k_expectedResults = 10;
         // The maximum tolerated latency, in seconds.
         public static final double k_latencyThreshold = 0.75;
         // The maximum tolerated ambiguity value.
@@ -451,7 +450,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.167480; // -0.427979;
+        public static final double encoderOffset = 0.369873; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
