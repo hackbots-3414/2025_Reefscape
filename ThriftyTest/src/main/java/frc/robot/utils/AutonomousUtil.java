@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -22,9 +24,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.DriveToPointCommand;
 import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutonomousUtil {
@@ -40,7 +42,7 @@ public class AutonomousUtil {
                     drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                     drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                     (speeds, feedforwards) -> drivetrain.driveWithChassisSpeeds(speeds),
-                    new PPHolonomicDriveController(DriveConstants.k_translationPID, DriveConstants.k_rotationPID),
+                    DriveConstants.k_pathplannerHolonomicDriveController,
                     config, // The robot configuration
                     () -> {
                         var alliance = DriverStation.getAlliance();
@@ -56,16 +58,36 @@ public class AutonomousUtil {
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            System.exit(1);
+            // System.exit(1);
         }
     }
 
-    private static final PathConstraints constraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
+    private static final PathConstraints pathFindConstraints = new PathConstraints(DriveConstants.k_maxLinearSpeed, DriveConstants.k_maxLinearAcceleration, DriveConstants.k_maxAngularSpeed, DriveConstants.k_maxAngularAcceleration);
+    private static final PathConstraints finalAlignConstraints = new PathConstraints(DriveConstants.k_maxAlignLinearSpeed, DriveConstants.k_maxAlignLinearAcceleration, DriveConstants.k_maxAlignAngularSpeed, DriveConstants.k_maxAlignAngularAcceleration);
 
-    public static Command pathFinder(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+    private static Command pathFindThenPreciseAlign(Pose2d pose) {
+        Pose2d startPose = new Pose2d(
+            (Math.cos(pose.getRotation().getRadians()) * -0.5) + pose.getX(),
+            (Math.sin(pose.getRotation().getRadians()) * -0.5) + pose.getY(),
+            pose.getRotation()
+        );
+        
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPose, pose);
+        PathPlannerPath path = new PathPlannerPath(waypoints, finalAlignConstraints, new IdealStartingState(1, pose.getRotation()), new GoalEndState(0, pose.getRotation()));
+        return AutoBuilder.pathfindThenFollowPath(path, pathFindConstraints);
+    }
+    
+    public static Command pathFinder(Pose2d pose) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
-            // AutoBuilder.pathfindToPoseFlipped(pose, constraints, 0),
+            pathFindThenPreciseAlign(pose),
+            new InstantCommand(() -> RobotObserver.setReefMode(false))
+        );
+    }
+
+    public static Command driveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> RobotObserver.setReefMode(true)),
             new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
             new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
@@ -75,11 +97,13 @@ public class AutonomousUtil {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < scoringCommands.length; i++) {
             if (i != 0) {
-                routine.addCommands(pathFinder(desiredPickupLocation, drivetrain));
+                routine.addCommands(pathFinder(desiredPickupLocation));
                 routine.addCommands(intakeCommand.get());
             }
-            routine.addCommands(pathFinder(poses[i], drivetrain));
+            routine.addCommands(pathFinder(poses[i]));
             routine.addCommands(scoringCommands[i]);
+            routine.addCommands(pathFinder(desiredPickupLocation));
+            routine.addCommands(intakeCommand.get());
         }
 
         return routine;
@@ -87,13 +111,13 @@ public class AutonomousUtil {
 
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
-    public static void queuePathWithCommand(CommandSwerveDrivetrain drivetrain, Pose2d pose, Supplier<Command> command) {
-        onTheFlyCommands.add(pathFinder(pose, drivetrain));
+    public static void queuePathWithCommand(Pose2d pose, Supplier<Command> command) {
+        onTheFlyCommands.add(pathFinder(pose));
         onTheFlyCommands.add(command.get());
     }
 
-    public static void queueClosest(CommandSwerveDrivetrain drivetrain, Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
-        queuePathWithCommand(drivetrain, clip(scoringLocationList), scoreSupplier);
+    public static void queueClosest(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        queuePathWithCommand(clip(scoringLocationList), scoreSupplier);
     }
 
     public static Pose2d clip(List<Pose2d> list) {

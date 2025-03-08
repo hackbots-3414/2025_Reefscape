@@ -11,18 +11,13 @@ public class AlgaeEjectCommand extends Command {
     addRequirements(rollers);
   }
 
-  @Override
-  public void initialize() {
-    m_rollers.ejectAlgae();
-  }
+    @Override
+    public void initialize() {
+      m_rollers.processorEjectAlgae();
+    }
 
-  @Override
-  public void end(boolean interrupted) {
-    m_rollers.stopMotor();
-  }
-
-  @Override
-  public boolean isFinished() {
-    return !m_rollers.hasObject();
-  }
+    @Override
+    public boolean isFinished() {
+      return true;
+    }
 }

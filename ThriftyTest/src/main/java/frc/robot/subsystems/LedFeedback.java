@@ -155,8 +155,8 @@ public class LedFeedback extends SubsystemBase {
     }
 
     private void defaultColors() {
-        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.LARSON);
-        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR2, LED_PATTERN.LARSON);
+        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH); // changed to heartbeat mode
+        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR2, LED_PATTERN.FLASH); //  changed to heartbeat mode
         setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL, LED_PATTERN.LARSON);
         setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL2, LED_PATTERN.LARSON);      
     }

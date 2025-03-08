@@ -1,13 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +28,12 @@ import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.UpdateModeValue;
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -49,6 +46,13 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -128,17 +132,25 @@ public class Constants {
         public static final PIDConstants k_translationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
+        public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
+
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public static final double k_driveToPointSpeed = 2.0;
         public static final double k_driveToPointAcceleration = 3.0;
 
-        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4.724);
+        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(3);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(5);
 
         public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1.5);
         public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(3);
+
+        public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(1);
+        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(2);
+
+        public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
+        public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(2);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond) / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
 
@@ -276,6 +288,9 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
+        public static final boolean k_enableLogging = true;
+
+        public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
         public static final String k_estimationName = "estimation";
 
@@ -309,23 +324,23 @@ public class Constants {
             Map.entry("cam4", new Transform3d(
                 new Translation3d(0.302,-0.266,0.175),
                 new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
-            )),
-            Map.entry("cam5", new Transform3d( // special
-                new Translation3d(-0.302, 0.266, 0.175),
-                new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
-            )),
-            Map.entry("cam6", new Transform3d(
-                new Translation3d(-0.340, 0.132, 0.483),
-                new Rotation3d(0, k_cameraPitch, k_cameraYaw)
-            )),
-            Map.entry("cam7", new Transform3d( // special
-                new Translation3d(-0.283, -0.277, 0.483),
-                new Rotation3d(0, k_backCameraPitch, Math.PI - k_backCameraYaw)
-            )),
-            Map.entry("cam8", new Transform3d(
-                new Translation3d(-0.340, -0.132, 0.483),
-                new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
             ))
+            // Map.entry("cam5", new Transform3d( // special
+            //     new Translation3d(-0.302, 0.266, 0.175),
+            //     new Rotation3d(0, k_backCameraPitch, k_backCameraYaw - Math.PI)
+            // )),
+            // Map.entry("cam6", new Transform3d(
+            //     new Translation3d(-0.340, 0.132, 0.483),
+            //     new Rotation3d(0, k_cameraPitch, k_cameraYaw)
+            // )),
+            // Map.entry("cam7", new Transform3d( // special
+            //     new Translation3d(-0.283, -0.277, 0.483),
+            //     new Rotation3d(0, k_backCameraPitch, Math.PI - k_backCameraYaw)
+            // )),
+            // Map.entry("cam8", new Transform3d(
+            //     new Translation3d(-0.340, -0.132, 0.483),
+            //     new Rotation3d(0, k_cameraPitch, -k_cameraYaw)
+            // ))
         );
 
         // The tick time for each pose estimator to run
@@ -388,6 +403,8 @@ public class Constants {
 
         public static double translationTolerance = 0.01; // m
         public static double rotationTolerance = Units.degreesToRadians(0.5);
+
+        public static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance));
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
     }
@@ -454,21 +471,21 @@ public class Constants {
         public static final double stow = 0.232;
         public static final double processor = 0.125;
         public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
-        public static final double L2 = Units.inchesToMeters(35.5) * metersToRotations;
-        public static final double L3 = Units.inchesToMeters(50.5) * metersToRotations;
+        public static final double L2 = Units.inchesToMeters(38) * metersToRotations; // 35.5
+        public static final double L3 = Units.inchesToMeters(54) * metersToRotations; // 50.5
         public static final double L4 = Units.inchesToMeters(76.0) * metersToRotations;
-        public static final double net = Units.inchesToMeters(79) * metersToRotations;
+        public static final double net = Units.inchesToMeters(67.0) * metersToRotations; // 67
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
 
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeedUp = 7.5; // was 10 cancoder rotations per second
-        public static final double accelerationMultiplierUp = 2.25;
+        public static final double maxSpeedUp = 10; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierUp = 3;
 
-        public static final double maxSpeedDown = 5; // was 10 cancoder rotations per second
-        public static final double accelerationMultiplierDown = 1.5;
+        public static final double maxSpeedDown = 7; // was 10 cancoder rotations per second
+        public static final double accelerationMultiplierDown = 2.25;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -545,7 +562,7 @@ public class Constants {
         public static final double tolerance = 0.03;
 
         public static final double groundPickup = -0.41;
-        public static final double processor = -0.365;
+        public static final double processor = -0.41;
         public static final double reefPickup = -0.34;
         public static final double reefExtract = -0.29;
         public static final double net = -0.165;
@@ -613,8 +630,8 @@ public class Constants {
         public static final double ejectVoltage = 6;
 
         public static final double l1EjectVoltage = 3;
-        public static final double l2EjectVoltage = 5.1;
-        public static final double l3EjectVoltage = 5.1;
+        public static final double l2EjectVoltage = 4.5; // 5.1
+        public static final double l3EjectVoltage = 4.5; // 5.1
         public static final double l4EjectVoltage = 7;
 
         public static final double spitOutVoltage = -8;
@@ -679,14 +696,14 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -1.7;
+        public static final double ejectVoltage = -1;
+        public static final double processorEjectVoltage = -4;
 
-        public static final double torqueCurrentThreshold = 30;
+        public static final double torqueCurrentThreshold = 75;
 
         public static final double supplyCurrentLimit = 20.0;
-        public static final double statorCurrentLimit = 40.0;
 
-        public static final double holdVoltage = 1;
+        public static final double holdVoltage = 1.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.3;

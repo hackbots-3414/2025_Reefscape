@@ -24,6 +24,7 @@
       "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Go To B": "Command",
       "/SmartDashboard/Height to Score #0": "String Chooser",
       "/SmartDashboard/Height to Score #1": "String Chooser",
       "/SmartDashboard/Height to Score #2": "String Chooser",
@@ -148,17 +149,7 @@
           "visible": false
         }
       },
-      "/SmartDashboard/Auto Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Reef mode off": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Reef mode on": {
+      "/SmartDashboard/Go To B": {
         "window": {
           "visible": true
         }
@@ -415,15 +406,15 @@
         "estimation": {
           "arrows": false,
           "color": [
-            0.3094233274459839,
-            0.3333333134651184,
-            0.3094233274459839,
+            0.9873417615890503,
+            1.0,
+            0.0,
             255.0
           ],
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
@@ -467,5 +458,8 @@
       "open": true
     },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

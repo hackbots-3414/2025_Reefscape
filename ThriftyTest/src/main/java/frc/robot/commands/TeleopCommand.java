@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -17,7 +18,7 @@ public class TeleopCommand extends Command {
     private final Supplier<Double> xSupplier;
     private final Supplier<Double> ySupplier;
     private final Supplier<Double> rotSupplier;
-    private final Supplier<Boolean> useOpenLoop;
+    private final BooleanSupplier useOpenLoop;
 
     private final double maxTranslationalVelocity = DriveConstants.k_maxTeleopLinearSpeed;
     private final double maxRotationalVelocity = DriveConstants.k_maxTeleopAngularSpeed;
@@ -31,7 +32,7 @@ public class TeleopCommand extends Command {
             .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
 
     public TeleopCommand(CommandSwerveDrivetrain drivetrain, Supplier<Double> xSupplier, Supplier<Double> ySupplier,
-            Supplier<Double> rotSupplier, Supplier<Boolean> useOpenLoop) {
+            Supplier<Double> rotSupplier, BooleanSupplier useOpenLoop) {
         this.drivetrain = drivetrain;
         this.xSupplier = xSupplier;
         this.ySupplier = ySupplier;
@@ -43,7 +44,7 @@ public class TeleopCommand extends Command {
 
     @Override
     public void execute() {
-        if (useOpenLoop.get()) { // open loop code
+        if (useOpenLoop.getAsBoolean()) { // open loop code
             drivetrain.setControl(
                     drive.withVelocityX(-xSupplier.get() * maxTranslationalVelocity)
                         .withVelocityY(-ySupplier.get() * maxTranslationalVelocity)

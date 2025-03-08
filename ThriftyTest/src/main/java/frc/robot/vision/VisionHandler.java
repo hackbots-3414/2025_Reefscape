@@ -1,6 +1,5 @@
 package frc.robot.vision;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +11,6 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import static edu.wpi.first.units.Units.Milliseconds;
@@ -35,28 +32,16 @@ public class VisionHandler implements AutoCloseable {
 
     private final Field2d m_field;
 
-    private LogBuilder m_logBuilder;
+    private LogBuilder m_logBuilder = new LogBuilder();
 
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
-        try {
-            setupAprilTagField();
-        } catch (IOException e) {
-            m_logger.error("could not load april tag resource file");
-            System.exit(1);
-        }
+        m_visionSim.addAprilTags(VisionConstants.k_layout);
         setupProps();
         setupCameras();
         m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
         RobotObserver.setField(m_field);
-    }
-
-    private void setupAprilTagField() throws IOException {
-        AprilTagFieldLayout tagLayout = AprilTagFieldLayout.loadFromResource(
-            AprilTagFields.k2025ReefscapeWelded.m_resourceFile
-        );
-        m_visionSim.addAprilTags(tagLayout);
     }
 
     /**
@@ -107,8 +92,6 @@ public class VisionHandler implements AutoCloseable {
     }
 
     private void updateEstimators() {
-        // logging
-        m_logBuilder = new LogBuilder();
         // clear previous output from the estimators.
         m_field.getObject(VisionConstants.k_estimationName).setPoses();
         for (SingleInputPoseEstimator estimator : m_estimators) {
@@ -125,10 +108,11 @@ public class VisionHandler implements AutoCloseable {
     }
 
     private void addEstimate(TimestampedPoseEstimate estimate) {
-        List<Pose2d> poses = m_field.getObject(VisionConstants.k_estimationName)
+        String name = VisionConstants.k_estimationName;
+        List<Pose2d> poses = m_field.getObject(name)
             .getPoses();
         poses.add(estimate.pose());
-        m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
+        m_field.getObject(name).setPoses(poses);
         m_drivetrain.addPoseEstimate(estimate);
         // pose logging
         m_logBuilder.addEstimate(estimate);
