@@ -8,7 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.vision.LogBuilder.VisionLog;
@@ -16,7 +15,7 @@ import frc.robot.vision.LogBuilder.VisionLog;
 public class VisionLogger implements AutoCloseable {
     private static VisionLogger instance;
 
-    private static VisionLogger getInstance() {
+    private synchronized static VisionLogger getInstance() {
         if (instance == null) {
             instance = new VisionLogger();
         }
@@ -25,12 +24,13 @@ public class VisionLogger implements AutoCloseable {
 
     private Logger logger = LoggerFactory.getLogger(VisionLogger.class);
 
-    private StringBuilder m_builder;
+    private final StringBuilder m_builder;
 
     private FileWriter m_writer;
     private BufferedWriter m_buffer;
 
     private VisionLogger() {
+        m_builder = new StringBuilder();
         String filepath = VisionConstants.k_logPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
         if (Robot.isSimulation()) {
             logger.trace("Simulation detected, using local logging path");
@@ -49,14 +49,11 @@ public class VisionLogger implements AutoCloseable {
         } catch (IOException e) {
             logger.error("failed to write to vision log: {}", e.toString());
         }
-        m_builder = new StringBuilder();
     }
 
     private synchronized void recordLogs(List<VisionLog > logs) {
         if (m_buffer == null) {
-            for (VisionLog log : logs) {
-                SmartDashboard.putNumber(log.estimate().source(), log.error());
-            }
+            logger.warn("Not saving vision logs! Check your console for more info");
             return;
         }
 
@@ -86,7 +83,7 @@ public class VisionLogger implements AutoCloseable {
 
     }
 
-    public synchronized static void record(List<VisionLog> logs) {
+    public static void record(List<VisionLog> logs) {
         getInstance().recordLogs(logs);
     }
 

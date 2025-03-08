@@ -12,8 +12,8 @@ public class LogBuilder {
     private List<VisionLog> m_logs;
 
     public LogBuilder() {
-        m_estimates = new ArrayList<>();
-        m_logs = new ArrayList<>();
+        m_estimates = new ArrayList<>(20);
+        m_logs = new ArrayList<>(20);
     }
 
     public void addEstimate(TimestampedPoseEstimate estimate) {

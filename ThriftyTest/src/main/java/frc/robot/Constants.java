@@ -323,8 +323,8 @@ public class Constants {
 
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
-        // The maximum number of results (per camera) we expect to see per tick
-        public static final int k_maxResults = 4;
+        // The maximum number of results (per camera)
+        public static final double k_fps = 120;
         // The maximum tolerated latency, in seconds.
         public static final double k_latencyThreshold = 0.75;
         // The maximum tolerated ambiguity value.
