@@ -41,7 +41,7 @@ public class SingleInputPoseEstimator implements Runnable {
 
     // Estimators
     private PhotonPoseEstimator m_pnpEstimator;
-    private PhotonPoseEstimator m_trigEstimator;
+    private PhotonPoseEstimator m_reefEstimator;
 
     private String m_name;
 
@@ -61,7 +61,7 @@ public class SingleInputPoseEstimator implements Runnable {
         m_pnpEstimator.setMultiTagFallbackStrategy(
             PoseStrategy.LOWEST_AMBIGUITY
         );
-        m_trigEstimator = new PhotonPoseEstimator(
+        m_reefEstimator = new PhotonPoseEstimator(
             VisionConstants.k_layout,
             PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
             robotToCamera
@@ -106,11 +106,11 @@ public class SingleInputPoseEstimator implements Runnable {
         PhotonPoseEstimator estimator;
         if (RobotObserver.getReefMode()) {
             // Update heading data
-            m_trigEstimator.addHeadingData(
+            m_reefEstimator.addHeadingData(
                 RobotController.getMeasureTime().in(Seconds),
                 RobotObserver.getPose().getRotation()
             );
-            estimator = m_trigEstimator;
+            estimator = m_reefEstimator;
         } else {
             estimator = m_pnpEstimator;
         }
@@ -192,7 +192,7 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose2d pose
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
-        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, multiplier / 20.0);
+        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, multiplier * Math.PI / 20);
         return stdDevs;
     }
 

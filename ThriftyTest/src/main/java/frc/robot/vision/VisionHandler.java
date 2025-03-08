@@ -110,6 +110,7 @@ public class VisionHandler implements AutoCloseable {
             .getPoses();
         poses.add(estimate.pose());
         m_field.getObject(name).setPoses(poses);
+        m_field.getObject(estimate.source()).setPose(estimate.pose());
         m_drivetrain.addPoseEstimate(estimate);
         // pose logging
         m_logBuilder.addEstimate(estimate);

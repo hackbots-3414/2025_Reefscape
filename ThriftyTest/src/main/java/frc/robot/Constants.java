@@ -129,7 +129,7 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_translationPID = new PIDConstants(13, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
@@ -140,15 +140,13 @@ public class Constants {
         public static final double k_driveToPointSpeed = 2.0;
         public static final double k_driveToPointAcceleration = 3.0;
 
-        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(2);
-        public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
-
+        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(1);
+        public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(1);
         public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1.5);
         public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(3);
 
         public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(0.5);
-        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(1);
-
+        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(0.5);
         public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
         public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(2);
 
@@ -299,34 +297,28 @@ public class Constants {
 
         private static final double k_moduleHeight = 0.190;
 
-        // change these values to test different camera configurations
-        private static final double k_fovMinimum = Units.degreesToRadians(2.0);
-        private static final double k_crossover = Units.degreesToRadians(10.0);
-
-        private static final double k_fovHorizontal = Units.degreesToRadians(70.0);
-
-        private static final double k_tightPitch = -Units.degreesToRadians(25.0);
-        private static final double k_widePitch = -Units.degreesToRadians(22.5);
+        private static final double k_tightPitch = -Units.degreesToRadians(22.5);
+        private static final double k_widePitch = -Units.degreesToRadians(25.0);
 
         // private static final double k_tightYaw = Math.PI / 2.0 - k_fovMinimum - k_fovHorizontal / 2.0;
         // private static final double k_wideYaw = k_crossover + k_tightYaw - k_fovHorizontal;
-        private static final double k_tightYaw = Units.degreesToRadians(53.0);
+        private static final double k_tightYaw = Units.degreesToRadians(37.0);
         private static final double k_wideYaw = Units.degreesToRadians(-7.0);
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
-            Map.entry("cam1", new Transform3d( // left tight
-                new Translation3d(0.256, 0.289, k_moduleHeight),
-                new Rotation3d(0, k_tightPitch, -k_tightYaw)
-            )),
-            Map.entry("cam2", new Transform3d( // left wide
-                new Translation3d(0.337, 0.331, k_moduleHeight),
-                new Rotation3d(0, k_widePitch, -k_wideYaw)
-            )),
-            Map.entry("cam3", new Transform3d( // right wide
-                new Translation3d(0.337, -0.331, k_moduleHeight),
-                new Rotation3d(0, k_widePitch, k_wideYaw)
-            )),
+            // Map.entry("cam1", new Transform3d( // left tight
+            //     new Translation3d(0.256, 0.289, k_moduleHeight),
+            //     new Rotation3d(0, k_tightPitch, -k_tightYaw)
+            // )),
+            // Map.entry("cam2", new Transform3d( // left wide
+            //     new Translation3d(0.337, 0.331, k_moduleHeight),
+            //     new Rotation3d(0, k_widePitch, -k_wideYaw)
+            // )),
+            // Map.entry("cam3", new Transform3d( // right wide
+            //     new Translation3d(0.337, -0.331, k_moduleHeight),
+            //     new Rotation3d(0, k_widePitch, k_wideYaw)
+            // )),
             Map.entry("cam4", new Transform3d( // right tight
                 new Translation3d(0.256, -0.289, k_moduleHeight),
                 new Rotation3d(0, k_tightPitch, k_tightYaw)
@@ -392,7 +384,7 @@ public class Constants {
         public static final boolean useSuperAuton = false;
         public static final int numWaypoints = 5;
 
-        public static double translationTolerance = 0.01; // m
+        public static double translationTolerance = 0.02; // m
         public static double rotationTolerance = Units.degreesToRadians(0.5);
 
         public static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance));

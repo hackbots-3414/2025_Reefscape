@@ -35,6 +35,8 @@ public class AutonomousUtil {
     @SuppressWarnings("unused")
     private static final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
 
+    private static CommandSwerveDrivetrain m_drivetrain;
+
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
         try {
@@ -57,10 +59,12 @@ public class AutonomousUtil {
 
             drivetrain.initializeSetpointGenerator(config);
 
+            m_drivetrain = drivetrain;
+
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            // System.exit(1);
+            System.exit(1);
         }
     }
 
@@ -69,8 +73,8 @@ public class AutonomousUtil {
 
     private static Command pathFindThenPreciseAlign(Pose2d pose) {
         Pose2d startPose = new Pose2d(
-            (Math.cos(pose.getRotation().getRadians()) * -0.5) + pose.getX(),
-            (Math.sin(pose.getRotation().getRadians()) * -0.5) + pose.getY(),
+            (Math.cos(pose.getRotation().getRadians()) * -1) + pose.getX(),
+            (Math.sin(pose.getRotation().getRadians()) * -1) + pose.getY(),
             pose.getRotation()
         );
         
@@ -83,6 +87,7 @@ public class AutonomousUtil {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
             pathFindThenPreciseAlign(pose),
+            // new DriveToPointCommand(FieldUtils.flipPose(pose), m_drivetrain)
             new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
     }

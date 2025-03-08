@@ -18,11 +18,129 @@
     },
     "windows": {
       "/SmartDashboard/Super Field": {
+        "Blue Alliance Left Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Blue Alliance Net": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Blue Alliance Processor": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Blue Alliance Reef": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Blue Alliance Right Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Pathfind Trajectory": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Line"
+        },
+        "Red Alliance Left Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Red Alliance Net": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Red Alliance Processor": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Red Alliance Reef": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Red Alliance Right Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "Robot": {
+          "arrowColor": [
+            1.0,
+            1.0,
+            1.0,
+            255.0
+          ],
+          "arrowSize": 79,
+          "arrowWeight": 2.0,
+          "arrows": false,
+          "color": [
+            0.5188573598861694,
+            0.8776371479034424,
+            0.21848353743553162,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "selectable": false,
+          "weight": 7.0,
+          "width": 0.9399999976158142
+        },
+        "apriltag": {
+          "arrowColor": [
+            1.0,
+            1.0,
+            1.0,
+            255.0
+          ],
+          "arrows": false,
+          "color": [
+            0.5601563453674316,
+            0.36869093775749207,
+            0.746835470199585,
+            255.0
+          ],
+          "length": 0.4000000059604645,
+          "selectable": false,
+          "style": "Hidden",
+          "width": 0.4000000059604645
+        },
+        "bottom": 1347,
+        "builtin": "",
+        "estimation": {
+          "arrows": false,
+          "color": [
+            0.6184905767440796,
+            0.8143459558486938,
+            0.8118667602539063,
+            255.0
+          ],
+          "length": 0.800000011920929,
+          "selectable": false,
+          "weight": 2.0,
+          "width": 0.800000011920929
+        },
+        "height": 8.051901817321777,
+        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "right": 2932,
+        "width": 17.54825210571289,
         "window": {
           "visible": true
         }
       }
     }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "visible": false
   },
   "NetworkTables View": {
     "visible": false
