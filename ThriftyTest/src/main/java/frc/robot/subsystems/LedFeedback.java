@@ -89,7 +89,8 @@ public class LedFeedback extends SubsystemBase {
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
 
-        coralOnBoard = RobotObserver.getPieceHeld();
+        coralOnBoard = RobotObserver.getCoralPieceHeld();
+        algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
         algaeInRange = CommandBounds.netBounds.isActive();
         algaeTooClose = CommandBounds.netBounds.isActive(); // need to change  
@@ -109,13 +110,13 @@ public class LedFeedback extends SubsystemBase {
                     if (matchTime <= LedConstants.endgameAlert) {
                         if (mode != LED_MODE.END_GAME_ALERT) {
                             mode = LED_MODE.END_GAME_ALERT;
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR_LEFT, LED_PATTERN.STROBE);
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR_RIGHT, LED_PATTERN.STROBE);
+                            setElevator(LED_COLOR.YELLOW, LED_PATTERN.STROBE);
+
                         }
                     } else {
                         if (mode != LED_MODE.END_GAME_WARNING) {
                             mode = LED_MODE.END_GAME_WARNING;
-                       setAll(LED_COLOR.YELLOW , LED_PATTERN.STROBE);
+                            setElevator(LED_COLOR.YELLOW, LED_PATTERN.SOLID);
                         }
                     }
                 }
