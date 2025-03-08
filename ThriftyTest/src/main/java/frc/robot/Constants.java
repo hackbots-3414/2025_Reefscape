@@ -543,7 +543,7 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final boolean enable = false;
+        public static final boolean enable = true;
 
         public static final double encoderOffset = 0.126465; //0.250977;
 
@@ -630,7 +630,7 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final boolean enable = false;
+        public static final boolean enable = true;
         
         public static final double intakeVoltage = 6;
         public static final double ejectVoltage = 6;
@@ -670,7 +670,7 @@ public class Constants {
     }
 
     public static final class ClimberConstants {
-        public static final boolean enable = false;
+        public static final boolean enable = true;
         
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0;
@@ -703,7 +703,7 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
-        public static final boolean enable = false;
+        public static final boolean enable = true;
         
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = -1;

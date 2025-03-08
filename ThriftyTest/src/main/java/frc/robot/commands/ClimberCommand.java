@@ -29,7 +29,7 @@ public class ClimberCommand extends Command {
         initialEncoderValue = climber.getEncoderValue();
         finish = false;
         if (m_climbing) {
-            if (climber.ready()) {
+            if (!climber.climbed()) {
                 climber.setClimbUpVolts();
             } else {
                 finish = true;
@@ -44,7 +44,7 @@ public class ClimberCommand extends Command {
         climber.stopMotor();
         climber.closeFunnel();
         RobotObserver.setClimbed(true);
-        if (m_climbing && !interrupted) climber.setClosedLoop(true); // only stay if we did it right.
+        // if (m_climbing && !interrupted) climber.setClosedLoop(true); // only stay if we did it right.
     }
 
     @Override
