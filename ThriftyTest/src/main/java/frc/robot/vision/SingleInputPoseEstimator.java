@@ -2,7 +2,6 @@ package frc.robot.vision;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -25,6 +24,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
@@ -36,6 +36,8 @@ public class SingleInputPoseEstimator implements Runnable {
 
     private PhotonCamera m_camera;
     private Consumer<TimestampedPoseEstimate> m_reporter;
+
+    private long m_lastUpdate;
 
     // Estimators
     private PhotonPoseEstimator m_pnpEstimator;
@@ -64,13 +66,17 @@ public class SingleInputPoseEstimator implements Runnable {
             PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
             robotToCamera
         );
+        m_lastUpdate = System.nanoTime();
     }
 
     @Override
     public void run() {
+        long newTime = System.nanoTime();
+        double dt = (double)(newTime - m_lastUpdate) / 1.0e9;
+        m_logger.info("dt: {}", dt);
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
-        if (results.size() > VisionConstants.k_maxResults) {
+        if (results.size() > VisionConstants.k_fps * dt) {
             /*
             Rationale for this warning:
             This run() method should be running on a loop. It should run fast.
@@ -85,13 +91,13 @@ public class SingleInputPoseEstimator implements Runnable {
             time between when a result was sent and when we "see" it. This would
             mess up the timestamping logic.
             */
-            m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
+            m_logger.warn("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
         /* take many */
         for (PhotonPipelineResult result : results) {
             handleResult(result);
         }
-        /* take one */
+        m_lastUpdate = newTime;
     }
 
     private void handleResult(PhotonPipelineResult result) {

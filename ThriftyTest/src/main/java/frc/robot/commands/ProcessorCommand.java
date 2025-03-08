@@ -22,16 +22,4 @@ public class ProcessorCommand extends Command {
         m_elevator.setProcessor();
         m_pivot.setProcessor();
     }
-
-    @Override
-    public void execute() {
-        if (m_elevator.atSetpoint() && m_pivot.atSetpoint()) {
-            m_rollers.ejectAlgae();
-        }
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        m_rollers.stopMotor();
-    }
 }

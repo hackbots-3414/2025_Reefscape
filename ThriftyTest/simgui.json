@@ -24,6 +24,7 @@
       "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Go To B": "Command",
       "/SmartDashboard/Height to Score #0": "String Chooser",
       "/SmartDashboard/Height to Score #1": "String Chooser",
       "/SmartDashboard/Height to Score #2": "String Chooser",
@@ -53,6 +54,8 @@
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/drive to other pose": "Command",
+      "/SmartDashboard/drive to reef": "Command",
       "/SmartDashboard/open funnel": "Command",
       "/SmartDashboard/runme hehe": "Command",
       "/SmartDashboard/teleport": "Command"
@@ -148,12 +151,12 @@
           "visible": false
         }
       },
-      "/SmartDashboard/Reef mode off": {
+      "/SmartDashboard/Elevator Visualization": {
         "window": {
           "visible": true
         }
       },
-      "/SmartDashboard/Reef mode on": {
+      "/SmartDashboard/Go To B": {
         "window": {
           "visible": true
         }
@@ -377,7 +380,6 @@
             255.0
           ],
           "length": 0.7599999904632568,
-          "selectable": false,
           "width": 0.7599999904632568
         },
         "apriltag": {
@@ -394,6 +396,7 @@
             0.0,
             255.0
           ],
+          "arrowSize": 100,
           "arrowWeight": 2.0,
           "color": [
             255.0,
@@ -418,7 +421,6 @@
           "selectable": false
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "visibleTargetPoses": {
           "arrowColor": [
@@ -438,6 +440,16 @@
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/drive to other pose": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/drive to reef": {
         "window": {
           "visible": true
         }

@@ -15,6 +15,7 @@ public record TimestampedPoseEstimate (
     public enum EstimationAlgorithm {
         Trig, PnP;
 
+        @Override
         public String toString() {
             String s;
             switch (this) {

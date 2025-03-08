@@ -12,10 +12,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IDConstants;
 
 public class Climber extends SubsystemBase implements AutoCloseable {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
     private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
     private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
@@ -27,7 +29,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     private double m_setpoint;
 
     private final CANrange range = new CANrange(IDConstants.canRange);
-    
+
     private double rangeLocation = 0.0;
     private boolean climbReady = false;
     private boolean climbed = false;
@@ -41,11 +43,16 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     public Climber() {
         configMotors();
+        configCanRange();
+    }
+
+    private void configCanRange() {
+        range.getConfigurator().apply(CanRangeConstants.k_canRangeConfig);
     }
 
     public void setClosedLoop(boolean enable) {
         m_closedLoop = enable;
-        m_setpoint = m_leftClimbMotor.getPosition().getValueAsDouble();
+        m_setpoint = getEncoderValue();
     }
 
     private void configMotors() {
@@ -67,6 +74,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     private void setMotor(double voltage) {
         m_voltageChanged = (m_voltage != voltage);
         m_voltage = voltage;
+        m_closedLoop = false;
     }
 
     public void setClimbUpVolts() {
@@ -101,32 +109,36 @@ public class Climber extends SubsystemBase implements AutoCloseable {
 
     @Override
     public void periodic() {
-        rangeLocation = range.getDistance().getValueAsDouble();
+        if (ClimberConstants.enable) {
+            rangeLocation = range.getDistance().getValueAsDouble();
 
-        climbReady = rangeLocation < ClimberConstants.climbReadyRangeValue;
-        climbed = rangeLocation > ClimberConstants.climbedRangeValue;
+            climbReady = rangeLocation < ClimberConstants.climbReadyRangeValue;
+            climbed = rangeLocation > ClimberConstants.climbedRangeValue;
 
-        if (m_voltageChanged) {
-            if (m_voltage >= 0) {
-                m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withLimitForwardMotion(climbed));
-            } else {
-                m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withIgnoreHardwareLimits(climbReady));
-            }            
-            m_voltageChanged = false;
-        }
-        SmartDashboard.putNumber("climber servo pos", m_servo.getPosition());
+            if (m_voltageChanged) {
+                if (m_voltage >= 0) {
+                    m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withLimitForwardMotion(climbed));
+                } else {
+                    m_leftClimbMotor.setControl(m_request.withOutput(m_voltage).withIgnoreHardwareLimits(climbReady));
+                }            
+                m_voltageChanged = false;
+            }
+            SmartDashboard.putNumber("climber servo pos", m_servo.getPosition());
 
-        SmartDashboard.putBoolean("Climb Ready", climbReady);
-        SmartDashboard.putBoolean("Climbed", climbed);
+            SmartDashboard.putNumber("CANRange", rangeLocation);
 
-        if (m_closedLoop) {
-            double position = m_leftClimbMotor.getPosition().getValueAsDouble();
-            double output = m_controller.calculate(position, m_setpoint);
-            setMotor(output);
+            SmartDashboard.putBoolean("Climb Ready", climbReady);
+            SmartDashboard.putBoolean("Climbed", climbed);
+
+            if (m_closedLoop) {
+                double position = getEncoderValue();
+                double output = m_controller.calculate(position, m_setpoint);
+                setMotor(output);
+            }
         }
     }
 
-   @Override
+    @Override
     public void close() throws Exception {
         m_leftClimbMotor.close();
         m_rightClimbMotor.close();

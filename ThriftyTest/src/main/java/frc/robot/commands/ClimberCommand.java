@@ -7,7 +7,7 @@ import frc.robot.subsystems.Climber;
 
 public class ClimberCommand extends Command {
     private final Climber climber;
-    private boolean m_up;
+    private boolean m_climbing;
 
     private boolean finish;
 
@@ -17,10 +17,10 @@ public class ClimberCommand extends Command {
         this(climber, true);
     }
 
-    public ClimberCommand(Climber climber, boolean goingUp) {
+    public ClimberCommand(Climber climber, boolean climbing) {
         addRequirements(climber);
         this.climber = climber;
-        m_up = goingUp;
+        m_climbing = climbing;
     }
 
     @Override
@@ -28,8 +28,8 @@ public class ClimberCommand extends Command {
         climber.setClosedLoop(false);
         initialEncoderValue = climber.getEncoderValue();
         finish = false;
-        if (m_up) {
-            if (climber.ready()) {
+        if (m_climbing) {
+            if (!climber.climbed()) {
                 climber.setClimbUpVolts();
             } else {
                 finish = true;
@@ -44,19 +44,22 @@ public class ClimberCommand extends Command {
         climber.stopMotor();
         climber.closeFunnel();
         RobotObserver.setClimbed(true);
-        climber.setClosedLoop(!interrupted); // only stay if we did it right.
+        // if (m_climbing && !interrupted) climber.setClosedLoop(true); // only stay if we did it right.
     }
 
     @Override
     public boolean isFinished() {
         if (finish) return true;
-        if (m_up) {
+        if (m_climbing) {
             if (Math.abs(climber.getEncoderValue() - initialEncoderValue) > ClimberConstants.climbMaxEncoderValue) {
                 return true;
             }
-            return climber.climbed();
+            return climber.climbed(); // canrange
         } else {
-            return climber.ready();
+            if (Math.abs(climber.getEncoderValue() - initialEncoderValue) > ClimberConstants.climbReadyMaxEncoderValue) {
+                return true;
+            }
+            return climber.ready(); // canrage 
         }
     }
 }
