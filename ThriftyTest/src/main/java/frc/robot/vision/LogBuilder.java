@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.Constants;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotObserver;
 
 public class LogBuilder {
     private List<TimestampedPoseEstimate> m_estimates;
     private List<VisionLog> m_logs;
 
     public LogBuilder() {
-        m_estimates = new ArrayList<>();
-        m_logs = new ArrayList<>();
+        m_estimates = new ArrayList<>(20);
+        m_logs = new ArrayList<>(20);
     }
 
     public void addEstimate(TimestampedPoseEstimate estimate) {
@@ -32,9 +31,10 @@ public class LogBuilder {
                 new VisionLog(est, distance, robot)
             );
         }
-        // "consume" all of the logs, so they aren't reused
+        // consume each processed value
         m_estimates.clear();
     }
+    
 
     public void log() {
         buildLogs();

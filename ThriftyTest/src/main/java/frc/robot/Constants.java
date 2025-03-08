@@ -294,36 +294,44 @@ public class Constants {
 
         public static final String k_estimationName = "estimation";
 
-        public static final double k_cameraOffsetX = 0.304;
-        public static final double k_cameraOffsetY = 0.270;
-        public static final double k_cameraHeight = Units.inchesToMeters(6.0);
-        public static final double k_cameraBackHeight = Units.inchesToMeters(12.0);
-        public static final double k_cameraPitch = -Units.degreesToRadians(27.5);
-        public static final double k_cameraPitchFront = -Units.degreesToRadians(22.5);
-        public static final double k_backCameraPitch = -Units.degreesToRadians(51.0);
-        public static final double k_cameraYaw = Units.degreesToRadians(35.0);
-        public static final double k_backCameraYaw = Units.degreesToRadians(45.0);
-
         public static final String k_logPath = "/home/lvuser/logs/vision";
         public static final String k_simLogPath = "logs/vision";
+
+        private static final double k_moduleHeight = 0.175;
+
+
+        private static final double k_offsetX = 0.302;
+        private static final double k_offsetY = 0.266;
+
+        // change these values to test different camera configurations
+        private static final double k_fovMinimum = Units.degreesToRadians(2.0);
+        private static final double k_crossover = Units.degreesToRadians(10.0);
+
+        private static final double k_fovHorizontal = Units.degreesToRadians(70.0);
+
+        private static final double k_tightPitch = -Units.degreesToRadians(25.0);
+        private static final double k_widePitch = -Units.degreesToRadians(22.5);
+
+        private static final double k_tightYaw = Math.PI / 2.0 - k_fovMinimum - k_fovHorizontal / 2.0;
+        private static final double k_wideYaw = k_crossover + k_tightYaw - k_fovHorizontal;
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d(
-                new Translation3d(0.302,0.266,0.175),
-                new Rotation3d(0, k_cameraPitchFront, -k_cameraYaw)
+                new Translation3d(k_offsetX, k_offsetY, k_moduleHeight),
+                new Rotation3d(0, k_tightPitch, -k_tightYaw)
             )),
             Map.entry("cam2", new Transform3d(
-                new Translation3d(0.261,0.299,0.175),
-                new Rotation3d(0, k_cameraPitchFront, Math.PI - k_cameraYaw)
+                new Translation3d(k_offsetX, k_offsetY, k_moduleHeight),
+                new Rotation3d(0, k_widePitch, -k_wideYaw)
             )),
             Map.entry("cam3", new Transform3d(
-                new Translation3d(0.259,-0.298,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw - Math.PI)
+                new Translation3d(k_offsetX, -k_offsetY, k_moduleHeight),
+                new Rotation3d(0, k_tightPitch, k_tightYaw)
             )),
             Map.entry("cam4", new Transform3d(
-                new Translation3d(0.302,-0.266,0.175),
-                new Rotation3d(0, k_cameraPitchFront, k_cameraYaw)
+                new Translation3d(k_offsetX, -k_offsetY, k_moduleHeight),
+                new Rotation3d(0, k_widePitch, k_wideYaw)
             ))
             // Map.entry("cam5", new Transform3d( // special
             //     new Translation3d(-0.302, 0.266, 0.175),
@@ -345,8 +353,8 @@ public class Constants {
 
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
-        // The maximum number of results (per camera) we expect to see per tick
-        public static final int k_maxResults = 4;
+        // The maximum number of results (per camera)
+        public static final double k_fps = 120;
         // The maximum tolerated latency, in seconds.
         public static final double k_latencyThreshold = 0.75;
         // The maximum tolerated ambiguity value.

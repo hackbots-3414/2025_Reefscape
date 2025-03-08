@@ -92,14 +92,16 @@ public class RobotContainer {
         addBoundsToField();
         // configureSysId();
         configureTesting();
+        configureDashboard();
+    }
+    
+    private void configureDashboard() {
+        SmartDashboard.putBoolean("SAFETY MODE", false);
+        SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
+        SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
     }
 
     private void configureTesting() {
-        SmartDashboard.putData("open funnel", new OpenFunnel(m_climber));
-        SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
-        SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
-        SmartDashboard.putBoolean("SAFETY MODE", false);
-
         SmartDashboard.putData("Reef mode on", new InstantCommand(() -> {
             RobotObserver.setReefMode(true);
         }));
@@ -108,8 +110,13 @@ public class RobotContainer {
             RobotObserver.setReefMode(false);
         }));
 
-
         SmartDashboard.putData("Go To B", new DriveToPointCommand(ScoringLocations.B.value, m_drivetrain));
+
+        Pose2d point = new Pose2d(0.56, 4.0, new Rotation2d());
+        SmartDashboard.putData("drive to reef", new DriveToPointCommand(point, m_drivetrain));
+
+        Pose2d point2 = new Pose2d(11.833, 4.051, new Rotation2d());
+        SmartDashboard.putData("drive to other pose", new DriveToPointCommand(point2, m_drivetrain));
     }
 
     private void addBoundsToField() {
