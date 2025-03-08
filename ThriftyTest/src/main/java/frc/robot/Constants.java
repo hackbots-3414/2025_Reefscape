@@ -130,7 +130,7 @@ public class Constants {
     
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(13, 0.0, 0.0); // 0.18836
-        public static final PIDConstants k_rotationPID = new PIDConstants(2, 0.0, 0.0); // 0.17119
+        public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -142,13 +142,13 @@ public class Constants {
 
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(1);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(1);
-        public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1.5);
-        public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(3);
+        public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1);
+        public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(1.5);
 
         public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(0.5);
         public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(0.5);
         public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
-        public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(2);
+        public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(1);
 
         public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond) / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
 
@@ -307,18 +307,18 @@ public class Constants {
 
         // The camera names
         public static Map<String, Transform3d> cameras = Map.ofEntries(
-            // Map.entry("cam1", new Transform3d( // left tight
-            //     new Translation3d(0.256, 0.289, k_moduleHeight),
-            //     new Rotation3d(0, k_tightPitch, -k_tightYaw)
-            // )),
-            // Map.entry("cam2", new Transform3d( // left wide
-            //     new Translation3d(0.337, 0.331, k_moduleHeight),
-            //     new Rotation3d(0, k_widePitch, -k_wideYaw)
-            // )),
-            // Map.entry("cam3", new Transform3d( // right wide
-            //     new Translation3d(0.337, -0.331, k_moduleHeight),
-            //     new Rotation3d(0, k_widePitch, k_wideYaw)
-            // )),
+            Map.entry("cam1", new Transform3d( // left tight
+                new Translation3d(0.256, 0.289, k_moduleHeight),
+                new Rotation3d(0, k_tightPitch, -k_tightYaw)
+            )),
+            Map.entry("cam2", new Transform3d( // left wide
+                new Translation3d(0.337, 0.331, k_moduleHeight),
+                new Rotation3d(0, k_widePitch, -k_wideYaw)
+            )),
+            Map.entry("cam3", new Transform3d( // right wide
+                new Translation3d(0.337, -0.331, k_moduleHeight),
+                new Rotation3d(0, k_widePitch, k_wideYaw)
+            )),
             Map.entry("cam4", new Transform3d( // right tight
                 new Translation3d(0.256, -0.289, k_moduleHeight),
                 new Rotation3d(0, k_tightPitch, k_tightYaw)
@@ -883,11 +883,11 @@ public class Constants {
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8;
         public static final int elevatorOffset = 94;
-        public static final int funnelNumLED = 85;
+        public static final int funnelNumLED = 86;
         public static final int elevatorNumLED = 40;
         public static final int funnelOffset2 = 8;
         public static final int elevatorOffset2 = 94;
-        public static final int funnelNumLED2 = 85;
+        public static final int funnelNumLED2 = 86;
         public static final int elevatorNumLED2 = 40;
     }
 }

@@ -49,7 +49,7 @@ public class LedFeedback extends SubsystemBase {
     private int b = 0;
     private boolean inAuton = false;
     private boolean inTeleop = false;
-    
+
     private int selectedSlot = 0;
 
     private static enum LED_MODE {
@@ -93,16 +93,14 @@ public class LedFeedback extends SubsystemBase {
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
         algaeInRange = CommandBounds.netBounds.isActive();
-        algaeTooClose = CommandBounds.netBounds.isActive(); // need to change  
+        algaeTooClose = CommandBounds.netBounds.isActive(); // need to change
         climbed = RobotObserver.getClimbed();
 
         if (badController()) {
             if (mode != LED_MODE.BADCONTROLLER) {
                 mode = LED_MODE.BADCONTROLLER;
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR_LEFT, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR_RIGHT, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL_LEFT, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL_RIGHT, LED_PATTERN.STROBE);
+                setAll(LED_COLOR.RED, LED_PATTERN.STROBE);
+                return;
             }
         } else if (inTeleop || inAuton) {
             if (inTeleop) {
@@ -111,12 +109,14 @@ public class LedFeedback extends SubsystemBase {
                         if (mode != LED_MODE.END_GAME_ALERT) {
                             mode = LED_MODE.END_GAME_ALERT;
                             setElevator(LED_COLOR.YELLOW, LED_PATTERN.STROBE);
+                            return;
 
                         }
                     } else {
                         if (mode != LED_MODE.END_GAME_WARNING) {
                             mode = LED_MODE.END_GAME_WARNING;
                             setElevator(LED_COLOR.YELLOW, LED_PATTERN.SOLID);
+                            return;
                         }
                     }
                 }
@@ -124,44 +124,45 @@ public class LedFeedback extends SubsystemBase {
                 if (climbed) {
                     if (mode != LED_MODE.CLIMBED && matchTime > 0) {
                         mode = LED_MODE.CLIMBED;
-                       setAll(LED_COLOR.OFF , LED_PATTERN.RAINBOW);
-                        
-
+                        setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
+                        return;
                     }
                 } else if (coralOnBoard && coralInRange) {
                     if (mode != LED_MODE.CORAL_READY) {
-                        mode = LED_MODE.CORAL_READY;                       
-                        setAll(LED_COLOR.BLUE , LED_PATTERN.SOLID);
+                        mode = LED_MODE.CORAL_READY;
+                        setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
+                        return;
                     }
                 } else if (coralOnBoard) {
                     if (mode != LED_MODE.CORAL_ON_BOARD) {
                         mode = LED_MODE.CORAL_ON_BOARD;
-                       setAll(LED_COLOR.GREEN , LED_PATTERN.SOLID);
+                        setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
+                        return;
                     }
-
-
-
-                }else if (algaeTooClose) {
-                    if (mode != LED_MODE.ALGAE_TOO_CLOSE){
+                } else if (algaeTooClose) {
+                    if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
                         mode = LED_MODE.ALGAE_TOO_CLOSE;
                         setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
+                        return;
                     }
-                } 
-                else if (algaeOnBoard && algaeInRange) {
-                    if(mode != LED_MODE.ALGAE_READY) {
+                } else if (algaeOnBoard && algaeInRange) {
+                    if (mode != LED_MODE.ALGAE_READY) {
                         mode = LED_MODE.ALGAE_READY;
-                        setAll(LED_COLOR.BLUE , LED_PATTERN.SOLID);
+                        setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
+                        return;
                     }
-                } else if ( algaeOnBoard) {
+                } else if (algaeOnBoard) {
                     if (mode != LED_MODE.ALGAE_ON_BOARD) {
                         mode = LED_MODE.ALGAE_ON_BOARD;
                         setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
+                        return;
                     }
 
-                }else {
+                } else {
                     if (mode != LED_MODE.DEFAULT) {
                         defaultColors();
                         mode = LED_MODE.DEFAULT;
+                        return;
                     }
                 }
 
@@ -170,22 +171,23 @@ public class LedFeedback extends SubsystemBase {
             if (mode != LED_MODE.DEFAULT) {
                 defaultColors();
                 mode = LED_MODE.DEFAULT;
+                return;
             }
-            
+
         }
     }
 
     private void defaultColors() {
-        setElevator(LED_COLOR.PURPLE, LED_PATTERN.FLASH ); //  changed to heartbeat mode
+        setElevator(LED_COLOR.PURPLE, LED_PATTERN.FLASH); // changed to heartbeat mode
         setFunnel(LED_COLOR.PURPLE, LED_PATTERN.LARSON);
     }
-
 
     private boolean badController() {
         boolean driverConnected = DriverStation.isJoystickConnected(ButtonBindingConstants.driverPort);
         boolean operatorConnected = DriverStation.isJoystickConnected(ButtonBindingConstants.buttonBoardPort);
 
-        if (!driverConnected || !operatorConnected) return true;
+        if (!driverConnected || !operatorConnected)
+            return true;
 
         String driverName = DriverStation.getJoystickName(ButtonBindingConstants.driverPort).toLowerCase();
         String operatorName = DriverStation.getJoystickName(ButtonBindingConstants.buttonBoardPort).toLowerCase();
@@ -201,25 +203,25 @@ public class LedFeedback extends SubsystemBase {
         return !(driverOk && operatorOk);
     }
 
-    public void setAll ( LED_COLOR color , LED_PATTERN pattern) {
+    public void setAll(LED_COLOR color, LED_PATTERN pattern) {
         setColor(color, LED_SECTION.ELEVATOR_LEFT, pattern); // changed to heartbeat mode
-        setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern); //  changed to heartbeat mode
+        setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern); // changed to heartbeat mode
         setColor(color, LED_SECTION.FUNNEL_LEFT, pattern);
-        setColor(color, LED_SECTION.FUNNEL_RIGHT, pattern); 
+        setColor(color, LED_SECTION.FUNNEL_RIGHT, pattern);
     }
 
-    public void setElevator ( LED_COLOR color , LED_PATTERN pattern) {
+    public void setElevator(LED_COLOR color, LED_PATTERN pattern) {
         setColor(color, LED_SECTION.ELEVATOR_LEFT, pattern);
         setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern);
     }
 
-    public void setFunnel (LED_COLOR color , LED_PATTERN pattern) {
+    public void setFunnel(LED_COLOR color, LED_PATTERN pattern) {
         setColor(color, LED_SECTION.FUNNEL_LEFT, pattern);
         setColor(color, LED_SECTION.FUNNEL_RIGHT, pattern);
     }
 
     // Color color = new Color();
-    //  int red = Color.unpackRGB((int) Color.kFirstBlue, RGBChannel.kBlue);  
+    // int red = Color.unpackRGB((int) Color.kFirstBlue, RGBChannel.kBlue);
 
     public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern) {
         int nbrLED = 0;
@@ -233,7 +235,7 @@ public class LedFeedback extends SubsystemBase {
             case GREEN -> c = Color.kGreen;
             case RED -> c = Color.kRed;
             case YELLOW -> c = Color.kYellow;
-            case PURPLE ->  c = Color.kPurple;
+            case PURPLE -> c = Color.kPurple;
             case WHITE -> c = Color.kWhite;
             case BROWN -> c = Color.kBrown;
             case OFF -> c = Color.kBlack;
@@ -271,11 +273,15 @@ public class LedFeedback extends SubsystemBase {
 
         switch (pattern) {
             case SOLID -> candle.setLEDs(r, g, b, 0, offsetLED, nbrLED);
-            case FLASH -> candle.animate(new SingleFadeAnimation(r, g, b, 0, LedConstants.flashSpeed, nbrLED, offsetLED), selectedSlot);
-            case STROBE -> candle.animate(new StrobeAnimation(r, g, b, 0, LedConstants.strobeSpeed, nbrLED, offsetLED), selectedSlot);
-            case TWINKLE -> candle.animate(new TwinkleAnimation(r, g, b, 0, 0.5, nbrLED, TwinklePercent.Percent42, offsetLED), selectedSlot);
+            case FLASH -> candle.animate(
+                    new SingleFadeAnimation(r, g, b, 0, LedConstants.flashSpeed, nbrLED, offsetLED), selectedSlot);
+            case STROBE -> candle.animate(new StrobeAnimation(r, g, b, 0, LedConstants.strobeSpeed, nbrLED, offsetLED),
+                    selectedSlot);
+            case TWINKLE -> candle.animate(
+                    new TwinkleAnimation(r, g, b, 0, 0.5, nbrLED, TwinklePercent.Percent42, offsetLED), selectedSlot);
             case CLEAR -> candle.setLEDs(0, 0, 0, 0, offsetLED, nbrLED);
-            case LARSON -> candle.animate(new LarsonAnimation(r, g, b, 0, 0.5, nbrLED, BounceMode.Back, 7, offsetLED), selectedSlot);
+            case LARSON -> candle.animate(new LarsonAnimation(r, g, b, 0, 0.5, nbrLED, BounceMode.Back, 7, offsetLED),
+                    selectedSlot);
             case RAINBOW -> candle.animate(new RainbowAnimation(1, 0.9, nbrLED, true, offsetLED), selectedSlot);
         }
     }

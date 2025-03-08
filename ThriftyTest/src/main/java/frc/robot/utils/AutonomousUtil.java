@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.path.EventMarker;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -79,15 +81,23 @@ public class AutonomousUtil {
         );
         
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPose, pose);
-        PathPlannerPath path = new PathPlannerPath(waypoints, finalAlignConstraints, new IdealStartingState(DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond), pose.getRotation()), new GoalEndState(0, pose.getRotation()));
+        PathPlannerPath path = new PathPlannerPath(
+                waypoints,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                List.of(new EventMarker("Enable Align Cameras", 0)),
+                finalAlignConstraints,
+                new IdealStartingState(DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond), pose.getRotation()),
+                new GoalEndState(0, pose.getRotation()),
+                false);
+
         return AutoBuilder.pathfindThenFollowPath(path, pathFindConstraints);
     }
     
     public static Command pathFinder(Pose2d pose) {
         return new SequentialCommandGroup(
-            new InstantCommand(() -> RobotObserver.setReefMode(true)),
             pathFindThenPreciseAlign(pose),
-            // new DriveToPointCommand(FieldUtils.flipPose(pose), m_drivetrain)
             new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
     }

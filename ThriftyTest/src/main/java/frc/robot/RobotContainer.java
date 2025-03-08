@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.EventMarker;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -185,7 +187,7 @@ public class RobotContainer {
             .or(controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
             .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
 
-        controller.button(13).onTrue(new InstantCommand(() -> m_drivetrain.resetPose(ScoringLocationsMiddle.EF.value)));
+        controller.button(13).onTrue(new InstantCommand(() -> m_drivetrain.resetPose(ScoringLocationsMiddle.GH.value)));
     }
 
     // private void configureSysId() {
@@ -507,6 +509,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
+
+        NamedCommands.registerCommand("Enable Align Cameras", new InstantCommand(() -> RobotObserver.setReefMode(true)));
     }
 
     private void configureVision() {
@@ -598,8 +602,12 @@ public class RobotContainer {
     @SuppressWarnings("unused")
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsListLeft)));
-            case RIGHT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsRightList)));
+            case LEFT -> trigger.whileTrue(new SequentialCommandGroup(
+                                            new InstantCommand(() -> RobotObserver.setReefClipLocation(location)),
+                                            new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsListLeft))));
+            case RIGHT -> trigger.whileTrue(new SequentialCommandGroup(
+                                            new InstantCommand(() -> RobotObserver.setReefClipLocation(location)),
+                                            new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsRightList))));
         }   
     }
 
@@ -662,12 +670,10 @@ public class RobotContainer {
     }
 
     private Command coralScoreCommand(int level) {
-        return new CoralScoreCommand(m_coralRollers, m_elevator, level);
+        return new CoralScoreCommand(m_coralRollers, m_elevator, level).andThen(new WaitUntilCommand(m_elevator::atSetpoint));
     }
 
-    private Command 
-    
-    algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
+    private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
         return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
     }
 

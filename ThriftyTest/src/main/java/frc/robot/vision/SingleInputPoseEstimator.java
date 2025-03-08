@@ -192,7 +192,7 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose2d pose
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
-        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, multiplier * Math.PI / 20);
+        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, multiplier * Math.PI);
         return stdDevs;
     }
 
