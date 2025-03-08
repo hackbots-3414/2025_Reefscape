@@ -19,6 +19,8 @@ import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color.RGBChannel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
@@ -37,24 +39,26 @@ public class LedFeedback extends SubsystemBase {
     // private Supplier<Boolean> isInRange;
     // private boolean algaeOnBoard = false;
     private boolean coralOnBoard = false;
-    private boolean inRange = false;
+    private boolean coralInRange = false;
     private boolean climbed = false;
+    private boolean algaeOnBoard = false;
+    private boolean algaeInRange = false;
+    private boolean algaeTooClose = false;
     private int r = 0;
     private int g = 0;
     private int b = 0;
-
     private boolean inAuton = false;
     private boolean inTeleop = false;
-
+    
     private int selectedSlot = 0;
 
     private static enum LED_MODE {
         CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
-        BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME;
+        BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME, ALGAE_READY, ALGAE_TOO_CLOSE;
     };
 
     private static enum LED_COLOR {
-        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF;
+        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN;
     };
 
     private static enum LED_PATTERN {
@@ -62,7 +66,7 @@ public class LedFeedback extends SubsystemBase {
     };
 
     private static enum LED_SECTION {
-        FUNNEL, ELEVATOR, FUNNEL2, ELEVATOR2;
+        FUNNEL_LEFT, ELEVATOR_LEFT, FUNNEL_RIGHT, ELEVATOR_RIGHT;
     }
 
     private static LED_MODE mode = null;
@@ -85,17 +89,20 @@ public class LedFeedback extends SubsystemBase {
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
 
-        coralOnBoard = RobotObserver.getPieceHeld();
-        inRange = CommandBounds.reefBounds.isActive();
+        coralOnBoard = RobotObserver.getCoralPieceHeld();
+        algaeOnBoard = RobotObserver.getAlgaePieceHeld();
+        coralInRange = CommandBounds.reefBounds.isActive();
+        algaeInRange = CommandBounds.netBounds.isActive();
+        algaeTooClose = CommandBounds.netBounds.isActive(); // need to change  
         climbed = RobotObserver.getClimbed();
 
         if (badController()) {
             if (mode != LED_MODE.BADCONTROLLER) {
                 mode = LED_MODE.BADCONTROLLER;
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL2, LED_PATTERN.STROBE);
+                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR_LEFT, LED_PATTERN.STROBE);
+                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR_RIGHT, LED_PATTERN.STROBE);
+                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL_LEFT, LED_PATTERN.STROBE);
+                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL_RIGHT, LED_PATTERN.STROBE);
             }
         } else if (inTeleop || inAuton) {
             if (inTeleop) {
@@ -103,14 +110,13 @@ public class LedFeedback extends SubsystemBase {
                     if (matchTime <= LedConstants.endgameAlert) {
                         if (mode != LED_MODE.END_GAME_ALERT) {
                             mode = LED_MODE.END_GAME_ALERT;
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE);
+                            setElevator(LED_COLOR.YELLOW, LED_PATTERN.STROBE);
+
                         }
                     } else {
                         if (mode != LED_MODE.END_GAME_WARNING) {
                             mode = LED_MODE.END_GAME_WARNING;
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR, LED_PATTERN.STROBE);
-                            setColor(LED_COLOR.YELLOW, LED_SECTION.ELEVATOR2, LED_PATTERN.STROBE);
+                            setElevator(LED_COLOR.YELLOW, LED_PATTERN.SOLID);
                         }
                     }
                 }
@@ -118,26 +124,41 @@ public class LedFeedback extends SubsystemBase {
                 if (climbed) {
                     if (mode != LED_MODE.CLIMBED && matchTime > 0) {
                         mode = LED_MODE.CLIMBED;
-                        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL, LED_PATTERN.RAINBOW);
-                        setColor(LED_COLOR.OFF, LED_SECTION.FUNNEL2, LED_PATTERN.RAINBOW);
-                        setColor(LED_COLOR.OFF, LED_SECTION.ELEVATOR, LED_PATTERN.RAINBOW);
-                        setColor(LED_COLOR.OFF, LED_SECTION.ELEVATOR2, LED_PATTERN.RAINBOW);
+                       setAll(LED_COLOR.OFF , LED_PATTERN.RAINBOW);
+                        
 
                     }
-                } else if (coralOnBoard && inRange) {
+                } else if (coralOnBoard && coralInRange) {
                     if (mode != LED_MODE.CORAL_READY) {
-                        mode = LED_MODE.CORAL_READY;
-                        setColor(LED_COLOR.BLUE, LED_SECTION.FUNNEL, LED_PATTERN.STROBE);
-                        setColor(LED_COLOR.BLUE, LED_SECTION.FUNNEL2, LED_PATTERN.STROBE);
-
+                        mode = LED_MODE.CORAL_READY;                       
+                        setAll(LED_COLOR.BLUE , LED_PATTERN.SOLID);
                     }
                 } else if (coralOnBoard) {
                     if (mode != LED_MODE.CORAL_ON_BOARD) {
                         mode = LED_MODE.CORAL_ON_BOARD;
-                        setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL, LED_PATTERN.SOLID);
-                        setColor(LED_COLOR.GREEN, LED_SECTION.FUNNEL2, LED_PATTERN.SOLID);
+                       setAll(LED_COLOR.GREEN , LED_PATTERN.SOLID);
                     }
-                } else {
+
+
+
+                }else if (algaeTooClose) {
+                    if (mode != LED_MODE.ALGAE_TOO_CLOSE){
+                        mode = LED_MODE.ALGAE_TOO_CLOSE;
+                        setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
+                    }
+                } 
+                else if (algaeOnBoard && algaeInRange) {
+                    if(mode != LED_MODE.ALGAE_READY) {
+                        mode = LED_MODE.ALGAE_READY;
+                        setAll(LED_COLOR.BLUE , LED_PATTERN.SOLID);
+                    }
+                } else if ( algaeOnBoard) {
+                    if (mode != LED_MODE.ALGAE_ON_BOARD) {
+                        mode = LED_MODE.ALGAE_ON_BOARD;
+                        setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
+                    }
+
+                }else {
                     if (mode != LED_MODE.DEFAULT) {
                         defaultColors();
                         mode = LED_MODE.DEFAULT;
@@ -155,11 +176,10 @@ public class LedFeedback extends SubsystemBase {
     }
 
     private void defaultColors() {
-        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR, LED_PATTERN.FLASH); // changed to heartbeat mode
-        setColor(LED_COLOR.PURPLE, LED_SECTION.ELEVATOR2, LED_PATTERN.FLASH); //  changed to heartbeat mode
-        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL, LED_PATTERN.LARSON);
-        setColor(LED_COLOR.PURPLE, LED_SECTION.FUNNEL2, LED_PATTERN.LARSON);      
+        setElevator(LED_COLOR.PURPLE, LED_PATTERN.FLASH ); //  changed to heartbeat mode
+        setFunnel(LED_COLOR.PURPLE, LED_PATTERN.LARSON);
     }
+
 
     private boolean badController() {
         boolean driverConnected = DriverStation.isJoystickConnected(ButtonBindingConstants.driverPort);
@@ -181,70 +201,68 @@ public class LedFeedback extends SubsystemBase {
         return !(driverOk && operatorOk);
     }
 
+    public void setAll ( LED_COLOR color , LED_PATTERN pattern) {
+        setColor(color, LED_SECTION.ELEVATOR_LEFT, pattern); // changed to heartbeat mode
+        setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern); //  changed to heartbeat mode
+        setColor(color, LED_SECTION.FUNNEL_LEFT, pattern);
+        setColor(color, LED_SECTION.FUNNEL_RIGHT, pattern); 
+    }
+
+    public void setElevator ( LED_COLOR color , LED_PATTERN pattern) {
+        setColor(color, LED_SECTION.ELEVATOR_LEFT, pattern);
+        setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern);
+    }
+
+    public void setFunnel (LED_COLOR color , LED_PATTERN pattern) {
+        setColor(color, LED_SECTION.FUNNEL_LEFT, pattern);
+        setColor(color, LED_SECTION.FUNNEL_RIGHT, pattern);
+    }
+
+    // Color color = new Color();
+    //  int red = Color.unpackRGB((int) Color.kFirstBlue, RGBChannel.kBlue);  
+
     public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern) {
         int nbrLED = 0;
         int offsetLED = 0;
 
         CANdle candle = null;
+        Color c = new Color();
 
         switch (color) {
-            case BLUE:
-                r = 0;
-                g = 0;
-                b = 255;
-                break;
-            case GREEN:
-                r = 0;
-                g = 255;
-                b = 0;
-                break;
-            case RED:
-                r = 255;
-                g = 0;
-                b = 0;
-                break;
-            case YELLOW:
-                r = 255;
-                g = 120;
-                b = 0;
-                break;
-            case PURPLE:
-                r = 255;
-                g = 0;
-                b = 255;
-                break;
-            case WHITE:
-                r = 255;
-                g = 255;
-                b = 255;
-                break;
-            case OFF:
-                r = 0;
-                g = 0;
-                b = 0;
-                break;
+            case BLUE -> c = Color.kBlue;
+            case GREEN -> c = Color.kGreen;
+            case RED -> c = Color.kRed;
+            case YELLOW -> c = Color.kYellow;
+            case PURPLE ->  c = Color.kPurple;
+            case WHITE -> c = Color.kWhite;
+            case BROWN -> c = Color.kBrown;
+            case OFF -> c = Color.kBlack;
         }
 
+        int r = (int) (c.red * 255);
+        int b = (int) (c.blue * 255);
+        int g = (int) (c.green * 255);
+
         switch (section) {
-            case FUNNEL:
+            case FUNNEL_LEFT:
                 offsetLED = LedConstants.funnelOffset;
                 nbrLED = LedConstants.funnelNumLED;
                 selectedSlot = 0;
                 candle = ledcontroller;
                 break;
-            case ELEVATOR:
+            case ELEVATOR_LEFT:
                 offsetLED = LedConstants.elevatorOffset;
                 nbrLED = LedConstants.elevatorNumLED;
                 selectedSlot = 1;
                 candle = ledcontroller;
                 break;
-            case FUNNEL2:
+            case FUNNEL_RIGHT:
                 offsetLED = LedConstants.funnelOffset2;
                 nbrLED = LedConstants.funnelNumLED2;
                 selectedSlot = 0;
                 candle = ledcontroller2;
                 break;
-            case ELEVATOR2:
+            case ELEVATOR_RIGHT:
                 offsetLED = LedConstants.elevatorOffset2;
                 nbrLED = LedConstants.elevatorNumLED2;
                 selectedSlot = 1;
