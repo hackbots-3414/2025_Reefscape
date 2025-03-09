@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.EventMarker;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,7 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -104,21 +102,13 @@ public class RobotContainer {
     }
 
     private void configureTesting() {
-        SmartDashboard.putData("Reef mode on", new InstantCommand(() -> {
-            RobotObserver.setReefMode(true);
-        }));
-
-        SmartDashboard.putData("Reef mode off", new InstantCommand(() -> {
-            RobotObserver.setReefMode(false);
-        }));
-
         SmartDashboard.putData("Go To B", new DriveToPointCommand(ScoringLocations.B.value, m_drivetrain));
 
-        Pose2d point = new Pose2d(0.56, 4.0, new Rotation2d());
-        SmartDashboard.putData("drive to reef", new DriveToPointCommand(point, m_drivetrain));
+        Pose2d point = new Pose2d(8.795, 4.906, Rotation2d.fromDegrees(15.949));
+        SmartDashboard.putData("camera testing spot", new DriveToPointCommand(point, m_drivetrain));
 
-        Pose2d point2 = new Pose2d(11.833, 4.051, new Rotation2d());
-        SmartDashboard.putData("drive to other pose", new DriveToPointCommand(point2, m_drivetrain));
+        Pose2d point2 = new Pose2d(9.936, 4.736, Rotation2d.fromDegrees(-9.001));
+        SmartDashboard.putData("camera testing spot 2", new DriveToPointCommand(point2, m_drivetrain));
     }
 
     private void addBoundsToField() {

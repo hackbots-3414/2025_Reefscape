@@ -20,7 +20,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class DriveToPointCommand extends Command {
-    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
     private final Constraints constraints = new Constraints(DriveConstants.k_driveToPointSpeed, DriveConstants.k_driveToPointAcceleration);
@@ -79,7 +78,7 @@ public class DriveToPointCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         m_drivetrain.stop();
-        m_logger.info("Stopping, because I finished");
+        m_logger.debug("drive to pose interrupted: {}",interrupted);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class DriveToPointCommand extends Command {
             .getRadians()
         );
         
-        m_logger.info("err: {}, errRotation: {}", err, errRotation);
+        m_logger.debug("err: {}, errRotation: {}", err, errRotation);
 
         return (err < AutonConstants.translationTolerance && errRotation < AutonConstants.rotationTolerance);
     }

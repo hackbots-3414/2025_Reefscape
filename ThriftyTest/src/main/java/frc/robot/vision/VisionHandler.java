@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Constants.ReefClipLocations;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -92,6 +91,8 @@ public class VisionHandler implements AutoCloseable {
     private void updateEstimators() {
         // clear previous output from the estimators.
         m_field.getObject(VisionConstants.k_estimationName).setPoses();
+        m_field.getObject("best").setPoses();
+        m_field.getObject("alt").setPoses();
         for (SingleInputPoseEstimator estimator : m_estimators) {
             estimator.run();
         }
@@ -106,32 +107,13 @@ public class VisionHandler implements AutoCloseable {
     }
 
     private void addEstimate(TimestampedPoseEstimate estimate) {
-        String name = VisionConstants.k_estimationName;
-        List<Pose2d> poses = m_field.getObject(name)
+        List<Pose2d> poses = m_field.getObject(VisionConstants.k_estimationName)
             .getPoses();
-        
-        if (RobotObserver.getReefMode()) {
-            if (RobotObserver.getReefClipLocation() == ReefClipLocations.LEFT) {
-                if (estimate.source().equals("cam4")) {
-                    m_drivetrain.addPoseEstimate(estimate);
-                    poses.add(estimate.pose());
-                    m_field.getObject(name).setPoses(poses);
-                    m_field.getObject(estimate.source()).setPose(estimate.pose());
-                }
-            } else if (RobotObserver.getReefClipLocation() == ReefClipLocations.RIGHT) {
-                if (estimate.source().equals("cam1")) {
-                    m_drivetrain.addPoseEstimate(estimate);
-                    poses.add(estimate.pose());
-                    m_field.getObject(name).setPoses(poses);
-                    m_field.getObject(estimate.source()).setPose(estimate.pose());
-                }
-            }
-        } else {
-            m_drivetrain.addPoseEstimate(estimate);
-            // poses.add(estimate.pose());
-            // m_field.getObject(name).setPoses(poses);
-            // m_field.getObject(estimate.source()).setPose(estimate.pose());
-        }
+
+        m_drivetrain.addPoseEstimate(estimate);
+        poses.add(estimate.pose());
+        m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
+
         // pose logging
         m_logBuilder.addEstimate(estimate);
     }

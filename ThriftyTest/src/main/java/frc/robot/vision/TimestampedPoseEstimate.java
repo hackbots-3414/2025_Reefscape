@@ -13,15 +13,16 @@ public record TimestampedPoseEstimate (
     EstimationAlgorithm algorithm
 ) {
     public enum EstimationAlgorithm {
-        Trig, PnP;
+        Trig, PnP, Ambiguity, Heading;
 
         @Override
         public String toString() {
-            String s;
+            String s = "?";
             switch (this) {
                 case Trig -> s = "T";
                 case PnP -> s = "P";
-                default -> s = "?";
+                case Ambiguity -> s = "A";
+                case Heading -> s = "H";
             }
             return s;
         }

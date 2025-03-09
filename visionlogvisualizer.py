@@ -1,8 +1,6 @@
 import csv
-from os import sep
 import sys
 from matplotlib import pyplot as plt
-from matplotlib.scale import ScaleBase
 
 class LogEntry:
     def withTimestamp(self, timestamp):
@@ -22,30 +20,40 @@ class LogEntry:
         self.err = err
         return self
 
+    def withMode(self, mode):
+        self.mode = mode
+        return self
+
 class VisionLog:
     def __init__(self):
         self.logs = []
         self.sources = set()
+        self.modes = set()
+        self.source = None
+        self.mode = None
 
     def add_log(self, log):
-        if len(log) != 5:
+        if len(log) != 6:
             print("found bad log entry")
             return
 
         timestamp = float(log[0])
-        source = log[1].strip()
+        source = log[1]
         x = float(log[2])
         y = float(log[3])
         err = float(log[4])
+        mode = log[5]
 
         self.logs.append(LogEntry()
             .withTimestamp(timestamp)
             .withSource(source)
             .withRobotPose(x, y)
             .withError(err)
+            .withMode(mode)
         )
 
         self.sources.add(source)
+        self.modes.add(mode)
 
     @classmethod
     def from_csv(cls, filepath):
@@ -67,14 +75,33 @@ class VisionLog:
                 ret.append(log)
         return ret
 
+    def get_mode(self, mode):
+        ret = []
+        for log in self.logs:
+            if log.mode == mode:
+                ret.append(log)
+        return ret
+
     def split_sources(self):
         logs = []
         for source in self.sources:
             log = VisionLog()
             log.logs = self.get_source(source)
             log.sources.add(source)
+            log.source = source
             logs.append(log) 
         return logs
+
+    def split_modes(self):
+        logs = []
+        for mode in self.modes:
+            log = VisionLog()
+            log.logs = self.get_mode(mode)
+            log.modes.add(mode)
+            log.mode = mode
+            logs.append(log)
+        return logs
+
 
 if len(sys.argv) != 2:
     print(f"usage: {sys.argv[0]} <filename>")
@@ -83,25 +110,41 @@ if len(sys.argv) != 2:
 filepath = sys.argv[1]
 
 logs = VisionLog.from_csv(filepath)
-separated = logs.split_sources()
+source_separated = logs.split_sources()
+mode_separated = logs.split_modes()
 
 def graph_error():
-    for log in separated:
-        source = log.sources
+    # add a recommendation
+    plt.axhline(0.2, label="acceptable range", color="gray")
+    plt.title("Vision Error")
+    plt.xlabel("FPGA time")
+    plt.ylabel("Error")
+    plt.legend()
+    plt.show()
+
+def graph_error_by_source():
+    for log in source_separated:
+        source = log.source
         timestamp = []
         err = []
         for entry in log.logs:
             err.append(entry.err)
             timestamp.append(entry.timestamp)
-        plt.scatter(timestamp, err, label=str(source))
+        plt.scatter(timestamp, err, label=source, alpha=0.5)
 
-    # add a recommendation
-    plt.axhline(0.2, label="acceptable range", color="gray")
+    graph_error()
 
-    plt.xlabel("FPGA time")
-    plt.ylabel("Error")
-    plt.legend()
-    plt.show()
+
+def graph_error_by_mode():
+    for log in mode_separated:
+        mode = log.mode
+        timestamp = []
+        err = []
+        for entry in log.logs:
+            err.append(entry.err)
+            timestamp.append(entry.timestamp)
+        plt.scatter(timestamp, err, label=mode, alpha=0.5)
+    graph_error()
 
 def graph_positions():
     x = [entry.x for entry in logs.logs]
@@ -111,5 +154,6 @@ def graph_positions():
 
     plt.show()
 
-graph_error()
+graph_error_by_source()
+graph_error_by_mode()
 graph_positions()

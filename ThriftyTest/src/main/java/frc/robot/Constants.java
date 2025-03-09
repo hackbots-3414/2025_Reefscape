@@ -32,8 +32,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -300,12 +298,13 @@ public class Constants {
         private static final double k_tightPitch = -Units.degreesToRadians(22.5);
         private static final double k_widePitch = -Units.degreesToRadians(25.0);
 
-        // private static final double k_tightYaw = Math.PI / 2.0 - k_fovMinimum - k_fovHorizontal / 2.0;
-        // private static final double k_wideYaw = k_crossover + k_tightYaw - k_fovHorizontal;
-        private static final double k_tightYaw = Units.degreesToRadians(37.0);
+        private static final double k_tightYaw = Units.degreesToRadians(37.0); // this doesn't seem right
         private static final double k_wideYaw = Units.degreesToRadians(-7.0);
 
         // The camera names
+        public static Map<String, Transform3d> fakecameras = Map.ofEntries(
+            Map.entry("test", new Transform3d())
+        );
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d( // left tight
                 new Translation3d(0.256, 0.289, k_moduleHeight),
@@ -325,10 +324,12 @@ public class Constants {
             ))
         );
 
+        public static final String k_leftAlignName = "cam1";
+        public static final String k_rightAlignName = "cam4";
+
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;
         // The maximum number of results (per camera)
-        public static final double k_fps = 200;
         public static final double k_expectedResults = 10;
         // The maximum tolerated latency, in seconds.
         public static final double k_latencyThreshold = 0.75;
@@ -350,15 +351,18 @@ public class Constants {
         public static final double k_differenceThreshold = 0.14;
         // this value is so high because we want to strongly punish far away poses.
         public static final double k_differenceMultiplier = 100.0;
+
         // Stats about the camera for simulation
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
         public static final Rotation2d k_fov = Rotation2d.fromDegrees(82.0);
+
         // Simulated error:
         public static final Time k_avgLatency = Milliseconds.of(18);
         public static final Time k_latencyStdDev = Milliseconds.of(5);
-        public static final double k_avgErr = 0.03;
+        public static final double k_avgErr = 0.08;
         public static final double k_errStdDev = 0.02;
+
         // Stop using vision after X time
         public static final double k_visionTimeout = 0.5;
 

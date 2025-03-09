@@ -5,6 +5,9 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -20,6 +23,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -48,6 +52,8 @@ import frc.robot.vision.TimestampedPoseEstimate;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
+
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
@@ -255,7 +261,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void addPoseEstimate(TimestampedPoseEstimate estimate) {
         m_oldVisionTimestamp = estimate.timestamp();
         // This should NOT run in simulation!
-        if (Robot.isSimulation()) return;
+        if (Robot.isSimulation()) {
+            Transform2d error = getPose().minus(estimate.pose());
+            m_logger.debug(
+                "{} pose error: {}, {}\theading error: {}deg", 
+                estimate.source(),
+                error.getX(),
+                error.getY(),
+                error.getRotation().getDegrees()
+            );
+            return;
+        }
         // Depending on our configs, we should use or not use the std devs
         if (Constants.VisionConstants.k_useStdDevs) {
             addVisionMeasurement(

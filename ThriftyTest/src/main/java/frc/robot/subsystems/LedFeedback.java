@@ -20,15 +20,12 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color.RGBChannel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
 import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
 import frc.robot.Constants.LedConstants;
 import frc.robot.RobotObserver;
 
