@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.IDConstants;
 
@@ -29,6 +30,8 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         configIntakeMotor();
         m_notifier = new Notifier(this::updateObjectState);
         m_notifier.startPeriodic(AlgaeRollerConstants.k_updateObjectPeriodSeconds);
+        RobotObserver.setAlgaePieceHeldSupplier(this::hasObject);
+
     }
 
     private void configIntakeMotor() {

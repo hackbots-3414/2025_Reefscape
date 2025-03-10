@@ -96,14 +96,22 @@ public class RobotObserver {
         return getInstance().m_reefMode;
     }
 
-    private BooleanSupplier m_pieceHeldSupplier;
+    private BooleanSupplier m_coralPieceHeldSupplier;
+    private BooleanSupplier m_algaeHeldSupplier;
 
     public static void setPieceHeldSupplier(BooleanSupplier pieceHeldSupplier) {
-        getInstance().m_pieceHeldSupplier = pieceHeldSupplier;
+        getInstance().m_coralPieceHeldSupplier = pieceHeldSupplier;
+    }
+    
+    public static void setAlgaePieceHeldSupplier(BooleanSupplier algaeHeldSupplier){
+        getInstance().m_algaeHeldSupplier = algaeHeldSupplier;
     }
 
-    public static boolean getPieceHeld() {
-        return getInstance().m_pieceHeldSupplier.getAsBoolean();
+    public static boolean getCoralPieceHeld() {
+        return getInstance().m_coralPieceHeldSupplier.getAsBoolean();
+    }
+    public static boolean getAlgaePieceHeld() {
+        return getInstance().m_algaeHeldSupplier.getAsBoolean();
     }
 
     private boolean m_climbed = false;

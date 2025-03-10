@@ -874,18 +874,18 @@ public class Constants {
     }
 
     public static class LedConstants {
-        public static final int numLED = 85;
+        public static final int numLED = 133;
         public static final double flashSpeed = 0.75;
         public static final double strobeSpeed = 0.1;
         public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8;
-        public static final int elevatorOffset = 53;
-        public static final int funnelNumLED = 45;
+        public static final int elevatorOffset = 94;
+        public static final int funnelNumLED = 85;
         public static final int elevatorNumLED = 40;
         public static final int funnelOffset2 = 8;
-        public static final int elevatorOffset2 = 89 ;
-        public static final int funnelNumLED2 = 88;
-        public static final int elevatorNumLED2 = 50;
+        public static final int elevatorOffset2 = 94;
+        public static final int funnelNumLED2 = 85;
+        public static final int elevatorNumLED2 = 40;
     }
 }
