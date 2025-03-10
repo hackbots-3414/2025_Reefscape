@@ -161,7 +161,7 @@ public class Constants {
 
     public static class ButtonBindingConstants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
-        public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP;}
+        public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP, KEYBOARD;}
 
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
@@ -279,6 +279,42 @@ public class Constants {
 
             public static final int intake = Button.kL1.value; // LB
             public static final int spitPiece = Button.kL2.value; // LT
+        }
+    
+        public static class ButtonBoardKeyboard {
+            public static final int manualModeSwitch = 26;
+
+            // WHEN SAFETY ON - AUTOMATION BASED
+            public static final int L1 = 1;
+            public static final int L2 = 2;
+            public static final int L3 = 3;
+            public static final int L4 = 4;
+
+            public static final int A = 5;
+            public static final int B = 6;
+            public static final int C = 7;
+            public static final int D = 8;
+            public static final int E = 9;
+            public static final int F = 10;
+            public static final int G = 11;
+            public static final int H = 12;
+            public static final int I = 13;
+            public static final int J = 14;
+            public static final int K = 15;
+            public static final int L = 16;
+
+            public static final int lowAlgae = 17;
+            public static final int highAlgae = 18;
+            public static final int groundAlgae = 19;
+            public static final int processor = 20;
+            public static final int net = 21;
+
+            public static final int leftIntake = 22;
+            public static final int rightIntake = 23;
+
+            public static final int climb = 24;
+
+            public static final int cancelAuto = 25;
         }
     }
 

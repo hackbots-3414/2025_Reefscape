@@ -41,17 +41,16 @@ public class LedFeedback extends SubsystemBase {
     private boolean algaeOnBoard = false;
     private boolean algaeInRange = false;
     private boolean algaeTooClose = false;
-    private int r = 0;
-    private int g = 0;
-    private int b = 0;
     private boolean inAuton = false;
     private boolean inTeleop = false;
 
     private int selectedSlot = 0;
 
     private static enum LED_MODE {
-        CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
-        BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME, ALGAE_READY, ALGAE_TOO_CLOSE;
+        CORAL_ON_BOARD, CORAL_READY, 
+        ALGAE_ON_BOARD, ALGAE_READY, ALGAE_TOO_CLOSE,
+        END_GAME_WARNING, END_GAME_ALERT, CLIMBED,
+        DEFAULT, BADCONTROLLER;
     };
 
     private static enum LED_COLOR {
