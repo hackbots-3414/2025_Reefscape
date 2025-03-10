@@ -186,8 +186,10 @@ public class SingleInputPoseEstimator implements Runnable {
         if (RobotObserver.getReefMode()) {
             switch (RobotObserver.getReefClipLocation()) {
                 case LEFT:
+                    SmartDashboard.putBoolean("CAMERA BEING CHECKED: " + m_name, m_name != VisionConstants.k_leftAlignName);
                     if (m_name != VisionConstants.k_leftAlignName) return false;
                 case RIGHT:
+                    SmartDashboard.putBoolean("CAMERA BEING CHECKED: " + m_name, m_name != VisionConstants.k_rightAlignName);
                     if (m_name != VisionConstants.k_rightAlignName) return false;
             }
         }

@@ -166,14 +166,15 @@ public class CoralRollers extends SubsystemBase {
     public void periodic() {
         if (CoralConstants.enable) {
             if (Robot.isReal()) {
-                m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
-                m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
+                m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.IRThreshold;
+                m_backSensorValue = m_backIR.getVoltage() > CoralConstants.IRThreshold;
             } else {
                 m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
             }
     
             SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
             SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
+            SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
     
             SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
     

@@ -39,7 +39,6 @@ import frc.robot.Constants.ButtonBindingConstants.BackupDriver;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoard;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardAlternate;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
-import frc.robot.Constants.ButtonBindingConstants.ButtonBoardKeyboard;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
 import frc.robot.Constants.ClimbLocations;
@@ -359,134 +358,6 @@ public class RobotContainer {
             
 
             bindClimbSetupCommand(controller.button(ButtonBoard.climb));
-        } else if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.KEYBOARD) {
-            controller.button(ButtonBoardKeyboard.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
-            BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
-            BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
-
-            Trigger A = controller.button(ButtonBoardKeyboard.A);
-            Trigger B = controller.button(ButtonBoardKeyboard.B);
-            Trigger C = controller.button(ButtonBoardKeyboard.C);
-            Trigger D = controller.button(ButtonBoardKeyboard.D);
-            Trigger E = controller.button(ButtonBoardKeyboard.E);
-            Trigger F = controller.button(ButtonBoardKeyboard.F);
-            Trigger G = controller.button(ButtonBoardKeyboard.G);
-            Trigger H = controller.button(ButtonBoardKeyboard.H);
-            Trigger I = controller.button(ButtonBoardKeyboard.I);
-            Trigger J = controller.button(ButtonBoardKeyboard.J);
-            Trigger K = controller.button(ButtonBoardKeyboard.K);
-            Trigger L = controller.button(ButtonBoardKeyboard.L);
-
-            Trigger L1 = controller.button(ButtonBoardKeyboard.L1);
-            Trigger L2 = controller.button(ButtonBoardKeyboard.L2);
-            Trigger L3 = controller.button(ButtonBoardKeyboard.L3);
-            Trigger L4 = controller.button(ButtonBoardKeyboard.L4);
-
-            bindButtonBoardAuto(ScoringLocations.A, 1, A.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 1, B.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 1, C.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 1, D.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 1, E.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 1, F.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 1, G.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 1, H.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 1, I.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 1, J.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 1, K.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 1, L.and(L1).and(manualModeOff));
-            
-            bindButtonBoardAuto(ScoringLocations.A, 2, A.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 2, B.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 2, C.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 2, D.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 2, E.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 2, F.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 2, G.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 2, H.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 2, I.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 2, J.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 2, K.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 2, L.and(L2).and(manualModeOff));
-
-            bindButtonBoardAuto(ScoringLocations.A, 3, A.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 3, B.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 3, C.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 3, D.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 3, E.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 3, F.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 3, G.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 3, H.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 3, I.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 3, J.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 3, K.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 3, L.and(L3).and(manualModeOff));
-
-            bindButtonBoardAuto(ScoringLocations.A, 4, A.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 4, B.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 4, C.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 4, D.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 4, E.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 4, F.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 4, G.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 4, H.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 4, I.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 4, J.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 4, K.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 4, L.and(L4).and(manualModeOff));
-
-            
-            
-            Trigger algaeLow = controller.button(ButtonBoardKeyboard.lowAlgae);
-            Trigger algaeHigh = controller.button(ButtonBoardKeyboard.highAlgae);
-
-            bindButtonBoardAuto(ScoringLocations.A, 5, A.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 5, B.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 5, C.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 5, D.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 5, E.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 5, F.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 5, G.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 5, H.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 5, I.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 5, J.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 5, K.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 5, L.and(algaeLow).and(manualModeOff));
-
-            bindButtonBoardAuto(ScoringLocations.A, 6, A.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 6, B.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 6, C.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 6, D.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 6, E.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 6, F.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 6, G.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 6, H.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 6, I.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 6, J.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 6, K.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 6, L.and(algaeHigh).and(manualModeOff));
-
-
-            bindButtonBoardAuto(ScoringLocations.LEFTHP, 0, controller.button(ButtonBoardKeyboard.leftIntake).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.RIGHTHP, 0, controller.button(ButtonBoardKeyboard.rightIntake).and(manualModeOff));
-
-
-            // MANUAL CORAL SCORE COMMANDS
-            bindManualCoralScoreCommand(1, L1.and(manualModeOn));
-            bindManualCoralScoreCommand(2, L2.and(manualModeOn));
-            bindManualCoralScoreCommand(3, L3.and(manualModeOn));
-            bindManualCoralScoreCommand(4, L4.and(manualModeOn));
-
-            bindManualCoralIntakeCommand(controller.button(ButtonBoardKeyboard.leftIntake).and(manualModeOn));
-
-            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoardKeyboard.groundAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardKeyboard.lowAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardKeyboard.highAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoardKeyboard.processor).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoardKeyboard.net).and(manualModeOn));
-        
-            bindAutoCancelButton(controller.button(ButtonBoardKeyboard.cancelAuto));
-            
-            bindClimbSetupCommand(controller.button(ButtonBoardKeyboard.climb));
         } else {
             controller.button(ButtonBoardAlternate.manualModeSwitch).onTrue(new InstantCommand(() -> RobotObserver.toggleManualMode()));
             BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
@@ -687,8 +558,8 @@ public class RobotContainer {
 
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(location)))), Set.of()));
-            case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(location)))), Set.of()));
+            case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
+            case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
         }   
     }
 

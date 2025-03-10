@@ -74,8 +74,8 @@ public class AutonomousUtil {
 
     private static Command pathFindThenPreciseAlign(Pose2d pose) {
         Pose2d startPose = new Pose2d(
-            (Math.cos(pose.getRotation().getRadians()) * -0.5) + pose.getX(),
-            (Math.sin(pose.getRotation().getRadians()) * -0.5) + pose.getY(),
+            (Math.cos(pose.getRotation().getRadians()) * -AutonConstants.stage2Distance) + pose.getX(),
+            (Math.sin(pose.getRotation().getRadians()) * -AutonConstants.stage2Distance) + pose.getY(),
             pose.getRotation()
         );
         
@@ -83,7 +83,7 @@ public class AutonomousUtil {
         PathPlannerPath path = new PathPlannerPath(
                 waypoints,
                 finalAlignConstraints,
-                new IdealStartingState(DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond), pose.getRotation()),
+                new IdealStartingState(0/*DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond)*/, pose.getRotation()),
                 new GoalEndState(0, pose.getRotation()),
                 false);
 

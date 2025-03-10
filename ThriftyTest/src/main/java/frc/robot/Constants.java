@@ -144,7 +144,7 @@ public class Constants {
         public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(2);
 
         public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(0.5);
-        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(0.5);
+        public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(1);
         public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
         public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(1);
 
@@ -320,8 +320,8 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
-        public static final boolean k_enableLogging = true;
-        public static final boolean k_debugCameras= true;
+        public static final boolean k_enableLogging = false;
+        public static final boolean k_debugCameras = false;
 
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
@@ -433,6 +433,7 @@ public class Constants {
         public static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance));
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
+        public static double stage2Distance = 1;
     }
 
     public static final class CanRangeConstants {
@@ -485,7 +486,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.369873; // -0.427979;
+        public static final double encoderOffset = 0.362305; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
@@ -494,14 +495,16 @@ public class Constants {
          * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
+        private static final double inch = Units.inchesToMeters(1) * metersToRotations;
+
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
-        public static final double stow = 0.232;
+        public static final double stow = 0.424;
         public static final double processor = 0.125;
-        public static final double L1 = Units.inchesToMeters(24) * metersToRotations;
-        public static final double L2 = Units.inchesToMeters(38) * metersToRotations; // 35.5
-        public static final double L3 = Units.inchesToMeters(54) * metersToRotations; // 50.5
-        public static final double L4 = Units.inchesToMeters(76.0) * metersToRotations;
+        public static final double L1 = 2.472;
+        public static final double L2 = 4.016 + 2 * inch; // 35.5
+        public static final double L3 = 7.257 - 2.6 * inch; // 50.5
+        public static final double L4 = 9.757 + 1.4 * inch;
         public static final double net = Units.inchesToMeters(67.0) * metersToRotations; // 67
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
@@ -571,7 +574,7 @@ public class Constants {
     public static final class PivotConstants {
         public static final boolean enable = true;
 
-        public static final double encoderOffset = 0.126465; //0.250977;
+        public static final double encoderOffset = -0.347656; //0.250977;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
@@ -658,13 +661,13 @@ public class Constants {
     public static class CoralConstants {
         public static final boolean enable = true;
         
-        public static final double intakeVoltage = 6;
-        public static final double ejectVoltage = 6;
+        public static final double intakeVoltage = 5;
+        public static final double ejectVoltage = 5;
 
         public static final double l1EjectVoltage = 3;
-        public static final double l2EjectVoltage = 4.5; // 5.1
-        public static final double l3EjectVoltage = 4.5; // 5.1
-        public static final double l4EjectVoltage = 7;
+        public static final double l2EjectVoltage = 4.0; // 5.1
+        public static final double l3EjectVoltage = 4.0; // 5.1
+        public static final double l4EjectVoltage = 6.2;
 
         public static final double spitOutVoltage = -8;
 
@@ -675,8 +678,7 @@ public class Constants {
 
         public static final double supplyCurrentLimit = 20;
 
-        public static final double frontIRThreshold = 1;
-        public static final double rearIRThreashold = 1;
+        public static final double IRThreshold = 1;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()

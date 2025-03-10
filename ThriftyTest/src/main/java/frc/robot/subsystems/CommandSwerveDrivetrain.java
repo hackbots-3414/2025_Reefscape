@@ -180,6 +180,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         AutonomousUtil.handleQueue();
 
         handleVisionToggle();
+
+        SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
+        SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
     }
 
     private void startSimThread() {

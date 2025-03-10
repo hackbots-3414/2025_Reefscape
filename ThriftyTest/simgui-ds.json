@@ -4,6 +4,16 @@
       "visible": false
     }
   },
+  "Joysticks": {
+    "window": {
+      "visible": false
+    }
+  },
+  "System Joysticks": {
+    "window": {
+      "visible": false
+    }
+  },
   "keyboardJoysticks": [
     {
       "axisConfig": [
@@ -23,38 +33,41 @@
           "decayRate": 1.0
         }
       ],
-      "axisCount": 4,
+      "axisCount": 0,
       "buttonCount": 25,
       "buttonKeys": [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        48,
         81,
         87,
-        -1,
+        69,
         82,
         84,
         89,
         85,
-        -1,
+        73,
         79,
         80,
-        -1,
+        65,
         83,
-        -1,
-        -1,
-        -1
+        68,
+        70,
+        71
       ],
       "povConfig": [
         {
-          "key135": 86
+          "key0": 90,
+          "key180": 67,
+          "key270": 86,
+          "key90": 88
         }
       ],
       "povCount": 2
@@ -126,31 +139,31 @@
       "axisCount": 0,
       "buttonCount": 25,
       "buttonKeys": [
-        49,
-        50,
-        51,
-        52,
-        65,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         66,
         -1,
-        68,
-        69,
-        70,
-        71,
+        -1,
+        -1,
+        -1,
+        -1,
         72,
-        73,
+        -1,
         74,
         75,
         76,
-        53,
-        54,
-        55,
-        56,
-        57,
-        90,
-        88,
-        67,
-        48
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
       ],
       "povCount": 0
     },
@@ -165,7 +178,7 @@
       "guid": "Keyboard1"
     },
     {
-      "guid": "Keyboard2"
+      "guid": "Keyboard0"
     }
   ],
   "useEnableDisableHotkeys": true
