@@ -2,7 +2,9 @@ package frc.robot.vision;
 
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -94,7 +96,7 @@ public class SingleInputPoseEstimator implements Runnable {
             */
             m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
-        m_pnpEstimator.addHeadingData(
+        m_trigEstimator.addHeadingData(
             RobotController.getMeasureTime().in(Seconds),
             RobotObserver.getPose().getRotation()
         );
@@ -105,7 +107,7 @@ public class SingleInputPoseEstimator implements Runnable {
         }
         m_lastUpdate = System.nanoTime();
     }
-
+    
     private void headingHandleResult(PhotonPipelineResult result) {
         // some prechecks before we do anything
         if (!precheckValidity(result)) return;
@@ -149,26 +151,25 @@ public class SingleInputPoseEstimator implements Runnable {
             estimate = best;
         } else {
             estimate = alt;
-            m_logger.info("Best pose != closest to heading");
         }
         process(result, estimate, EstimationAlgorithm.Heading).ifPresent(m_reporter);
     }
 
     private void handleResult(PhotonPipelineResult result) {
-        boolean isValid = precheckValidity(result);
-        if (!isValid) {
-            SmartDashboard.putBoolean("Using " + m_name, false);
+        if (!precheckValidity(result)) {
             return;
         }
-        SmartDashboard.putBoolean("Using " + m_name, true);
         // By this point the result is valid.
         EstimationAlgorithm algorithm;
+        PhotonPoseEstimator estimator;
         if (result.targets.size() == 1) {
-            algorithm = EstimationAlgorithm.Trig;
-        } else {
+            estimator = m_pnpEstimator;
             algorithm = EstimationAlgorithm.PnP;
+        } else {
+            estimator = m_trigEstimator;
+            algorithm = EstimationAlgorithm.Trig;
         }
-        m_pnpEstimator.update(result).ifPresent((est) -> {
+        estimator.update(result).ifPresent((est) -> {
             process(result, est.estimatedPose, algorithm).ifPresent(m_reporter);
         });
     }
@@ -303,4 +304,19 @@ public class SingleInputPoseEstimator implements Runnable {
     private double getAmbiguity(PhotonPipelineResult result) {
         return result.getBestTarget().getPoseAmbiguity();
     }
+
+    public Optional<CameraOffset> getOffset() {
+        List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
+        if (results.size() == 0) return Optional.empty();
+        PhotonPipelineResult result = results.get(results.size() - 1);
+        if (!result.hasTargets()) return Optional.empty();
+        Map<Integer, Transform3d> offsets = new HashMap<>();
+        for (PhotonTrackedTarget target : result.getTargets()) {
+            int id = target.getFiducialId();
+            offsets.put(id, target.getBestCameraToTarget());
+        }
+        if (offsets.isEmpty()) return Optional.empty();
+        return Optional.of(new CameraOffset(m_name, offsets));
+    }
 }
+

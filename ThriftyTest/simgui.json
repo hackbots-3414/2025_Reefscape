@@ -153,11 +153,6 @@
           "visible": false
         }
       },
-      "/SmartDashboard/Auto Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Super Field": {
         "Blue Alliance Left Intake": {
           "arrows": false,
@@ -459,7 +454,6 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "target": {
           "arrows": false,
@@ -493,6 +487,16 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/camera testing spot": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/camera testing spot 2": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -512,6 +516,7 @@
   "NetworkTables Info": {
     "Server": {
       "open": true
-    }
+    },
+    "visible": true
   }
 }
