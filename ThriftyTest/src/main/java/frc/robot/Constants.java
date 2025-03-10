@@ -138,10 +138,10 @@ public class Constants {
         public static final double k_driveToPointSpeed = 2.0;
         public static final double k_driveToPointAcceleration = 3.0;
 
-        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(1);
-        public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(1);
-        public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(1);
-        public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(1.5);
+        public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
+        public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
+        public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(2);
+        public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(2);
 
         public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(0.5);
         public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(0.5);
@@ -387,6 +387,8 @@ public class Constants {
     public static final class AutonConstants {
         public static final boolean useSuperAuton = false;
         public static final int numWaypoints = 5;
+
+        public static final boolean useQueue = false;
 
         public static double translationTolerance = 0.02; // m
         public static double rotationTolerance = Units.degreesToRadians(0.5);

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
@@ -101,16 +102,16 @@ public class AutonomousUtil {
         return AutoBuilder.followPath(path);
     }
     
-    public static Command pathFinder(Pose2d pose) {
+    private static Command pathFinder(Pose2d pose) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
-            // pathFindThenPreciseAlign(pose),
-            preciseAlign(pose),
+            pathFindThenPreciseAlign(pose),
+            // preciseAlign(pose),
             new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
     }
 
-    public static Command driveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+    private static Command driveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
             new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
@@ -134,18 +135,30 @@ public class AutonomousUtil {
         return routine;
     }
 
+    public static Command pathThenRunCommand(Pose2d pose, Supplier<Command> command) {
+        return new SequentialCommandGroup(
+            pathFinder(pose),
+            command.get()
+        );
+    }
+
+    public static Command closestPathThenRunCommand(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        return pathThenRunCommand(clip(scoringLocationList), scoreSupplier);
+    }
+
+    // queue stuff
+
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
     public static void queuePathWithCommand(Pose2d pose, Supplier<Command> command) {
-        onTheFlyCommands.add(pathFinder(pose));
-        onTheFlyCommands.add(command.get());
+        onTheFlyCommands.add(pathThenRunCommand(pose, command));
     }
 
     public static void queueClosest(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
         queuePathWithCommand(clip(scoringLocationList), scoreSupplier);
     }
 
-    public static Pose2d clip(List<Pose2d> list) {
+    private static Pose2d clip(List<Pose2d> list) {
         return FieldUtils.flipPose(RobotObserver.getPose()).nearest(list);
     }
 
@@ -161,42 +174,20 @@ public class AutonomousUtil {
     private static boolean ranCommand = false;
 
     public static void handleQueue() {
-        if (!onTheFlyCommands.isEmpty()) {
-            if (!ranCommand) {
-                onTheFlyCommands.get(0).schedule();
-                ranCommand = true;
-            }
-            if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
-                onTheFlyCommands.get(0).cancel();
-                onTheFlyCommands.remove(0);
+        if (AutonConstants.useQueue) {
+            if (!onTheFlyCommands.isEmpty()) {
+                if (!ranCommand) {
+                    onTheFlyCommands.get(0).schedule();
+                    ranCommand = true;
+                }
+                if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
+                    onTheFlyCommands.get(0).cancel();
+                    onTheFlyCommands.remove(0);
+                    ranCommand = false;
+                }
+            } else {
                 ranCommand = false;
             }
-        } else {
-            ranCommand = false;
         }
     }
-
-
-    // ******** UNUSED METHODS; KEPT INCASE FUTURE IMPLEMENTATION NEEDED?? ********
-
-    public static void queuePath(String pathName) {
-        try {
-            onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(
-                    PathPlannerPath.fromPathFile(pathName).getStartingDifferentialPose(),
-                    PathConstraints.unlimitedConstraints(12.0), 1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Command followPath(String pathName) {
-        System.out.println("CONSTRUCTED PATH WITH NAME:" + pathName);
-        try {
-            return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 }
