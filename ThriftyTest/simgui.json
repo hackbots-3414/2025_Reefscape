@@ -153,7 +153,7 @@
           "visible": false
         }
       },
-      "/SmartDashboard/Go To B": {
+      "/SmartDashboard/Auto Chooser": {
         "window": {
           "visible": true
         }
@@ -459,7 +459,7 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "image": "C:\\Users\\aksha\\code\\clubs\\robotics\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "target": {
           "arrows": false,
@@ -490,16 +490,6 @@
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/camera testing spot": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/camera testing spot 2": {
         "window": {
           "visible": true
         }

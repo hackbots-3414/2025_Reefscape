@@ -499,8 +499,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
-
-        NamedCommands.registerCommand("Enable Align Cameras", new InstantCommand(() -> RobotObserver.setReefMode(true)));
     }
 
     private void configureVision() {
@@ -533,15 +531,8 @@ public class RobotContainer {
     // ** BUTTON BOARD HELPERS **
     private void bindReefClipPath(ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> new InstantCommand(), scoringLocationsListLeft)));
-            case RIGHT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> new InstantCommand(), scoringLocationsRightList)));
-        }
-    }
-
-    private void bindAutoCoralIntakeCommand(ReefClipLocations location, Trigger trigger) {
-        switch (location) {
-            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocations.RIGHTHP.value, () -> coralIntakeCommand())));
-            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(ScoringLocations.LEFTHP.value, () -> coralIntakeCommand())));
+            case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> new InstantCommand(), scoringLocationsListLeft)).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(location))));
+            case RIGHT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> new InstantCommand(), scoringLocationsRightList)).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(location))));
         }
     }
 
@@ -592,12 +583,8 @@ public class RobotContainer {
     @SuppressWarnings("unused")
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.whileTrue(new SequentialCommandGroup(
-                                            new InstantCommand(() -> RobotObserver.setReefClipLocation(location)),
-                                            new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsListLeft))));
-            case RIGHT -> trigger.whileTrue(new SequentialCommandGroup(
-                                            new InstantCommand(() -> RobotObserver.setReefClipLocation(location)),
-                                            new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsRightList))));
+            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsListLeft)).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(location))));
+            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(() -> coralScoreCommand(level), scoringLocationsRightList)).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(location))));
         }   
     }
 
@@ -629,22 +616,6 @@ public class RobotContainer {
             }
         }
     }
-
-    // COMMANDS DO NOT WORK
-
-    // private void bindManualElevatorCommand(Direction direction, Trigger trigger) {
-    //     switch (direction) {
-    //         case kForward -> trigger.whileTrue(new ManualElevatorCommand(m_elevator, true));
-    //         case kReverse -> trigger.whileTrue(new ManualElevatorCommand(m_elevator, false));
-    //     }
-    // }
-
-    // private void bindManualPivotCommand(Direction direction, Trigger trigger) {
-    //     switch (direction) {
-    //         case kForward -> trigger.whileTrue(new ManualPivotCommand(m_algaePivot, true));
-    //         case kReverse -> trigger.whileTrue(new ManualPivotCommand(m_algaePivot, false));
-    //     }
-    // }
 
     private void bindClimbSetupCommand(Trigger trigger) {
         trigger.whileTrue(new SequentialCommandGroup(

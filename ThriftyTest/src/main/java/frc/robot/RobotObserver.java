@@ -97,7 +97,7 @@ public class RobotObserver {
         return getInstance().m_reefMode;
     }
 
-    private ReefClipLocations m_reefClipLocation;
+    private ReefClipLocations m_reefClipLocation = ReefClipLocations.LEFT;
 
     public static void setReefClipLocation(ReefClipLocations reefClipLocation) {
         getInstance().m_reefClipLocation = reefClipLocation;

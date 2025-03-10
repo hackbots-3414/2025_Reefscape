@@ -25,9 +25,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.RobotObserver;
 import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class SingleInputPoseEstimator implements Runnable {
@@ -156,7 +156,11 @@ public class SingleInputPoseEstimator implements Runnable {
 
     private void handleResult(PhotonPipelineResult result) {
         boolean isValid = precheckValidity(result);
-        if (!isValid) return;
+        if (!isValid) {
+            SmartDashboard.putBoolean("Using " + m_name, false);
+            return;
+        }
+        SmartDashboard.putBoolean("Using " + m_name, true);
         // By this point the result is valid.
         EstimationAlgorithm algorithm;
         if (result.targets.size() == 1) {
@@ -178,12 +182,12 @@ public class SingleInputPoseEstimator implements Runnable {
             return false;
         }
         // check if we are in reef mode
-        if (RobotObserver.getReefMode() && false) {
+        if (RobotObserver.getReefMode()) {
             switch (RobotObserver.getReefClipLocation()) {
                 case LEFT:
-                    return (m_name == VisionConstants.k_leftAlignName);
+                    if (m_name != VisionConstants.k_leftAlignName) return false;
                 case RIGHT:
-                    return (m_name == VisionConstants.k_rightAlignName);
+                    if (m_name != VisionConstants.k_rightAlignName) return false;
             }
         }
         // no targets -> no pose
