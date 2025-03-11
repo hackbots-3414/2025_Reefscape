@@ -103,7 +103,7 @@ public class SingleInputPoseEstimator implements Runnable {
         /* take many */
         for (PhotonPipelineResult result : results) {
             headingHandleResult(result);
-            handleResult(result);
+            // handleResult(result);
         }
         m_lastUpdate = System.nanoTime();
     }
@@ -255,7 +255,7 @@ public class SingleInputPoseEstimator implements Runnable {
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
         SmartDashboard.putNumber(m_name + " multiplier", multiplier);
-        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, multiplier * Math.PI);
+        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, 0.0);
         return stdDevs;
     }
 

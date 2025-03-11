@@ -486,7 +486,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.362305; // -0.427979;
+        public static final double encoderOffset = -0.302734 ; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
@@ -503,9 +503,9 @@ public class Constants {
         public static final double processor = 0.125;
         public static final double L1 = 2.472;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
-        public static final double L3 = 7.257 - 2.6 * inch; // 50.5
+        public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 1.4 * inch;
-        public static final double net = Units.inchesToMeters(67.0) * metersToRotations; // 67
+        public static final double net = 79 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
 
@@ -734,7 +734,7 @@ public class Constants {
         public static final boolean enable = true;
         
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -1;
+        public static final double ejectVoltage = -6; // 1.5
         public static final double processorEjectVoltage = -4;
 
         public static final double torqueCurrentThreshold = 75;
