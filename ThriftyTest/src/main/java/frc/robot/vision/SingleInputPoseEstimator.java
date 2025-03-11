@@ -41,8 +41,7 @@ public class SingleInputPoseEstimator implements Runnable {
     private long m_lastUpdate;
 
     // Estimators
-    private final PhotonPoseEstimator m_pnpEstimator;
-    private final PhotonPoseEstimator m_trigEstimator;
+    private final PhotonPoseEstimator m_estimator;
 
     private final String m_name;
 
@@ -57,18 +56,13 @@ public class SingleInputPoseEstimator implements Runnable {
         m_name = camera.getName();
         m_reporter = updateCallback;
         m_robotToCamera = robotToCamera;
-        m_pnpEstimator = new PhotonPoseEstimator(
+        m_estimator = new PhotonPoseEstimator(
             VisionConstants.k_layout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             robotToCamera
         );
-        m_pnpEstimator.setMultiTagFallbackStrategy(
+        m_estimator.setMultiTagFallbackStrategy(
             PoseStrategy.PNP_DISTANCE_TRIG_SOLVE
-        );
-        m_trigEstimator = new PhotonPoseEstimator(
-            VisionConstants.k_layout,
-            PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
-            robotToCamera
         );
         m_lastUpdate = System.nanoTime();
     }
@@ -96,16 +90,67 @@ public class SingleInputPoseEstimator implements Runnable {
             */
             m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
-        m_trigEstimator.addHeadingData(
+        m_estimator.addHeadingData(
             RobotController.getMeasureTime().in(Seconds),
             RobotObserver.getPose().getRotation()
         );
         /* take many */
         for (PhotonPipelineResult result : results) {
-            headingHandleResult(result);
-            // handleResult(result);
+            //headingHandleResult(result);
+            //handleResult(result);
+            combinedHandleResult(result);
         }
         m_lastUpdate = System.nanoTime();
+    }
+
+    private void combinedHandleResult(PhotonPipelineResult result) {
+        // some prechecks before we do anything
+        if (!precheckValidity(result)) return;
+        // we can now assume that we have targets
+        List<PhotonTrackedTarget> targets = result.getTargets();
+        // use solvePnP every time
+        EstimationAlgorithm algorithm = (targets.size() > 1) ?
+            EstimationAlgorithm.PnP
+            : EstimationAlgorithm.Trig;
+        m_estimator.update(result).ifPresent((est) -> {
+            Optional<TimestampedPoseEstimate> estimation = process(result, est.estimatedPose, algorithm);
+            if (estimation.isPresent()) {
+                m_reporter.accept(estimation.get());
+                return;
+            }
+        });
+        // at this point the regular mode has failed, fallback to heading mode
+        PhotonTrackedTarget target = targets.get(0);
+        int fidId = target.getFiducialId();
+        Optional<Pose3d> targetPosition = VisionConstants.k_layout
+            .getTagPose(fidId);
+        if (targetPosition.isEmpty()) {
+            m_logger.error("Tag {} detected not in field layout", fidId);
+            return;
+        }
+        Pose3d targetPosition3d = targetPosition.get();
+        Transform3d best3d = target.getBestCameraToTarget();
+        Transform3d alt3d = target.getAlternateCameraToTarget();
+        Pose3d best = targetPosition3d
+            .plus(best3d.inverse())
+            .plus(m_robotToCamera.inverse());
+        Pose3d alt = targetPosition3d
+            .plus(alt3d.inverse())
+            .plus(m_robotToCamera.inverse());
+        double bestHeading = best.getRotation().getZ();
+        double altHeading = alt.getRotation().getZ();
+        double heading = RobotObserver.getPose().getRotation().getRadians();
+        double bestErr = Math.abs(bestHeading - heading);
+        double altErr = Math.abs(altHeading - heading);
+        RobotObserver.getField().getObject("best").setPose(best.toPose2d());
+        RobotObserver.getField().getObject("alt").setPose(alt.toPose2d());
+        Pose3d estimate;
+        if (bestErr <= altErr) {
+            estimate = best;
+        } else {
+            estimate = alt;
+        }
+        process(result, estimate, EstimationAlgorithm.Heading).ifPresent(m_reporter);
     }
     
     private void headingHandleResult(PhotonPipelineResult result) {
@@ -115,7 +160,7 @@ public class SingleInputPoseEstimator implements Runnable {
         List<PhotonTrackedTarget> targets = result.getTargets();
         if (targets.size() > 1) {
             // use the solve pnp estimator every time.
-            m_pnpEstimator.update(result).ifPresent((est) -> {
+            m_estimator.update(result).ifPresent((est) -> {
                 process(result, est.estimatedPose, EstimationAlgorithm.PnP)
                     .ifPresent(m_reporter);
             });
@@ -161,15 +206,12 @@ public class SingleInputPoseEstimator implements Runnable {
         }
         // By this point the result is valid.
         EstimationAlgorithm algorithm;
-        PhotonPoseEstimator estimator;
         if (result.targets.size() == 1) {
-            estimator = m_pnpEstimator;
             algorithm = EstimationAlgorithm.PnP;
         } else {
-            estimator = m_trigEstimator;
             algorithm = EstimationAlgorithm.Trig;
         }
-        estimator.update(result).ifPresent((est) -> {
+        m_estimator.update(result).ifPresent((est) -> {
             process(result, est.estimatedPose, algorithm).ifPresent(m_reporter);
         });
     }
