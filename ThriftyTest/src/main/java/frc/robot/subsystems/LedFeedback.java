@@ -17,14 +17,16 @@ import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
+import com.ctre.phoenix6.hardware.CANrange;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color.RGBChannel;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
 import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
+import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 // import org.slf4j.Logger;
@@ -49,16 +51,19 @@ public class LedFeedback extends SubsystemBase {
     private int b = 0;
     private boolean inAuton = false;
     private boolean inTeleop = false;
+    private double rangeLeft = 0.0;
+    private double rangeRight = 0.0;
+    
     
     private int selectedSlot = 0;
 
     private static enum LED_MODE {
         CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
-        BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME, ALGAE_READY, ALGAE_TOO_CLOSE;
+        BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME, ALGAE_READY, ALGAE_TOO_CLOSE, ALIGNED, CLOSE, ALIGNED_REEF, ALIGNED_BRANCH;
     };
 
     private static enum LED_COLOR {
-        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN;
+        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE;
     };
 
     private static enum LED_PATTERN {
@@ -73,6 +78,11 @@ public class LedFeedback extends SubsystemBase {
 
     private CANdle ledcontroller = new CANdle(IDConstants.candle1);
     private CANdle ledcontroller2 = new CANdle(IDConstants.candle2);
+    private final CANrange CANrange_Right = new CANrange(IDConstants.CANrange2);
+    private final CANrange CANrange_Left = new CANrange(IDConstants.CANrange3);
+
+    
+
 
     public LedFeedback() {
         CANdleConfiguration config = new CANdleConfiguration();
@@ -80,6 +90,8 @@ public class LedFeedback extends SubsystemBase {
         config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
         ledcontroller.configAllSettings(config);
         ledcontroller2.configAllSettings(config);
+        SmartDashboard.putNumber("RangeLeft", rangeLeft);
+        SmartDashboard.putNumber("Rangeright" , rangeRight);
         defaultColors();
     }
 
@@ -88,7 +100,17 @@ public class LedFeedback extends SubsystemBase {
         matchTime = DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
+        
+        rangeRight = CANrange_Right.getDistance().getValueAsDouble();
+        rangeLeft = CANrange_Left.getDistance().getValueAsDouble();
+        //TODO FIX
+        rangeLeft  = SmartDashboard.getNumber("rangeLeft", 0);
+        rangeRight = SmartDashboard.getNumber("rangeRight", 0);
+        
 
+
+
+        
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
@@ -99,10 +121,7 @@ public class LedFeedback extends SubsystemBase {
         if (badController()) {
             if (mode != LED_MODE.BADCONTROLLER) {
                 mode = LED_MODE.BADCONTROLLER;
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR_LEFT, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.ELEVATOR_RIGHT, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL_LEFT, LED_PATTERN.STROBE);
-                setColor(LED_COLOR.RED, LED_SECTION.FUNNEL_RIGHT, LED_PATTERN.STROBE);
+                setAll(LED_COLOR.RED , LED_PATTERN.STROBE);
             }
         } else if (inTeleop || inAuton) {
             if (inTeleop) {
@@ -128,20 +147,29 @@ public class LedFeedback extends SubsystemBase {
                         
 
                     }
-                } else if (coralOnBoard && coralInRange) {
+                } else if (coralOnBoard && alignedReef()) {
+                    if (mode != LED_MODE.ALIGNED_REEF) {
+                        mode = LED_MODE.ALIGNED_REEF;
+                        setAll(LED_COLOR.ORANGE, LED_PATTERN.STROBE);
+                    }
+                } else if (coralOnBoard && (alignedRight() || alignedLeft())) {
+                    if (mode != LED_MODE.ALIGNED_BRANCH) {
+                        mode = LED_MODE.ALIGNED_BRANCH;
+                        setAll(LED_COLOR.GREEN, LED_PATTERN.FLASH);
+                    }
+                }
+                else if (coralOnBoard && coralInRange) {
                     if (mode != LED_MODE.CORAL_READY) {
                         mode = LED_MODE.CORAL_READY;                       
-                        setAll(LED_COLOR.BLUE , LED_PATTERN.SOLID);
+                        setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
                     }
                 } else if (coralOnBoard) {
                     if (mode != LED_MODE.CORAL_ON_BOARD) {
                         mode = LED_MODE.CORAL_ON_BOARD;
-                       setAll(LED_COLOR.GREEN , LED_PATTERN.SOLID);
+                       setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
                     }
 
-
-
-                }else if (algaeTooClose) {
+                }else if (algaeOnBoard && algaeTooClose) {
                     if (mode != LED_MODE.ALGAE_TOO_CLOSE){
                         mode = LED_MODE.ALGAE_TOO_CLOSE;
                         setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
@@ -152,13 +180,12 @@ public class LedFeedback extends SubsystemBase {
                         mode = LED_MODE.ALGAE_READY;
                         setAll(LED_COLOR.BLUE , LED_PATTERN.SOLID);
                     }
-                } else if ( algaeOnBoard) {
+                } else if (algaeOnBoard) {
                     if (mode != LED_MODE.ALGAE_ON_BOARD) {
                         mode = LED_MODE.ALGAE_ON_BOARD;
                         setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
                     }
-
-                }else {
+                } else {
                     if (mode != LED_MODE.DEFAULT) {
                         defaultColors();
                         mode = LED_MODE.DEFAULT;
@@ -174,9 +201,31 @@ public class LedFeedback extends SubsystemBase {
             
         }
     }
+    private boolean alignedReef() {
+        return (Math.abs(rangeRight - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters * CanRangeConstants.tolerance && 
+        Math.abs(rangeLeft - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters * CanRangeConstants.tolerance);
+    }
+
+    private boolean alignedLeft() {
+        return (Math.abs(rangeRight - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters * CanRangeConstants.tolerance) && 
+        (Math.abs(rangeLeft - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters * CanRangeConstants.tolerance);
+    }
+    
+    private boolean alignedRight() {
+        return (Math.abs(rangeLeft - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters * CanRangeConstants.tolerance) && 
+        (Math.abs(rangeRight - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters * CanRangeConstants.tolerance);
+    }
+
+    private void ClearAnim() {
+        ledcontroller.clearAnimation(0);
+        ledcontroller.clearAnimation(1);
+        ledcontroller2.clearAnimation(0);
+        ledcontroller2.clearAnimation(1);
+    }
 
     private void defaultColors() {
-        setElevator(LED_COLOR.PURPLE, LED_PATTERN.FLASH ); //  changed to heartbeat mode
+        ClearAnim();
+        setElevator(LED_COLOR.PURPLE, LED_PATTERN.FLASH); //  changed to heartbeat mode
         setFunnel(LED_COLOR.PURPLE, LED_PATTERN.LARSON);
     }
 
@@ -201,7 +250,7 @@ public class LedFeedback extends SubsystemBase {
         return !(driverOk && operatorOk);
     }
 
-    public void setAll ( LED_COLOR color , LED_PATTERN pattern) {
+    public void setAll( LED_COLOR color , LED_PATTERN pattern) {
         setColor(color, LED_SECTION.ELEVATOR_LEFT, pattern); // changed to heartbeat mode
         setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern); //  changed to heartbeat mode
         setColor(color, LED_SECTION.FUNNEL_LEFT, pattern);
@@ -236,6 +285,7 @@ public class LedFeedback extends SubsystemBase {
             case PURPLE ->  c = Color.kPurple;
             case WHITE -> c = Color.kWhite;
             case BROWN -> c = Color.kBrown;
+            case ORANGE -> c = Color.kOrange;
             case OFF -> c = Color.kBlack;
         }
 
