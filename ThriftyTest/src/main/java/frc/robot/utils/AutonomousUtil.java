@@ -137,7 +137,8 @@ public class AutonomousUtil {
 
     public static Command pathThenRunCommand(Pose2d pose, Supplier<Command> command) {
         return new SequentialCommandGroup(
-            pathFinder(pose),
+            // pathFinder(pose),
+            driveToPoint(pose, m_drivetrain),
             command.get()
         );
     }

@@ -24,14 +24,14 @@ public class DriveToPointCommand extends Command {
 
     private final Constraints constraints = new Constraints(DriveConstants.k_driveToPointSpeed, DriveConstants.k_driveToPointAcceleration);
 
-    private final ProfiledPIDController xPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
-    private final ProfiledPIDController yPIDController = new ProfiledPIDController(DriveConstants.k_translationPID.kP, 0, 0, constraints);
+    private final ProfiledPIDController xPIDController = new ProfiledPIDController(DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, constraints);
+    private final ProfiledPIDController yPIDController = new ProfiledPIDController(DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, constraints);
 
     private static Rotation2d m_targetRotation;
 
     private final SwerveRequest.FieldCentricFacingAngle m_request = new SwerveRequest.FieldCentricFacingAngle()
         .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-        .withHeadingPID(DriveConstants.k_rotationPID.kP, 0, 0)
+        .withHeadingPID(DriveConstants.k_driveToPointRotationPID.kP, 0, 0)
         .withSteerRequestType(SteerRequestType.MotionMagicExpo)
         .withDriveRequestType(DriveRequestType.Velocity);
 

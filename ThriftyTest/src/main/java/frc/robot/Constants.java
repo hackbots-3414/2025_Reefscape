@@ -127,23 +127,25 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(13, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
+        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
-        public static final double k_driveToPointSpeed = 2.0;
-        public static final double k_driveToPointAcceleration = 3.0;
+        public static final double k_driveToPointSpeed = 4.0;
+        public static final double k_driveToPointAcceleration = 2.0;
 
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
         public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(2);
         public static final AngularAcceleration k_maxAngularAcceleration = RotationsPerSecondPerSecond.of(2);
 
-        public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(0.5);
+        public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(1.0);
         public static final LinearAcceleration k_maxAlignLinearAcceleration = MetersPerSecondPerSecond.of(1);
         public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
         public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(1);
@@ -155,8 +157,8 @@ public class Constants {
         public static final double k_elevatorHeightAngularVelocityGain = -0.0446; // for every 1 rotation elevator up, subtract X: 0.25 rps at max elevator
         public static final double k_elevatorHeightAngularAccelerationGain = k_elevatorHeightAngularVelocityGain * 2;
 
-        public static final double k_closedLoopOverrideToleranceTranslation = 0.02;
-        public static final double k_closedLoopOverrideToleranceRotation = 0.02;
+        public static final double k_closedLoopOverrideToleranceTranslation = 0.05;
+        public static final double k_closedLoopOverrideToleranceRotation = 0.05;
     }
 
     public static class ButtonBindingConstants {
@@ -323,6 +325,9 @@ public class Constants {
         public static final boolean k_enableLogging = false;
         public static final boolean k_debugCameras = false;
 
+        public static final double k_rotationCoefficient = 0.35;
+        public static final double k_translationCoefficient = 0.2;
+
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
         public static final String k_estimationName = "estimation";
@@ -486,7 +491,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.302734 ; // -0.427979;
+        public static final double encoderOffset = -0.052490 ; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 

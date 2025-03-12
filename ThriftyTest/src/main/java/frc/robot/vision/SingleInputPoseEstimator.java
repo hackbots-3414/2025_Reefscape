@@ -69,8 +69,6 @@ public class SingleInputPoseEstimator implements Runnable {
 
     @Override
     public void run() {
-        double dt = (double)(System.nanoTime() - m_lastUpdate) / 1.0e9;
-        m_logger.trace("{} dt: {}", m_name, dt);
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
         if (results.size() > VisionConstants.k_expectedResults) {
@@ -119,6 +117,7 @@ public class SingleInputPoseEstimator implements Runnable {
                 return;
             }
         });
+        // if (true) return;
         // at this point the regular mode has failed, fallback to heading mode
         PhotonTrackedTarget target = targets.get(0);
         int fidId = target.getFiducialId();
@@ -142,8 +141,6 @@ public class SingleInputPoseEstimator implements Runnable {
         double heading = RobotObserver.getPose().getRotation().getRadians();
         double bestErr = Math.abs(bestHeading - heading);
         double altErr = Math.abs(altHeading - heading);
-        RobotObserver.getField().getObject("best").setPose(best.toPose2d());
-        RobotObserver.getField().getObject("alt").setPose(alt.toPose2d());
         Pose3d estimate;
         if (bestErr <= altErr) {
             estimate = best;
@@ -297,7 +294,11 @@ public class SingleInputPoseEstimator implements Runnable {
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
         SmartDashboard.putNumber(m_name + " multiplier", multiplier);
-        Matrix<N3, N1> stdDevs = VecBuilder.fill(multiplier, multiplier, 0.0);
+        Matrix<N3, N1> stdDevs = VecBuilder.fill(
+            multiplier * VisionConstants.k_translationCoefficient,
+            multiplier * VisionConstants.k_translationCoefficient,
+            multiplier * VisionConstants.k_rotationCoefficient
+        );
         return stdDevs;
     }
 
@@ -347,20 +348,6 @@ public class SingleInputPoseEstimator implements Runnable {
 
     private double getAmbiguity(PhotonPipelineResult result) {
         return result.getBestTarget().getPoseAmbiguity();
-    }
-
-    public Optional<CameraOffset> getOffset() {
-        List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
-        if (results.size() == 0) return Optional.empty();
-        PhotonPipelineResult result = results.get(results.size() - 1);
-        if (!result.hasTargets()) return Optional.empty();
-        Map<Integer, Transform3d> offsets = new HashMap<>();
-        for (PhotonTrackedTarget target : result.getTargets()) {
-            int id = target.getFiducialId();
-            offsets.put(id, target.getBestCameraToTarget());
-        }
-        if (offsets.isEmpty()) return Optional.empty();
-        return Optional.of(new CameraOffset(m_name, offsets));
     }
 }
 

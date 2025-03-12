@@ -25,6 +25,7 @@ import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class VisionHandler implements AutoCloseable {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
     private CommandSwerveDrivetrain m_drivetrain;
     private final Notifier m_notifier;
@@ -42,11 +43,7 @@ public class VisionHandler implements AutoCloseable {
         m_visionSim.addAprilTags(VisionConstants.k_layout);
         setupProps();
         setupCameras();
-        if (VisionConstants.k_debugCameras) {
-            m_notifier = new Notifier(this::debugCameras);
-        } else {
-            m_notifier = new Notifier(this::updateEstimators);
-        }
+        m_notifier = new Notifier(this::updateEstimators);
         m_field = m_visionSim.getDebugField();
         RobotObserver.setField(m_field);
     }
@@ -95,44 +92,6 @@ public class VisionHandler implements AutoCloseable {
                 this::addEstimate
             );
             m_estimators.add(estimator);
-        }
-    }
-
-    private void debugCameras() {
-        m_visionSim.update(m_drivetrain.getPose());
-        // read the offsets from each camera, relative to the robot's position
-        List<CameraOffset> offsets = new ArrayList<>();
-        for (SingleInputPoseEstimator estimator : m_estimators) {
-            Optional<CameraOffset> offset = estimator.getOffset();
-            if (offset.isEmpty()) continue;
-            offsets.add(offset.get());
-        }
-        if (offsets.size() <= 1) {
-            m_logger.warn("not enough tags in view");
-            return;
-        }
-        Set<Integer> visibleTags = new HashSet<>();
-        for (CameraOffset offset : offsets) {
-            Set<Integer> currTags = offset.offsets().keySet();
-            if (currTags.isEmpty()) continue;
-            if (visibleTags.isEmpty()) {
-                visibleTags = currTags;
-            } else {
-                visibleTags.retainAll(currTags);
-            }
-        }
-        if (visibleTags.isEmpty()) {
-            m_logger.warn("No tags seen across multiple sources");
-            return;
-        }
-        for (Integer id : visibleTags) {
-            // look only for this tag
-            for (CameraOffset offset : offsets) {
-                if (offset.offsets().containsKey(id)) {
-                    Transform3d transform = offset.offsets().get(id);
-                    m_logger.info("{}:\n{}: {}", offset.source(), id, transform);
-                }
-            }
         }
     }
 

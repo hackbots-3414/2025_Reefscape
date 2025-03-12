@@ -92,7 +92,7 @@ public class RobotContainer {
         configureButtonBoard();
         configureAutonChooser();
         configureVision();
-        addBoundsToField();
+        // addBoundsToField();
         // configureSysId();
         configureTesting();
         configureDashboard();
@@ -487,6 +487,7 @@ public class RobotContainer {
 
     private void configureNamedCommands() {
         NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
+        NamedCommands.registerCommand("L3", coralScoreCommand(3).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
     }
