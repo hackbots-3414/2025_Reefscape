@@ -1,5 +1,14 @@
 {
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
+    "Retained Values": {
+      "open": false
+    },
+    "Transitory Values": {
+      "open": false
+    },
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
@@ -12,65 +21,14 @@
       "/SmartDashboard/Reef mode off": "Command",
       "/SmartDashboard/Reef mode on": "Command",
       "/SmartDashboard/Super Field": "Field2d",
-      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
-      "/SmartDashboard/drive to other pose": "Command",
-      "/SmartDashboard/drive to reef": "Command"
+      "/SmartDashboard/camera testing spot": "Command",
+      "/SmartDashboard/camera testing spot 2": "Command",
+      "/SmartDashboard/open funnel": "Command"
     },
     "windows": {
       "/SmartDashboard/Super Field": {
-        "Blue Alliance Left Intake": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Blue Alliance Net": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Blue Alliance Processor": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Blue Alliance Reef": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Blue Alliance Right Intake": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Pathfind Trajectory": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Line"
-        },
-        "Red Alliance Left Intake": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Red Alliance Net": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Red Alliance Processor": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
-        "Red Alliance Reef": {
-          "arrows": false,
-          "selectable": false,
-          "style": "Hidden"
-        },
         "Red Alliance Right Intake": {
           "arrows": false,
-          "selectable": false,
           "style": "Hidden"
         },
         "Robot": {
@@ -80,53 +38,32 @@
             1.0,
             255.0
           ],
-          "arrowSize": 79,
-          "arrowWeight": 2.0,
-          "arrows": false,
           "color": [
-            0.5188573598861694,
-            0.8776371479034424,
-            0.21848353743553162,
+            0.45930102467536926,
+            0.6751054525375366,
+            0.3760080933570862,
             255.0
           ],
           "length": 0.9399999976158142,
-          "selectable": false,
-          "weight": 7.0,
           "width": 0.9399999976158142
         },
         "apriltag": {
-          "arrowColor": [
-            1.0,
-            1.0,
-            1.0,
-            255.0
-          ],
           "arrows": false,
-          "color": [
-            0.5601563453674316,
-            0.36869093775749207,
-            0.746835470199585,
-            255.0
-          ],
-          "length": 0.4000000059604645,
-          "selectable": false,
-          "style": "Hidden",
-          "width": 0.4000000059604645
+          "style": "Hidden"
         },
         "bottom": 1347,
         "builtin": "",
         "estimation": {
           "arrows": false,
           "color": [
-            0.6184905767440796,
-            0.8143459558486938,
-            0.8118667602539063,
+            0.3948085606098175,
+            0.4464501738548279,
+            0.649789035320282,
             255.0
           ],
-          "length": 0.800000011920929,
+          "length": 0.9399999976158142,
           "selectable": false,
-          "weight": 2.0,
-          "width": 0.800000011920929
+          "width": 0.9399999976158142
         },
         "height": 8.051901817321777,
         "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
@@ -138,11 +75,14 @@
       }
     }
   },
+  "NetworkTables Info": {
+    "Server": {
+      "open": true
+    },
+    "visible": true
+  },
   "NetworkTables Settings": {
     "mode": "Client (NT4)",
-    "visible": false
-  },
-  "NetworkTables View": {
-    "visible": false
+    "serverTeam": "3414"
   }
 }
