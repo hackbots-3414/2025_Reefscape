@@ -119,6 +119,14 @@ public class AutonomousUtil {
         );
     }
 
+    private static Command autoDriveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> RobotObserver.setReefMode(true)),
+            new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
+            new InstantCommand(() -> RobotObserver.setReefMode(false))
+        );
+    }
+
     public static Command generateRoutineWithCommands(CommandSwerveDrivetrain drivetrain, Pose2d desiredPickupLocation, Pose2d[] poses, Command[] scoringCommands, Supplier<Command> intakeCommand) {
         SequentialCommandGroup routine = new SequentialCommandGroup();
         for (int i = 0; i < scoringCommands.length; i++) {
