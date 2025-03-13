@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
@@ -23,10 +24,13 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotObserver;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.commands.ElevatorToPointCommand;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
@@ -57,6 +61,7 @@ public class Elevator extends SubsystemBase {
         configEncoder();
         configMotor();
         configSim();
+        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator));
     }
 
     private void configEncoder() {
@@ -136,19 +141,23 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setL1() {
-        setPosition(ElevatorConstants.L1);
+        setPosition(ElevatorConstants.L1 + getCANRangeCompensation());
     }
 
     public void setL2() {
-        setPosition(ElevatorConstants.L2);
+        setPosition(ElevatorConstants.L2 + getCANRangeCompensation());
     }
 
     public void setL3() {
-        setPosition(ElevatorConstants.L3);
+        setPosition(ElevatorConstants.L3 + getCANRangeCompensation());
     }
 
     public void setL4() {
-        setPosition(ElevatorConstants.L4);
+        setPosition(ElevatorConstants.L4 + getCANRangeCompensation());
+    }
+
+    private double getCANRangeCompensation() {
+        return (RobotObserver.getRangeDistance() - ElevatorConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch;
     }
 
     public void setReefLower() {
@@ -210,6 +219,14 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    private void zeroElevator() {
+        m_cancoder.clearStickyFaults();
+        CANcoderConfiguration config = ElevatorConstants.encoderConfig;
+        config.MagnetSensor.MagnetOffset = m_cancoder.getAbsolutePosition(true).getValueAsDouble() - ElevatorConstants.encoderOffset;
+
+        m_cancoder.getConfigurator().apply(config, 0.2);
+    }
+
     @Override
     public void periodic() {
         if (ElevatorConstants.enable) {
@@ -222,6 +239,7 @@ public class Elevator extends SubsystemBase {
             }
 
             SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
+            SmartDashboard.putNumber("Elevator Compensatin", getCANRangeCompensation());
         }
     }
 

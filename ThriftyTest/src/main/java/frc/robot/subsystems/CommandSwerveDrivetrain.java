@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -21,6 +23,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -39,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -74,6 +78,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private SwerveSetpoint previousSetpoint;
     private final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
+    private CANrange leftRange;
+    private CANrange rightRange;
+
+    private MedianFilter rangeFilter;
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
@@ -102,6 +111,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setVisionValidSupplier(this::getVisionValid);
         RobotObserver.setPoseSupplier(this::getPose);
         RobotObserver.setVelocitySupplier(this::getVelocity);
+        RobotObserver.setRangeDistanceSupplier(this::getRangeDistance);
+
+        configureCANRange();
+    }
+
+    private void configureCANRange() {
+        leftRange = new CANrange(IDConstants.leftRange);
+        rightRange = new CANrange(IDConstants.rightRange);
+
+        rangeFilter = new MedianFilter(5);
     }
 
     public void initializeSetpointGenerator(RobotConfig config) {
@@ -163,6 +182,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public double getRangeDistance() {
+        return rangeFilter.calculate(Math.min(leftRange.getDistance().getValueAsDouble(), rightRange.getDistance().getValueAsDouble()));
+    }
+
     @Override
     public void periodic() {
         m_estimatedPose = this.getState().Pose;
@@ -183,6 +206,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
         SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
+        SmartDashboard.putNumber("REEF ALING RANGE DISANCE", getRangeDistance());
     }
 
     private void startSimThread() {
