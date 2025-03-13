@@ -394,6 +394,8 @@ public class Constants {
         // this value is so high because we want to strongly punish far away poses.
         public static final double k_differenceMultiplier = 100.0;
 
+        public static final double k_headingThreshold = Units.degreesToRadians(3);
+
         // Stats about the camera for simulation
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
@@ -401,8 +403,8 @@ public class Constants {
 
         // Simulated error:
         public static final Time k_avgLatency = Milliseconds.of(18);
-        public static final Time k_latencyStdDev = Milliseconds.of(5);
-        public static final double k_avgErr = 0.08;
+        public static final Time k_latencyStdDev = Milliseconds.of(2);
+        public static final double k_avgErr = 0.18;
         public static final double k_errStdDev = 0.02;
 
         // Stop using vision after X time

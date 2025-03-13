@@ -2,12 +2,11 @@ package frc.robot.vision;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -22,6 +21,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -110,15 +110,14 @@ public class SingleInputPoseEstimator implements Runnable {
         EstimationAlgorithm algorithm = (targets.size() > 1) ?
             EstimationAlgorithm.PnP
             : EstimationAlgorithm.Trig;
-        m_estimator.update(result).ifPresent((est) -> {
-            Optional<TimestampedPoseEstimate> estimation = process(result, est.estimatedPose, algorithm);
-            if (estimation.isPresent()) {
-                m_reporter.accept(estimation.get());
+        Optional<EstimatedRobotPose> est = m_estimator.update(result);
+        if (est.isPresent() && false) {
+            Optional<TimestampedPoseEstimate> processed = process(result, est.get().estimatedPose, algorithm);
+            if (processed.isPresent()) {
+                m_reporter.accept(processed.get());
                 return;
             }
-        });
-        // if (true) return;
-        // at this point the regular mode has failed, fallback to heading mode
+        }
         PhotonTrackedTarget target = targets.get(0);
         int fidId = target.getFiducialId();
         Optional<Pose3d> targetPosition = VisionConstants.k_layout
@@ -138,16 +137,22 @@ public class SingleInputPoseEstimator implements Runnable {
             .plus(m_robotToCamera.inverse());
         double bestHeading = best.getRotation().getZ();
         double altHeading = alt.getRotation().getZ();
-        double heading = RobotObserver.getPose().getRotation().getRadians();
-        double bestErr = Math.abs(bestHeading - heading);
-        double altErr = Math.abs(altHeading - heading);
+        Pose2d pose = RobotObserver.getPose();
+        double heading = pose.getRotation().getRadians();
+        Transform2d bestDiff = best.toPose2d().minus(pose);
+        Transform2d altDiff = alt.toPose2d().minus(pose);
+        double bestRotErr = Math.abs(bestHeading - heading);
+        double altRotErr = Math.abs(altHeading - heading);
+        double bestXYErr = bestDiff.getTranslation().getNorm();
+        double altXYErr = altDiff.getTranslation().getNorm();
         Pose3d estimate;
-        if (bestErr <= altErr) {
-            estimate = best;
+        if (Math.abs(bestRotErr - altRotErr) >= VisionConstants.k_headingThreshold) {
+            estimate = (bestRotErr <= altRotErr) ? best : alt;
         } else {
-            estimate = alt;
+            estimate = (bestXYErr <= altXYErr) ? best : alt;
         }
         process(result, estimate, EstimationAlgorithm.Heading).ifPresent(m_reporter);
+
     }
     
     private void headingHandleResult(PhotonPipelineResult result) {
