@@ -92,6 +92,9 @@ And +Z is upwards, so it wouldn't show here.
 public class Constants {
 
     public static class IDConstants {
+        public static final int leftRange = 8;
+        public static final int rightRange = 7;
+
         public static final int elevatorLeft = 51;
         public static final int elevatorRight = 52;
         public static final int elevatorEncoder = 53;
@@ -127,12 +130,12 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
-        public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
+        // public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
+        // public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
+        public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_driveToPointTranslationPID, k_driveToPointRotationPID);
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
@@ -434,9 +437,9 @@ public class Constants {
 
         public static final boolean useQueue = false;
 
-        public static double translationTolerance = 0.02; // m
+        public static double translationTolerance = 0.005; // m
         public static double rotationTolerance = Units.degreesToRadians(0.5);
-
+        
         public static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance));
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
@@ -488,21 +491,26 @@ public class Constants {
 
         public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
 
+        public static final double rangeDistanceGain = 64; // how much higher, per unit of range
+        public static final double rangeZero = 0.175;
+
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
             .createElevatorSystem(TalonFXConstants.TalonFXDCMotor, netMass, drumRadius, gearRatio);
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.052490 ; // -0.427979;
+        public static final double encoderOffset = -0.277344 ; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
+
+        public static final boolean enableCANRange = true;
 
         /* Please note:
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
          * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
          */
 
-        private static final double inch = Units.inchesToMeters(1) * metersToRotations;
+        public static final double inch = Units.inchesToMeters(1) * metersToRotations;
 
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
@@ -519,11 +527,11 @@ public class Constants {
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeedUp = 10; // was 10 cancoder rotations per second
-        public static final double accelerationMultiplierUp = 3;
+        public static final double maxSpeedUp = 10; // 10
+        public static final double accelerationMultiplierUp = 1; // 3
 
-        public static final double maxSpeedDown = 7; // was 10 cancoder rotations per second
-        public static final double accelerationMultiplierDown = 2.25;
+        public static final double maxSpeedDown = 7; // 7
+        public static final double accelerationMultiplierDown = 0.7; // 2.25
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -676,6 +684,9 @@ public class Constants {
         public static final double l3EjectVoltage = 4.0; // 5.1
         public static final double l4EjectVoltage = 6.2;
 
+        public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
+        public static final double rangeZero = 0.175;
+
         public static final double spitOutVoltage = -8;
 
         public static final double l1LeftEjectVoltage = 8;
@@ -686,6 +697,8 @@ public class Constants {
         public static final double supplyCurrentLimit = 20;
 
         public static final double IRThreshold = 1;
+
+        public static final boolean enableCANRange = true;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()

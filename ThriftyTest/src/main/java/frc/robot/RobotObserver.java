@@ -135,4 +135,14 @@ public class RobotObserver {
         return getInstance().m_climbed;
     }
 
+    private DoubleSupplier m_rangeDistanceSupplier;
+
+    public static void setRangeDistanceSupplier(DoubleSupplier rangeDistanceSupplier) {
+        getInstance().m_rangeDistanceSupplier = rangeDistanceSupplier;
+    }
+    
+    public static double getRangeDistance(){
+        return getInstance().m_rangeDistanceSupplier.getAsDouble();
+    }
+
 }

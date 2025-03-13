@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -111,19 +112,24 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setL1Eject() {
-        setVoltage(CoralConstants.l1EjectVoltage);
+        setVoltage(CoralConstants.l1EjectVoltage + getCANRangeCompensation());
     }
 
     public void setL2Eject() {
-        setVoltage(CoralConstants.l2EjectVoltage);
+        setVoltage(CoralConstants.l2EjectVoltage + getCANRangeCompensation());
     }
 
     public void setL3Eject() {
-        setVoltage(CoralConstants.l3EjectVoltage);
+        setVoltage(CoralConstants.l3EjectVoltage + getCANRangeCompensation());
     }
 
     public void setL4Eject() {
-        setVoltage(CoralConstants.l4EjectVoltage);
+        setVoltage(CoralConstants.l4EjectVoltage + getCANRangeCompensation());
+    }
+
+    private double getCANRangeCompensation() {
+        if (RobotObserver.getManualMode() || !CoralConstants.enableCANRange) return 0.0;
+        return (RobotObserver.getRangeDistance() - CoralConstants.rangeZero) * CoralConstants.rangeDistanceGain;
     }
 
     public void setSpitOut() {
@@ -179,6 +185,7 @@ public class CoralRollers extends SubsystemBase {
             SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
     
             SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+            SmartDashboard.putNumber("Coral Compensatin", getCANRangeCompensation());
     
             if (m_voltageChanged) {
                 m_coralLeft.setVoltage(m_voltage);

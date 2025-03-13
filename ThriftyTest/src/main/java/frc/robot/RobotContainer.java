@@ -564,6 +564,15 @@ public class RobotContainer {
         }   
     }
 
+    private Command pathPlannerOverrideScore(int level, ReefClipLocations location) {
+        Command c = new InstantCommand();
+        switch (location) {
+            case LEFT -> c = new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of());
+            case RIGHT -> c = new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of());
+        }
+        return c;
+    }
+
     private void bindManualCoralScoreCommand(int level, Trigger trigger) {
         trigger.whileTrue(coralScoreCommand(level));    
     }
