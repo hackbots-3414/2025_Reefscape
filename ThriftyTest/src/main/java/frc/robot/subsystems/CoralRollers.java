@@ -128,6 +128,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     private double getCANRangeCompensation() {
+        if (RobotObserver.getManualMode() || !CoralConstants.enableCANRange) return 0.0;
         return (RobotObserver.getRangeDistance() - CoralConstants.rangeZero) * CoralConstants.rangeDistanceGain;
     }
 

@@ -501,6 +501,8 @@ public class Constants {
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
+        public static final boolean enableCANRange = true;
+
         /* Please note:
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
          * Accounting for e rror, we really never should set a setpoint higher than 79 inches (how we chose the net height)
@@ -693,6 +695,8 @@ public class Constants {
         public static final double supplyCurrentLimit = 20;
 
         public static final double IRThreshold = 1;
+
+        public static final boolean enableCANRange = true;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()

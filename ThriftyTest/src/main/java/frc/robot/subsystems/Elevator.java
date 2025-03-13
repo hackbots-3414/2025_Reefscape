@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotObserver;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
@@ -157,6 +158,7 @@ public class Elevator extends SubsystemBase {
     }
 
     private double getCANRangeCompensation() {
+        if (RobotObserver.getManualMode() || !ElevatorConstants.enableCANRange) return 0.0;
         return (RobotObserver.getRangeDistance() - ElevatorConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch;
     }
 
