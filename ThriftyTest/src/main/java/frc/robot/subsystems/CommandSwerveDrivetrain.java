@@ -41,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
@@ -183,7 +184,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getRangeDistance() {
-        return rangeFilter.calculate(Math.min(leftRange.getDistance().getValueAsDouble(), rightRange.getDistance().getValueAsDouble()));
+        double leftRaw = leftRange.getDistance().getValueAsDouble();
+        double rightRaw = rightRange.getDistance().getValueAsDouble();
+        double leftValue = leftRaw > DriveConstants.rangeZero && leftRaw < DriveConstants.rangeMax ? leftRaw : DriveConstants.rangeZero;
+        double rightValue = rightRaw > DriveConstants.rangeZero && rightRaw < DriveConstants.rangeMax ? rightRaw : DriveConstants.rangeZero;
+        return rangeFilter.calculate(Math.min(leftValue, rightValue));
     }
 
     @Override
@@ -207,6 +212,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
         SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
         SmartDashboard.putNumber("REEF ALING RANGE DISANCE", getRangeDistance());
+        SmartDashboard.putNumber("LEFT", leftRange.getDistance().getValueAsDouble());
+        SmartDashboard.putNumber("RIGHT", rightRange.getDistance().getValueAsDouble());
     }
 
     private void startSimThread() {

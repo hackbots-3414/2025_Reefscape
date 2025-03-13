@@ -162,6 +162,9 @@ public class Constants {
 
         public static final double k_closedLoopOverrideToleranceTranslation = 0.05;
         public static final double k_closedLoopOverrideToleranceRotation = 0.05;
+
+        public static final double rangeZero = 0.175;
+        public static final double rangeMax = 0.3;
     }
 
     public static class ButtonBindingConstants {
@@ -492,7 +495,6 @@ public class Constants {
         public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
 
         public static final double rangeDistanceGain = 64; // how much higher, per unit of range
-        public static final double rangeZero = 0.175;
 
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
             .createElevatorSystem(TalonFXConstants.TalonFXDCMotor, netMass, drumRadius, gearRatio);
@@ -685,7 +687,6 @@ public class Constants {
         public static final double l4EjectVoltage = 6.2;
 
         public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
-        public static final double rangeZero = 0.175;
 
         public static final double spitOutVoltage = -8;
 
