@@ -139,7 +139,7 @@ public class Constants {
     public static class DriveConstants {
         // public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
         // public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
-        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(15, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_driveToPointTranslationPID, k_driveToPointRotationPID);
@@ -517,7 +517,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.277344 ; // -0.427979;
+        public static final double encoderOffset = 0.114014; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
 
@@ -605,9 +605,9 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final boolean enable = true;
+        public static final boolean enable = false;
 
-        public static final double encoderOffset = -0.347656; //0.250977;
+        public static final double encoderOffset = 0.665283203125;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
@@ -615,8 +615,8 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.Clockwise_Positive;
 
-        public static final double forwardSoftLimitThreshold = -0.14;
-        public static final double reverseSoftLimitThreshold = -0.49;
+        public static final double forwardSoftLimitThreshold = 0.268;
+        public static final double reverseSoftLimitThreshold = -0.08;
 
         public static final double radiansAtMax = forwardSoftLimitThreshold;
         public static final double radiansAtZero = 0;
@@ -627,12 +627,12 @@ public class Constants {
 
         public static final double tolerance = 0.03;
 
-        public static final double groundPickup = -0.41;
-        public static final double processor = -0.41;
-        public static final double reefPickup = -0.34;
-        public static final double reefExtract = -0.29;
-        public static final double net = -0.165;
-        public static final double stow = -0.165;
+        public static final double groundPickup = -0.015;
+        public static final double processor = -0.015;
+        public static final double reefPickup = 0.200;
+        public static final double reefExtract = 0.210;
+        public static final double net = 0.245;
+        public static final double stow = 0.245;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
@@ -675,7 +675,7 @@ public class Constants {
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(100)
+                        .withKP(0)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
@@ -714,7 +714,7 @@ public class Constants {
 
         public static final double supplyCurrentLimit = 20;
 
-        public static final double IRThreshold = 1;
+        public static final double IRThreshold = 0.51;
 
         public static final boolean enableCANRange = true;
 

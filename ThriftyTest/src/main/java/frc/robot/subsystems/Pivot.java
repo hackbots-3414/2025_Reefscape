@@ -82,7 +82,7 @@ public class Pivot extends SubsystemBase {
     MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
-        m_pivot.setControl(control.withPosition(goal));
+        // m_pivot.setControl(control.withPosition(goal));
         m_reference = goal;
     }
 
