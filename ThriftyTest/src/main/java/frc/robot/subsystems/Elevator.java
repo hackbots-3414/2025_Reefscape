@@ -7,10 +7,10 @@ package frc.robot.subsystems;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -24,10 +24,15 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotObserver;
+import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.commands.ElevatorToPointCommand;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
@@ -58,6 +63,7 @@ public class Elevator extends SubsystemBase {
         configEncoder();
         configMotor();
         configSim();
+        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator));
     }
 
     private void configEncoder() {
@@ -89,7 +95,7 @@ public class Elevator extends SubsystemBase {
         if (RobotBase.isSimulation()) {
             // in simulation, we want to emulate the effect produced by
             // using an encoder offset (i.e. we start at 0).
-            m_cancoder.setPosition(0.0);
+            m_elevatorRight.setPosition(0.0);
         }
     }
 
@@ -137,19 +143,24 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setL1() {
-        setPosition(ElevatorConstants.L1);
+        setPosition(ElevatorConstants.L1 + getCANRangeCompensation());
     }
 
     public void setL2() {
-        setPosition(ElevatorConstants.L2);
+        setPosition(ElevatorConstants.L2 + getCANRangeCompensation());
     }
 
     public void setL3() {
-        setPosition(ElevatorConstants.L3);
+        setPosition(ElevatorConstants.L3 + getCANRangeCompensation());
     }
 
     public void setL4() {
-        setPosition(ElevatorConstants.L4);
+        setPosition(ElevatorConstants.L4 + getCANRangeCompensation());
+    }
+
+    private double getCANRangeCompensation() {
+        if (RobotObserver.getManualMode() || !ElevatorConstants.enableCANRange) return 0.0;
+        return (RobotObserver.getRangeDistance() - DriveConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch;
     }
 
     public void setReefLower() {
@@ -211,31 +222,34 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    private void zeroElevator() {
+        m_cancoder.clearStickyFaults();
+        CANcoderConfiguration config = ElevatorConstants.encoderConfig;
+        config.MagnetSensor.MagnetOffset = m_cancoder.getAbsolutePosition(true).getValueAsDouble() - ElevatorConstants.encoderOffset;
+
+        m_cancoder.getConfigurator().apply(config, 0.2);
+    }
+
     @Override
     public void periodic() {
-        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
+        if (ElevatorConstants.enable) {
+            m_position = getPositionUncached();
+            m_velocity = getVelocityUncached();
 
-        m_position = getPositionUncached();
-        m_velocity = getVelocityUncached();
+            if (m_speedChanged) {
+                m_elevatorRight.setControl(new DutyCycleOut(m_speed));
+                m_speedChanged = false;
+            }
 
-        if (m_speedChanged) {
-            m_elevatorRight.setControl(new DutyCycleOut(m_speed));
-            m_speedChanged = false;
+            SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
+            SmartDashboard.putNumber("Elevator Compensatin", getCANRangeCompensation());
         }
-
-        SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
     }
 
     @Override
     public void simulationPeriodic() {
         // Update the simulation with the motor voltage
-        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage();
-        double current = m_elevatorRight.getSupplyCurrent().getValueAsDouble();
-        SmartDashboard.putNumber("Elevator Voltage", appliedVolts);
-        SmartDashboard.putNumber("Elevator Supply Current", current);
-
-        double speed = m_elevatorRight.get();
-        SmartDashboard.putNumber("Elevator Speed", speed);
+        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage() * 10;
 
         m_elevatorSim.setInput(appliedVolts);
         m_elevatorSim.update(SimConstants.k_simPeriodic);
@@ -244,9 +258,11 @@ public class Elevator extends SubsystemBase {
         m_velocity = getVelocityUncached();
 
         // Update the simulated encoder values
-        m_cancoder.getSimState().setRawPosition(m_position);
-        m_cancoder.getSimState().setVelocity(m_velocity);
+        m_elevatorRight.getSimState().setRawRotorPosition(m_position);
+        m_elevatorRight.getSimState().setRotorVelocity(m_velocity);
 
+        m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
+        
         // Simulate battery voltage
         double volts = BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps());
         RoboRioSim.setVInVoltage(volts);

@@ -8,10 +8,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.Robot;
+import frc.robot.RobotObserver;
 
 public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     @SuppressWarnings("unused")
@@ -74,26 +74,34 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         setMotor(AlgaeRollerConstants.ejectVoltage);
     }
 
+    public void processorEjectAlgae() {
+        setMotor(AlgaeRollerConstants.processorEjectVoltage);
+    }
+
     public void stopMotor() {
         setMotor(0);
     }
 
     private void updateObjectState() {
-        if (Robot.isReal()) {
-            m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
-        } else {
-            m_hasObject = SmartDashboard.getBoolean("Algae Holding Object", false);
+        if (AlgaeRollerConstants.enable) {
+            if (Robot.isReal()) {
+                m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
+            } else {
+                m_hasObject = SmartDashboard.getBoolean("Algae Holding Object", false);
+            }
+    
+            SmartDashboard.putBoolean("Algae Holding Object", m_hasObject);
         }
-
-        SmartDashboard.putBoolean("Algae Holding Object", m_hasObject);
     }
 
     @Override
     public void periodic() {
-        if (m_voltageChanged) {
-            m_algaeRoller.setVoltage(m_voltage);
-            m_voltageChanged = false;
-            SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
+        if (AlgaeRollerConstants.enable) {
+            if (m_voltageChanged) {
+                m_algaeRoller.setVoltage(m_voltage);
+                m_voltageChanged = false;
+                SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
+            }
         }
     }
 

@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,12 +14,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-public class DriveToPointCommand extends Command {
+public class PathplannerOverrideCommand extends Command {
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
     private final Constraints constraints = new Constraints(DriveConstants.k_driveToPointSpeed, DriveConstants.k_driveToPointAcceleration);
@@ -38,7 +38,7 @@ public class DriveToPointCommand extends Command {
     private final Pose2d m_goal;
     private final CommandSwerveDrivetrain m_drivetrain;
 
-    public DriveToPointCommand(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+    public PathplannerOverrideCommand(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         this.m_goal = pose;
         this.m_drivetrain = drivetrain;
         addRequirements(drivetrain);
@@ -59,6 +59,7 @@ public class DriveToPointCommand extends Command {
 
     @Override
     public void execute() {
+
         Pose2d currPose = m_drivetrain.getPose();
 
         double xVelo = xPIDController.calculate(currPose.getX(), m_goal.getX());

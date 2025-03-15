@@ -24,6 +24,7 @@
       "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Go To B": "Command",
       "/SmartDashboard/Height to Score #0": "String Chooser",
       "/SmartDashboard/Height to Score #1": "String Chooser",
       "/SmartDashboard/Height to Score #2": "String Chooser",
@@ -54,6 +55,10 @@
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/camera testing spot": "Command",
+      "/SmartDashboard/camera testing spot 2": "Command",
+      "/SmartDashboard/drive to other pose": "Command",
+      "/SmartDashboard/drive to reef": "Command",
       "/SmartDashboard/open funnel": "Command",
       "/SmartDashboard/runme hehe": "Command",
       "/SmartDashboard/teleport": "Command"
@@ -149,12 +154,7 @@
           "visible": false
         }
       },
-      "/SmartDashboard/Reef mode off": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Reef mode on": {
+      "/SmartDashboard/Go To B": {
         "window": {
           "visible": true
         }
@@ -371,18 +371,41 @@
             1.0,
             255.0
           ],
+          "arrowSize": 25,
+          "arrowWeight": 2.0,
           "color": [
-            0.37408536672592163,
-            0.8607594966888428,
-            0.43568962812423706,
+            0.7045847773551941,
+            0.7914843559265137,
+            0.7941176295280457,
             255.0
           ],
-          "length": 0.7599999904632568,
-          "selectable": false,
-          "width": 0.7599999904632568
+          "length": 0.9399999976158142,
+          "style": "Box/Image",
+          "width": 0.9399999976158142
+        },
+        "alt": {
+          "arrows": false,
+          "color": [
+            0.0,
+            0.14705896377563477,
+            1.0,
+            255.0
+          ],
+          "style": "Hidden"
         },
         "apriltag": {
           "arrows": false,
+          "selectable": false,
+          "style": "Hidden"
+        },
+        "best": {
+          "arrows": false,
+          "color": [
+            0.0,
+            1.0,
+            0.11764693260192871,
+            255.0
+          ],
           "selectable": false,
           "style": "Hidden"
         },
@@ -395,7 +418,9 @@
             0.0,
             255.0
           ],
+          "arrowSize": 100,
           "arrowWeight": 2.0,
+          "arrows": false,
           "color": [
             255.0,
             167.8480987548828,
@@ -408,19 +433,46 @@
           "weight": 2.0,
           "width": 0.30000001192092896
         },
+        "chosen": {
+          "arrows": false,
+          "color": [
+            1.0,
+            1.0,
+            1.0,
+            255.0
+          ]
+        },
+        "chsoen": {
+          "color": [
+            0.9313725233078003,
+            0.49764513969421387,
+            0.06391774863004684,
+            255.0
+          ]
+        },
         "estimation": {
           "arrows": false,
           "color": [
-            0.9873417615890503,
-            1.0,
-            0.0,
+            0.9588443040847778,
+            0.970588207244873,
+            0.042820051312446594,
             255.0
-          ],
-          "selectable": false
+          ]
         },
         "height": 8.051901817321777,
         "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
+        "target": {
+          "arrows": false,
+          "color": [
+            0.2598039507865906,
+            0.22796523571014404,
+            0.22796523571014404,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Hidden"
+        },
         "visibleTargetPoses": {
           "arrowColor": [
             1.0,
@@ -439,6 +491,16 @@
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/camera testing spot": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/camera testing spot 2": {
         "window": {
           "visible": true
         }
@@ -463,8 +525,5 @@
       "open": true
     },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

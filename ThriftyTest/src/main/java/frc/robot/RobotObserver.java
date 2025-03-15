@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.ReefClipLocations;
 
 public class RobotObserver {
     private static RobotObserver m_instance;
@@ -96,6 +97,16 @@ public class RobotObserver {
         return getInstance().m_reefMode;
     }
 
+    private ReefClipLocations m_reefClipLocation = ReefClipLocations.LEFT;
+
+    public static void setReefClipLocation(ReefClipLocations reefClipLocation) {
+        getInstance().m_reefClipLocation = reefClipLocation;
+    }
+
+    public static ReefClipLocations getReefClipLocation() {
+        return getInstance().m_reefClipLocation;
+    }
+
     private BooleanSupplier m_coralPieceHeldSupplier;
     private BooleanSupplier m_algaeHeldSupplier;
 
@@ -122,6 +133,16 @@ public class RobotObserver {
 
     public static boolean getClimbed() {
         return getInstance().m_climbed;
+    }
+
+    private DoubleSupplier m_rangeDistanceSupplier;
+
+    public static void setRangeDistanceSupplier(DoubleSupplier rangeDistanceSupplier) {
+        getInstance().m_rangeDistanceSupplier = rangeDistanceSupplier;
+    }
+    
+    public static double getRangeDistance(){
+        return getInstance().m_rangeDistanceSupplier.getAsDouble();
     }
 
 }

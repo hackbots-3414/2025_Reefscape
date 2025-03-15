@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -25,8 +26,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -56,6 +59,7 @@ import frc.robot.commands.AlignRightCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
+import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
@@ -85,29 +89,31 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureSubsystems();
-        // configureNamedCommands();
-        // configureDriverBindings();
-        // configureButtonBoard();
-        // configureAutonChooser();
-        // configureVision();
+        configureNamedCommands();
+        configureDriverBindings();
+        configureButtonBoard();
+        configureAutonChooser();
+        configureVision();
         // addBoundsToField();
-        // // configureSysId();
-        // configureTesting();
+        // configureSysId();
+        configureTesting();
+        configureDashboard();
+    }
+    
+    private void configureDashboard() {
+        SmartDashboard.putBoolean("SAFETY MODE", false);
+        SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
+        SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
     }
 
     private void configureTesting() {
-        SmartDashboard.putData("open funnel", new OpenFunnel(m_climber));
-        SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
-        SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
-        SmartDashboard.putBoolean("SAFETY MODE", false);
+        SmartDashboard.putData("Go To B", new DriveToPointCommand(ScoringLocations.B.value, m_drivetrain));
 
-        SmartDashboard.putData("Reef mode on", new InstantCommand(() -> {
-            RobotObserver.setReefMode(true);
-        }));
+        Pose2d point = new Pose2d(8.795, 4.906, Rotation2d.fromDegrees(15.949));
+        SmartDashboard.putData("camera testing spot", new DriveToPointCommand(point, m_drivetrain));
 
-        SmartDashboard.putData("Reef mode off", new InstantCommand(() -> {
-            RobotObserver.setReefMode(false);
-        }));
+        Pose2d point2 = new Pose2d(9.936, 4.736, Rotation2d.fromDegrees(-9.001));
+        SmartDashboard.putData("camera testing spot 2", new DriveToPointCommand(point2, m_drivetrain));
     }
 
     private void addBoundsToField() {
@@ -162,7 +168,7 @@ public class RobotContainer {
         Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
         Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
         Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
-        Supplier<Boolean> openLoopSup = () -> controller.button(openLoop).getAsBoolean();
+        BooleanSupplier openLoopSup = controller.button(openLoop);
 
         m_drivetrain.setDefaultCommand(
             new TeleopCommand(m_drivetrain, xSup, ySup, rSup, openLoopSup)
@@ -172,9 +178,11 @@ public class RobotContainer {
         controller.button(resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
 
         controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
-            .or(() -> controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation).getAsBoolean())
-            .or(() -> controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation).getAsBoolean())
+            .or(controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
+            .or(controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
             .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
+
+        controller.button(13).onTrue(new InstantCommand(() -> m_drivetrain.resetPose(ScoringLocationsMiddle.GH.value)));
     }
 
     // private void configureSysId() {
@@ -220,11 +228,8 @@ public class RobotContainer {
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
-        // m_coralRollers.setDefaultCommand(new CoralDefaultCommand(m_coralRollers));
-        // m_elevator.setDefaultCommand(new InstantCommand(() -> m_elevator.setStow()));
-
         if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
-            controller.button(ButtonBoardAlternate.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
+            controller.button(ButtonBoard.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
             BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
             BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
 
@@ -365,49 +370,29 @@ public class RobotContainer {
             controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
             // Manual Mode Off
-            /* TEMPORARY COMMENT BECAUSE IAN WANTED IT */
-            // bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            // bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            // bindAutoCoralScoreCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            // bindAutoCoralScoreCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.leftReef).getAsBoolean()).and(manualModeOff));
-            // bindAutoCoralScoreCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-            // bindAutoCoralScoreCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-            // bindAutoCoralScoreCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-            // bindAutoCoralScoreCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(() -> controller.button(ButtonBoardAlternate.rightReef).getAsBoolean()).and(manualModeOff));
-
-            bindReefClipPath(ReefClipLocations.LEFT, controller.button(ButtonBoardAlternate.leftReef));
-            bindReefClipPath(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightReef));
-
-            // bindAutoCoralIntakeCommand(ReefClipLocations.LEFT, controller.button(ButtonBoardAlternate.leftIntake).and(manualModeOff));
-            // bindAutoCoralIntakeCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightIntake).and(manualModeOff));
-
-            bindAutoAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOff));
-            bindAutoAlgaeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(ButtonBoardAlternate.highGround).and(algaeOn).and(manualModeOff));
+            bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralScoreCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralScoreCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralScoreCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            bindAutoCoralScoreCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            bindAutoCoralScoreCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            bindAutoCoralScoreCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
 
             // Manual Mode On
-            bindManualCoralScoreCommand(1, controller.pov(ButtonBoardAlternate.L1)/*.and(manualModeOn)*/);
-            bindManualCoralScoreCommand(2, controller.pov(ButtonBoardAlternate.L2)/*.and(manualModeOn)*/);
-            bindManualCoralScoreCommand(3, controller.pov(ButtonBoardAlternate.L3)/*.and(manualModeOn)*/);
-            bindManualCoralScoreCommand(4, controller.pov(ButtonBoardAlternate.L4)/*.and(manualModeOn)*/);
+            bindManualCoralScoreCommand(1, controller.pov(ButtonBoardAlternate.L1).and(manualModeOn));
+            bindManualCoralScoreCommand(2, controller.pov(ButtonBoardAlternate.L2).and(manualModeOn));
+            bindManualCoralScoreCommand(3, controller.pov(ButtonBoardAlternate.L3).and(manualModeOn));
+            bindManualCoralScoreCommand(4, controller.pov(ButtonBoardAlternate.L4).and(manualModeOn));
 
             bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake)/*.and(manualModeOn)*/);
 
-            // bindManualElevatorCommand(Direction.kForward, controller.axisGreaterThan(ButtonBoardAlternate.manualElevatorUp, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
-            // bindManualElevatorCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualElevatorDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
-
-            // bindManualPivotCommand(Direction.kForward, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotUp, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
-            // bindManualPivotCommand(Direction.kReverse, controller.axisGreaterThan(ButtonBoardAlternate.manualPivotDown, ButtonBoardAlternate.manualThresholds).and(manualModeOn));
-
-            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(ButtonBoardAlternate.highGround).and(algaeOn).and(manualModeOn));
+            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn)/*.and(manualModeOn)*/);
+            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae)/*.and(manualModeOn)*/);
+            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae)/*.and(manualModeOn)*/);
+            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn)/*.and(manualModeOn)*/);
+            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn)/*.and(manualModeOn)*/);
+            bindManualAlgaeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(ButtonBoardAlternate.highGround).and(algaeOn)/*.and(manualModeOn)*/);
 
             bindClimbSetupCommand(controller.button(ButtonBoardAlternate.climbReady));
             controller.button(ButtonBoardAlternate.climb).whileTrue(new ClimberCommand(m_climber));
@@ -503,14 +488,8 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        // NamedCommands.registerCommand("L1", coralScoreCommand(1));
-        // NamedCommands.registerCommand("L2", coralScoreCommand(2));
-        // NamedCommands.registerCommand("L3", coralScoreCommand(3));
         NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
-        // NamedCommands.registerCommand("L4", new InstantCommand());
-        // NamedCommands.registerCommand("Algae Lower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER));
-        // NamedCommands.registerCommand("Algae Upper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER));
-        // NamedCommands.registerCommand("Processor", algaeScoreCommand(AlgaeLocationPresets.PROCESSOR));
+        NamedCommands.registerCommand("L3", coralScoreCommand(3).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
     }
@@ -530,6 +509,7 @@ public class RobotContainer {
     private Climber m_climber;
     private AlgaeRollers m_algaeRollers;
     private CoralRollers m_coralRollers;
+    @SuppressWarnings("unused")
     private LedFeedback m_ledFeedback;
 
     private void configureSubsystems() {
@@ -543,56 +523,35 @@ public class RobotContainer {
     }
 
     // ** BUTTON BOARD HELPERS **
-    private void bindReefClipPath(ReefClipLocations location, Trigger trigger) {
-        switch (location) {
-            case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> new InstantCommand(), scoringLocationsListLeft)));
-            case RIGHT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> new InstantCommand(), scoringLocationsRightList)));
-        }
-    }
-
-    private void bindAutoCoralIntakeCommand(ReefClipLocations location, Trigger trigger) {
-        switch (location) {
-            case LEFT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.RIGHTHP.value, () -> coralIntakeCommand())));
-            case RIGHT -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.LEFTHP.value, () -> coralIntakeCommand())));
-        }
-    }
-
     private void bindManualCoralIntakeCommand(Trigger trigger) {
         trigger.whileTrue(coralIntakeCommand()); 
     }
 
     /**
-     * @param level 1, 2, 3, 4 for coral score; 5 for algae pickup low; 6 for algae pickup high; otherwise doesn't matter
+     * @param level 1, 2, 3, 4 for coral score; 5 for algae pickup low; 6 for algae pickup high; 
      * */
     @SuppressWarnings("incomplete-switch")
     private void bindButtonBoardAuto(ScoringLocations location, int level, Trigger trigger) {
-        switch (location) {
-            case LEFTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, this::coralIntakeCommand)));
-            case RIGHTHP -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, this::coralIntakeCommand)));
-            case NET -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, () -> algaeScoreCommand(AlgaeLocationPresets.NET))));
-            case PROCESSOR -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, () -> processorCommand())));
-        }
-
         if (level == 5) {
             switch (location) {
-                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
-                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))));
+                case A, B -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
+                case C, D -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
+                case E, F -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
+                case G, H -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
+                case I, J -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
+                case K, L -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
             }
         } else if (level == 6) {
             switch (location) {
-                case A, B -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case C, D -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case E, F -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case G, H -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case I, J -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
-                case K, L -> trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))));
+                case A, B -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
+                case C, D -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
+                case E, F -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
+                case G, H -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
+                case I, J -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
+                case K, L -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
             }
         } else {
-            trigger.onTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, location.value, () -> coralScoreCommand(level))));
+            trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(location.value, () -> coralScoreCommand(level)), Set.of()));
         }
     }
 
@@ -600,31 +559,24 @@ public class RobotContainer {
         trigger.onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
-    // might want to use in the future, currently is unbound
-    @SuppressWarnings("unused")
     private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsListLeft)));
-            case RIGHT -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> coralScoreCommand(level), scoringLocationsRightList)));
+            case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
+            case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
         }   
+    }
+
+    private Command pathPlannerOverrideScore(int level, ReefClipLocations location) {
+        Command c = new InstantCommand();
+        switch (location) {
+            case LEFT -> c = new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of());
+            case RIGHT -> c = new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of());
+        }
+        return c;
     }
 
     private void bindManualCoralScoreCommand(int level, Trigger trigger) {
         trigger.whileTrue(coralScoreCommand(level));    
-    }
-
-    private void bindAutoAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
-        switch (type) {
-            case GROUND -> trigger.whileTrue(algaeIntakeCommand(AlgaeLocationPresets.GROUND));
-            case REEFLOWER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER), scoringLocationsMiddleList)));
-            case REEFUPPER -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queueClosest(m_drivetrain, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER), scoringLocationsMiddleList)));
-            case NET -> trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.NET.value, () -> algaeScoreCommand(AlgaeLocationPresets.PROCESSOR))));
-            case PROCESSOR -> {
-                trigger.whileTrue(new InstantCommand(() -> AutonomousUtil.queuePathWithCommand(m_drivetrain, ScoringLocations.PROCESSOR.value, this::processorCommand)));
-                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers));
-            }
-            case HIGHGROUND -> {trigger.whileTrue(algaeIntakeCommand(AlgaeLocationPresets.HIGHGROUND));}
-        }
     }
 
     private void bindManualAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
@@ -633,26 +585,10 @@ public class RobotContainer {
             case NET -> trigger.whileTrue(algaeScoreCommand(type));
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
-                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers));
+                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers).andThen(new WaitCommand(2).andThen(new InstantCommand(() -> {m_algaeRollers.stopMotor(); m_algaePivot.setStow();}))));
             }
         }
     }
-
-    // COMMANDS DO NOT WORK
-
-    // private void bindManualElevatorCommand(Direction direction, Trigger trigger) {
-    //     switch (direction) {
-    //         case kForward -> trigger.whileTrue(new ManualElevatorCommand(m_elevator, true));
-    //         case kReverse -> trigger.whileTrue(new ManualElevatorCommand(m_elevator, false));
-    //     }
-    // }
-
-    // private void bindManualPivotCommand(Direction direction, Trigger trigger) {
-    //     switch (direction) {
-    //         case kForward -> trigger.whileTrue(new ManualPivotCommand(m_algaePivot, true));
-    //         case kReverse -> trigger.whileTrue(new ManualPivotCommand(m_algaePivot, false));
-    //     }
-    // }
 
     private void bindClimbSetupCommand(Trigger trigger) {
         trigger.whileTrue(new SequentialCommandGroup(
@@ -668,12 +604,10 @@ public class RobotContainer {
     }
 
     private Command coralScoreCommand(int level) {
-        return new CoralScoreCommand(m_coralRollers, m_elevator, level);
+        return new CoralScoreCommand(m_coralRollers, m_elevator, level).andThen(new WaitUntilCommand(m_elevator::atSetpoint));
     }
 
-    private Command 
-    
-    algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
+    private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
         return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
     }
 

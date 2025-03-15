@@ -10,6 +10,8 @@ public class CoralScoreCommand extends Command {
   private final Elevator elevator;
   private final int level;
 
+  private boolean finish = false;
+
   private int m_timeRemaining;
 
   public CoralScoreCommand(CoralRollers coralRollers, Elevator elevator, int level) {
@@ -21,6 +23,12 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void initialize() {
+    if (!coral.presentPiece()) {
+      finish = true;
+      return;
+    }
+    finish = false;
+    
     m_timeRemaining = 25;
     if (!CommandBounds.reefBounds.isActive()) {
         m_timeRemaining = 0;
@@ -57,6 +65,7 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
+    if (finish) return true;
     return m_timeRemaining == 0;
   }
 }

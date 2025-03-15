@@ -29,8 +29,6 @@ import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
 import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
 import frc.robot.Constants.LedConstants;
 import frc.robot.Constants;
 import frc.robot.RobotObserver;
@@ -251,6 +249,7 @@ public class LedFeedback extends SubsystemBase {
                 // System.out.println("DEFAULT");
                 defaultColors();
                 mode = LED_MODE.DEFAULT;
+                return;
             }
         }
         // System.out.println("XPERIODIC END");
