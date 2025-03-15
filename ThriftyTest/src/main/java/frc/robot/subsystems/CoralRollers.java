@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
@@ -129,7 +130,7 @@ public class CoralRollers extends SubsystemBase {
 
     private double getCANRangeCompensation() {
         if (RobotObserver.getManualMode() || !CoralConstants.enableCANRange) return 0.0;
-        return (RobotObserver.getRangeDistance() - CoralConstants.rangeZero) * CoralConstants.rangeDistanceGain;
+        return (RobotObserver.getRangeDistance() - DriveConstants.rangeZero) * CoralConstants.rangeDistanceGain;
     }
 
     public void setSpitOut() {
