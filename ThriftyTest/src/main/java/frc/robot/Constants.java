@@ -119,12 +119,6 @@ public class Constants {
         public static final int candle2 = 6;
 
         public static final int servo = 9;
-
-        public static final int CANrange = 10;// Placed arbitrarly 
-        public static final int CANrange_Right = 11;// Placed Arbitrarly
-        public static final int CANrange_Left = 12;// TODO: figure out what the canrange ids are on the robot
-    
-
     }
 
     public static class SimConstants {

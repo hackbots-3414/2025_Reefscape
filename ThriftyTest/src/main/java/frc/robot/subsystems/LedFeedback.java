@@ -17,10 +17,8 @@ import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
-import com.ctre.phoenix6.hardware.CANrange;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
@@ -30,7 +28,6 @@ import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
-import frc.robot.Constants;
 import frc.robot.RobotObserver;
 
 public class LedFeedback extends SubsystemBase {
@@ -45,12 +42,11 @@ public class LedFeedback extends SubsystemBase {
     private boolean algaeOnBoard = false;
     private boolean algaeInRange = false;
     private boolean algaeTooClose = false;
-    private boolean alignedLeft = false;
-    private boolean alignedRight = false;
     private boolean inAuton = false;
     private boolean inTeleop = false;
     private double rangeLeft = 0.0;
     private double rangeRight = 0.0;
+    private CommandSwerveDrivetrain drivetrain;
 
     private int selectedSlot = 0;
 
@@ -76,16 +72,16 @@ public class LedFeedback extends SubsystemBase {
 
     private CANdle ledcontroller = new CANdle(IDConstants.candle1);
     private CANdle ledcontroller2 = new CANdle(IDConstants.candle2);
-    private final CANrange CANrange_Right = new CANrange(IDConstants.CANrange_Right);
-    private final CANrange CANrange_Left = new CANrange(IDConstants.CANrange_Left);
 
-    public LedFeedback() {
+    public LedFeedback(CommandSwerveDrivetrain m_Drivetrain) {
         ledcontroller2 = ledcontroller; // FIXME for comp bot!!!
         CANdleConfiguration config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB; // set the strip type to RGB
         config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
         ledcontroller.configAllSettings(config, 20);
         ledcontroller2.configAllSettings(config, 20);
+        this.drivetrain = m_Drivetrain;
+
 
         // SmartDashboard.putBoolean("AlignedRight", alignedRight());
         // SmartDashboard.putBoolean("AlignedLeft", alignedLeft());
@@ -106,8 +102,8 @@ public class LedFeedback extends SubsystemBase {
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
 
-        rangeRight = CANrange_Right.getDistance().getValueAsDouble();
-        rangeLeft = CANrange_Left.getDistance().getValueAsDouble();
+        rangeRight =  drivetrain.getRangeRightDistance();
+        rangeLeft =  drivetrain.getRangeLeftDistance();
         // TODO FIX
         
         // alignedRight = SmartDashboard.getBoolean("AlignedRight", alignedRight());
@@ -180,14 +176,14 @@ public class LedFeedback extends SubsystemBase {
                 // mode = LED_MODE.ALIGNED_BRANCH;
                 // setAll(LED_COLOR.GREEN, LED_PATTERN.FLASH);
                 // }
-            } else if (coralOnBoard && alignedRight) {
+            } else if (coralOnBoard && alignedRight()) {
                 if (mode != LED_MODE.ALIGNED_RIGHT) {
                     mode = LED_MODE.ALIGNED_RIGHT;
                     setRight(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
                     // System.out.println("CORAL_ON_BOARD && ALIGNED RIGHT");
 
                 }
-            } else if (coralOnBoard && alignedLeft) {
+            } else if (coralOnBoard && alignedLeft()) {
                 if (mode != LED_MODE.ALIGNED_LEFT) {
                     mode = LED_MODE.ALIGNED_LEFT;
                     setLeft(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
