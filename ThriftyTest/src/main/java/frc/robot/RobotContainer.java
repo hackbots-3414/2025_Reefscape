@@ -514,11 +514,11 @@ public class RobotContainer {
 
     private void configureSubsystems() {
         // m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
-        // m_elevator = new Elevator();
-        // m_algaePivot = new Pivot();
-        // m_climber = new Climber();
-        // m_algaeRollers = new AlgaeRollers();
-        // m_coralRollers = new CoralRollers();
+        m_elevator = new Elevator();
+        m_algaePivot = new Pivot();
+        m_climber = new Climber();
+        m_algaeRollers = new AlgaeRollers();
+        m_coralRollers = new CoralRollers();
         m_ledFeedback = new LedFeedback();
     }
 
