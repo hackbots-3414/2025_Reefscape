@@ -27,9 +27,8 @@ public class AlignLeftCommand extends Command {
   public boolean alignedleft;    
   private StatusSignal<Distance> range;
   public double distance = range.getValueAsDouble();
-  public boolean isDone = false;
   private CommandSwerveDrivetrain m_drivetrain; 
-  private ChassisSpeeds alignDriveSpeed = new ChassisSpeeds(0, 1, 0);
+  private ChassisSpeeds alignDriveSpeed = new ChassisSpeeds(0, 0.5, 0);
   /** Creates a new AlignCommand. */
   public AlignLeftCommand(CommandSwerveDrivetrain m_drivetrain) {
     this.m_drivetrain = m_drivetrain;
@@ -40,31 +39,26 @@ public class AlignLeftCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (distance == 0) {
-       isDone = true;
-    }
+    distance = range.getValueAsDouble();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    while (distance < CanRangeConstants.farAlignedDistanceMeters ) {
+      distance = range.getValueAsDouble();
       m_drivetrain.driveRobotRelative(alignDriveSpeed);
-      }
-      m_drivetrain.driveRobotRelative(new ChassisSpeeds(0,0,0));
-      isDone = true;
     }
   
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
+    m_drivetrain.driveRobotRelative(new ChassisSpeeds(0,0,0));
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isDone;
+    return distance > CanRangeConstants.farAlignedDistanceMeters;
   }
 }

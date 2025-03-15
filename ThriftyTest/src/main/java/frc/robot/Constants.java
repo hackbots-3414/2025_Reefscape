@@ -115,8 +115,8 @@ public class Constants {
         public static final int servo = 9;
 
         public static final int CANrange = 10;// Placed arbitrarly 
-        public static final int CANrange2 = 11;// Placed Arbitrarly
-        public static final int CANrange3 = 12;// TODO: figure out what the canrange ids are on the robot
+        public static final int CANrange_Right = 11;// Placed Arbitrarly
+        public static final int CANrange_Left = 12;// TODO: figure out what the canrange ids are on the robot
     
 
     }
@@ -410,7 +410,7 @@ public class Constants {
         // .withToFParams(null);
         public final static String kCANrangeCANbus = "canivore";
         public final static double farAlignedDistanceMeters = 0.18; 
-        public static final double tolerance = 0.01; // 1% tolerance
+        public static final double tolerance = 0.2; // 20% tolerance
         public static final double closeAlignedDistanceMeters = 0.12; 
 
 
@@ -880,13 +880,13 @@ public class Constants {
         public static final double strobeSpeed = 0.1;
         public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
-        public static final int funnelOffset = 8;
-        public static final int elevatorOffset = 34;
-        public static final int funnelNumLED = 26; // 85 
-        public static final int elevatorNumLED = 20;
-        public static final int funnelOffset2 = 8;
-        public static final int elevatorOffset2 = 94;
-        public static final int funnelNumLED2 = 85;
-        public static final int elevatorNumLED2 = 40;
+        public static final int funnelOffset = 8; // 8
+        public static final int elevatorOffset = 94; // 94
+        public static final int funnelNumLED = 85; // 85 
+        public static final int elevatorNumLED = 40; // 40
+        public static final int funnelOffset2 = 8; // 8
+        public static final int elevatorOffset2 = 94; // 94
+        public static final int funnelNumLED2 = 85; // 85
+        public static final int elevatorNumLED2 = 40; // 40
     }
 }
