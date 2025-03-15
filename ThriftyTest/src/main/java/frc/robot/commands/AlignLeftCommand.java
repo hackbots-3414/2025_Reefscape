@@ -48,7 +48,7 @@ public class AlignLeftCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    while (distance < CanRangeConstants.canRangeAlignedDistance ) {
+    while (distance < CanRangeConstants.farAlignedDistanceMeters ) {
       m_drivetrain.driveRobotRelative(alignDriveSpeed);
       }
       m_drivetrain.driveRobotRelative(new ChassisSpeeds(0,0,0));

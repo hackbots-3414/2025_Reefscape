@@ -409,8 +409,9 @@ public class Constants {
         // .withProximityParams(null)
         // .withToFParams(null);
         public final static String kCANrangeCANbus = "canivore";
-        public final static double canRangeAlignedDistance = 3.5; 
-
+        public final static double farAlignedDistanceMeters = 0.18; 
+        public static final double tolerance = 0.01; // 1% tolerance
+        public static final double closeAlignedDistanceMeters = 0.12; 
 
 
         public static final int k_filterWindow = 5; // 5 measurements
@@ -880,9 +881,9 @@ public class Constants {
         public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8;
-        public static final int elevatorOffset = 94;
-        public static final int funnelNumLED = 85;
-        public static final int elevatorNumLED = 40;
+        public static final int elevatorOffset = 34;
+        public static final int funnelNumLED = 26; // 85 
+        public static final int elevatorNumLED = 20;
         public static final int funnelOffset2 = 8;
         public static final int elevatorOffset2 = 94;
         public static final int funnelNumLED2 = 85;

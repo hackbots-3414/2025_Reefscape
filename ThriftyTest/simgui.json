@@ -37,6 +37,7 @@
       "/SmartDashboard/Module 2": "Mechanism2d",
       "/SmartDashboard/Module 3": "Mechanism2d",
       "/SmartDashboard/Multi Tag": "Command",
+      "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
       "/SmartDashboard/Place to Score #0": "String Chooser",
       "/SmartDashboard/Place to Score #1": "String Chooser",
