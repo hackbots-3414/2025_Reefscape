@@ -72,7 +72,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
-import frc.robot.utils.FieldUtils;
 import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
@@ -97,6 +96,11 @@ public class RobotContainer {
         // configureSysId();
         configureTesting();
         configureDashboard();
+        confiureSimulation();
+    }
+
+    private void confiureSimulation() {
+        DriverStation.silenceJoystickConnectionWarning(true);
     }
     
     private void configureDashboard() {
@@ -493,8 +497,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
-            Pose2d position = FieldUtils.flipPose(location.value);
-            NamedCommands.registerCommand(name, new DriveToPointCommand(position, m_drivetrain));
+            NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true));
         }
     }
 

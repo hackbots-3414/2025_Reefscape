@@ -27,6 +27,7 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -130,11 +131,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleState[] currStates = getState().ModuleStates;
         previousSetpoint = new SwerveSetpoint(currSpeeds, currStates, DriveFeedforwards.zeros(config.numModules));
     }
-
-    public double getVelocity() {
+    
+    public Translation2d getVelocityComponents() {
         double vx = getRobotRelativeSpeeds().vxMetersPerSecond;
         double vy = getRobotRelativeSpeeds().vyMetersPerSecond;
-        return Math.hypot(vx, vy);
+        Rotation2d theta = getPose().getRotation();
+        return new Translation2d(vx, vy).rotateBy(theta);
+        
+    }
+
+    public double getVelocity() {
+        Translation2d velo = getVelocityComponents();
+        return velo.getNorm();
     }
 
     public Pose2d getPose() {
@@ -157,11 +165,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public void setPose(Pose2d pose) {
-        super.resetPose(pose);
+        resetPose(pose);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        return super.getState().Speeds;
+        return getState().Speeds;
     }
 
     public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
@@ -207,6 +215,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
         SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
         SmartDashboard.putNumber("REEF ALING RANGE DISANCE", getRangeDistance());
+
+        // Translation2d v = getVelocityComponents();
+        // SmartDashboard.putNumber("vx", v.getX());
+        // SmartDashboard.putNumber("vy", v.getY());
     }
 
     private void startSimThread() {
