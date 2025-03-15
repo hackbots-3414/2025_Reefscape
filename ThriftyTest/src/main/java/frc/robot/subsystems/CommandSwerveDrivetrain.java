@@ -83,6 +83,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private CANrange rightRange;
 
     private MedianFilter rangeFilter;
+    private double rightRaw = -1;
+    private double leftRaw = -1;
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
@@ -113,7 +115,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setPoseSupplier(this::getPose);
         RobotObserver.setVelocitySupplier(this::getVelocity);
         RobotObserver.setRangeDistanceSupplier(this::getRangeDistance);
-
         configureCANRange();
     }
 
@@ -184,11 +185,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getRangeDistance() {
-        double leftRaw = leftRange.getDistance().getValueAsDouble();
-        double rightRaw = rightRange.getDistance().getValueAsDouble();
+        double leftRaw = getRangeLeftDistance();
+        double rightRaw = getRangeRightDistance();
         double leftValue = leftRaw > DriveConstants.rangeZero && leftRaw < DriveConstants.rangeMax ? leftRaw : DriveConstants.rangeZero;
         double rightValue = rightRaw > DriveConstants.rangeZero && rightRaw < DriveConstants.rangeMax ? rightRaw : DriveConstants.rangeZero;
         return rangeFilter.calculate(Math.min(leftValue, rightValue));
+    }
+
+    public double getRangeRightDistance() {
+        return rightRaw;
+    }
+
+    public double getRangeLeftDistance() {
+        return leftRaw;
     }
 
     @Override
@@ -204,6 +213,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        rightRaw = rightRange.getDistance().getValueAsDouble();
+        leftRaw = leftRange.getDistance().getValueAsDouble();
 
         AutonomousUtil.handleQueue();
 
