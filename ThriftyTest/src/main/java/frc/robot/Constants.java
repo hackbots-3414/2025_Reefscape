@@ -43,14 +43,21 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -162,6 +169,17 @@ public class Constants {
 
         public static final double k_closedLoopOverrideToleranceTranslation = 0.05;
         public static final double k_closedLoopOverrideToleranceRotation = 0.05;
+
+        // These are the constraints solely used by the DriveToPoint commands
+        public static final Constraints k_driveToPointConstraints = new Constraints(
+            k_driveToPointSpeed,
+            k_driveToPointAcceleration
+        );
+        // This one is as well, however it is only used in auton
+        public static final Constraints k_rotationConstraints = new Constraints(
+            k_maxAngularSpeed.in(RadiansPerSecond),
+            k_maxAngularAcceleration.in(RadiansPerSecondPerSecond)
+        );
     }
 
     public static class ButtonBindingConstants {
@@ -394,8 +412,8 @@ public class Constants {
         public static final double k_ambiguityShifter = 0.2;
         public static final double k_targetMultiplier = 10;
         public static final double k_differenceThreshold = 0.14;
-        // this value is so high because we want to strongly punish far away poses.
         public static final double k_differenceMultiplier = 100.0;
+        public static final double k_latencyMultiplier = 0.3;
 
         public static final double k_headingThreshold = Units.degreesToRadians(3);
 
@@ -437,10 +455,10 @@ public class Constants {
 
         public static final boolean useQueue = false;
 
-        public static double translationTolerance = 0.005; // m
-        public static double rotationTolerance = Units.degreesToRadians(0.5);
-        
-        public static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance));
+        public static double translationTolerance = 0.05; // m
+        public static Angle rotationTolerance = Degrees.of(0.5);
+
+        private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static double stage2Distance = 1;

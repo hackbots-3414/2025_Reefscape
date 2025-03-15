@@ -72,6 +72,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.FieldUtils;
 import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
@@ -490,6 +491,11 @@ public class RobotContainer {
         NamedCommands.registerCommand("L3", coralScoreCommand(3).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
+        for (ScoringLocations location : Constants.ScoringLocations.values()) {
+            String name = "Align ".concat(location.toString());
+            Pose2d position = FieldUtils.flipPose(location.value);
+            NamedCommands.registerCommand(name, new DriveToPointCommand(position, m_drivetrain));
+        }
     }
 
     private void configureVision() {

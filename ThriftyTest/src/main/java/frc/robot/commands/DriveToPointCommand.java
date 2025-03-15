@@ -1,39 +1,40 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Radians;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class DriveToPointCommand extends Command {
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
-    private final Constraints constraints = new Constraints(DriveConstants.k_driveToPointSpeed, DriveConstants.k_driveToPointAcceleration);
-
-    private final ProfiledPIDController xPIDController = new ProfiledPIDController(DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, constraints);
-    private final ProfiledPIDController yPIDController = new ProfiledPIDController(DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, constraints);
+    private final ProfiledPIDController xController = new ProfiledPIDController(
+            DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, DriveConstants.k_driveToPointConstraints);
+    private final ProfiledPIDController yController = new ProfiledPIDController(
+            DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, DriveConstants.k_driveToPointConstraints);
 
     private static Rotation2d m_targetRotation;
 
     private final SwerveRequest.FieldCentricFacingAngle m_request = new SwerveRequest.FieldCentricFacingAngle()
-        .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-        .withHeadingPID(DriveConstants.k_driveToPointRotationPID.kP, 0, 0)
-        .withSteerRequestType(SteerRequestType.MotionMagicExpo)
-        .withDriveRequestType(DriveRequestType.Velocity);
+            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+            .withHeadingPID(DriveConstants.k_driveToPointRotationPID.kP, 0, 0)
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+            .withDriveRequestType(DriveRequestType.Velocity);
 
     private final Pose2d m_goal;
     private final CommandSwerveDrivetrain m_drivetrain;
@@ -51,8 +52,8 @@ public class DriveToPointCommand extends Command {
         Pose2d currPose = m_drivetrain.getPose();
 
         // so first is finished run doesn't break
-        xPIDController.reset(currPose.getX());
-        yPIDController.reset(currPose.getY());
+        xController.reset(currPose.getX());
+        yController.reset(currPose.getY());
 
         RobotObserver.getField().getObject("target").setPose(m_goal);
     }
@@ -61,24 +62,23 @@ public class DriveToPointCommand extends Command {
     public void execute() {
         Pose2d currPose = m_drivetrain.getPose();
 
-        double xVelo = xPIDController.calculate(currPose.getX(), m_goal.getX());
-        double yVelo = yPIDController.calculate(currPose.getY(), m_goal.getY());
+        double xVelo = xController.calculate(currPose.getX(), m_goal.getX());
+        double yVelo = yController.calculate(currPose.getY(), m_goal.getY());
 
         SmartDashboard.putNumber("XVELO", xVelo);
         SmartDashboard.putNumber("YVELO", yVelo);
 
         m_drivetrain.setControl(
-            m_request
-                .withVelocityX(xVelo)
-                .withVelocityY(yVelo)
-                .withTargetDirection(m_targetRotation)
-        );
+                m_request
+                        .withVelocityX(xVelo)
+                        .withVelocityY(yVelo)
+                        .withTargetDirection(m_targetRotation));
     }
 
     @Override
     public void end(boolean interrupted) {
         m_drivetrain.stop();
-        m_logger.debug("drive to pose interrupted: {}",interrupted);
+        m_logger.debug("drive to pose interrupted: {}", interrupted);
     }
 
     @Override
@@ -88,13 +88,12 @@ public class DriveToPointCommand extends Command {
         double err = Math.hypot(errX, errY);
 
         double errRotation = Math.abs(m_drivetrain.getPose()
-            .getRotation()
-            .minus(m_targetRotation)
-            .getRadians()
-        );
-        
+                .getRotation()
+                .minus(m_targetRotation)
+                .getRadians());
+
         m_logger.debug("err: {}, errRotation: {}", err, errRotation);
 
-        return (err < AutonConstants.translationTolerance && errRotation < AutonConstants.rotationTolerance);
+        return (err < AutonConstants.translationTolerance && errRotation < AutonConstants.rotationTolerance.in(Radians));
     }
 }
