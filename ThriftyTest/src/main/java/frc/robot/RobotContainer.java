@@ -104,6 +104,8 @@ public class RobotContainer {
         SmartDashboard.putBoolean("SAFETY MODE", false);
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
+        SmartDashboard.putData("AlignLEFT " , new  AlignLeftCommand(m_drivetrain));
+        SmartDashboard.putData("AlignRight", new AlignRightCommand(m_drivetrain));
     }
 
     private void configureTesting() {
