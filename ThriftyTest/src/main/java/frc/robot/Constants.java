@@ -192,7 +192,7 @@ public class Constants {
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
-        public static final String dragonReinsName = "interlink";
+        public static final String dragonReinsName = "spark";
         public static final String driverBackupName = "dual";
 
         public static final String buttonBoardName = "dragon";
@@ -1011,12 +1011,12 @@ public class Constants {
         public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8; // 8
-        public static final int elevatorOffset = 94; // 94
-        public static final int funnelNumLED = 85; // 85 
+        public static final int elevatorOffset = 95; // 94
+        public static final int funnelNumLED = 87; // 85 
         public static final int elevatorNumLED = 40; // 40
         public static final int funnelOffset2 = 8; // 8
-        public static final int elevatorOffset2 = 94; // 94
-        public static final int funnelNumLED2 = 85; // 85
+        public static final int elevatorOffset2 = 95; // 94
+        public static final int funnelNumLED2 = 87; // 85
         public static final int elevatorNumLED2 = 40; // 40
     }
 }

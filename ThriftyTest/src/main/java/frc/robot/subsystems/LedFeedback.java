@@ -74,7 +74,6 @@ public class LedFeedback extends SubsystemBase {
     private CANdle ledcontroller2 = new CANdle(IDConstants.candle2);
 
     public LedFeedback(CommandSwerveDrivetrain m_Drivetrain) {
-        ledcontroller2 = ledcontroller; // FIXME for comp bot!!!
         CANdleConfiguration config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB; // set the strip type to RGB
         config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
