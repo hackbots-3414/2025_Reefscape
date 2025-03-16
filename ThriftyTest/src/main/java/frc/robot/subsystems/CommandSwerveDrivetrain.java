@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -114,6 +115,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setPoseSupplier(this::getPose);
         RobotObserver.setVelocitySupplier(this::getVelocity);
         RobotObserver.setRangeDistanceSupplier(this::getRangeDistance);
+        RobotObserver.setCompensationDistanceSupplier(this::getCompensationDistance);
 
         configureCANRange();
     }
@@ -197,6 +199,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double leftValue = leftRaw > DriveConstants.rangeZero && leftRaw < DriveConstants.rangeMax ? leftRaw : DriveConstants.rangeZero;
         double rightValue = rightRaw > DriveConstants.rangeZero && rightRaw < DriveConstants.rangeMax ? rightRaw : DriveConstants.rangeZero;
         return rangeFilter.calculate(Math.min(leftValue, rightValue));
+    }
+
+    public Optional<Double> getCompensationDistance() {
+        double leftRaw = leftRange.getDistance().getValueAsDouble();
+        boolean leftOk = leftRange.getIsDetected().getValue();
+        double rightRaw = rightRange.getDistance().getValueAsDouble();
+        boolean rightOk = rightRange.getIsDetected().getValue();
+        if (!(rightOk || leftOk)) return Optional.empty();
+        double measurement;
+        if (!rightOk) {
+            measurement = leftRaw;
+        } else if (!leftOk) {
+            measurement = rightRaw;
+        } else {
+            measurement = Math.min(leftRaw, rightRaw);
+        }
+        return Optional.of(rangeFilter.calculate(measurement));
     }
 
     @Override
