@@ -146,7 +146,7 @@ public class RobotObserver {
         return getInstance().m_rangeDistanceSupplier.getAsDouble();
     }
 
-    private Supplier<Optional<Double> m_compDistanceSupplier;
+    private Supplier<Optional<Double>> m_compDistanceSupplier;
 
     public static void setCompensationDistanceSupplier(Supplier<Optional<Double>> sup) {
         getInstance().m_compDistanceSupplier = sup;
