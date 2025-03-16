@@ -55,6 +55,7 @@
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/Zero Elevator": "Command",
       "/SmartDashboard/camera testing spot": "Command",
       "/SmartDashboard/camera testing spot 2": "Command",
       "/SmartDashboard/drive to other pose": "Command",
@@ -152,6 +153,11 @@
         "width": 17.54825210571289,
         "window": {
           "visible": false
+        }
+      },
+      "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
         }
       },
       "/SmartDashboard/Go To B": {
@@ -465,13 +471,15 @@
         "target": {
           "arrows": false,
           "color": [
-            0.2598039507865906,
-            0.22796523571014404,
-            0.22796523571014404,
+            0.8649789094924927,
+            0.31752389669418335,
+            0.31752389669418335,
             255.0
           ],
+          "length": 0.9399999976158142,
           "selectable": false,
-          "style": "Hidden"
+          "style": "Box/Image",
+          "width": 0.9399999976158142
         },
         "visibleTargetPoses": {
           "arrowColor": [
@@ -525,5 +533,50 @@
       "open": true
     },
     "visible": true
+  },
+  "Plot": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "label": "Velocity",
+              "lockMax": true,
+              "lockMin": true,
+              "max": 4.0,
+              "min": -4.0
+            }
+          ],
+          "backgroundColor": [
+            0.0,
+            0.0,
+            0.0,
+            0.8500000238418579
+          ],
+          "height": 508,
+          "name": "Robot Velocity",
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/vx"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/vy"
+            }
+          ]
+        }
+      ]
+    }
   }
 }

@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,13 +28,11 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotObserver;
-import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
-import frc.robot.commands.ElevatorToPointCommand;
+import frc.robot.RobotObserver;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
@@ -103,6 +103,9 @@ public class Elevator extends SubsystemBase {
     private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
 
     public void setPosition(double goal) {
+        if (goal > ElevatorConstants.forwardSoftLimit) {
+            goal = ElevatorConstants.forwardSoftLimit;
+        }
         if (goal >= getPosition()) {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
@@ -160,7 +163,14 @@ public class Elevator extends SubsystemBase {
 
     private double getCANRangeCompensation() {
         if (RobotObserver.getManualMode() || !ElevatorConstants.enableCANRange) return 0.0;
-        return (RobotObserver.getRangeDistance() - DriveConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch;
+        Optional<Double> distance = RobotObserver.getCompensationDistance();
+        if (distance.isEmpty()) return 0.0;
+        double comp = Math.min(
+            ElevatorConstants.k_maxCanCompensation,
+            (distance.get() - DriveConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch
+        );
+        SmartDashboard.putNumber("canrange comp", comp);
+        return comp;
     }
 
     public void setReefLower() {

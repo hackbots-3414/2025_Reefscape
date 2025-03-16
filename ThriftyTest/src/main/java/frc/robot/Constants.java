@@ -43,14 +43,21 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -111,14 +118,14 @@ public class Constants {
         public static final int climbLeft = 1;
         public static final int climbRight = 2;
 
-        public static final int canRange = 3;
-
         public static final int algae = 60;
 
         public static final int candle1 = 5; 
         public static final int candle2 = 6;
 
         public static final int servo = 9;
+
+        public static final int climbEncoder = 9;
     }
 
     public static class SimConstants {
@@ -132,7 +139,7 @@ public class Constants {
     public static class DriveConstants {
         // public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
         // public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
-        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(10, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(20, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_driveToPointTranslationPID, k_driveToPointRotationPID);
@@ -165,6 +172,17 @@ public class Constants {
 
         public static final double rangeZero = 0.175;
         public static final double rangeMax = 0.3;
+
+        // These are the constraints solely used by the DriveToPoint commands
+        public static final Constraints k_driveToPointConstraints = new Constraints(
+            k_driveToPointSpeed,
+            k_driveToPointAcceleration
+        );
+        // This one is as well, however it is only used in auton
+        public static final Constraints k_rotationConstraints = new Constraints(
+            k_maxAngularSpeed.in(RadiansPerSecond),
+            k_maxAngularAcceleration.in(RadiansPerSecondPerSecond)
+        );
     }
 
     public static class ButtonBindingConstants {
@@ -187,16 +205,16 @@ public class Constants {
         public static class DragonReins {
             public static final int xAxis = 1;
             public static final int yAxis = 0;
-            public static final int rotAxis = 3;
+            public static final int rotAxis = 2;
 
             public static final boolean flipX = true;
             public static final boolean flipY = false;
             public static final boolean flipRot = true;
 
             public static final int enableOpenLoop = 3;
-            public static final int resetHeading = 1;
+            public static final int resetHeading = 2;
 
-            public static final double deadband = 0.05;
+            public static final double deadband = 0.01;
         }
 
         public static class BackupDriver {
@@ -397,8 +415,8 @@ public class Constants {
         public static final double k_ambiguityShifter = 0.2;
         public static final double k_targetMultiplier = 10;
         public static final double k_differenceThreshold = 0.14;
-        // this value is so high because we want to strongly punish far away poses.
         public static final double k_differenceMultiplier = 100.0;
+        public static final double k_latencyMultiplier = 0.3;
 
         public static final double k_headingThreshold = Units.degreesToRadians(3);
 
@@ -440,10 +458,10 @@ public class Constants {
 
         public static final boolean useQueue = false;
 
-        public static double translationTolerance = 0.005; // m
-        public static double rotationTolerance = Units.degreesToRadians(0.5);
-        
-        public static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance));
+        public static double translationTolerance = 0.04; // m
+        public static Angle rotationTolerance = Degrees.of(0.5);
+
+        private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static double stage2Distance = 1;
@@ -471,9 +489,6 @@ public class Constants {
 
         public static final boolean invertLeftMotorFollower = true;
 
-        public static final double forwardSoftLimit = 11.2;
-        public static final double reverseSoftLimit = 0;
-
         public static final double supplyCurrentLimit = 40;
 
         public static final double rotorToSensorRatio = 5.2;
@@ -491,10 +506,9 @@ public class Constants {
 
         public static final double netMass = stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of the elevator carriage
         public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the elevator drum
+        // approx. 0.02865
 
         public static final double momentOfInertia = netMass * Math.pow(drumRadius, 2);
-
-        public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
 
         public static final double rangeDistanceGain = 64; // how much higher, per unit of range
 
@@ -503,9 +517,10 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.277344 ; // -0.427979;
+        public static final double encoderOffset = 0.114014; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
+        // approx 7.96
 
         public static final boolean enableCANRange = true;
 
@@ -528,13 +543,20 @@ public class Constants {
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
 
+        public static final double forwardSoftLimit = 11.15;
+        public static final double reverseSoftLimit = 0;
+
+        public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
+
+        public static final double k_maxCanCompensation = 2 * inch;
+
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeedUp = 10; // 10
+        public static final double maxSpeedUp = 22; // 10
         public static final double accelerationMultiplierUp = 1; // 3
 
-        public static final double maxSpeedDown = 7; // 7
+        public static final double maxSpeedDown = 10; // 7
         public static final double accelerationMultiplierDown = 0.7; // 2.25
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
@@ -562,7 +584,7 @@ public class Constants {
                         .withForwardSoftLimitThreshold(forwardSoftLimit)
                         .withForwardSoftLimitEnable(true)
                         .withReverseSoftLimitThreshold(reverseSoftLimit)
-                        .withForwardSoftLimitEnable(true))
+                        .withReverseSoftLimitEnable(true))
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Elevator_Static)
@@ -593,7 +615,9 @@ public class Constants {
     public static final class PivotConstants {
         public static final boolean enable = true;
 
-        public static final double encoderOffset = -0.347656; //0.250977;
+        public static final double encoderOffset = 0.665283203125;
+
+        public static final double rotorOffset = 0.344;
 
         public static final double rotorToSensorRatio = 64.0 / 14.0; 
         public static final double sensorToMechanismRatio = 32.0 / 14.0; 
@@ -601,8 +625,8 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.Clockwise_Positive;
 
-        public static final double forwardSoftLimitThreshold = -0.14;
-        public static final double reverseSoftLimitThreshold = -0.49;
+        public static final double forwardSoftLimitThreshold = 0.359;
+        public static final double reverseSoftLimitThreshold = 0.0;
 
         public static final double radiansAtMax = forwardSoftLimitThreshold;
         public static final double radiansAtZero = 0;
@@ -613,12 +637,12 @@ public class Constants {
 
         public static final double tolerance = 0.03;
 
-        public static final double groundPickup = -0.41;
-        public static final double processor = -0.41;
-        public static final double reefPickup = -0.34;
-        public static final double reefExtract = -0.29;
-        public static final double net = -0.165;
-        public static final double stow = -0.165;
+        public static final double groundPickup = 0.0669;
+        public static final double processor = 0.0669;
+        public static final double reefPickup = 0.2;
+        public static final double reefExtract = 0.281;
+        public static final double net = 0.342;
+        public static final double stow = 0.342;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
@@ -643,11 +667,14 @@ public class Constants {
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withInverted(invertMotor))
 
+                // .withFeedback(new FeedbackConfigs()
+                //         .withFeedbackRemoteSensorID(IDConstants.pivotEncoder)
+                //         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                //         .withRotorToSensorRatio(rotorToSensorRatio)
+                //         .withSensorToMechanismRatio(sensorToMechanismRatio))
                 .withFeedback(new FeedbackConfigs()
-                        .withFeedbackRemoteSensorID(IDConstants.pivotEncoder)
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-                        .withRotorToSensorRatio(rotorToSensorRatio)
-                        .withSensorToMechanismRatio(sensorToMechanismRatio))
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                        .withSensorToMechanismRatio(gearRatio))
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
@@ -661,13 +688,22 @@ public class Constants {
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(100)
+                        .withKP(15)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
                         .withKV(1.3)
                         .withKA(0.12)
                         .withKG(0.625))
+                .withSlot1(new Slot1Configs()
+                        .withGravityType(GravityTypeValue.Arm_Cosine)
+                        .withKP(15)
+                        .withKI(0)
+                        .withKD(0)
+                        .withKS(0)
+                        .withKV(1.3)
+                        .withKA(0.12)
+                        .withKG(0.85))
 
                 .withMotionMagic(new MotionMagicConfigs()
                         .withMotionMagicCruiseVelocity(maxSpeed)
@@ -680,7 +716,7 @@ public class Constants {
     public static class CoralConstants {
         public static final boolean enable = true;
         
-        public static final double intakeVoltage = 5;
+        public static final double intakeVoltage = 3.5;
         public static final double ejectVoltage = 5;
 
         public static final double l1EjectVoltage = 3;
@@ -690,7 +726,7 @@ public class Constants {
 
         public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
 
-        public static final double spitOutVoltage = -8;
+        public static final double spitOutVoltage = -6;
 
         public static final double l1LeftEjectVoltage = 8;
         public static final double l1RightEjectVoltage = 6;
@@ -699,7 +735,7 @@ public class Constants {
 
         public static final double supplyCurrentLimit = 20;
 
-        public static final double IRThreshold = 1;
+        public static final double IRThreshold = 0.51;
 
         public static final boolean enableCANRange = true;
 
@@ -726,21 +762,42 @@ public class Constants {
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 8.0; // 12.0
         public static final double climbDownVolts = -12.0;
-        public static final double climbRollVolts = 2;
-
-        public static final double kP = 2.0;
+        public static final double climbRollVolts = -2;
 
         public static final double climberCurrentLimit = 80.0;
-        public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
+        public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
-        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
+        public static final double forwardSoftLimit = -0.01;
+        public static final double reverseSoftLimit = -0.265;
+        public static final double climbPosition = -0.130371;
+
+        public static final double encoderOffset = 0.284423828125;
+        public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
+
+        public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
+                .withMagnetSensor(new MagnetSensorConfigs()
+                        .withAbsoluteSensorDiscontinuityPoint(0.5)
+                        .withSensorDirection(invertEncoder)
+                        .withMagnetOffset(encoderOffset));
+
+        public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()                        
                 .withMotorOutput(new MotorOutputConfigs()
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withInverted(invertMotor))
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
-                        .withSupplyCurrentLimit(climberCurrentLimit));
+                        .withSupplyCurrentLimit(climberCurrentLimit))
+
+                .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                    .withForwardSoftLimitThreshold(forwardSoftLimit)
+                    .withForwardSoftLimitEnable(true)
+                    .withReverseSoftLimitThreshold(reverseSoftLimit)
+                    .withReverseSoftLimitEnable(true))
+
+                .withFeedback(new FeedbackConfigs()
+                        .withFeedbackRemoteSensorID(IDConstants.climbEncoder)
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder));
 
         public static final double climbReadyRangeValue = 0.08;
         public static final double climbedRangeValue = 0.145;
@@ -751,6 +808,8 @@ public class Constants {
         public static final double k_openServoPosition = 0.0;
         public static final double k_closedServoPosition = 1.0;
         public static final double k_servoTolerance = 0.01;
+
+        public static final double climbReadyTolerance = -0.02;
     }
 
     public static final class AlgaeRollerConstants {
@@ -795,24 +854,26 @@ public class Constants {
                 stallCurrentAmps, freeCurrentAmps, freeSpeedRadPerSec, 1);
     }
 
+    public static double offset = Units.inchesToMeters(0);
+
     public enum ScoringLocations {
-        A(new Pose2d(3.188, 4.191, Rotation2d.fromDegrees(0))), // GOOD
-        B(new Pose2d(3.188, 3.861, Rotation2d.fromDegrees(0))), // GOOD
+        A(new Pose2d(3.188+offset, 4.191, Rotation2d.fromDegrees(0))), // GOOD
+        B(new Pose2d(3.188+offset, 3.861, Rotation2d.fromDegrees(0))), // GOOD
 
-        C(new Pose2d(3.696, 2.981, Rotation2d.fromDegrees(60))), // GOOD
-        D(new Pose2d(3.951, 2.816, Rotation2d.fromDegrees(60))), // GOOD
+        C(new Pose2d(3.696+offset, 2.981+offset, Rotation2d.fromDegrees(60))), // GOOD
+        D(new Pose2d(3.951+offset, 2.816+offset, Rotation2d.fromDegrees(60))), // GOOD
 
-        E(new Pose2d(4.998, 2.816, Rotation2d.fromDegrees(120))), // GOOD
-        F(new Pose2d(5.283 + Math.cos(120)*(-0.02), 2.981 + Math.sin(120)*(-0.02), Rotation2d.fromDegrees(120))), // GOOD
+        E(new Pose2d(4.998-offset, 2.816, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.283-offset, 2.981+offset, Rotation2d.fromDegrees(120))), // GOOD
 
-        G(new Pose2d(5.791, 3.861, Rotation2d.fromDegrees(180))), // GOOD
-        H(new Pose2d(5.791, 4.191, Rotation2d.fromDegrees(180))), // GOOD
+        G(new Pose2d(5.791-offset, 3.861, Rotation2d.fromDegrees(180))), // GOOD
+        H(new Pose2d(5.791-offset, 4.191, Rotation2d.fromDegrees(180))), // GOOD
 
-        I(new Pose2d(5.283, 5.071, Rotation2d.fromDegrees(-120))), // GOOD
-        J(new Pose2d(4.998, 5.236, Rotation2d.fromDegrees(-120))), // GOOD
+        I(new Pose2d(5.283-offset, 5.071-offset, Rotation2d.fromDegrees(-120))), // GOOD
+        J(new Pose2d(4.998-offset, 5.236-offset, Rotation2d.fromDegrees(-120))), // GOOD
 
-        K(new Pose2d(3.951, 5.236, Rotation2d.fromDegrees(-60))), // GOOD
-        L(new Pose2d(3.696, 5.071, Rotation2d.fromDegrees(-60))), // GOOD
+        K(new Pose2d(3.951+offset, 5.236-offset, Rotation2d.fromDegrees(-60))), // GOOD
+        L(new Pose2d(3.696+offset, 5.071-offset, Rotation2d.fromDegrees(-60))), // GOOD
 
         RIGHTHP(new Pose2d(1.227, 1.048, Rotation2d.fromDegrees(55))),
         LEFTHP(new Pose2d(1.227, 6.983, Rotation2d.fromDegrees(-55))),

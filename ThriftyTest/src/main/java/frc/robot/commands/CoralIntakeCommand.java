@@ -24,7 +24,7 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void initialize() {
-    timeRemaining = 3;
+    timeRemaining = 4;
     elevator.setStow();
   }
 

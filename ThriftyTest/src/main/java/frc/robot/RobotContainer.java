@@ -23,6 +23,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -98,6 +99,11 @@ public class RobotContainer {
         // configureSysId();
         configureTesting();
         configureDashboard();
+        confiureSimulation();
+    }
+
+    private void confiureSimulation() {
+        DriverStation.silenceJoystickConnectionWarning(true);
     }
     
     private void configureDashboard() {
@@ -132,6 +138,7 @@ public class RobotContainer {
 
     private void configureDriverBindings() {
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
+        // controller.setRumble(RumbleType.kRightRumble, 1.0);
 
         int xAxis;
         int yAxis;
@@ -229,6 +236,7 @@ public class RobotContainer {
 
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
+        controller.setRumble(RumbleType.kBothRumble, 1.0);
 
         if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
             controller.button(ButtonBoard.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
@@ -494,6 +502,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("L3", coralScoreCommand(3).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
+        for (ScoringLocations location : Constants.ScoringLocations.values()) {
+            String name = "Align ".concat(location.toString());
+            NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true));
+        }
     }
 
     private void configureVision() {

@@ -111,7 +111,7 @@ public class SingleInputPoseEstimator implements Runnable {
             EstimationAlgorithm.PnP
             : EstimationAlgorithm.Trig;
         Optional<EstimatedRobotPose> est = m_estimator.update(result);
-        if (est.isPresent() && false) {
+        if (est.isPresent()) {
             Optional<TimestampedPoseEstimate> processed = process(result, est.get().estimatedPose, algorithm);
             if (processed.isPresent()) {
                 m_reporter.accept(processed.get());
@@ -230,11 +230,9 @@ public class SingleInputPoseEstimator implements Runnable {
         if (RobotObserver.getReefMode()) {
             switch (RobotObserver.getReefClipLocation()) {
                 case LEFT:
-                    SmartDashboard.putBoolean("CAMERA BEING CHECKED: " + m_name, m_name != VisionConstants.k_leftAlignName);
-                    if (m_name != VisionConstants.k_leftAlignName) return false;
+                    if (m_name.equals(VisionConstants.k_leftAlignName)) return false;
                 case RIGHT:
-                    SmartDashboard.putBoolean("CAMERA BEING CHECKED: " + m_name, m_name != VisionConstants.k_rightAlignName);
-                    if (m_name != VisionConstants.k_rightAlignName) return false;
+                    if (m_name.equals(VisionConstants.k_rightAlignName)) return false;
             }
         }
         // no targets -> no pose
@@ -343,10 +341,12 @@ public class SingleInputPoseEstimator implements Runnable {
         double diffMultiplier = Math.max(1,
             poseDifferenceError * VisionConstants.k_differenceMultiplier
         );
+        double timeMultiplier = Math.max(1, latency * VisionConstants.k_latencyMultiplier);
         // final calculation
         double stdDevMultiplier = ambiguityFactor
             * distanceFactor
             * diffMultiplier
+            * timeMultiplier
             / tagDivisor;
         return stdDevMultiplier;
     }
