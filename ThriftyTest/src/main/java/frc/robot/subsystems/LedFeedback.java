@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
 import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
+import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
@@ -43,18 +44,20 @@ public class LedFeedback extends SubsystemBase {
     private boolean algaeTooClose = false;
     private boolean inAuton = false;
     private boolean inTeleop = false;
+    private double rangeLeft = 0.0;
+    private double rangeRight = 0.0;
+    private CommandSwerveDrivetrain drivetrain;
 
     private int selectedSlot = 0;
 
     private static enum LED_MODE {
-        CORAL_ON_BOARD, CORAL_READY, 
-        ALGAE_ON_BOARD, ALGAE_READY, ALGAE_TOO_CLOSE,
-        END_GAME_WARNING, END_GAME_ALERT, CLIMBED,
-        DEFAULT, BADCONTROLLER;
+        CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
+        BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME, ALGAE_READY, ALGAE_TOO_CLOSE, ALIGNED, CLOSE,
+        ALIGNED_REEF, ALIGNED_BRANCH, ALIGNED_RIGHT, ALIGNED_LEFT;
     };
 
     private static enum LED_COLOR {
-        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN;
+        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE, BLUE_VIOLET, DEEP_PINK;
     };
 
     private static enum LED_PATTERN {
@@ -70,20 +73,47 @@ public class LedFeedback extends SubsystemBase {
     private CANdle ledcontroller = new CANdle(IDConstants.candle1);
     private CANdle ledcontroller2 = new CANdle(IDConstants.candle2);
 
-    public LedFeedback() {
+    public LedFeedback(CommandSwerveDrivetrain m_Drivetrain) {
+        ledcontroller2 = ledcontroller; // FIXME for comp bot!!!
         CANdleConfiguration config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB; // set the strip type to RGB
         config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
-        ledcontroller.configAllSettings(config);
-        ledcontroller2.configAllSettings(config);
+        ledcontroller.configAllSettings(config, 20);
+        ledcontroller2.configAllSettings(config, 20);
+        this.drivetrain = m_Drivetrain;
+
+
+        // SmartDashboard.putBoolean("AlignedRight", alignedRight());
+        // SmartDashboard.putBoolean("AlignedLeft", alignedLeft());
+        // SmartDashboard.putBoolean("coralOnBoard", coralOnBoard);
+        // SmartDashboard.putBoolean("coralInRange", coralInRange);
+        // SmartDashboard.putBoolean("algaeOnBoard", algaeOnBoard);
+        // SmartDashboard.putBoolean("ALGAEINRANGE", algaeInRange);
+        // SmartDashboard.putBoolean("ALGAETOOCLOSE", algaeTooClose);
+        // SmartDashboard.putBoolean("CLIMBED", climbed);
         defaultColors();
+
     }
 
     @Override
     public void periodic() {
+        // System.out.println("PERIODIC ENTER");
         matchTime = DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
+
+        rangeRight =  drivetrain.getRangeRightDistance();
+        rangeLeft =  drivetrain.getRangeLeftDistance();
+        // TODO FIX
+        
+        // alignedRight = SmartDashboard.getBoolean("AlignedRight", alignedRight());
+        // alignedLeft = SmartDashboard.getBoolean("AlignedLeft", alignedLeft());
+        // coralOnBoard = SmartDashboard.getBoolean("coralOnBoard", coralOnBoard);
+        // coralInRange = SmartDashboard.getBoolean("coralInRange", coralInRange);
+        // algaeOnBoard = SmartDashboard.getBoolean("algaeOnBoard", algaeOnBoard);
+        // algaeInRange = SmartDashboard.getBoolean("ALGAEINRANGE", algaeInRange);
+        // algaeTooClose = SmartDashboard.getBoolean("ALGAETOOCLOSE", algaeTooClose);
+        // climbed = SmartDashboard.getBoolean("CLIMBED", climbed);
 
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
@@ -93,87 +123,173 @@ public class LedFeedback extends SubsystemBase {
         climbed = RobotObserver.getClimbed();
 
         if (badController()) {
+
             if (mode != LED_MODE.BADCONTROLLER) {
                 mode = LED_MODE.BADCONTROLLER;
                 setAll(LED_COLOR.RED, LED_PATTERN.STROBE);
-                return;
+                // System.out.println("BADCONTROLLER");
+
             }
-        } else if (inTeleop || inAuton) {
-            if (inTeleop) {
-                if (matchTime <= LedConstants.endgameWarning) {
-                    if (matchTime <= LedConstants.endgameAlert) {
-                        if (mode != LED_MODE.END_GAME_ALERT) {
-                            mode = LED_MODE.END_GAME_ALERT;
-                            setElevator(LED_COLOR.YELLOW, LED_PATTERN.STROBE);
-                            return;
-
-                        }
-                    } else {
-                        if (mode != LED_MODE.END_GAME_WARNING) {
-                            mode = LED_MODE.END_GAME_WARNING;
-                            setElevator(LED_COLOR.YELLOW, LED_PATTERN.SOLID);
-                            return;
-                        }
-                    }
-                }
-
-                if (climbed) {
-                    if (mode != LED_MODE.CLIMBED && matchTime > 0) {
-                        mode = LED_MODE.CLIMBED;
+        } 
+        else if (inTeleop || inAuton) {
+            if (climbed) {
+                if (mode != LED_MODE.CLIMBED) {
+                    if (matchTime < LedConstants.endgameWarning) {
                         setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
-                        return;
                     }
-                } else if (coralOnBoard && coralInRange) {
-                    if (mode != LED_MODE.CORAL_READY) {
-                        mode = LED_MODE.CORAL_READY;
-                        setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
-                        return;
-                    }
-                } else if (coralOnBoard) {
-                    if (mode != LED_MODE.CORAL_ON_BOARD) {
-                        mode = LED_MODE.CORAL_ON_BOARD;
-                        setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
-                        return;
-                    }
-                } else if (algaeTooClose) {
-                    if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
-                        mode = LED_MODE.ALGAE_TOO_CLOSE;
-                        setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
-                        return;
-                    }
-                } else if (algaeOnBoard && algaeInRange) {
-                    if (mode != LED_MODE.ALGAE_READY) {
-                        mode = LED_MODE.ALGAE_READY;
-                        setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
-                        return;
-                    }
-                } else if (algaeOnBoard) {
-                    if (mode != LED_MODE.ALGAE_ON_BOARD) {
-                        mode = LED_MODE.ALGAE_ON_BOARD;
-                        setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
-                        return;
-                    }
+                    // System.out.println("CLIMBED");
+                    mode = LED_MODE.CLIMBED;
 
-                } else {
-                    if (mode != LED_MODE.DEFAULT) {
-                        defaultColors();
-                        mode = LED_MODE.DEFAULT;
-                        return;
-                    }
                 }
 
+                // Check if Coral on Board and At reef and not aligned to Branch
             }
+            // Check for endgame
+           else if (matchTime <= LedConstants.endgameWarning) {
+                // Check for Final Seconds of  Endgame
+                if (matchTime <= LedConstants.endgameAlert) {
+                    if (mode != LED_MODE.END_GAME_ALERT) {
+                        mode = LED_MODE.END_GAME_ALERT;
+                        setAll(LED_COLOR.YELLOW, LED_PATTERN.STROBE);
+                        // System.out.println("ENDGAME ALERT");
+                    }
+                    // In Start of Endgame
+                } else {
+                    if (mode != LED_MODE.END_GAME_WARNING) {
+                        mode = LED_MODE.END_GAME_WARNING;
+                        setAll(LED_COLOR.YELLOW, LED_PATTERN.SOLID);
+                        // System.out.println("ENDGAME WARNING");
+
+                    }
+                }
+            }
+            else if (coralOnBoard && alignedReef()) {
+                if (mode != LED_MODE.ALIGNED_REEF) {
+                    mode = LED_MODE.ALIGNED_REEF;
+                    setAll(LED_COLOR.ORANGE, LED_PATTERN.STROBE);
+                    // System.out.println("CORAL_ON_BOARD && ALIGNED REEF");
+
+                }
+                // Check if Aligned too far right or Left Branch on Reef
+                // } else if (coralOnBoard && (alignedRight() || alignedLeft())) {
+                // if (mode != LED_MODE.ALIGNED_BRANCH) {
+                // mode = LED_MODE.ALIGNED_BRANCH;
+                // setAll(LED_COLOR.GREEN, LED_PATTERN.FLASH);
+                // }
+            } else if (coralOnBoard && alignedRight()) {
+                if (mode != LED_MODE.ALIGNED_RIGHT) {
+                    mode = LED_MODE.ALIGNED_RIGHT;
+                    setRight(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
+                    // System.out.println("CORAL_ON_BOARD && ALIGNED RIGHT");
+
+                }
+            } else if (coralOnBoard && alignedLeft()) {
+                if (mode != LED_MODE.ALIGNED_LEFT) {
+                    mode = LED_MODE.ALIGNED_LEFT;
+                    setLeft(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
+                    // System.out.println("CORAL_ON_BOARD && ALIGNED LEFT");
+
+                }
+            }
+            // Check if Coral is On Board and In range of reef
+            else if (coralOnBoard && coralInRange) {
+                if (mode != LED_MODE.CORAL_READY) {
+                    mode = LED_MODE.CORAL_READY;
+                    setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
+                    // System.out.println("CORAL_ON_BOARD && INRANGE");
+
+                }
+                // Check if Coral is On Board
+            } else if (coralOnBoard) {
+                if (mode != LED_MODE.CORAL_ON_BOARD) {
+                    mode = LED_MODE.CORAL_ON_BOARD;
+                    setAll(LED_COLOR.WHITE, LED_PATTERN.SOLID);
+                    // System.out.println("CORAL_ON_BOARD");
+
+                }   
+                // Check if Algae is On Board and Too Close to Net
+            } else if (algaeOnBoard && algaeTooClose) {
+                if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
+                    mode = LED_MODE.ALGAE_TOO_CLOSE;
+                    setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
+                    // System.out.println("ALGAE_ON_BOARD && ALGAE_TOO_CLOSE");
+
+                }
+                // Check if Algae is On Board and In range to Net
+            } else if (algaeOnBoard && algaeInRange) {
+                if (mode != LED_MODE.ALGAE_READY) {
+                    mode = LED_MODE.ALGAE_READY;
+                    setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
+                    // System.out.println("ALGAE IN RANGE");
+                }
+                // Check if Algae is on board
+            } else if (algaeOnBoard) {
+                if (mode != LED_MODE.ALGAE_ON_BOARD) {
+                    mode = LED_MODE.ALGAE_ON_BOARD;
+                    setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
+                    // System.out.println("ALGAE_ON_BOARD******************************************");
+
+                }
+                // If Everything is false make it Default Colors
+            } else {
+                if (mode != LED_MODE.DEFAULT) {
+                    // System.out.println("DEFAULT2");
+                    defaultColors();
+                    mode = LED_MODE.DEFAULT;
+                }
+            }
+
+            // Run this when robot is disabled
         } else {
             if (mode != LED_MODE.DEFAULT) {
+                // System.out.println("DEFAULT");
                 defaultColors();
                 mode = LED_MODE.DEFAULT;
                 return;
             }
-
         }
+        // System.out.println("XPERIODIC END");
+    }
+
+    private boolean alignedReef() {
+        return (Math.abs(rangeRight
+                - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
+                        * CanRangeConstants.tolerance
+                &&
+                Math.abs(rangeLeft
+                        - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
+                                * CanRangeConstants.tolerance);
+    }
+
+    private boolean alignedLeft() {
+        return (Math.abs(rangeRight
+                - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
+                        * CanRangeConstants.tolerance)
+                &&
+                (Math.abs(rangeLeft
+                        - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters
+                                * CanRangeConstants.tolerance);
+    }
+
+    private boolean alignedRight() {
+        return (Math.abs(
+                rangeLeft - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
+                        * CanRangeConstants.tolerance)
+                &&
+                (Math.abs(rangeRight
+                        - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters
+                                * CanRangeConstants.tolerance);
+    }
+
+    private void clearAllAnimations() {
+        ledcontroller.clearAnimation(0);
+        ledcontroller.clearAnimation(1);
+        ledcontroller2.clearAnimation(0);
+        ledcontroller2.clearAnimation(1);
     }
 
     private void defaultColors() {
+        clearAllAnimations();
         setElevator(LED_COLOR.PURPLE, LED_PATTERN.FLASH); // changed to heartbeat mode
         setFunnel(LED_COLOR.PURPLE, LED_PATTERN.LARSON);
     }
@@ -200,6 +316,7 @@ public class LedFeedback extends SubsystemBase {
     }
 
     public void setAll(LED_COLOR color, LED_PATTERN pattern) {
+        clearAllAnimations();
         setColor(color, LED_SECTION.ELEVATOR_LEFT, pattern); // changed to heartbeat mode
         setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern); // changed to heartbeat mode
         setColor(color, LED_SECTION.FUNNEL_LEFT, pattern);
@@ -216,9 +333,17 @@ public class LedFeedback extends SubsystemBase {
         setColor(color, LED_SECTION.FUNNEL_RIGHT, pattern);
     }
 
-    // Color color = new Color();
-    // int red = Color.unpackRGB((int) Color.kFirstBlue, RGBChannel.kBlue);
+    public void setRight(LED_COLOR color, LED_PATTERN pattern) {
+        setColor(color, LED_SECTION.ELEVATOR_RIGHT, pattern);
+        setColor(color, LED_SECTION.FUNNEL_RIGHT, pattern);
+    }
 
+    public void setLeft(LED_COLOR color, LED_PATTERN pattern) {
+        setColor(color, LED_SECTION.ELEVATOR_LEFT, pattern);
+        setColor(color, LED_SECTION.FUNNEL_LEFT, pattern);
+    }
+
+    @SuppressWarnings("incomplete-switch")
     public void setColor(LED_COLOR color, LED_SECTION section, LED_PATTERN pattern) {
         int nbrLED = 0;
         int offsetLED = 0;
@@ -234,7 +359,10 @@ public class LedFeedback extends SubsystemBase {
             case PURPLE -> c = Color.kPurple;
             case WHITE -> c = Color.kWhite;
             case BROWN -> c = Color.kBrown;
+            case ORANGE -> c = Color.kOrange;
+            case DEEP_PINK -> c = Color.kDeepPink;
             case OFF -> c = Color.kBlack;
+
         }
 
         int r = (int) (c.red * 255);
@@ -266,6 +394,8 @@ public class LedFeedback extends SubsystemBase {
                 selectedSlot = 1;
                 candle = ledcontroller2;
         }
+
+        candle.clearAnimation(selectedSlot);
 
         switch (pattern) {
             case SOLID -> candle.setLEDs(r, g, b, 0, offsetLED, nbrLED);

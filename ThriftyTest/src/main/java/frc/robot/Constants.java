@@ -478,7 +478,9 @@ public class Constants {
             .withUpdateMode(UpdateModeValue.ShortRange100Hz)
         );
         // .withProximityParams(null)
-
+        public final static double farAlignedDistanceMeters = 0.18; 
+        public static final double tolerance = 0.2; // 20% tolerance
+        public static final double closeAlignedDistanceMeters = 0.12; 
         public static final int k_filterWindow = 5; // 5 measurements
     }
 
@@ -1008,13 +1010,13 @@ public class Constants {
         public static final double strobeSpeed = 0.1;
         public static final double endgameWarning = 30;
         public static final double endgameAlert = 15;
-        public static final int funnelOffset = 8;
-        public static final int elevatorOffset = 94;
-        public static final int funnelNumLED = 86;
-        public static final int elevatorNumLED = 40;
-        public static final int funnelOffset2 = 8;
-        public static final int elevatorOffset2 = 94;
-        public static final int funnelNumLED2 = 86;
-        public static final int elevatorNumLED2 = 40;
+        public static final int funnelOffset = 8; // 8
+        public static final int elevatorOffset = 94; // 94
+        public static final int funnelNumLED = 85; // 85 
+        public static final int elevatorNumLED = 40; // 40
+        public static final int funnelOffset2 = 8; // 8
+        public static final int elevatorOffset2 = 94; // 94
+        public static final int funnelNumLED2 = 85; // 85
+        public static final int elevatorNumLED2 = 40; // 40
     }
 }
