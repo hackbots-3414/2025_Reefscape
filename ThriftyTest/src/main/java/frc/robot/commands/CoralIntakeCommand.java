@@ -14,7 +14,7 @@ public class CoralIntakeCommand extends Command {
   private final CoralRollers coral;
   private final Elevator elevator;
 
-  private int timeRemaining = 3;
+  private int timeRemaining = 5;
 
   public CoralIntakeCommand(CoralRollers coralRollers, Elevator elevator) {
     this.coral = coralRollers;
@@ -24,7 +24,7 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void initialize() {
-    timeRemaining = 4;
+    timeRemaining = 6;
     elevator.setStow();
   }
 

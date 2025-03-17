@@ -113,20 +113,14 @@ public class Elevator extends SubsystemBase {
                 .withVelocity(ElevatorConstants.maxSpeedUp)
                 .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
                 .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(0)
-                .withLimitForwardMotion(true)
-                .withLimitReverseMotion(true)
-                .withIgnoreHardwareLimits(false));
+                .withSlot(0));
         } else {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
                 .withVelocity(ElevatorConstants.maxSpeedDown)
                 .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
                 .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(1)
-                .withLimitForwardMotion(true)
-                .withLimitReverseMotion(true)
-                .withIgnoreHardwareLimits(false));
+                .withSlot(1));
         }
         m_reference = goal;
     }
@@ -169,7 +163,10 @@ public class Elevator extends SubsystemBase {
     }
 
     private double getCANRangeCompensation() {
-        if (RobotObserver.getManualMode() || !ElevatorConstants.enableCANRange) return 0.0;
+        if (RobotObserver.getManualMode() || !ElevatorConstants.enableCANRange) {
+            m_logger.debug("not doing compensation");
+            return 0.0;
+        };
         Optional<Double> distance = RobotObserver.getCompensationDistance();
         if (distance.isEmpty()) return 0.0;
         double comp = Math.min(
