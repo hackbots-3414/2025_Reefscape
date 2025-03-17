@@ -126,7 +126,6 @@ public class LedFeedback extends SubsystemBase {
             if (mode != LED_MODE.BADCONTROLLER) {
                 mode = LED_MODE.BADCONTROLLER;
                 setAll(LED_COLOR.RED, LED_PATTERN.STROBE);
-                // System.out.println("BADCONTROLLER");
 
             }
         } 
@@ -136,7 +135,6 @@ public class LedFeedback extends SubsystemBase {
                     if (matchTime < LedConstants.endgameWarning) {
                         setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
                     }
-                    // System.out.println("CLIMBED");
                     mode = LED_MODE.CLIMBED;
 
                 }
@@ -150,14 +148,12 @@ public class LedFeedback extends SubsystemBase {
                     if (mode != LED_MODE.END_GAME_ALERT) {
                         mode = LED_MODE.END_GAME_ALERT;
                         setAll(LED_COLOR.YELLOW, LED_PATTERN.STROBE);
-                        // System.out.println("ENDGAME ALERT");
                     }
                     // In Start of Endgame
                 } else {
                     if (mode != LED_MODE.END_GAME_WARNING) {
                         mode = LED_MODE.END_GAME_WARNING;
                         setAll(LED_COLOR.YELLOW, LED_PATTERN.SOLID);
-                        // System.out.println("ENDGAME WARNING");
 
                     }
                 }
@@ -166,7 +162,6 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.ALIGNED_REEF) {
                     mode = LED_MODE.ALIGNED_REEF;
                     setAll(LED_COLOR.ORANGE, LED_PATTERN.STROBE);
-                    // System.out.println("CORAL_ON_BOARD && ALIGNED REEF");
 
                 }
                 // Check if Aligned too far right or Left Branch on Reef

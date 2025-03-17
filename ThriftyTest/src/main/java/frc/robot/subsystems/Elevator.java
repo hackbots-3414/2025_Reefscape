@@ -103,9 +103,9 @@ public class Elevator extends SubsystemBase {
     private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
 
     public void setPosition(double goal) {
-        if (goal > ElevatorConstants.forwardSoftLimit) {
-            goal = ElevatorConstants.forwardSoftLimit;
-        }
+        // floor values for the goal between our two extrema for their positions
+        goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
+        goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
         if (goal >= getPosition()) {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
