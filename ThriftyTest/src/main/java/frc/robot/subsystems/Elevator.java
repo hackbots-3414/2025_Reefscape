@@ -106,20 +106,27 @@ public class Elevator extends SubsystemBase {
         // floor values for the goal between our two extrema for their positions
         goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
         goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
+        m_logger.info("Setpoint is: {}", goal);
         if (goal >= getPosition()) {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
                 .withVelocity(ElevatorConstants.maxSpeedUp)
                 .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
                 .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(0));
+                .withSlot(0)
+                .withLimitForwardMotion(true)
+                .withLimitReverseMotion(true)
+                .withIgnoreHardwareLimits(false));
         } else {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
                 .withVelocity(ElevatorConstants.maxSpeedDown)
                 .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
                 .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(1));
+                .withSlot(1)
+                .withLimitForwardMotion(true)
+                .withLimitReverseMotion(true)
+                .withIgnoreHardwareLimits(false));
         }
         m_reference = goal;
     }

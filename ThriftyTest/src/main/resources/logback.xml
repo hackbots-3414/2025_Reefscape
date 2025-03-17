@@ -8,6 +8,7 @@
 
  <logger name="frc.robot.commands" level="INFO"/>
  <logger name="frc.robot.vision" level="WARN"/>
+ <logger name="frc.robot.subsystems" level="INFO"/>
  <logger name="frc.robot.subsystems.CommandSwerveDrivetrain" level="INFO"/>
 
  <root level="WARN">
