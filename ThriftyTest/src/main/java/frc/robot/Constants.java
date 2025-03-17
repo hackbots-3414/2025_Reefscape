@@ -45,7 +45,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -56,7 +55,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -193,7 +191,7 @@ public class Constants {
         public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
 
         public static final String dragonReinsName = "spark";
-        public static final String driverBackupName = "dual";
+        public static final String driverBackupName = "inter";
 
         public static final String buttonBoardName = "dragon";
         public static final String operatorBackupName = "dual";
@@ -716,7 +714,7 @@ public class Constants {
     public static class CoralConstants {
         public static final boolean enable = true;
         
-        public static final double intakeVoltage = 3.5;
+        public static final double intakeVoltage = 3.0;
         public static final double ejectVoltage = 5;
 
         public static final double l1EjectVoltage = 3;
@@ -760,14 +758,14 @@ public class Constants {
         public static final boolean enable = true;
         
         public static final boolean rightMotorInvert = true;
-        public static final double climberUpVolts = 8.0; // 12.0
+        public static final double climberUpVolts = 12.0; // 12.0
         public static final double climbDownVolts = -12.0;
-        public static final double climbRollVolts = -2;
+        public static final double climbRollVolts = -4;
 
         public static final double climberCurrentLimit = 80.0;
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
-        public static final double forwardSoftLimit = -0.01;
+        public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.265;
         public static final double climbPosition = -0.130371;
 
@@ -809,7 +807,7 @@ public class Constants {
         public static final double k_closedServoPosition = 1.0;
         public static final double k_servoTolerance = 0.01;
 
-        public static final double climbReadyTolerance = -0.02;
+        public static final double climbReadyTolerance = 0.0;
     }
 
     public static final class AlgaeRollerConstants {
