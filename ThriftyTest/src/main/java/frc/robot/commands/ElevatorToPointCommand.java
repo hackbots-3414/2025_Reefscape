@@ -8,18 +8,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 
 public class ElevatorToPointCommand extends Command {
-    private final double elevatorPosition;
+    private final int level;
     private final Elevator elevator;
     
-    public ElevatorToPointCommand(double elevatorPosition, Elevator elevator) {
-        this.elevatorPosition = elevatorPosition;
+    public ElevatorToPointCommand(int level, Elevator elevator) {
+        this.level = level;
         this.elevator = elevator;
         addRequirements(elevator);
     }
 
     @Override
     public void initialize() {
-        elevator.setPosition(elevatorPosition);
+        elevator.setLevel(level);
     }
 
     @Override

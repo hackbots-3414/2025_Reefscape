@@ -27,20 +27,14 @@ public class CoralScoreCommand extends Command {
       finish = true;
       return;
     }
-    finish = false;
-    
+        
     m_timeRemaining = 25;
     if (!CommandBounds.reefBounds.isActive()) {
         m_timeRemaining = 0;
         return;
     }
-    switch(level) {
-      case 1 -> elevator.setL1();
-      case 2 -> elevator.setL2();
-      case 3 -> elevator.setL3();
-      case 4 -> elevator.setL4();
-      default -> m_timeRemaining = 0;
-    }
+
+    finish = false;
   }
 
   @Override

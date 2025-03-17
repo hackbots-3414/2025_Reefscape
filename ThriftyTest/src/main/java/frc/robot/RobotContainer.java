@@ -61,6 +61,7 @@ import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
+import frc.robot.commands.ElevatorToPointCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
@@ -580,15 +581,6 @@ public class RobotContainer {
         }   
     }
 
-    private Command pathPlannerOverrideScore(int level, ReefClipLocations location) {
-        Command c = new InstantCommand();
-        switch (location) {
-            case LEFT -> c = new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of());
-            case RIGHT -> c = new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of());
-        }
-        return c;
-    }
-
     private void bindManualCoralScoreCommand(int level, Trigger trigger) {
         trigger.whileTrue(coralScoreCommand(level));    
     }
@@ -618,7 +610,9 @@ public class RobotContainer {
     }
 
     private Command coralScoreCommand(int level) {
-        return new CoralScoreCommand(m_coralRollers, m_elevator, level).andThen(new WaitUntilCommand(m_elevator::atSetpoint));
+        return new ElevatorToPointCommand(level, m_elevator)
+                .andThen(new CoralScoreCommand(m_coralRollers, m_elevator, level))
+                .andThen(new WaitUntilCommand(m_elevator::atSetpoint));
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
