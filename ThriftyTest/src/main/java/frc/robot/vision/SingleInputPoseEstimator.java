@@ -110,6 +110,7 @@ public class SingleInputPoseEstimator implements Runnable {
         EstimationAlgorithm algorithm = (targets.size() > 1) ?
             EstimationAlgorithm.PnP
             : EstimationAlgorithm.Trig;
+
         Optional<EstimatedRobotPose> est = m_estimator.update(result);
         if (est.isPresent()) {
             Optional<TimestampedPoseEstimate> processed = process(result, est.get().estimatedPose, algorithm);
@@ -126,6 +127,7 @@ public class SingleInputPoseEstimator implements Runnable {
             m_logger.error("Tag {} detected not in field layout", fidId);
             return;
         }
+
         Pose3d targetPosition3d = targetPosition.get();
         Transform3d best3d = target.getBestCameraToTarget();
         Transform3d alt3d = target.getAlternateCameraToTarget();
@@ -146,11 +148,14 @@ public class SingleInputPoseEstimator implements Runnable {
         double bestXYErr = bestDiff.getTranslation().getNorm();
         double altXYErr = altDiff.getTranslation().getNorm();
         Pose3d estimate;
+
         if (Math.abs(bestRotErr - altRotErr) >= VisionConstants.k_headingThreshold) {
             estimate = (bestRotErr <= altRotErr) ? best : alt;
         } else {
             estimate = (bestXYErr <= altXYErr) ? best : alt;
         }
+
+        // TEMPORARLY USING BEST
         process(result, estimate, EstimationAlgorithm.Heading).ifPresent(m_reporter);
 
     }

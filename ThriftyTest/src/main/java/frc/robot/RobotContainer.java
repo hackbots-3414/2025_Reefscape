@@ -380,20 +380,23 @@ public class RobotContainer {
             controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
             // Manual Mode Off
-            bindAutoCoralCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            bindAutoCoralCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            bindAutoCoralCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            bindAutoCoralCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            // bindAutoCoralCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            // bindAutoCoralCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            // bindAutoCoralCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            // bindAutoCoralCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            // bindAutoCoralCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            // bindAutoCoralCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            // bindAutoCoralCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            // bindAutoCoralCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+
+            bindReefClipCommand(ReefClipLocations.LEFT, controller.button(ButtonBoardAlternate.leftReef).and(manualModeOff));
+            bindReefClipCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightReef).and(manualModeOff));
 
             // Manual Mode On
-            bindManualCoralPrepCommand(1, controller.pov(ButtonBoardAlternate.L1).and(manualModeOn));
-            bindManualCoralPrepCommand(2, controller.pov(ButtonBoardAlternate.L2).and(manualModeOn));
-            bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3).and(manualModeOn));
-            bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4).and(manualModeOn));
+            bindManualCoralPrepCommand(1, controller.pov(ButtonBoardAlternate.L1)/*.and(manualModeOn)*/);
+            bindManualCoralPrepCommand(2, controller.pov(ButtonBoardAlternate.L2)/*.and(manualModeOn)*/);
+            bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3)/*.and(manualModeOn)*/);
+            bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4)/*.and(manualModeOn)*/);
 
             controller.pov(ButtonBoardAlternate.L1).onFalse(coralScoreCommand(1));
             controller.pov(ButtonBoardAlternate.L2).onFalse(coralScoreCommand(2));
@@ -582,6 +585,13 @@ public class RobotContainer {
         switch (location) {
             case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralPrepCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
             case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralPrepCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
+        }   
+    }
+
+    private void bindReefClipCommand(ReefClipLocations location, Trigger trigger) {
+        switch (location) {
+            case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> new InstantCommand(), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
+            case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> new InstantCommand(), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
         }   
     }
 

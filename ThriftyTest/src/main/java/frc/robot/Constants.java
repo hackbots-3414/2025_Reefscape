@@ -347,7 +347,7 @@ public class Constants {
         public static final boolean k_enableLogging = false;
         public static final boolean k_debugCameras = false;
 
-        public static final double k_rotationCoefficient = 0.35;
+        public static final double k_rotationCoefficient = Math.PI * 20; // 0.35
         public static final double k_translationCoefficient = 0.2;
 
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
