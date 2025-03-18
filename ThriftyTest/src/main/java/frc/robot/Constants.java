@@ -515,7 +515,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.114014; // -0.427979;
+        public static final double encoderOffset = 0.32177; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
         // approx 7.96
@@ -715,6 +715,7 @@ public class Constants {
         public static final boolean enable = true;
         
         public static final double intakeVoltage = 3.0;
+        public static final double setSlowReverse = -4.0;
         public static final double ejectVoltage = 5;
 
         public static final double l1EjectVoltage = 3;

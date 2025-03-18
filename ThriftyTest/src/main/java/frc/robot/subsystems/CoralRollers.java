@@ -71,6 +71,10 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.intakeVoltage);
     }
 
+    public void setRetract() {
+        setVoltage(CoralConstants.setSlowReverse);
+    }
+
     public void timeoutIntake() {
         // a whole lotta logic that essentially allows u to stop the motor in default command
         // when you leave the yay zone after intakeTimeout seconds automatically (max process time) or when coral detected
@@ -166,6 +170,10 @@ public class CoralRollers extends SubsystemBase {
 
     public boolean presentPiece() {
         return getFrontIR() || getBackIR();
+    }
+
+    public boolean onlyFrontIR() {
+        return getFrontIR() && !getBackIR();
     }
 
     @Override
