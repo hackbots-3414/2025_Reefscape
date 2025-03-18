@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Align A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L4"
           }
         },
@@ -39,6 +45,12 @@
           "type": "path",
           "data": {
             "pathName": "TestBScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align B"
           }
         },
         {
@@ -75,6 +87,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Align A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L3"
           }
         },
@@ -101,6 +119,12 @@
           "type": "path",
           "data": {
             "pathName": "TestBScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align B"
           }
         },
         {

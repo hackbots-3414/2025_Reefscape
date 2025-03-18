@@ -19,6 +19,7 @@ import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
@@ -96,7 +97,7 @@ public class LedFeedback extends SubsystemBase {
     @Override
     public void periodic() {
         // System.out.println("PERIODIC ENTER");
-        matchTime = DriverStation.getMatchTime();
+        matchTime = (DriverStation.getMatchType() == MatchType.None) ? 100000 : DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
 

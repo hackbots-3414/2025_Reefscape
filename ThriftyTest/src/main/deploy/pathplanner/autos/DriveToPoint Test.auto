@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartEA"
+            "pathName": "StartIA"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Align E"
+            "name": "Align I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3"
           }
         }
       ]

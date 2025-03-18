@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +20,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -54,9 +53,9 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
-import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.AlignLeftCommand;
 import frc.robot.commands.AlignRightCommand;
+import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralScoreCommand;
@@ -354,10 +353,10 @@ public class RobotContainer {
 
 
             // MANUAL CORAL SCORE COMMANDS
-            bindManualCoralScoreCommand(1, L1.and(manualModeOn));
-            bindManualCoralScoreCommand(2, L2.and(manualModeOn));
-            bindManualCoralScoreCommand(3, L3.and(manualModeOn));
-            bindManualCoralScoreCommand(4, L4.and(manualModeOn));
+            bindManualCoralPrepCommand(1, L1.and(manualModeOn));
+            bindManualCoralPrepCommand(2, L2.and(manualModeOn));
+            bindManualCoralPrepCommand(3, L3.and(manualModeOn));
+            bindManualCoralPrepCommand(4, L4.and(manualModeOn));
 
             bindManualCoralIntakeCommand(controller.button(ButtonBoard.leftIntake).and(manualModeOn));
 
@@ -381,20 +380,25 @@ public class RobotContainer {
             controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
             // Manual Mode Off
-            bindAutoCoralScoreCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralScoreCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralScoreCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralScoreCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            bindAutoCoralScoreCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            bindAutoCoralScoreCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            bindAutoCoralScoreCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            bindAutoCoralScoreCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            bindAutoCoralCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
+            bindAutoCoralCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            bindAutoCoralCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            bindAutoCoralCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
+            bindAutoCoralCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
 
             // Manual Mode On
-            bindManualCoralScoreCommand(1, controller.pov(ButtonBoardAlternate.L1).and(manualModeOn));
-            bindManualCoralScoreCommand(2, controller.pov(ButtonBoardAlternate.L2).and(manualModeOn));
-            bindManualCoralScoreCommand(3, controller.pov(ButtonBoardAlternate.L3).and(manualModeOn));
-            bindManualCoralScoreCommand(4, controller.pov(ButtonBoardAlternate.L4).and(manualModeOn));
+            bindManualCoralPrepCommand(1, controller.pov(ButtonBoardAlternate.L1).and(manualModeOn));
+            bindManualCoralPrepCommand(2, controller.pov(ButtonBoardAlternate.L2).and(manualModeOn));
+            bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3).and(manualModeOn));
+            bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4).and(manualModeOn));
+
+            controller.pov(ButtonBoardAlternate.L1).onFalse(coralScoreCommand(1));
+            controller.pov(ButtonBoardAlternate.L2).onFalse(coralScoreCommand(2));
+            controller.pov(ButtonBoardAlternate.L3).onFalse(coralScoreCommand(3));
+            controller.pov(ButtonBoardAlternate.L4).onFalse(coralScoreCommand(4));
 
             bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake)/*.and(manualModeOn)*/);
 
@@ -474,10 +478,10 @@ public class RobotContainer {
     }
 
     private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
-        chooser.addOption("L1", () -> coralScoreCommand(1));
-        chooser.addOption("L2", () -> coralScoreCommand(2));
-        chooser.addOption("L3", () -> coralScoreCommand(3));
-        chooser.setDefaultOption("L4", () -> coralScoreCommand(4));
+        chooser.addOption("L1", () -> coralPrepCommand(1));
+        chooser.addOption("L2", () -> coralPrepCommand(2));
+        chooser.addOption("L3", () -> coralPrepCommand(3));
+        chooser.setDefaultOption("L4", () -> coralPrepCommand(4));
     }
 
     public Command getAutonomousCommand() {
@@ -499,8 +503,8 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("L4", coralScoreCommand(4).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
-        NamedCommands.registerCommand("L3", coralScoreCommand(3).andThen(new WaitUntilCommand(m_elevator::atSetpoint)));
+        NamedCommands.registerCommand("L4", coralPrepCommand(4).andThen(coralScoreCommand(4)));
+        NamedCommands.registerCommand("L3", coralPrepCommand(3).andThen(coralScoreCommand(3)));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
@@ -566,7 +570,7 @@ public class RobotContainer {
                 case K, L -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
             }
         } else {
-            trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(location.value, () -> coralScoreCommand(level)), Set.of()));
+            trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(location.value, () -> coralPrepCommand(level)), Set.of()));
         }
     }
 
@@ -574,15 +578,15 @@ public class RobotContainer {
         trigger.onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
-    private void bindAutoCoralScoreCommand(int level, ReefClipLocations location, Trigger trigger) {
+    private void bindAutoCoralCommand(int level, ReefClipLocations location, Trigger trigger) {
         switch (location) {
-            case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
-            case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralScoreCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
+            case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralPrepCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
+            case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralPrepCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
         }   
     }
 
-    private void bindManualCoralScoreCommand(int level, Trigger trigger) {
-        trigger.whileTrue(coralScoreCommand(level));    
+    private void bindManualCoralPrepCommand(int level, Trigger trigger) {
+        trigger.whileTrue(coralPrepCommand(level));    
     }
 
     private void bindManualAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
@@ -609,9 +613,12 @@ public class RobotContainer {
         return new CoralIntakeCommand(m_coralRollers, m_elevator);
     }
 
+    private Command coralPrepCommand(int level) {
+        return new ElevatorToPointCommand(level, m_elevator);
+    }
+
     private Command coralScoreCommand(int level) {
-        return new ElevatorToPointCommand(level, m_elevator)
-                .andThen(new CoralScoreCommand(m_coralRollers, m_elevator, level))
+        return new CoralScoreCommand(m_coralRollers, m_elevator, level)
                 .andThen(new WaitUntilCommand(m_elevator::atSetpoint));
     }
 

@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Align F"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L4"
           }
         },
@@ -39,6 +45,12 @@
           "type": "path",
           "data": {
             "pathName": "IntakeD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align D"
           }
         },
         {
@@ -75,6 +87,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Align C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L4"
           }
         },
@@ -101,6 +119,12 @@
           "type": "path",
           "data": {
             "pathName": "IntakeB"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align B"
           }
         },
         {

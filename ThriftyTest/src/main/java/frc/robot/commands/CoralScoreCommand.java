@@ -1,11 +1,17 @@
 package frc.robot.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CommandBounds;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
 public class CoralScoreCommand extends Command {
+    private final Logger m_logger = LoggerFactory.getLogger(CoralScoreCommand.class);
+
   private final CoralRollers coral;
   private final Elevator elevator;
   private final int level;
@@ -53,6 +59,9 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    if (interrupted) {
+      m_logger.warn("Elevator Reference: {}, Elevator Position: {}", elevator.getReference(), elevator.getPosition());
+    }
     elevator.setStow();
     coral.stop();
   }
@@ -60,6 +69,11 @@ public class CoralScoreCommand extends Command {
   @Override
   public boolean isFinished() {
     if (finish) return true;
+    
+    if (!elevator.atSetpoint()) return true;
+
+    if (elevator.getReference() == ElevatorConstants.stow) return true;
+
     return m_timeRemaining == 0;
   }
 }

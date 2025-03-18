@@ -135,12 +135,12 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        // public static final PIDConstants k_translationPID = new PIDConstants(4, 0.0, 0.0); // 0.18836
-        // public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
+        public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(20, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_driveToPointTranslationPID, k_driveToPointRotationPID);
+        public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
@@ -551,8 +551,8 @@ public class Constants {
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeedUp = 22; // 10
-        public static final double accelerationMultiplierUp = 1; // 3
+        public static final double maxSpeedUp = 12; // 10
+        public static final double accelerationMultiplierUp = 3; // 3
 
         public static final double maxSpeedDown = 10; // 7
         public static final double accelerationMultiplierDown = 0.7; // 2.25
@@ -695,7 +695,7 @@ public class Constants {
                         .withKG(0.625))
                 .withSlot1(new Slot1Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(15)
+                        .withKP(20)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
@@ -767,7 +767,7 @@ public class Constants {
 
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.265;
-        public static final double climbPosition = -0.130371;
+        public static final double climbPosition = -0.100;
 
         public static final double encoderOffset = 0.284423828125;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
