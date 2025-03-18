@@ -457,7 +457,7 @@ public class Constants {
         public static final boolean useQueue = false;
 
         public static double translationTolerance = 0.04; // m
-        public static Angle rotationTolerance = Degrees.of(0.5);
+        public static Angle rotationTolerance = Degrees.of(2);
 
         private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
 
@@ -852,26 +852,24 @@ public class Constants {
                 stallCurrentAmps, freeCurrentAmps, freeSpeedRadPerSec, 1);
     }
 
-    public static double offset = Units.inchesToMeters(0);
-
     public enum ScoringLocations {
-        A(new Pose2d(3.188+offset, 4.191, Rotation2d.fromDegrees(0))), // GOOD
-        B(new Pose2d(3.188+offset, 3.861, Rotation2d.fromDegrees(0))), // GOOD
+        A(new Pose2d(3.188, 4.191, Rotation2d.fromDegrees(0))), // GOOD
+        B(new Pose2d(3.188, 3.861, Rotation2d.fromDegrees(0))), // GOOD
 
-        C(new Pose2d(3.696+offset, 2.981+offset, Rotation2d.fromDegrees(60))), // GOOD
-        D(new Pose2d(3.951+offset, 2.816+offset, Rotation2d.fromDegrees(60))), // GOOD
+        C(new Pose2d(3.72, 2.982, Rotation2d.fromDegrees(58.7))), // GOOD
+        D(new Pose2d(3.967, 2.810, Rotation2d.fromDegrees(58.2))), // GOOD
 
-        E(new Pose2d(4.998-offset, 2.816, Rotation2d.fromDegrees(120))), // GOOD
-        F(new Pose2d(5.283-offset, 2.981+offset, Rotation2d.fromDegrees(120))), // GOOD
+        E(new Pose2d(4.998, 2.816, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.283, 2.981, Rotation2d.fromDegrees(120))), // GOOD
 
-        G(new Pose2d(5.791-offset, 3.861, Rotation2d.fromDegrees(180))), // GOOD
-        H(new Pose2d(5.791-offset, 4.191, Rotation2d.fromDegrees(180))), // GOOD
+        G(new Pose2d(5.791, 3.861, Rotation2d.fromDegrees(180))), // GOOD
+        H(new Pose2d(5.791, 4.191, Rotation2d.fromDegrees(180))), // GOOD
 
-        I(new Pose2d(5.283-offset, 5.071-offset, Rotation2d.fromDegrees(-120))), // GOOD
-        J(new Pose2d(4.998-offset, 5.236-offset, Rotation2d.fromDegrees(-120))), // GOOD
+        I(new Pose2d(5.283, 5.071, Rotation2d.fromDegrees(-120))), // GOOD
+        J(new Pose2d(4.998, 5.236, Rotation2d.fromDegrees(-120))), // GOOD
 
-        K(new Pose2d(3.951+offset, 5.236-offset, Rotation2d.fromDegrees(-60))), // GOOD
-        L(new Pose2d(3.696+offset, 5.071-offset, Rotation2d.fromDegrees(-60))), // GOOD
+        K(new Pose2d(3.951, 5.236, Rotation2d.fromDegrees(-60))), // GOOD
+        L(new Pose2d(3.696, 5.071, Rotation2d.fromDegrees(-60))), // GOOD
 
         RIGHTHP(new Pose2d(1.227, 1.048, Rotation2d.fromDegrees(55))),
         LEFTHP(new Pose2d(1.227, 6.983, Rotation2d.fromDegrees(-55))),

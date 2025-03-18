@@ -509,7 +509,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
-            NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true));
+            NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true).withTimeout(3.0));
         }
     }
 

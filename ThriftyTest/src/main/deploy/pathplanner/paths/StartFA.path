@@ -48,7 +48,7 @@
   "folder": "StartX align",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 125.11201118442219
   },
   "useDefaultConstraints": true
 }
