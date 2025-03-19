@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -99,31 +99,31 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    private final MotionMagicVoltage control = new MotionMagicVoltage(0);
-    // private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
+    // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
+    private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
 
     public void setPosition(double goal) {
         // floor values for the goal between our two extrema for their positions
         goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
         goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
         m_logger.info("Setpoint is: {}", goal);
-        // if (goal >= getPosition()) {
-        //     m_elevatorRight.setControl(control
-        //         .withPosition(goal)
-        //         .withVelocity(ElevatorConstants.maxSpeedUp)
-        //         .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
-        //         .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
-        //         .withSlot(0));
-        // } else {
-        //     m_elevatorRight.setControl(control
-        //         .withPosition(goal)
-        //         .withVelocity(ElevatorConstants.maxSpeedDown)
-        //         .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
-        //         .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
-        //         .withSlot(1));
-        // }
+        if (goal >= getPosition()) {
+            m_elevatorRight.setControl(control
+                .withPosition(goal)
+                .withVelocity(ElevatorConstants.maxSpeedUp)
+                .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
+                .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withSlot(0));
+        } else {
+            m_elevatorRight.setControl(control
+                .withPosition(goal)
+                .withVelocity(ElevatorConstants.maxSpeedDown)
+                .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
+                .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withSlot(1));
+        }
 
-        m_elevatorRight.setControl(control.withPosition(goal));
+        // m_elevatorRight.setControl(control.withPosition(goal));
         m_reference = goal;
     }
 
