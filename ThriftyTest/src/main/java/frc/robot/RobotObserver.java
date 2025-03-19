@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -7,6 +8,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.ReefClipLocations;
 
 public class RobotObserver {
     private static RobotObserver m_instance;
@@ -96,14 +98,32 @@ public class RobotObserver {
         return getInstance().m_reefMode;
     }
 
-    private BooleanSupplier m_pieceHeldSupplier;
+    private ReefClipLocations m_reefClipLocation = ReefClipLocations.LEFT;
 
-    public static void setPieceHeldSupplier(BooleanSupplier pieceHeldSupplier) {
-        getInstance().m_pieceHeldSupplier = pieceHeldSupplier;
+    public static void setReefClipLocation(ReefClipLocations reefClipLocation) {
+        getInstance().m_reefClipLocation = reefClipLocation;
     }
 
-    public static boolean getPieceHeld() {
-        return getInstance().m_pieceHeldSupplier.getAsBoolean();
+    public static ReefClipLocations getReefClipLocation() {
+        return getInstance().m_reefClipLocation;
+    }
+
+    private BooleanSupplier m_coralPieceHeldSupplier;
+    private BooleanSupplier m_algaeHeldSupplier;
+
+    public static void setPieceHeldSupplier(BooleanSupplier pieceHeldSupplier) {
+        getInstance().m_coralPieceHeldSupplier = pieceHeldSupplier;
+    }
+    
+    public static void setAlgaePieceHeldSupplier(BooleanSupplier algaeHeldSupplier){
+        getInstance().m_algaeHeldSupplier = algaeHeldSupplier;
+    }
+
+    public static boolean getCoralPieceHeld() {
+        return getInstance().m_coralPieceHeldSupplier.getAsBoolean();
+    }
+    public static boolean getAlgaePieceHeld() {
+        return getInstance().m_algaeHeldSupplier.getAsBoolean();
     }
 
     private boolean m_climbed = false;
@@ -116,4 +136,23 @@ public class RobotObserver {
         return getInstance().m_climbed;
     }
 
+    private DoubleSupplier m_rangeDistanceSupplier;
+
+    public static void setRangeDistanceSupplier(DoubleSupplier rangeDistanceSupplier) {
+        getInstance().m_rangeDistanceSupplier = rangeDistanceSupplier;
+    }
+    
+    public static double getRangeDistance(){
+        return getInstance().m_rangeDistanceSupplier.getAsDouble();
+    }
+
+    private Supplier<Optional<Double>> m_compDistanceSupplier;
+
+    public static void setCompensationDistanceSupplier(Supplier<Optional<Double>> sup) {
+        getInstance().m_compDistanceSupplier = sup;
+    }
+
+    public static Optional<Double> getCompensationDistance() {
+        return getInstance().m_compDistanceSupplier.get();
+    }
 }

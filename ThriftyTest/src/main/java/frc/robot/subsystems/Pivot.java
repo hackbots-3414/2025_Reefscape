@@ -24,6 +24,7 @@ import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 
 public class Pivot extends SubsystemBase {
     private final TalonFX m_pivot = new TalonFX(IDConstants.pivot);
@@ -58,6 +59,7 @@ public class Pivot extends SubsystemBase {
 
     private void configMotor() {
         m_pivot.getConfigurator().apply(PivotConstants.motorConfig, 0.2);
+        m_pivot.setPosition(PivotConstants.rotorOffset);
     }
 
     private void configSim() {
@@ -82,7 +84,11 @@ public class Pivot extends SubsystemBase {
     MotionMagicVoltage control = new MotionMagicVoltage(0);
 
     public void setPosition(double goal) {
-        m_pivot.setControl(control.withPosition(goal));
+        if (RobotObserver.getAlgaePieceHeld()) {
+            m_pivot.setControl(control.withPosition(goal).withSlot(1));
+        } else {
+            m_pivot.setControl(control.withPosition(goal).withSlot(0));
+        }
         m_reference = goal;
     }
 

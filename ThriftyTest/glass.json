@@ -1,0 +1,88 @@
+{
+  "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
+    "Retained Values": {
+      "open": false
+    },
+    "Transitory Values": {
+      "open": false
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Elevator Visualization": "Mechanism2d",
+      "/SmartDashboard/Go To B": "Command",
+      "/SmartDashboard/LIFT CLIMB": "Command",
+      "/SmartDashboard/LOWER CLIMB": "Command",
+      "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
+      "/SmartDashboard/Reef mode off": "Command",
+      "/SmartDashboard/Reef mode on": "Command",
+      "/SmartDashboard/Super Field": "Field2d",
+      "/SmartDashboard/camera testing spot": "Command",
+      "/SmartDashboard/camera testing spot 2": "Command",
+      "/SmartDashboard/open funnel": "Command"
+    },
+    "windows": {
+      "/SmartDashboard/Super Field": {
+        "Red Alliance Right Intake": {
+          "arrows": false,
+          "style": "Hidden"
+        },
+        "Robot": {
+          "arrowColor": [
+            1.0,
+            1.0,
+            1.0,
+            255.0
+          ],
+          "color": [
+            0.45930102467536926,
+            0.6751054525375366,
+            0.3760080933570862,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "width": 0.9399999976158142
+        },
+        "apriltag": {
+          "arrows": false,
+          "style": "Hidden"
+        },
+        "bottom": 1347,
+        "builtin": "",
+        "estimation": {
+          "arrows": false,
+          "color": [
+            0.3948085606098175,
+            0.4464501738548279,
+            0.649789035320282,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "selectable": false,
+          "width": 0.9399999976158142
+        },
+        "height": 8.051901817321777,
+        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "right": 2932,
+        "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "Server": {
+      "open": true
+    },
+    "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "3414"
+  }
+}

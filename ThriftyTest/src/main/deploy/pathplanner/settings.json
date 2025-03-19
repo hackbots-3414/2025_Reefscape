@@ -4,7 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "IntakeX",
+    "StartX align",
     "StartX",
+    "Testing",
     "XIntake"
   ],
   "autoFolders": [],

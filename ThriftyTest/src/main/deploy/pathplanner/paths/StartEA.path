@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.7212090163934426,
-        "y": 4.017487157534247
+        "x": 7.6,
+        "y": 6.1338727678571425
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4556049292338007,
-        "y": 4.5187621783452405
+        "x": 7.656050444761658,
+        "y": 3.6793094957117325
       },
       "isLocked": false,
-      "linkedName": "A"
+      "linkedName": "LeftStart"
     },
     {
       "anchor": {
-        "x": 1.1546052631578947,
-        "y": 7.01735197368421
+        "x": 6.298500000000001,
+        "y": 2.2504999999999997
       },
       "prevControl": {
-        "x": 1.3505157719691923,
-        "y": 6.862048810363889
+        "x": 6.690320773853117,
+        "y": 3.181559387055498
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LeftIntake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 2.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 2852.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -55.0
+    "velocity": 0.5,
+    "rotation": 123.51101879784082
   },
   "reversed": false,
-  "folder": "XIntake",
+  "folder": "StartX align",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": 180.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

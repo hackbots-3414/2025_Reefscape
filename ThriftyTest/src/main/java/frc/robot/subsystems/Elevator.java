@@ -4,12 +4,15 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -23,10 +26,13 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.RobotObserver;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
@@ -57,6 +63,7 @@ public class Elevator extends SubsystemBase {
         configEncoder();
         configMotor();
         configSim();
+        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator));
     }
 
     private void configEncoder() {
@@ -92,25 +99,31 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
-    private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
+    private final MotionMagicVoltage control = new MotionMagicVoltage(0);
+    // private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
 
     public void setPosition(double goal) {
-        if (goal >= getPosition()) {
-            m_elevatorRight.setControl(control
-                .withPosition(goal)
-                .withVelocity(ElevatorConstants.maxSpeedUp)
-                .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(0));
-        } else {
-            m_elevatorRight.setControl(control
-                .withPosition(goal)
-                .withVelocity(ElevatorConstants.maxSpeedDown)
-                .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
-                .withSlot(1));
-        }
+        // floor values for the goal between our two extrema for their positions
+        goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
+        goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
+        m_logger.info("Setpoint is: {}", goal);
+        // if (goal >= getPosition()) {
+        //     m_elevatorRight.setControl(control
+        //         .withPosition(goal)
+        //         .withVelocity(ElevatorConstants.maxSpeedUp)
+        //         .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
+        //         .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
+        //         .withSlot(0));
+        // } else {
+        //     m_elevatorRight.setControl(control
+        //         .withPosition(goal)
+        //         .withVelocity(ElevatorConstants.maxSpeedDown)
+        //         .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
+        //         .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
+        //         .withSlot(1));
+        // }
+
+        m_elevatorRight.setControl(control.withPosition(goal));
         m_reference = goal;
     }
 
@@ -136,19 +149,34 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setL1() {
-        setPosition(ElevatorConstants.L1);
+        setPosition(ElevatorConstants.L1 + getCANRangeCompensation());
     }
 
     public void setL2() {
-        setPosition(ElevatorConstants.L2);
+        setPosition(ElevatorConstants.L2 + getCANRangeCompensation());
     }
 
     public void setL3() {
-        setPosition(ElevatorConstants.L3);
+        setPosition(ElevatorConstants.L3 + getCANRangeCompensation());
     }
 
     public void setL4() {
-        setPosition(ElevatorConstants.L4);
+        setPosition(ElevatorConstants.L4 + getCANRangeCompensation());
+    }
+
+    private double getCANRangeCompensation() {
+        if (RobotObserver.getManualMode() || !ElevatorConstants.enableCANRange) {
+            m_logger.debug("not doing compensation");
+            return 0.0;
+        };
+        Optional<Double> distance = RobotObserver.getCompensationDistance();
+        if (distance.isEmpty()) return 0.0;
+        double comp = Math.min(
+            ElevatorConstants.k_maxCanCompensation,
+            (distance.get() - DriveConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch
+        );
+        SmartDashboard.putNumber("canrange comp", comp);
+        return comp;
     }
 
     public void setReefLower() {
@@ -210,6 +238,14 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    private void zeroElevator() {
+        m_cancoder.clearStickyFaults();
+        CANcoderConfiguration config = ElevatorConstants.encoderConfig;
+        config.MagnetSensor.MagnetOffset = m_cancoder.getAbsolutePosition(true).getValueAsDouble() - ElevatorConstants.encoderOffset;
+
+        m_cancoder.getConfigurator().apply(config, 0.2);
+    }
+
     @Override
     public void periodic() {
         if (ElevatorConstants.enable) {
@@ -222,6 +258,7 @@ public class Elevator extends SubsystemBase {
             }
 
             SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
+            SmartDashboard.putNumber("Elevator Compensatin", getCANRangeCompensation());
         }
     }
 

@@ -3,10 +3,16 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -18,8 +24,11 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -34,7 +43,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -48,6 +59,8 @@ import frc.robot.vision.TimestampedPoseEstimate;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
+
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
@@ -67,6 +80,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private SwerveSetpointGenerator setpointGenerator;
     private SwerveSetpoint previousSetpoint;
     private final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+
+    private CANrange leftRange;
+    private CANrange rightRange;
+
+    private MedianFilter rangeFilter;
+    private double rightRaw = -1;
+    private double leftRaw = -1;
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
@@ -96,6 +116,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setVisionValidSupplier(this::getVisionValid);
         RobotObserver.setPoseSupplier(this::getPose);
         RobotObserver.setVelocitySupplier(this::getVelocity);
+        RobotObserver.setRangeDistanceSupplier(this::getRangeDistance);
+        RobotObserver.setCompensationDistanceSupplier(this::getCompensationDistance);
+
+        configureCANRange();
+    }
+
+    private void configureCANRange() {
+        leftRange = new CANrange(IDConstants.leftRange);
+        rightRange = new CANrange(IDConstants.rightRange);
+
+        rangeFilter = new MedianFilter(5);
     }
 
     public void initializeSetpointGenerator(RobotConfig config) {
@@ -105,11 +136,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleState[] currStates = getState().ModuleStates;
         previousSetpoint = new SwerveSetpoint(currSpeeds, currStates, DriveFeedforwards.zeros(config.numModules));
     }
-
-    public double getVelocity() {
+    
+    public Translation2d getVelocityComponents() {
         double vx = getRobotRelativeSpeeds().vxMetersPerSecond;
         double vy = getRobotRelativeSpeeds().vyMetersPerSecond;
-        return Math.hypot(vx, vy);
+        Rotation2d theta = getPose().getRotation();
+        return new Translation2d(vx, vy).rotateBy(theta);
+        
+    }
+
+    public double getVelocity() {
+        Translation2d velo = getVelocityComponents();
+        return velo.getNorm();
     }
 
     public Pose2d getPose() {
@@ -132,11 +170,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public void setPose(Pose2d pose) {
-        super.resetPose(pose);
+        resetPose(pose);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-        return super.getState().Speeds;
+        return getState().Speeds;
     }
 
     public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
@@ -157,6 +195,39 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public double getRangeDistance() {
+        double leftRaw = getRangeLeftDistance();
+        double rightRaw = getRangeRightDistance();
+        double leftValue = leftRaw > DriveConstants.rangeZero && leftRaw < DriveConstants.rangeMax ? leftRaw : DriveConstants.rangeZero;
+        double rightValue = rightRaw > DriveConstants.rangeZero && rightRaw < DriveConstants.rangeMax ? rightRaw : DriveConstants.rangeZero;
+        return rangeFilter.calculate(Math.min(leftValue, rightValue));
+    }
+
+    public double getRangeRightDistance() {
+        return rightRaw;
+    }
+
+    public double getRangeLeftDistance() {
+        return leftRaw;
+    }
+
+    public Optional<Double> getCompensationDistance() {
+        double leftRaw = leftRange.getDistance().getValueAsDouble();
+        boolean leftOk = leftRange.getIsDetected().getValue();
+        double rightRaw = rightRange.getDistance().getValueAsDouble();
+        boolean rightOk = rightRange.getIsDetected().getValue();
+        if (!(rightOk || leftOk)) return Optional.empty();
+        double measurement;
+        if (!rightOk) {
+            measurement = leftRaw;
+        } else if (!leftOk) {
+            measurement = rightRaw;
+        } else {
+            measurement = Math.min(leftRaw, rightRaw);
+        }
+        return Optional.of(rangeFilter.calculate(measurement));
+    }
+
     @Override
     public void periodic() {
         m_estimatedPose = this.getState().Pose;
@@ -171,9 +242,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
+        rightRaw = rightRange.getDistance().getValueAsDouble();
+        leftRaw = leftRange.getDistance().getValueAsDouble();
+
         AutonomousUtil.handleQueue();
 
         handleVisionToggle();
+
+        SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
+        SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
+        SmartDashboard.putNumber("REEF ALING RANGE DISANCE", getRangeDistance());
+
+        // Translation2d v = getVelocityComponents();
+        // SmartDashboard.putNumber("vx", v.getX());
+        // SmartDashboard.putNumber("vy", v.getY());
+        SmartDashboard.putNumber("LEFT", leftRange.getDistance().getValueAsDouble());
+        SmartDashboard.putNumber("RIGHT", rightRange.getDistance().getValueAsDouble());
     }
 
     private void startSimThread() {
@@ -255,7 +339,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void addPoseEstimate(TimestampedPoseEstimate estimate) {
         m_oldVisionTimestamp = estimate.timestamp();
         // This should NOT run in simulation!
-        if (Robot.isSimulation()) return;
+        if (Robot.isSimulation()) {
+            Transform2d error = getPose().minus(estimate.pose());
+            m_logger.debug(
+                "{} pose error: {}, {}\theading error: {}deg", 
+                estimate.source(),
+                error.getX(),
+                error.getY(),
+                error.getRotation().getDegrees()
+            );
+            return;
+        }
         // Depending on our configs, we should use or not use the std devs
         if (Constants.VisionConstants.k_useStdDevs) {
             addVisionMeasurement(

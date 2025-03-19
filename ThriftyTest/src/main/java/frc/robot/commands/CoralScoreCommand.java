@@ -1,14 +1,22 @@
 package frc.robot.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.CommandBounds;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 
 public class CoralScoreCommand extends Command {
+    private final Logger m_logger = LoggerFactory.getLogger(CoralScoreCommand.class);
+
   private final CoralRollers coral;
   private final Elevator elevator;
   private final int level;
+
+  private boolean finish = false;
 
   private int m_timeRemaining;
 
@@ -21,18 +29,18 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void initialize() {
-    m_timeRemaining = 25;
+    if (!coral.presentPiece()) {
+      finish = true;
+      return;
+    }
+        
+    m_timeRemaining = 12;
     if (!CommandBounds.reefBounds.isActive()) {
         m_timeRemaining = 0;
         return;
     }
-    switch(level) {
-      case 1 -> elevator.setL1();
-      case 2 -> elevator.setL2();
-      case 3 -> elevator.setL3();
-      case 4 -> elevator.setL4();
-      default -> m_timeRemaining = 0;
-    }
+
+    finish = false;
   }
 
   @Override
@@ -51,12 +59,21 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    if (interrupted) {
+      m_logger.warn("Elevator Reference: {}, Elevator Position: {}", elevator.getReference(), elevator.getPosition());
+    }
     elevator.setStow();
     coral.stop();
   }
 
   @Override
   public boolean isFinished() {
+    if (finish) return true;
+    
+    if (!elevator.atSetpoint()) return true;
+
+    if (elevator.getReference() == ElevatorConstants.stow) return true;
+
     return m_timeRemaining == 0;
   }
 }

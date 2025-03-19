@@ -1,13 +1,18 @@
 package frc.robot.vision;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -20,6 +25,8 @@ import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class VisionHandler implements AutoCloseable {
+    @SuppressWarnings("unused")
+    private final Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
     private CommandSwerveDrivetrain m_drivetrain;
     private final Notifier m_notifier;
     private List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
@@ -91,6 +98,8 @@ public class VisionHandler implements AutoCloseable {
     private void updateEstimators() {
         // clear previous output from the estimators.
         m_field.getObject(VisionConstants.k_estimationName).setPoses();
+        m_field.getObject("best").setPoses();
+        m_field.getObject("alt").setPoses();
         for (SingleInputPoseEstimator estimator : m_estimators) {
             estimator.run();
         }
@@ -105,12 +114,13 @@ public class VisionHandler implements AutoCloseable {
     }
 
     private void addEstimate(TimestampedPoseEstimate estimate) {
-        String name = VisionConstants.k_estimationName;
-        List<Pose2d> poses = m_field.getObject(name)
+        List<Pose2d> poses = m_field.getObject(VisionConstants.k_estimationName)
             .getPoses();
-        poses.add(estimate.pose());
-        m_field.getObject(name).setPoses(poses);
+
         m_drivetrain.addPoseEstimate(estimate);
+        poses.add(estimate.pose());
+        m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
+
         // pose logging
         m_logBuilder.addEstimate(estimate);
     }

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotObserver;
@@ -34,6 +35,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class AutonomousUtil {
     @SuppressWarnings("unused")
     private static final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
+
+    private static CommandSwerveDrivetrain m_drivetrain;
 
     public static void initializePathPlanner(CommandSwerveDrivetrain drivetrain) {
         RobotConfig config;
@@ -57,10 +60,12 @@ public class AutonomousUtil {
 
             drivetrain.initializeSetpointGenerator(config);
 
+            m_drivetrain = drivetrain;
+
             PathPlannerLogging.setLogActivePathCallback(poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            // System.exit(1);
+            System.exit(1);
         }
     }
 
@@ -69,25 +74,52 @@ public class AutonomousUtil {
 
     private static Command pathFindThenPreciseAlign(Pose2d pose) {
         Pose2d startPose = new Pose2d(
-            (Math.cos(pose.getRotation().getRadians()) * -0.5) + pose.getX(),
-            (Math.sin(pose.getRotation().getRadians()) * -0.5) + pose.getY(),
+            (Math.cos(pose.getRotation().getRadians()) * -AutonConstants.stage2Distance) + pose.getX(),
+            (Math.sin(pose.getRotation().getRadians()) * -AutonConstants.stage2Distance) + pose.getY(),
             pose.getRotation()
         );
         
         List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startPose, pose);
-        PathPlannerPath path = new PathPlannerPath(waypoints, finalAlignConstraints, new IdealStartingState(DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond), pose.getRotation()), new GoalEndState(0, pose.getRotation()));
+        PathPlannerPath path = new PathPlannerPath(
+                waypoints,
+                finalAlignConstraints,
+                new IdealStartingState(0/*DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond)*/, pose.getRotation()),
+                new GoalEndState(0, pose.getRotation()),
+                false);
+
         return AutoBuilder.pathfindThenFollowPath(path, pathFindConstraints);
     }
+
+    private static Command preciseAlign(Pose2d pose) {        
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_drivetrain.getBluePose(), pose);
+        PathPlannerPath path = new PathPlannerPath(
+                waypoints,
+                finalAlignConstraints,
+                new IdealStartingState(DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond), pose.getRotation()),
+                new GoalEndState(0, pose.getRotation()),
+                false);
+
+        return AutoBuilder.followPath(path);
+    }
     
-    public static Command pathFinder(Pose2d pose) {
+    private static Command pathFinder(Pose2d pose) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
             pathFindThenPreciseAlign(pose),
+            // preciseAlign(pose),
             new InstantCommand(() -> RobotObserver.setReefMode(false))
         );
     }
 
-    public static Command driveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+    private static Command driveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> RobotObserver.setReefMode(true)),
+            new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
+            new InstantCommand(() -> RobotObserver.setReefMode(false))
+        );
+    }
+
+    private static Command autoDriveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
             new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
@@ -111,18 +143,31 @@ public class AutonomousUtil {
         return routine;
     }
 
+    public static Command pathThenRunCommand(Pose2d pose, Supplier<Command> command) {
+        return new SequentialCommandGroup(
+            // pathFinder(pose),
+            driveToPoint(pose, m_drivetrain),
+            command.get()
+        );
+    }
+
+    public static Command closestPathThenRunCommand(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
+        return pathThenRunCommand(clip(scoringLocationList), scoreSupplier);
+    }
+
+    // queue stuff
+
     private static ArrayList<Command> onTheFlyCommands = new ArrayList<>();
 
     public static void queuePathWithCommand(Pose2d pose, Supplier<Command> command) {
-        onTheFlyCommands.add(pathFinder(pose));
-        onTheFlyCommands.add(command.get());
+        onTheFlyCommands.add(pathThenRunCommand(pose, command));
     }
 
     public static void queueClosest(Supplier<Command> scoreSupplier, List<Pose2d> scoringLocationList) {
         queuePathWithCommand(clip(scoringLocationList), scoreSupplier);
     }
 
-    public static Pose2d clip(List<Pose2d> list) {
+    private static Pose2d clip(List<Pose2d> list) {
         return FieldUtils.flipPose(RobotObserver.getPose()).nearest(list);
     }
 
@@ -138,42 +183,20 @@ public class AutonomousUtil {
     private static boolean ranCommand = false;
 
     public static void handleQueue() {
-        if (!onTheFlyCommands.isEmpty()) {
-            if (!ranCommand) {
-                onTheFlyCommands.get(0).schedule();
-                ranCommand = true;
-            }
-            if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
-                onTheFlyCommands.get(0).cancel();
-                onTheFlyCommands.remove(0);
+        if (AutonConstants.useQueue) {
+            if (!onTheFlyCommands.isEmpty()) {
+                if (!ranCommand) {
+                    onTheFlyCommands.get(0).schedule();
+                    ranCommand = true;
+                }
+                if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
+                    onTheFlyCommands.get(0).cancel();
+                    onTheFlyCommands.remove(0);
+                    ranCommand = false;
+                }
+            } else {
                 ranCommand = false;
             }
-        } else {
-            ranCommand = false;
         }
     }
-
-
-    // ******** UNUSED METHODS; KEPT INCASE FUTURE IMPLEMENTATION NEEDED?? ********
-
-    public static void queuePath(String pathName) {
-        try {
-            onTheFlyCommands.add(AutoBuilder.pathfindToPoseFlipped(
-                    PathPlannerPath.fromPathFile(pathName).getStartingDifferentialPose(),
-                    PathConstraints.unlimitedConstraints(12.0), 1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Command followPath(String pathName) {
-        System.out.println("CONSTRUCTED PATH WITH NAME:" + pathName);
-        try {
-            return AutoBuilder.followPath(PathPlannerPath.fromPathFile(pathName));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
 }

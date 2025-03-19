@@ -7,50 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartF"
+            "pathName": "TestAScore"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Align F"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "FIntake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IntakeD"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Align D"
+            "name": "Align A"
           }
         },
         {
@@ -66,7 +29,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "DIntake"
+                  "pathName": "TestAIntake"
                 }
               },
               {
@@ -81,44 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "IntakeC"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Align C"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "CIntake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IntakeB"
+            "pathName": "TestBScore"
           }
         },
         {
@@ -131,6 +57,80 @@
           "type": "named",
           "data": {
             "name": "L4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TestBIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TestAScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TestAIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TestBScore"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align B"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3"
           }
         }
       ]

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -70,6 +71,10 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.intakeVoltage);
     }
 
+    public void setRetract() {
+        setVoltage(CoralConstants.setSlowReverse);
+    }
+
     public void timeoutIntake() {
         // a whole lotta logic that essentially allows u to stop the motor in default command
         // when you leave the yay zone after intakeTimeout seconds automatically (max process time) or when coral detected
@@ -111,19 +116,24 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setL1Eject() {
-        setVoltage(CoralConstants.l1EjectVoltage);
+        setVoltage(CoralConstants.l1EjectVoltage + getCANRangeCompensation());
     }
 
     public void setL2Eject() {
-        setVoltage(CoralConstants.l2EjectVoltage);
+        setVoltage(CoralConstants.l2EjectVoltage + getCANRangeCompensation());
     }
 
     public void setL3Eject() {
-        setVoltage(CoralConstants.l3EjectVoltage);
+        setVoltage(CoralConstants.l3EjectVoltage + getCANRangeCompensation());
     }
 
     public void setL4Eject() {
-        setVoltage(CoralConstants.l4EjectVoltage);
+        setVoltage(CoralConstants.l4EjectVoltage + getCANRangeCompensation());
+    }
+
+    private double getCANRangeCompensation() {
+        if (RobotObserver.getManualMode() || !CoralConstants.enableCANRange) return 0.0;
+        return (RobotObserver.getRangeDistance() - DriveConstants.rangeZero) * CoralConstants.rangeDistanceGain;
     }
 
     public void setSpitOut() {
@@ -162,22 +172,29 @@ public class CoralRollers extends SubsystemBase {
         return getFrontIR() || getBackIR();
     }
 
+    public boolean onlyFrontIR() {
+        return getFrontIR() && !getBackIR();
+    }
+
     @Override
     public void periodic() {
         if (CoralConstants.enable) {
             if (Robot.isReal()) {
-                m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.frontIRThreshold;
-                m_backSensorValue = m_backIR.getVoltage() > CoralConstants.frontIRThreshold;
+                m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.IRThreshold;
+                m_backSensorValue = m_backIR.getVoltage() > CoralConstants.IRThreshold;
             } else {
                 m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
             }
     
             SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
             SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
+            SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
+            SmartDashboard.putNumber("Front IR Voltage", m_frontIR.getVoltage());
     
             SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
     
             SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+            SmartDashboard.putNumber("Coral Compensatin", getCANRangeCompensation());
     
             if (m_voltageChanged) {
                 m_coralLeft.setVoltage(m_voltage);
