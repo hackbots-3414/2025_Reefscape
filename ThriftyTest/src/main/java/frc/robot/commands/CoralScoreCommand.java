@@ -34,7 +34,7 @@ public class CoralScoreCommand extends Command {
       return;
     }
         
-    m_timeRemaining = 25;
+    m_timeRemaining = 12;
     if (!CommandBounds.reefBounds.isActive()) {
         m_timeRemaining = 0;
         return;
