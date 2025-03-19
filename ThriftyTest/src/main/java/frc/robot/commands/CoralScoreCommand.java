@@ -54,7 +54,7 @@ public class CoralScoreCommand extends Command {
         default -> m_timeRemaining = 0;
       }
     }
-    if (!coral.presentPiece()) m_timeRemaining --;
+    if (!coral.onlyFrontIR()) m_timeRemaining --;
   }
 
   @Override
