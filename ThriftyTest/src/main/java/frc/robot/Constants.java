@@ -203,14 +203,14 @@ public class Constants {
         public static class DragonReins {
             public static final int xAxis = 1;
             public static final int yAxis = 0;
-            public static final int rotAxis = 2;
+            public static final int rotAxis = 3;
 
             public static final boolean flipX = true;
             public static final boolean flipY = false;
             public static final boolean flipRot = true;
 
             public static final int enableOpenLoop = 3;
-            public static final int resetHeading = 2;
+            public static final int resetHeading = 1;
 
             public static final double deadband = 0.01;
         }
@@ -554,8 +554,8 @@ public class Constants {
         public static final double maxSpeedUp = 12; // 10
         public static final double accelerationMultiplierUp = 3; // 3
 
-        public static final double maxSpeedDown = 10; // 7
-        public static final double accelerationMultiplierDown = 0.7; // 2.25
+        public static final double maxSpeedDown = 10; // 10
+        public static final double accelerationMultiplierDown = 3; // 3
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
