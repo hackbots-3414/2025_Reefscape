@@ -69,6 +69,12 @@ public class SingleInputPoseEstimator implements Runnable {
 
     @Override
     public void run() {
+        if (!m_camera.isConnected()) {
+            SmartDashboard.putBoolean(m_name + " Connected", false);
+            m_logger.error("Unable to read data from {}", m_name);
+        } else {
+            SmartDashboard.putBoolean(m_name + " Connected", true);
+        }
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
         if (results.size() > VisionConstants.k_expectedResults) {
