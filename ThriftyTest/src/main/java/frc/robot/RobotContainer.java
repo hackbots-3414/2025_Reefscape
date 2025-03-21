@@ -393,15 +393,15 @@ public class RobotContainer {
             bindReefClipCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightReef).and(manualModeOff));
 
             // Manual Mode On
-            bindManualCoralPrepCommand(1, controller.pov(ButtonBoardAlternate.L1)/*.and(manualModeOn)*/);
-            bindManualCoralPrepCommand(2, controller.pov(ButtonBoardAlternate.L2)/*.and(manualModeOn)*/);
-            bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3)/*.and(manualModeOn)*/);
-            bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4)/*.and(manualModeOn)*/);
+            bindManualCoralPrepCommand(1, controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate())/*.and(manualModeOn)*/);
+            bindManualCoralPrepCommand(2, controller.pov(ButtonBoardAlternate.L2).and(algaeOn.negate())/*.and(manualModeOn)*/);
+            bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate())/*.and(manualModeOn)*/);
+            bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate())/*.and(manualModeOn)*/);
 
-            controller.pov(ButtonBoardAlternate.L1).onFalse(coralScoreCommand(1));
-            controller.pov(ButtonBoardAlternate.L2).onFalse(coralScoreCommand(2));
-            controller.pov(ButtonBoardAlternate.L3).onFalse(coralScoreCommand(3));
-            controller.pov(ButtonBoardAlternate.L4).onFalse(coralScoreCommand(4));
+            controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate()).onFalse(coralScoreCommand(1));
+            controller.pov(ButtonBoardAlternate.L2).and(algaeOn.negate()).onFalse(coralScoreCommand(2));
+            controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate()).onFalse(coralScoreCommand(3));
+            controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate()).onFalse(coralScoreCommand(4));
 
             bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake)/*.and(manualModeOn)*/);
 
@@ -605,7 +605,7 @@ public class RobotContainer {
             case NET -> trigger.whileTrue(algaeScoreCommand(type));
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
-                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers).andThen(new WaitCommand(2).andThen(new InstantCommand(() -> {m_algaeRollers.stopMotor(); m_algaePivot.setStow();}))));
+                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, m_elevator).andThen(new WaitCommand(2).andThen(new InstantCommand(() -> {m_algaeRollers.stopMotor(); m_algaePivot.setStow();}))));
             }
         }
     }

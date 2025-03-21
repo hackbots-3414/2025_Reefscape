@@ -413,7 +413,7 @@ public class Constants {
         public static final double k_noisyDistance = 4.0;
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
-        public static final double k_targetMultiplier = 10;
+        public static final double k_targetMultiplier = 20;
         public static final double k_differenceThreshold = 0.14;
         public static final double k_differenceMultiplier = 100.0;
         public static final double k_latencyMultiplier = 0.3;
@@ -458,7 +458,7 @@ public class Constants {
 
         public static final boolean useQueue = false;
 
-        public static double translationTolerance = 0.025; // 0.04
+        public static double translationTolerance = 0.03; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
 
         private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
@@ -534,11 +534,11 @@ public class Constants {
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.424 + 0.1 * inch;
-        public static final double processor = 0.125;
+        public static final double processor = 0;
         public static final double L1 = 2.472;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
         public static final double L3 = 7.257 - 4 * inch; // 50.5
-        public static final double L4 = 9.757 + 1.4 * inch;
+        public static final double L4 = 9.757 + 0.3 * inch;
         public static final double net = 79 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
@@ -780,7 +780,7 @@ public class Constants {
 
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.250;
-        public static final double climbPosition = -0.100;
+        public static final double climbPosition = -0.090;
 
         public static final double encoderOffset = 0.284423828125;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;

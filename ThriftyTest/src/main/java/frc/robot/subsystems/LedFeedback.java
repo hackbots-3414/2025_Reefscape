@@ -73,13 +73,13 @@ public class LedFeedback extends SubsystemBase {
     private CANdle ledcontroller = new CANdle(IDConstants.candle1);
     private CANdle ledcontroller2 = new CANdle(IDConstants.candle2);
 
-    public LedFeedback(CommandSwerveDrivetrain m_Drivetrain) {
+    public LedFeedback(CommandSwerveDrivetrain m_drivetrain) {
         CANdleConfiguration config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB; // set the strip type to RGB
         config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
         ledcontroller.configAllSettings(config, 20);
         ledcontroller2.configAllSettings(config, 20);
-        this.drivetrain = m_Drivetrain;
+        this.drivetrain = m_drivetrain;
 
 
         // SmartDashboard.putBoolean("AlignedRight", alignedRight());
@@ -97,7 +97,7 @@ public class LedFeedback extends SubsystemBase {
     @Override
     public void periodic() {
         // System.out.println("PERIODIC ENTER");
-        matchTime = (DriverStation.getMatchType() == MatchType.None) ? 100000 : DriverStation.getMatchTime();
+        matchTime = (DriverStation.getMatchType() == MatchType.None) ? Double.POSITIVE_INFINITY : DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
 
