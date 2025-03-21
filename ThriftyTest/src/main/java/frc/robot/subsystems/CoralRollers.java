@@ -80,7 +80,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setRetract() {
-        setVoltage(CoralConstants.setSlowReverse);
+        setVoltage(CoralConstants.retractVoltage);
     }
 
     public void timeoutIntake() {

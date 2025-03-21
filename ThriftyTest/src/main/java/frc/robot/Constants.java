@@ -458,7 +458,7 @@ public class Constants {
 
         public static final boolean useQueue = false;
 
-        public static double translationTolerance = 0.04; // m
+        public static double translationTolerance = 0.025; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
 
         private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
@@ -489,7 +489,7 @@ public class Constants {
 
         public static final boolean invertLeftMotorFollower = true;
 
-        public static final double supplyCurrentLimit = 40;
+        public static final double supplyCurrentLimit = 60;
 
         public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
@@ -533,7 +533,7 @@ public class Constants {
 
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
-        public static final double stow = 0.424;
+        public static final double stow = 0.424 + 0.1 * inch;
         public static final double processor = 0.125;
         public static final double L1 = 2.472;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
@@ -553,7 +553,7 @@ public class Constants {
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeedUp = 12; // 10
+        public static final double maxSpeedUp = 16; // 12
         public static final double accelerationMultiplierUp = 3; // 3
 
         public static final double maxSpeedDown = 10; // 10
@@ -715,12 +715,12 @@ public class Constants {
 
     public static class CoralConstants {
         public static final boolean enable = true;
-        
-        public static final double intakeVoltage = 3.0;
-        public static final double setSlowReverse = -4.0;
+    
+        public static final double intakeVoltage = 2.71;
+        public static final double retractVoltage = -3.5;
         public static final double ejectVoltage = 5;
 
-        public static final double l1EjectVoltage = 3;
+        public static final double l1EjectVoltage = 3.0;
         public static final double l2EjectVoltage = 4.0; // 5.1
         public static final double l3EjectVoltage = 4.0; // 5.1
         public static final double l4EjectVoltage = 6.2;
@@ -827,7 +827,7 @@ public class Constants {
         public static final boolean enable = true;
         
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -6; // 1.5
+        public static final double ejectVoltage = -7.0; // 1.5
         public static final double processorEjectVoltage = -4;
 
         public static final double torqueCurrentThreshold = 75;
