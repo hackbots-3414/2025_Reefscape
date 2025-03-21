@@ -14,6 +14,7 @@ import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -109,6 +110,7 @@ public class Constants {
 
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
+        public static final int coralCANrange = 59;
 
         public static final int frontIR = 2;
         public static final int rearIR = 3;
@@ -207,7 +209,7 @@ public class Constants {
 
             public static final boolean flipX = true;
             public static final boolean flipY = false;
-            public static final boolean flipRot = true;
+            public static final boolean flipRot = false;
 
             public static final int enableOpenLoop = 3;
             public static final int resetHeading = 1;
@@ -752,6 +754,16 @@ public class Constants {
                         .withS1CloseState(S1CloseStateValue.CloseWhenHigh)
                         .withS2CloseState(S2CloseStateValue.CloseWhenHigh));
 
+        public static final CANrangeConfiguration rangeConfig = new CANrangeConfiguration()
+                .withFovParams(new FovParamsConfigs()
+                        .withFOVRangeX(6.5)
+                        .withFOVRangeY(6.5))
+                .withProximityParams(new ProximityParamsConfigs()
+                        .withMinSignalStrengthForValidMeasurement(1500)
+                        .withProximityThreshold(0.2))
+                .withToFParams(new ToFParamsConfigs()
+                        .withUpdateMode(UpdateModeValue.ShortRange100Hz));
+
         public static double intakeTimeout = 1;
     }
 
@@ -767,7 +779,7 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
         public static final double forwardSoftLimit = 0.0;
-        public static final double reverseSoftLimit = -0.265;
+        public static final double reverseSoftLimit = -0.250;
         public static final double climbPosition = -0.100;
 
         public static final double encoderOffset = 0.284423828125;

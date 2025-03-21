@@ -14,8 +14,6 @@ public class CoralIntakeCommand extends Command {
   private final CoralRollers coral;
   private final Elevator elevator;
 
-  private boolean pulledForward = false;
-
   public CoralIntakeCommand(CoralRollers coralRollers, Elevator elevator) {
     this.coral = coralRollers;
     this.elevator = elevator;
@@ -24,19 +22,13 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public void initialize() {
-    pulledForward = false;
     elevator.setStow();
   }
 
   @Override
   public void execute() {
     if(elevator.atSetpoint()) {
-      if (coral.onlyFrontIR()) {
-        pulledForward = true;
-        coral.setRetract();
-      } else {
-        if (!pulledForward) coral.setIntake();
-      }
+        coral.setIntake();
     }
   }
 
@@ -47,6 +39,6 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return coral.holdingPiece() && pulledForward;
+    return coral.getCANrangeTriggered();
   }
 }
