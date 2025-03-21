@@ -624,7 +624,7 @@ public class RobotContainer {
     }
 
     private Command coralPrepCommand(int level) {
-        return new ElevatorToPointCommand(level, m_elevator);
+        return new ElevatorToPointCommand(level, m_elevator).onlyIf(m_coralRollers::getCANrangeTriggered);
     }
 
     private Command coralScoreCommand(int level) {

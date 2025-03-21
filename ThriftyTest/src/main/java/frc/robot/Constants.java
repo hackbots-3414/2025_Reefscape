@@ -759,8 +759,8 @@ public class Constants {
                         .withFOVRangeX(6.5)
                         .withFOVRangeY(6.5))
                 .withProximityParams(new ProximityParamsConfigs()
-                        .withMinSignalStrengthForValidMeasurement(1500)
-                        .withProximityThreshold(0.2))
+                        .withMinSignalStrengthForValidMeasurement(15015)
+                        .withProximityThreshold(0.1))
                 .withToFParams(new ToFParamsConfigs()
                         .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 

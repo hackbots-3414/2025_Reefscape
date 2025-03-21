@@ -64,7 +64,7 @@ public class CoralScoreCommand extends Command {
     if (interrupted) {
       m_logger.warn("Elevator Reference: {}, Elevator Position: {}", elevator.getReference(), elevator.getPosition());
     }
-    elevator.setStow();
+    if (coral.getCANrangeTriggered()) elevator.setStow();
     coral.stop();
   }
 
