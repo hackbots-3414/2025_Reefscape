@@ -25,6 +25,7 @@ public class CoralIntakeCommand extends Command {
   @Override
   public void initialize() {
     pulledForward = false;
+    if (coral.holdingPiece()) pulledForward = true; // don't run again.
     elevator.setStow();
   }
 
