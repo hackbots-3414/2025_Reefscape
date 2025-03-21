@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -30,6 +31,8 @@ public class CoralRollers extends SubsystemBase {
     private final AnalogInput m_frontIR = new AnalogInput(IDConstants.frontIR); // tolerance 1
     private final AnalogInput m_backIR = new AnalogInput(IDConstants.rearIR);
 
+    private final CANrange m_range = new CANrange(IDConstants.coralCANrange);
+
     private boolean m_frontSensorValue = false;
     private boolean m_backSensorValue = false;
 
@@ -41,6 +44,7 @@ public class CoralRollers extends SubsystemBase {
     public CoralRollers() {
         configMotors();
         configDashboard();
+        configCANrange();
         RobotObserver.setPieceHeldSupplier(this::holdingPiece);
     }
 
@@ -62,6 +66,10 @@ public class CoralRollers extends SubsystemBase {
         }
     }
 
+    private void configCANrange() {
+        m_range.getConfigurator().apply(CoralConstants.rangeConfig);
+    }
+
     public void setVoltage(double voltage) {
         m_voltageChanged = (voltage != m_voltage);
         m_voltage = voltage;
@@ -72,7 +80,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setRetract() {
-        setVoltage(CoralConstants.setSlowReverse);
+        setVoltage(CoralConstants.retractVoltage);
     }
 
     public void timeoutIntake() {
@@ -154,6 +162,10 @@ public class CoralRollers extends SubsystemBase {
         m_voltage = 0;
         m_voltageChanged = false;
         m_coralLeft.setVoltage(0.0);
+    }
+
+    public boolean getCANrangeTriggered() {
+        return m_range.getIsDetected().getValue();
     }
 
     public boolean getFrontIR() {

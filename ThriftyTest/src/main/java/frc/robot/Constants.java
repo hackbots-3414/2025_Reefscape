@@ -14,6 +14,7 @@ import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.ProximityParamsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -109,6 +110,7 @@ public class Constants {
 
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
+        public static final int coralCANrange = 59;
 
         public static final int frontIR = 2;
         public static final int rearIR = 3;
@@ -203,14 +205,14 @@ public class Constants {
         public static class DragonReins {
             public static final int xAxis = 1;
             public static final int yAxis = 0;
-            public static final int rotAxis = 2;
+            public static final int rotAxis = 3;
 
             public static final boolean flipX = true;
             public static final boolean flipY = false;
-            public static final boolean flipRot = true;
+            public static final boolean flipRot = false;
 
             public static final int enableOpenLoop = 3;
-            public static final int resetHeading = 2;
+            public static final int resetHeading = 1;
 
             public static final double deadband = 0.01;
         }
@@ -411,7 +413,7 @@ public class Constants {
         public static final double k_noisyDistance = 4.0;
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
-        public static final double k_targetMultiplier = 10;
+        public static final double k_targetMultiplier = 20;
         public static final double k_differenceThreshold = 0.14;
         public static final double k_differenceMultiplier = 100.0;
         public static final double k_latencyMultiplier = 0.3;
@@ -456,7 +458,7 @@ public class Constants {
 
         public static final boolean useQueue = false;
 
-        public static double translationTolerance = 0.04; // m
+        public static double translationTolerance = 0.03; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
 
         private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
@@ -487,7 +489,7 @@ public class Constants {
 
         public static final boolean invertLeftMotorFollower = true;
 
-        public static final double supplyCurrentLimit = 40;
+        public static final double supplyCurrentLimit = 60;
 
         public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
@@ -531,12 +533,12 @@ public class Constants {
 
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
-        public static final double stow = 0.424;
-        public static final double processor = 0.125;
+        public static final double stow = 0.424 + 0.1 * inch;
+        public static final double processor = 0;
         public static final double L1 = 2.472;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
         public static final double L3 = 7.257 - 4 * inch; // 50.5
-        public static final double L4 = 9.757 + 1.4 * inch;
+        public static final double L4 = 9.757 + 0.3 * inch;
         public static final double net = 79 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
@@ -551,11 +553,11 @@ public class Constants {
         public static final double manualUpSpeed = 0.2;
         public static final double manualDownSpeed = -0.2;
 
-        public static final double maxSpeedUp = 12; // 10
+        public static final double maxSpeedUp = 16; // 12
         public static final double accelerationMultiplierUp = 3; // 3
 
-        public static final double maxSpeedDown = 10; // 7
-        public static final double accelerationMultiplierDown = 0.7; // 2.25
+        public static final double maxSpeedDown = 10; // 10
+        public static final double accelerationMultiplierDown = 3; // 3
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -713,12 +715,12 @@ public class Constants {
 
     public static class CoralConstants {
         public static final boolean enable = true;
-        
-        public static final double intakeVoltage = 3.0;
-        public static final double setSlowReverse = -4.0;
+    
+        public static final double intakeVoltage = 2.71;
+        public static final double retractVoltage = -3.5;
         public static final double ejectVoltage = 5;
 
-        public static final double l1EjectVoltage = 3;
+        public static final double l1EjectVoltage = 3.0;
         public static final double l2EjectVoltage = 4.0; // 5.1
         public static final double l3EjectVoltage = 4.0; // 5.1
         public static final double l4EjectVoltage = 6.2;
@@ -752,6 +754,16 @@ public class Constants {
                         .withS1CloseState(S1CloseStateValue.CloseWhenHigh)
                         .withS2CloseState(S2CloseStateValue.CloseWhenHigh));
 
+        public static final CANrangeConfiguration rangeConfig = new CANrangeConfiguration()
+                .withFovParams(new FovParamsConfigs()
+                        .withFOVRangeX(6.5)
+                        .withFOVRangeY(6.5))
+                .withProximityParams(new ProximityParamsConfigs()
+                        .withMinSignalStrengthForValidMeasurement(1500)
+                        .withProximityThreshold(0.2))
+                .withToFParams(new ToFParamsConfigs()
+                        .withUpdateMode(UpdateModeValue.ShortRange100Hz));
+
         public static double intakeTimeout = 1;
     }
 
@@ -767,8 +779,8 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
         public static final double forwardSoftLimit = 0.0;
-        public static final double reverseSoftLimit = -0.265;
-        public static final double climbPosition = -0.100;
+        public static final double reverseSoftLimit = -0.250;
+        public static final double climbPosition = -0.090;
 
         public static final double encoderOffset = 0.284423828125;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
@@ -815,7 +827,7 @@ public class Constants {
         public static final boolean enable = true;
         
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -6; // 1.5
+        public static final double ejectVoltage = -7.0; // 1.5
         public static final double processorEjectVoltage = -4;
 
         public static final double torqueCurrentThreshold = 75;
