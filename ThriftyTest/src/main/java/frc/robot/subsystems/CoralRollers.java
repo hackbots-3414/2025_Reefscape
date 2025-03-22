@@ -32,6 +32,7 @@ public class CoralRollers extends SubsystemBase {
     private final AnalogInput m_backIR = new AnalogInput(IDConstants.rearIR);
 
     private final CANrange m_range = new CANrange(IDConstants.coralCANrange);
+    private final CANrange m_upperRange = new CANrange(IDConstants.upperCANrange);
 
     private boolean m_frontSensorValue = false;
     private boolean m_backSensorValue = false;
@@ -68,6 +69,7 @@ public class CoralRollers extends SubsystemBase {
 
     private void configCANrange() {
         m_range.getConfigurator().apply(CoralConstants.rangeConfig);
+        m_upperRange.getConfigurator().apply(CoralConstants.upperRangeConfig);
     }
 
     public void setVoltage(double voltage) {
@@ -168,6 +170,10 @@ public class CoralRollers extends SubsystemBase {
         return m_range.getIsDetected().getValue();
     }
 
+    public boolean getUpperCANrange() {
+        return m_upperRange.getIsDetected().getValue();
+    }
+
     public boolean getFrontIR() {
         return m_frontSensorValue;
     }
@@ -177,7 +183,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean holdingPiece() {
-        return getFrontIR() && getCANrangeTriggered();
+        return getCANrangeTriggered() && !getUpperCANrange();
     }
 
     public boolean presentPiece() {
@@ -203,6 +209,7 @@ public class CoralRollers extends SubsystemBase {
             SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
             SmartDashboard.putNumber("Front IR Voltage", m_frontIR.getVoltage());
             SmartDashboard.putBoolean("Coral CANrange", getCANrangeTriggered());
+            SmartDashboard.putBoolean("OCS", getUpperCANrange());
     
             SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
     

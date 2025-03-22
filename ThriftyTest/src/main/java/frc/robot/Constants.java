@@ -111,6 +111,7 @@ public class Constants {
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
         public static final int coralCANrange = 59;
+        public static final int upperCANrange = 58;
 
         public static final int frontIR = 2;
         public static final int rearIR = 3;
@@ -517,7 +518,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.105224609375; // -0.427979;
+        public static final double encoderOffset = 0.28466796875; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
         // approx 7.96
@@ -761,6 +762,16 @@ public class Constants {
                 .withProximityParams(new ProximityParamsConfigs()
                         .withMinSignalStrengthForValidMeasurement(15015)
                         .withProximityThreshold(0.1))
+                .withToFParams(new ToFParamsConfigs()
+                        .withUpdateMode(UpdateModeValue.ShortRange100Hz));
+        
+        public static final CANrangeConfiguration upperRangeConfig = new CANrangeConfiguration()
+                .withFovParams(new FovParamsConfigs()
+                        .withFOVRangeX(6.5)
+                        .withFOVRangeY(15))
+                .withProximityParams(new ProximityParamsConfigs()
+                        .withMinSignalStrengthForValidMeasurement(2500)
+                        .withProximityThreshold(0.65))
                 .withToFParams(new ToFParamsConfigs()
                         .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 

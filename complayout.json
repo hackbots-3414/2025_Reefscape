@@ -180,9 +180,9 @@
         "containers": [
           {
             "title": "LIFT CLIMB",
-            "x": 384.0,
-            "y": 384.0,
-            "width": 384.0,
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
@@ -194,8 +194,8 @@
           {
             "title": "LOWER CLIMB",
             "x": 0.0,
-            "y": 384.0,
-            "width": 384.0,
+            "y": 256.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Command",
             "properties": {
@@ -209,7 +209,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 512.0,
-            "height": 384.0,
+            "height": 256.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Super Field",
@@ -226,8 +226,8 @@
           },
           {
             "title": "ELEVATOR AT POSITION",
-            "x": 768.0,
-            "y": 0.0,
+            "x": 256.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -260,8 +260,8 @@
           },
           {
             "title": "PIVOT AT POSITION",
-            "x": 768.0,
-            "y": 128.0,
+            "x": 0.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -396,13 +396,47 @@
           },
           {
             "title": "Coral CANrange",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Coral CANrange",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "OCS",
+            "x": 768.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/OCS",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "HAS CORAL",
             "x": 512.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/SmartDashboard/Coral CANrange",
+              "topic": "/SmartDashboard/HAS CORAL",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,

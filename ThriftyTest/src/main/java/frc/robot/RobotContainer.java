@@ -546,7 +546,8 @@ public class RobotContainer {
 
     // ** BUTTON BOARD HELPERS **
     private void bindManualCoralIntakeCommand(Trigger trigger) {
-        trigger.whileTrue(coralIntakeCommand()); 
+        trigger.whileTrue(coralIntakeCommand());
+        trigger.onFalse(coralIntakeCommand().onlyWhile(m_coralRollers::presentPiece));
     }
 
     /**
