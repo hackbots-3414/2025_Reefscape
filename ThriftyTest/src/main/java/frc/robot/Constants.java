@@ -843,9 +843,9 @@ public class Constants {
 
         public static final double torqueCurrentThreshold = 75;
 
-        public static final double supplyCurrentLimit = 20.0;
+        public static final double supplyCurrentLimit = 30.0;
 
-        public static final double holdVoltage = 1.5;
+        public static final double holdVoltage = 2.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.3;

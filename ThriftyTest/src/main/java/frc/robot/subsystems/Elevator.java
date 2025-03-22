@@ -63,7 +63,7 @@ public class Elevator extends SubsystemBase {
         configEncoder();
         configMotor();
         configSim();
-        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator));
+        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator).ignoringDisable(true));
     }
 
     private void configEncoder() {
@@ -239,8 +239,9 @@ public class Elevator extends SubsystemBase {
     }
 
     private void zeroElevator() {
-        m_elevatorRight.setPosition(0.0);
-        m_cancoder.setPosition(0.0);
+        m_elevatorRight.setPosition(0.0, 0.2);
+        m_elevatorLeft.setPosition(0.0, 0.2);
+        m_logger.info("Cancoder Error: {}", m_cancoder.setPosition(0.0, 0.2));
     }
 
     @Override

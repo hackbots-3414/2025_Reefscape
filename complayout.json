@@ -3,7 +3,7 @@
   "grid_size": 128,
   "tabs": [
     {
-      "name": "Match",
+      "name": "2025 Test",
       "grid_layout": {
         "layouts": [],
         "containers": [
@@ -430,7 +430,7 @@
           },
           {
             "title": "HAS CORAL",
-            "x": 512.0,
+            "x": 768.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
@@ -443,6 +443,37 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Zero Elevator",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Zero Elevator",
+              "period": 0.06,
+              "show_type": true
+            }
+          },
+          {
+            "title": "Algae Temperature",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/SmartDashboard/algae temp",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 80.0,
+              "divisions": 9,
+              "inverted": false,
+              "orientation": "horizontal"
             }
           }
         ]

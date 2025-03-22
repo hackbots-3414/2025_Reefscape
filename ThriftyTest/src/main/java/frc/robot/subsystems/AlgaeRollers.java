@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,14 +23,12 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     private double m_voltage;
     private boolean m_voltageChanged;
 
-    private final Notifier m_notifier;
-
     private boolean m_hasObject;
+
+    private MedianFilter m_filter = new MedianFilter(10);
 
     public AlgaeRollers() {
         configIntakeMotor();
-        m_notifier = new Notifier(this::updateObjectState);
-        m_notifier.startPeriodic(AlgaeRollerConstants.k_updateObjectPeriodSeconds);
         RobotObserver.setAlgaePieceHeldSupplier(this::hasObject);
 
     }
@@ -67,7 +66,8 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     }
 
     private double getTorqueCurrent() {
-        return m_algaeRoller.getTorqueCurrent().getValueAsDouble();
+        double measurement = m_algaeRoller.getTorqueCurrent().getValueAsDouble();
+        return m_filter.calculate(measurement);
     }
 
     public void ejectAlgae() {
@@ -96,6 +96,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
 
     @Override
     public void periodic() {
+        updateObjectState();
         if (AlgaeRollerConstants.enable) {
             if (m_voltageChanged) {
                 m_algaeRoller.setVoltage(m_voltage);
@@ -103,12 +104,12 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
                 SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
             }
         }
+        SmartDashboard.putNumber("algae temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
     }
 
     @Override
     public void close() throws Exception {
         m_algaeRoller.close();
-        m_notifier.close();
     }
 
 }
