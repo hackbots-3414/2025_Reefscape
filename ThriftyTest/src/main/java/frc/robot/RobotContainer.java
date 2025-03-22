@@ -22,7 +22,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -88,6 +90,8 @@ public class RobotContainer {
 
     private final VisionHandler m_vision = new VisionHandler(m_drivetrain);
 
+    private final PowerDistribution pdp = new PowerDistribution(1, ModuleType.kRev);
+
     public RobotContainer() {
         configureSubsystems();
         configureNamedCommands();
@@ -104,6 +108,10 @@ public class RobotContainer {
 
     private void confiureSimulation() {
         DriverStation.silenceJoystickConnectionWarning(true);
+    }
+
+    public void enablePDPSwitch() {
+        pdp.setSwitchableChannel(true);
     }
     
     private void configureDashboard() {

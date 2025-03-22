@@ -28,13 +28,11 @@ public class CoralRollers extends SubsystemBase {
     private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
     private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
 
-    private final AnalogInput m_frontIR = new AnalogInput(IDConstants.frontIR); // tolerance 1
     private final AnalogInput m_backIR = new AnalogInput(IDConstants.rearIR);
 
     private final CANrange m_range = new CANrange(IDConstants.coralCANrange);
     private final CANrange m_upperRange = new CANrange(IDConstants.upperCANrange);
 
-    private boolean m_frontSensorValue = false;
     private boolean m_backSensorValue = false;
 
     private double m_voltage;
@@ -174,10 +172,6 @@ public class CoralRollers extends SubsystemBase {
         return m_upperRange.getIsDetected().getValue();
     }
 
-    public boolean getFrontIR() {
-        return m_frontSensorValue;
-    }
-
     public boolean getBackIR() {
         return m_backSensorValue;
     }
@@ -187,27 +181,18 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean presentPiece() {
-        return getFrontIR() || getBackIR();
-    }
-
-    public boolean onlyFrontIR() {
-        return getFrontIR() && !getBackIR();
+        return getBackIR();
     }
 
     @Override
     public void periodic() {
         if (CoralConstants.enable) {
             if (Robot.isReal()) {
-                m_frontSensorValue = m_frontIR.getVoltage() > CoralConstants.IRThreshold;
                 m_backSensorValue = m_backIR.getVoltage() > CoralConstants.IRThreshold;
-            } else {
-                m_frontSensorValue = SmartDashboard.getBoolean("Coral Override", false);
             }
     
-            SmartDashboard.putBoolean("Front IR Triggered", m_frontSensorValue);
             SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
             SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
-            SmartDashboard.putNumber("Front IR Voltage", m_frontIR.getVoltage());
             SmartDashboard.putBoolean("Coral CANrange", getCANrangeTriggered());
             SmartDashboard.putBoolean("OCS", getUpperCANrange());
     

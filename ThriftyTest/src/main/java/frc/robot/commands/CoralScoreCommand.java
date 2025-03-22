@@ -32,13 +32,8 @@ public class CoralScoreCommand extends Command {
     if (!coral.presentPiece()) {
       finish = true;
       return;
-    }
-        
-    m_timeRemaining = 12;
-    if (!CommandBounds.reefBounds.isActive()) {
-        m_timeRemaining = 0;
-        return;
-    }
+    }   
+  m_timeRemaining = 12;
 
     finish = false;
   }
@@ -54,7 +49,7 @@ public class CoralScoreCommand extends Command {
         default -> m_timeRemaining = 0;
       }
     }
-    if (!coral.getFrontIR()) {
+    if (!coral.getCANrangeTriggered()) {
       m_logger.info("time remaining is {}", --m_timeRemaining);
     };
   }

@@ -20,6 +20,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/AlignLEFT ": "Command",
+      "/SmartDashboard/AlignRight": "Command",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Drive To Center Command": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
@@ -507,11 +509,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/camera testing spot 2": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },
@@ -531,8 +528,7 @@
   "NetworkTables Info": {
     "Server": {
       "open": true
-    },
-    "visible": true
+    }
   },
   "Plot": {
     "Plot <0>": {
@@ -553,7 +549,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 508,
+          "height": 0,
           "name": "Robot Velocity",
           "series": [
             {
@@ -576,7 +572,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }
