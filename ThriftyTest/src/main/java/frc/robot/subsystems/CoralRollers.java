@@ -181,7 +181,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean presentPiece() {
-        return getBackIR();
+        return getBackIR() || getCANrangeTriggered();
     }
 
     @Override
