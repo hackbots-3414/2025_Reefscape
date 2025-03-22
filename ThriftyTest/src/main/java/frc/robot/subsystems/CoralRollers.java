@@ -202,6 +202,7 @@ public class CoralRollers extends SubsystemBase {
             SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
             SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
             SmartDashboard.putNumber("Front IR Voltage", m_frontIR.getVoltage());
+            SmartDashboard.putBoolean("Coral CANrange", getCANrangeTriggered());
     
             SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
     
