@@ -239,11 +239,8 @@ public class Elevator extends SubsystemBase {
     }
 
     private void zeroElevator() {
-        m_cancoder.clearStickyFaults();
-        CANcoderConfiguration config = ElevatorConstants.encoderConfig;
-        config.MagnetSensor.MagnetOffset = m_cancoder.getAbsolutePosition(true).getValueAsDouble() - ElevatorConstants.encoderOffset;
-
-        m_cancoder.getConfigurator().apply(config, 0.2);
+        m_elevatorRight.setPosition(0.0);
+        m_cancoder.setPosition(0.0);
     }
 
     @Override
