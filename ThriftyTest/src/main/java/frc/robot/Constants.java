@@ -793,7 +793,7 @@ public class Constants {
         public static final double reverseSoftLimit = -0.250;
         public static final double climbPosition = -0.090;
 
-        public static final double encoderOffset = 0.284423828125;
+        public static final double encoderOffset = 0.257080078125;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
@@ -843,7 +843,7 @@ public class Constants {
 
         public static final double torqueCurrentThreshold = 75;
 
-        public static final double supplyCurrentLimit = 30.0;
+        public static final double supplyCurrentLimit = 25.0;
 
         public static final double holdVoltage = 2.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
