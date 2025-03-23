@@ -536,7 +536,7 @@ public class Constants {
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.424 + 0.1 * inch;
         public static final double processor = 0;
-        public static final double L1 = 2.472;
+        public static final double L1 = stow + 3.5 * inch;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
@@ -729,13 +729,14 @@ public class Constants {
         public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
 
         public static final double spitOutVoltage = -6;
+        public static final double fastEjectVoltage = -10;
 
         public static final double l1LeftEjectVoltage = 8;
         public static final double l1RightEjectVoltage = 6;
 
         public static final boolean rightMotorInvert = true;
 
-        public static final double supplyCurrentLimit = 20;
+        public static final double supplyCurrentLimit = 22.5;
 
         public static final double IRThreshold = 0.51;
 

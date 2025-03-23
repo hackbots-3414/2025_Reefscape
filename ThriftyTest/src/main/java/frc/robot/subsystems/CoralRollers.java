@@ -180,6 +180,10 @@ public class CoralRollers extends SubsystemBase {
         return getCANrangeTriggered() && !getUpperCANrange();
     }
 
+    public void fastEject() {
+        m_coralLeft.setVoltage(CoralConstants.fastEjectVoltage);
+    }
+
     public boolean presentPiece() {
         return getBackIR() || getCANrangeTriggered();
     }

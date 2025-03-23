@@ -61,6 +61,7 @@ import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.CoralL1Command;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ElevatorToPointCommand;
@@ -376,7 +377,6 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoard.net).and(manualModeOn));
         
             bindAutoCancelButton(controller.button(ButtonBoard.cancelAuto));
-            
 
             bindClimbSetupCommand(controller.button(ButtonBoard.climb));
         } else {
@@ -407,7 +407,7 @@ public class RobotContainer {
             bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate())/*.and(manualModeOn)*/);
             bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate())/*.and(manualModeOn)*/);
 
-            controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate()).onFalse(coralScoreCommand(1));
+            controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate()).onFalse(new CoralL1Command(m_coralRollers, m_elevator));
             controller.pov(ButtonBoardAlternate.L2).and(algaeOn.negate()).onFalse(coralScoreCommand(2));
             controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate()).onFalse(coralScoreCommand(3));
             controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate()).onFalse(coralScoreCommand(4));

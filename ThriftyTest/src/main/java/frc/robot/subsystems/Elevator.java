@@ -49,6 +49,8 @@ public class Elevator extends SubsystemBase {
 
     private double m_reference;
 
+    private double m_compensation;
+
     private ElevatorSim m_elevatorSim;
     private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
 
@@ -149,19 +151,19 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setL1() {
-        setPosition(ElevatorConstants.L1 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L1 + m_compensation);
     }
 
     public void setL2() {
-        setPosition(ElevatorConstants.L2 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L2 + m_compensation);
     }
 
     public void setL3() {
-        setPosition(ElevatorConstants.L3 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L3 + m_compensation);
     }
 
     public void setL4() {
-        setPosition(ElevatorConstants.L4 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L4 + m_compensation);
     }
 
     private double getCANRangeCompensation() {
@@ -175,7 +177,6 @@ public class Elevator extends SubsystemBase {
             ElevatorConstants.k_maxCanCompensation,
             (distance.get() - DriveConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch
         );
-        SmartDashboard.putNumber("canrange comp", comp);
         return comp;
     }
 
@@ -256,7 +257,7 @@ public class Elevator extends SubsystemBase {
             }
 
             SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
-            SmartDashboard.putNumber("Elevator Compensatin", getCANRangeCompensation());
+            m_compensation = getCANRangeCompensation();
         }
     }
 

@@ -19,30 +19,24 @@ public class CoralL1Command extends Command {
 
   @Override
   public void initialize() {
-    m_timeRemaining = 25;
-    if (!CommandBounds.reefBounds.isActive()) {
-        m_timeRemaining = 0;
-        return;
-    }
     elevator.setL1();
   }
 
   @Override
   public void execute() {
-    if(elevator.atSetpoint()) {
-      coral.setIndividualEject();
+    if (elevator.atSetpoint()) {
+      coral.fastEject();
     }
-    if (!coral.presentPiece()) m_timeRemaining --;
   }
 
   @Override
   public void end(boolean interrupted) {
-    coral.resetFollow();
     coral.stop();
+    elevator.setStow();
   }
 
   @Override
   public boolean isFinished() {
-    return m_timeRemaining == 0;
+    return !coral.getUpperCANrange() && !coral.presentPiece();
   }
 }
