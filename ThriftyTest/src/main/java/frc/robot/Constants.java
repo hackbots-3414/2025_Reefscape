@@ -51,7 +51,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -462,8 +461,6 @@ public class Constants {
         public static double translationTolerance = 0.03; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
 
-        private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
-
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static double stage2Distance = 1;
     }
@@ -518,7 +515,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.132080078125; // -0.427979;
+        public static final double encoderOffset = -0.091552734375; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
         // approx 7.96
@@ -736,7 +733,7 @@ public class Constants {
 
         public static final boolean rightMotorInvert = true;
 
-        public static final double supplyCurrentLimit = 22.5;
+        public static final double supplyCurrentLimit = 20.0;
 
         public static final double IRThreshold = 0.51;
 
