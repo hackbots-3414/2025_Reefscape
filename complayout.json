@@ -31,8 +31,8 @@
             "title": "SAFETY MODE",
             "x": 1024.0,
             "y": 0.0,
-            "width": 512.0,
-            "height": 384.0,
+            "width": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/SAFETY MODE",
@@ -46,15 +46,53 @@
           },
           {
             "title": "Auto Chooser",
-            "x": 1024.0,
-            "y": 384.0,
-            "width": 512.0,
+            "x": 1280.0,
+            "y": 0.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Auto Chooser",
               "period": 0.06,
               "sort_options": false
+            }
+          },
+          {
+            "title": "Climb Ready",
+            "x": 1280.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Climb Ready",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "climber pos",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "/SmartDashboard/climber pos",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -90.0,
+              "end_angle": 0.0,
+              "min_value": -0.25,
+              "max_value": 0.0,
+              "number_of_labels": 0,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": false
             }
           }
         ]
@@ -242,23 +280,6 @@
             }
           },
           {
-            "title": "Front IR Triggered",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Front IR Triggered",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "PIVOT AT POSITION",
             "x": 0.0,
             "y": 384.0,
@@ -362,7 +383,7 @@
           },
           {
             "title": "SAFETY MODE",
-            "x": 1024.0,
+            "x": 768.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
@@ -379,8 +400,8 @@
           },
           {
             "title": "VIABLE POSE",
-            "x": 1280.0,
-            "y": 256.0,
+            "x": 768.0,
+            "y": 384.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -396,7 +417,7 @@
           },
           {
             "title": "Coral CANrange",
-            "x": 768.0,
+            "x": 512.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -431,7 +452,7 @@
           {
             "title": "HAS CORAL",
             "x": 768.0,
-            "y": 256.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -462,7 +483,7 @@
             "title": "Algae Temperature",
             "x": 512.0,
             "y": 384.0,
-            "width": 512.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -470,10 +491,48 @@
               "period": 0.06,
               "data_type": "double",
               "min_value": 0.0,
-              "max_value": 80.0,
-              "divisions": 9,
+              "max_value": 100.0,
+              "divisions": 6,
               "inverted": false,
               "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Climb Ready",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Climb Ready",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "climber pos",
+            "x": 1280.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "/SmartDashboard/climber pos",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -90.0,
+              "end_angle": 0.0,
+              "min_value": -0.25,
+              "max_value": 0.0,
+              "number_of_labels": 0,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": false
             }
           }
         ]

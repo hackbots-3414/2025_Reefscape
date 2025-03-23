@@ -57,6 +57,7 @@ import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.AlignLeftCommand;
 import frc.robot.commands.AlignRightCommand;
+import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
@@ -424,6 +425,8 @@ public class RobotContainer {
             controller.button(ButtonBoardAlternate.climb).whileTrue(new ClimberCommand(m_climber));
 
             controller.PS().onTrue(new StowCommand(m_elevator, m_algaePivot));
+
+            controller.button(11).and(controller.button(12)).whileTrue(new ClimbReadyCommand(m_climber));
         }
     }
 

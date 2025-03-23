@@ -95,6 +95,10 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         }
     }
 
+    public double getVelocity() {
+        return m_leftClimbMotor.getVelocity().getValueAsDouble();
+    }
+
     public boolean atClimb() {
         return getEncoderValue() <= ClimberConstants.climbPosition;
     }

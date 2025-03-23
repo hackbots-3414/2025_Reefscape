@@ -414,7 +414,7 @@ public class Constants {
         public static final double k_noisyDistance = 4.0;
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
-        public static final double k_targetMultiplier = 20;
+        public static final double k_targetMultiplier = 30;
         public static final double k_differenceThreshold = 0.14;
         public static final double k_differenceMultiplier = 100.0;
         public static final double k_latencyMultiplier = 0.3;
@@ -518,7 +518,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = 0.28466796875; // -0.427979;
+        public static final double encoderOffset = 0.132080078125; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
         // approx 7.96
@@ -791,9 +791,9 @@ public class Constants {
 
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.250;
-        public static final double climbPosition = -0.090;
+        public static final double climbPosition = -0.115;
 
-        public static final double encoderOffset = 0.257080078125;
+        public static final double encoderOffset = 0.21533203125;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
@@ -831,7 +831,7 @@ public class Constants {
         public static final double k_closedServoPosition = 1.0;
         public static final double k_servoTolerance = 0.01;
 
-        public static final double climbReadyTolerance = 0.0;
+        public static final double climbReadyTolerance = -0.001;
     }
 
     public static final class AlgaeRollerConstants {
