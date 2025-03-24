@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FFConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
@@ -152,6 +153,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return m_estimatedPose;
     }
 
+    public Pose2d getNearestAntitarget() {
+        return new Pose2d(FFConstants.k_bargeX, m_estimatedPose.getY(), new Rotation2d());
+    }
+
     /**
      * returns the current pose, with red side poses flipped
      */
@@ -251,9 +256,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
         SmartDashboard.putNumber("REEF ALING RANGE DISANCE", getRangeDistance());
 
-        // Translation2d v = getVelocityComponents();
-        // SmartDashboard.putNumber("vx", v.getX());
-        // SmartDashboard.putNumber("vy", v.getY());
+         Translation2d v = getVelocityComponents();
+         SmartDashboard.putNumber("vx", v.getX());
+         SmartDashboard.putNumber("vy", v.getY());
         SmartDashboard.putNumber("LEFT", leftRange.getDistance().getValueAsDouble());
         SmartDashboard.putNumber("RIGHT", rightRange.getDistance().getValueAsDouble());
     }

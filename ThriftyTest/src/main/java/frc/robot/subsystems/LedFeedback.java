@@ -96,24 +96,13 @@ public class LedFeedback extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // System.out.println("PERIODIC ENTER");
         matchTime = (DriverStation.getMatchType() == MatchType.None) ? Double.POSITIVE_INFINITY : DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
 
         rangeRight =  drivetrain.getRangeRightDistance();
         rangeLeft =  drivetrain.getRangeLeftDistance();
-        // TODO FIX
         
-        // alignedRight = SmartDashboard.getBoolean("AlignedRight", alignedRight());
-        // alignedLeft = SmartDashboard.getBoolean("AlignedLeft", alignedLeft());
-        // coralOnBoard = SmartDashboard.getBoolean("coralOnBoard", coralOnBoard);
-        // coralInRange = SmartDashboard.getBoolean("coralInRange", coralInRange);
-        // algaeOnBoard = SmartDashboard.getBoolean("algaeOnBoard", algaeOnBoard);
-        // algaeInRange = SmartDashboard.getBoolean("ALGAEINRANGE", algaeInRange);
-        // algaeTooClose = SmartDashboard.getBoolean("ALGAETOOCLOSE", algaeTooClose);
-        // climbed = SmartDashboard.getBoolean("CLIMBED", climbed);
-
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
@@ -174,14 +163,12 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.ALIGNED_RIGHT) {
                     mode = LED_MODE.ALIGNED_RIGHT;
                     setRight(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
-                    // System.out.println("CORAL_ON_BOARD && ALIGNED RIGHT");
 
                 }
             } else if (coralOnBoard && alignedLeft()) {
                 if (mode != LED_MODE.ALIGNED_LEFT) {
                     mode = LED_MODE.ALIGNED_LEFT;
                     setLeft(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
-                    // System.out.println("CORAL_ON_BOARD && ALIGNED LEFT");
 
                 }
             }
@@ -190,7 +177,6 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.CORAL_READY) {
                     mode = LED_MODE.CORAL_READY;
                     setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
-                    // System.out.println("CORAL_ON_BOARD && INRANGE");
 
                 }
                 // Check if Coral is On Board
@@ -198,7 +184,6 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.CORAL_ON_BOARD) {
                     mode = LED_MODE.CORAL_ON_BOARD;
                     setAll(LED_COLOR.WHITE, LED_PATTERN.SOLID);
-                    // System.out.println("CORAL_ON_BOARD");
 
                 }   
                 // Check if Algae is On Board and Too Close to Net
@@ -206,7 +191,6 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
                     mode = LED_MODE.ALGAE_TOO_CLOSE;
                     setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
-                    // System.out.println("ALGAE_ON_BOARD && ALGAE_TOO_CLOSE");
 
                 }
                 // Check if Algae is On Board and In range to Net
@@ -214,20 +198,17 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.ALGAE_READY) {
                     mode = LED_MODE.ALGAE_READY;
                     setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
-                    // System.out.println("ALGAE IN RANGE");
                 }
                 // Check if Algae is on board
             } else if (algaeOnBoard) {
                 if (mode != LED_MODE.ALGAE_ON_BOARD) {
                     mode = LED_MODE.ALGAE_ON_BOARD;
                     setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
-                    // System.out.println("ALGAE_ON_BOARD******************************************");
 
                 }
                 // If Everything is false make it Default Colors
             } else {
                 if (mode != LED_MODE.DEFAULT) {
-                    // System.out.println("DEFAULT2");
                     defaultColors();
                     mode = LED_MODE.DEFAULT;
                 }
@@ -236,13 +217,11 @@ public class LedFeedback extends SubsystemBase {
             // Run this when robot is disabled
         } else {
             if (mode != LED_MODE.DEFAULT) {
-                // System.out.println("DEFAULT");
                 defaultColors();
                 mode = LED_MODE.DEFAULT;
                 return;
             }
         }
-        // System.out.println("XPERIODIC END");
     }
 
     private boolean alignedReef() {

@@ -22,6 +22,6 @@ public class AlgaeIntakeManualCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return algae.hasObject();
+    return algae.algaeHeld();
   }
 }

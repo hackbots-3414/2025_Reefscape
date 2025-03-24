@@ -49,12 +49,12 @@ public class AlgaeIntakeCommand extends Command {
         switch (location) {
             case GROUND, HIGHGROUND -> {
                 if (elevator.atSetpoint()) pivot.setGroundPickup();
-                if (rollers.hasObject()) isDone = true; 
+                if (rollers.algaeHeld()) isDone = true; 
             }
             case REEFLOWER, REEFUPPER -> {
                 // isDone = !CommandBounds.reefBounds.isActive();
                 if (elevator.atSetpoint()) {
-                    if (rollers.hasObject()) {
+                    if (rollers.algaeHeld()) {
                         pivot.setReefExtract();
                     } else {
                         pivot.setReefPickup();

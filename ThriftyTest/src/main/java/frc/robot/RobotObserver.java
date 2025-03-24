@@ -122,6 +122,7 @@ public class RobotObserver {
     public static boolean getCoralPieceHeld() {
         return getInstance().m_coralPieceHeldSupplier.getAsBoolean();
     }
+
     public static boolean getAlgaePieceHeld() {
         return getInstance().m_algaeHeldSupplier.getAsBoolean();
     }
@@ -154,5 +155,24 @@ public class RobotObserver {
 
     public static Optional<Double> getCompensationDistance() {
         return getInstance().m_compDistanceSupplier.get();
+    }
+
+    private Supplier<Pose2d> m_antitargetSupplier;
+    
+    public static void setAntitargetSupplier(Supplier<Pose2d> antitargetSup) {
+        getInstance().m_antitargetSupplier = antitargetSup;
+    }
+
+    public static Pose2d getAntitarget() {
+        return getInstance().m_antitargetSupplier.get();
+    }
+
+    private BooleanSupplier m_ffEnabledSupplier; 
+
+    public static void setFFEnabledSupplier(BooleanSupplier ffSupplier) {
+        getInstance().m_ffEnabledSupplier = ffSupplier;
+    }
+    public static boolean getFFEnabled() {
+        return getInstance().m_ffEnabledSupplier.getAsBoolean();
     }
 }

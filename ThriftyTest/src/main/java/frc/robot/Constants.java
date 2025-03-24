@@ -207,11 +207,10 @@ public class Constants {
             public static final int yAxis = 0;
             public static final int rotAxis = 3;
 
-            public static final boolean flipX = true;
-            public static final boolean flipY = false;
+            public static final boolean flipX = false;
+            public static final boolean flipY = true;
             public static final boolean flipRot = false;
 
-            public static final int enableOpenLoop = 3;
             public static final int resetHeading = 1;
 
             public static final double deadband = 0.01;
@@ -222,11 +221,10 @@ public class Constants {
             public static final int yAxis = Axis.kLeftX.value;
             public static final int rotAxis = Axis.kRightY.value;
 
-            public static final boolean flipX = true;
-            public static final boolean flipY = false;
+            public static final boolean flipX = false;
+            public static final boolean flipY = true;
             public static final boolean flipRot = true;
 
-            public static final int enableOpenLoop = Button.kSquare.value;
             public static final int resetHeading = Button.kCircle.value;
         }
 
@@ -543,6 +541,8 @@ public class Constants {
 
         public static final double forwardSoftLimit = 11.15;
         public static final double reverseSoftLimit = 0;
+
+        public static final double unsafeRange = L2 + 2 * inch;
 
         public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
 
@@ -1038,5 +1038,11 @@ public class Constants {
         public static final int elevatorOffset2 = 95; // 94
         public static final int funnelNumLED2 = 87; // 85
         public static final int elevatorNumLED2 = 40; // 40
+    }
+
+    public static class FFConstants {
+        public static final double k_bargeX = 8.774176;
+        public static final double k_radius = 1.137;
+        public static final double k_decceleration = 1.5;
     }
 }

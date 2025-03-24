@@ -83,7 +83,6 @@ import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
-    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
     @SuppressWarnings("unused")
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
@@ -101,11 +100,11 @@ public class RobotContainer {
         configureButtonBoard();
         configureAutonChooser();
         configureVision();
-        // addBoundsToField();
-        // configureSysId();
+        //addBoundsToField();
         configureTesting();
         configureDashboard();
         confiureSimulation();
+        RobotObserver.setFFEnabledSupplier(this::getFFEnabled);
     }
 
     private void confiureSimulation() {
@@ -154,7 +153,6 @@ public class RobotContainer {
         int yAxis;
         int rAxis; // rotation
         int resetHeading;
-        int openLoop;
 
         double flipX;
         double flipY;
@@ -166,7 +164,6 @@ public class RobotContainer {
             rAxis = DragonReins.rotAxis;
 
             resetHeading = DragonReins.resetHeading;
-            openLoop = DragonReins.enableOpenLoop;
 
             flipX = DragonReins.flipX ? -1.0 : 1.0;
             flipY = DragonReins.flipY ? -1.0 : 1.0;
@@ -177,7 +174,6 @@ public class RobotContainer {
             rAxis = BackupDriver.rotAxis;
 
             resetHeading = BackupDriver.resetHeading;
-            openLoop = BackupDriver.enableOpenLoop;
 
             flipX = BackupDriver.flipX ? -1.0 : 1.0;
             flipY = BackupDriver.flipY ? -1.0 : 1.0;
@@ -187,10 +183,9 @@ public class RobotContainer {
         Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
         Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
         Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
-        BooleanSupplier openLoopSup = controller.button(openLoop);
 
         m_drivetrain.setDefaultCommand(
-            new TeleopCommand(m_drivetrain, xSup, ySup, rSup, openLoopSup)
+            new TeleopCommand(m_drivetrain, xSup, ySup, rSup)
         );
 
         controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
@@ -381,7 +376,6 @@ public class RobotContainer {
             bindClimbSetupCommand(controller.button(ButtonBoard.climb));
         } else {
             controller.button(ButtonBoardAlternate.manualModeSwitch).onTrue(new InstantCommand(() -> RobotObserver.toggleManualMode()));
-            BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
             BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
 
             Trigger algaeOn = controller.button(ButtonBoardAlternate.algaeModeButton);
@@ -593,13 +587,6 @@ public class RobotContainer {
         trigger.onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
-    private void bindAutoCoralCommand(int level, ReefClipLocations location, Trigger trigger) {
-        switch (location) {
-            case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralPrepCommand(level), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
-            case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> coralPrepCommand(level), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
-        }   
-    }
-
     private void bindReefClipCommand(ReefClipLocations location, Trigger trigger) {
         switch (location) {
             case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> new InstantCommand(), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
@@ -663,5 +650,10 @@ public class RobotContainer {
     public void resetReferences() {
         m_elevator.setPosition(m_elevator.getPosition());
         m_algaePivot.setStow();
+    }
+
+    public boolean getFFEnabled() {
+        return true;
+        //return m_elevator.elevatorUp() && m_algaeRollers.algaeHeld();
     }
 }
