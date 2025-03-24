@@ -1042,7 +1042,7 @@ public class Constants {
 
     public static class FFConstants {
         public static final double k_bargeX = 8.774176;
-        public static final double k_radius = 1.137;
-        public static final double k_decceleration = 1.5;
+        public static final double k_radius = 1.40;
+        public static final double k_decceleration = 1.2;
     }
 }
