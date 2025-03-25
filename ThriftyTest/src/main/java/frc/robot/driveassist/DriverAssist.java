@@ -65,7 +65,7 @@ public class DriverAssist {
         if (d <= 0) {
             return c;
         }
-        double magI = dot(c, t) / t.getNorm();
+        double magI = d / t.getNorm();
         if (magI <= 0) {
             return c;
         }
