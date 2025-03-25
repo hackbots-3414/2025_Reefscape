@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class FieldUtils {
     public static Pose2d flipPose(Pose2d pose) {
-        if (DriverStation.getAlliance().get() == Alliance.Red) {
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
             return FlippingUtil.flipFieldPose(pose);
         } else {
             return pose;

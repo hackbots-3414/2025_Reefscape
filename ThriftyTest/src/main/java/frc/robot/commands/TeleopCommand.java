@@ -58,6 +58,9 @@ public class TeleopCommand extends Command {
                 m_rotSupplier.get() * maxRotationalVelocity
             )
         );
+        if (robotRelative.getTranslation().getNorm() > 0) {
+            m_drivetrain.setAligned(false);
+        }
         Transform2d fieldRelative = getFieldRelative(robotRelative);
         // avoid obstacles using drive assist
         Translation2d filtered = m_assist.calculate(

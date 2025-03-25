@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartE"
+            "pathName": "StartI"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
           }
         }
       ]

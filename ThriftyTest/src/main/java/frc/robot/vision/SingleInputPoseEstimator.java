@@ -171,14 +171,14 @@ public class SingleInputPoseEstimator implements Runnable {
             return false;
         }
         // check if we are in reef mode
-        if (RobotObserver.getReefMode()) {
-            switch (RobotObserver.getReefClipLocation()) {
-                case LEFT:
-                    if (m_name.equals(VisionConstants.k_leftAlignName)) return false;
-                case RIGHT:
-                    if (m_name.equals(VisionConstants.k_rightAlignName)) return false;
-            }
-        }
+        //if (RobotObserver.getReefMode()) {
+        //    switch (RobotObserver.getReefClipLocation()) {
+        //        case LEFT:
+        //            if (m_name.equals(VisionConstants.k_leftAlignName)) return false;
+        //        case RIGHT:
+        //            if (m_name.equals(VisionConstants.k_rightAlignName)) return false;
+        //    }
+        //}
         // no targets -> no pose
         return result.hasTargets();
     }

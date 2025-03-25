@@ -29,7 +29,6 @@ public class CoralL1Command extends Command {
   @Override
   public void end(boolean interrupted) {
     coral.stop();
-    elevator.setStow();
   }
 
   @Override

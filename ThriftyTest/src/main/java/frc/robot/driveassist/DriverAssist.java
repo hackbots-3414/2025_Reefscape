@@ -12,7 +12,6 @@ import frc.robot.Constants.FFConstants;
 import frc.robot.RobotObserver;
 
 public class DriverAssist {
-    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriverAssist.class);
 
     /**
@@ -28,7 +27,6 @@ public class DriverAssist {
         Pose2d current,
         Pose2d antitarget
     ) {
-        if (!RobotObserver.getFFEnabled()) return velocity;
         Translation2d x = antitarget.getTranslation().minus(current.getTranslation());
         double xNorm = x.getNorm();
         SmartDashboard.putNumber("FF x", xNorm);
@@ -45,7 +43,8 @@ public class DriverAssist {
         Translation2d t = x.times(
             Math.sqrt(2 * FFConstants.k_decceleration/ x.getNorm())
         );
-        boolean active = t.getNorm() < DriveConstants.k_maxTeleopLinearSpeed;
+        boolean active = t.getNorm() < DriveConstants.k_maxTeleopLinearSpeed
+            && RobotObserver.getFFEnabled();
         SmartDashboard.putBoolean("Force Field Active", active);
         if (!active) {
             RobotObserver.getField().getObject("FF").setPoses();

@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
 import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
@@ -279,9 +278,7 @@ public class LedFeedback extends SubsystemBase {
 
         boolean driverOk = driverName.contains(ButtonBindingConstants.dragonReinsName) || driverName.contains(ButtonBindingConstants.driverBackupName);
 
-        boolean operatorOk = (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD)
-                ? operatorName.contains(ButtonBindingConstants.buttonBoardName)
-                : operatorName.contains(ButtonBindingConstants.operatorBackupName);
+        boolean operatorOk = operatorName.contains(ButtonBindingConstants.ps5Name);
 
         return !(driverOk && operatorOk);
     }

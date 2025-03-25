@@ -82,26 +82,22 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     }
 
     private void updateObjectState() {
-        if (AlgaeRollerConstants.enable) {
-            if (Robot.isReal()) {
-                m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
-            } else {
-                m_hasAlgae = SmartDashboard.getBoolean("Algae Holding Object", false);
-            }
-    
-            SmartDashboard.putBoolean("Algae Holding Object", m_hasAlgae);
+        if (Robot.isReal()) {
+            m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
+        } else {
+            m_hasAlgae = SmartDashboard.getBoolean("Algae Holding Object", false);
         }
+
+        SmartDashboard.putBoolean("Algae Holding Object", m_hasAlgae);
     }
 
     @Override
     public void periodic() {
         updateObjectState();
-        if (AlgaeRollerConstants.enable) {
-            if (m_voltageChanged) {
-                m_algaeRoller.setVoltage(m_voltage);
-                m_voltageChanged = false;
-                SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
-            }
+        if (m_voltageChanged) {
+            m_algaeRoller.setVoltage(m_voltage);
+            m_voltageChanged = false;
+            SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
         }
         SmartDashboard.putNumber("algae temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
     }

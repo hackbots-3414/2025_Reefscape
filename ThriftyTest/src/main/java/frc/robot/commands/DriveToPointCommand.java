@@ -23,6 +23,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 
 public class DriveToPointCommand extends Command {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
     private final ProfiledPIDController xController = new ProfiledPIDController(
@@ -56,6 +57,7 @@ public class DriveToPointCommand extends Command {
 
     @Override
     public void initialize() {
+        m_drivetrain.setAligned(false);
         // flip goal if necessary
         if (m_flip) {
             m_goal = FieldUtils.flipPose(m_goal);
@@ -97,8 +99,8 @@ public class DriveToPointCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        m_drivetrain.setAligned(!interrupted);
         m_drivetrain.stop();
-        m_logger.debug("drive to pose interrupted: {}", interrupted);
         RobotObserver.getField().getObject("target").setPoses();
     }
 
@@ -112,8 +114,6 @@ public class DriveToPointCommand extends Command {
                 .getRotation()
                 .minus(m_targetRotation)
                 .getRadians());
-
-        m_logger.debug("err: {}, errRotation: {}", err, errRotation);
 
         return (err < AutonConstants.translationTolerance && errRotation < AutonConstants.rotationTolerance.in(Radians));
     }

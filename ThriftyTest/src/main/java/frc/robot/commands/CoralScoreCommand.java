@@ -44,8 +44,6 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    m_logger.warn("Elevator Reference: {}, Elevator Position: {}", elevator.getReference(), elevator.getPosition());
-    elevator.setStow();
     coral.stop();
   }
 
