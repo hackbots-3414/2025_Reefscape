@@ -175,4 +175,14 @@ public class RobotObserver {
     public static boolean getFFEnabled() {
         return getInstance().m_ffEnabledSupplier.getAsBoolean();
     }
+
+    private BooleanSupplier m_noElevatorSup;
+
+    public static void setNoElevatorZoneSupplier(BooleanSupplier noElevatorSup) {
+        getInstance().m_noElevatorSup = noElevatorSup;
+    }
+
+    public static boolean getNoElevatorZone() {
+        return getInstance().m_noElevatorSup.getAsBoolean();
+    }
 }

@@ -41,7 +41,7 @@ public class LedFeedback extends SubsystemBase {
     private boolean climbed = false;
     private boolean algaeOnBoard = false;
     private boolean algaeInRange = false;
-    private boolean algaeTooClose = false;
+    private boolean bargeTooClose = false;
     private boolean inAuton = false;
     private boolean inTeleop = false;
     private double rangeLeft = 0.0;
@@ -107,8 +107,9 @@ public class LedFeedback extends SubsystemBase {
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
         algaeInRange = CommandBounds.netBounds.isActive();
-        algaeTooClose = CommandBounds.netBounds.isActive(); // need to change
+        bargeTooClose = CommandBounds.netTooCloseBounds.isActive(); // need to change
         climbed = RobotObserver.getClimbed();
+        // algaeTooClose = RobotObserver.getNoElevatorZone();
 
         if (badController()) {
 
@@ -117,8 +118,7 @@ public class LedFeedback extends SubsystemBase {
                 setAll(LED_COLOR.RED, LED_PATTERN.STROBE);
 
             }
-        } 
-        else if (inTeleop || inAuton) {
+        } else if (inTeleop || inAuton) {
             if (climbed) {
                 if (mode != LED_MODE.CLIMBED) {
                     if (matchTime < LedConstants.endgameWarning) {
@@ -131,7 +131,7 @@ public class LedFeedback extends SubsystemBase {
                 // Check if Coral on Board and At reef and not aligned to Branch
             }
             // Check for endgame
-           else if (matchTime <= LedConstants.endgameWarning) {
+           else if (matchTime <= LedConstants.endgameWarning && !inAuton) {
                 // Check for Final Seconds of  Endgame
                 if (matchTime <= LedConstants.endgameAlert) {
                     if (mode != LED_MODE.END_GAME_ALERT) {
@@ -187,7 +187,7 @@ public class LedFeedback extends SubsystemBase {
 
                 }   
                 // Check if Algae is On Board and Too Close to Net
-            } else if (algaeOnBoard && algaeTooClose) {
+            } else if (algaeOnBoard && bargeTooClose) {
                 if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
                     mode = LED_MODE.ALGAE_TOO_CLOSE;
                     setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);

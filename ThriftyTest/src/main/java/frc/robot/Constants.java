@@ -1010,6 +1010,16 @@ public class Constants {
         );
         public static final Shape netBounds = Shape.fromUnsortedVertices(net, "Net");
 
+        public static final List<Translation2d> tooClose = List.of(
+            new Translation2d(8.6 ,4.25 ),
+            new Translation2d(11.7,4.25),
+            new Translation2d(11.7,8),
+            new Translation2d(11.7,8)
+
+        );
+
+        public static final Shape netTooCloseBounds = Shape.fromUnsortedVertices(tooClose, "NoNet");
+
         public static Map<String, Shape> displayBounds = Map.ofEntries(
             Map.entry("Blue Alliance Reef", reefBounds),
             Map.entry("Blue Alliance Net", netBounds),
