@@ -117,6 +117,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setVelocitySupplier(this::getVelocity);
         RobotObserver.setRangeDistanceSupplier(this::getRangeDistance);
         RobotObserver.setCompensationDistanceSupplier(this::getCompensationDistance);
+        RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
 
         configureCANRange();
     }
@@ -388,5 +389,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineRotation.dynamic(direction);
+    }
+
+    private boolean noElevatorZone() {
+        return getNearestAntitarget().getTranslation().minus(m_estimatedPose.getTranslation()).getNorm() < FFConstants.k_radius;
     }
 }
