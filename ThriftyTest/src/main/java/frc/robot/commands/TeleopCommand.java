@@ -83,9 +83,8 @@ public class TeleopCommand extends Command {
         // calculate the new position after rotation
         double px = x * forward.getCos() - y * forward.getSin();
         double py = y * forward.getCos() + x * forward.getSin();
-        Rotation2d ptheta = theta;
         // combine the results
-        return new Transform2d(new Translation2d(px, py), ptheta);
+        return new Transform2d(new Translation2d(px, py), theta);
     }
 
     /**
