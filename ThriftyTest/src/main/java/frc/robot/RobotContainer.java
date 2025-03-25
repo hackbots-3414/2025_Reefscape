@@ -22,8 +22,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -655,7 +655,6 @@ public class RobotContainer {
     }
 
     public boolean getFFEnabled() {
-        return true;
-        //return m_elevator.elevatorUp() && m_algaeRollers.algaeHeld();
+        return m_elevator.elevatorUp() && m_algaeRollers.algaeHeld();
     }
 }

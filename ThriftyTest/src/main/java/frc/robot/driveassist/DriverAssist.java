@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
+import frc.robot.RobotObserver;
 
 public class DriverAssist {
     @SuppressWarnings("unused")
@@ -28,6 +28,7 @@ public class DriverAssist {
         Pose2d current,
         Pose2d antitarget
     ) {
+        if (!RobotObserver.getFFEnabled()) return velocity;
         Translation2d x = antitarget.getTranslation().minus(current.getTranslation());
         double xNorm = x.getNorm();
         SmartDashboard.putNumber("FF x", xNorm);
