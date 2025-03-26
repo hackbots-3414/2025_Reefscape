@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartF"
+            "pathName": "StartG"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Align F"
+            "name": "Align G"
           }
         },
         {
@@ -25,19 +25,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "FEF"
+            "pathName": "GGH"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AlgaeUpper"
+            "name": "AlgaeLower"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "EFProcessor"
+            "pathName": "GHProcessor"
           }
         }
       ]

@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.150582525927948,
-        "y": 2.8614163994268553
+        "x": 5.791,
+        "y": 4.046021773726852
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.53154979173344,
-        "y": 2.241048578865341
+        "x": 6.146463035300925,
+        "y": 3.894967809606481
       },
       "isLocked": false,
-      "linkedName": "AlgaeEF"
+      "linkedName": "AlgaeGH"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.7
       },
       "prevControl": {
-        "x": 5.078953740468607,
-        "y": 1.7945110381994809
+        "x": 5.834239104689004,
+        "y": 0.897479675635914
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Processor",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
