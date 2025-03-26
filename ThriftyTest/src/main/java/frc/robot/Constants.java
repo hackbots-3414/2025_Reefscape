@@ -1014,7 +1014,7 @@ public class Constants {
             new Translation2d(8.6 ,4.25 ),
             new Translation2d(11.7,4.25),
             new Translation2d(11.7,8),
-            new Translation2d(11.7,8)
+            new Translation2d(8.6,8)
 
         );
 
