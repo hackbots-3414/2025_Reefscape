@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Align J"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L4"
           }
         },
@@ -44,7 +50,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Interrupt"
+            "name": "Align K"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
           }
         },
         {
@@ -70,6 +82,12 @@
           "type": "path",
           "data": {
             "pathName": "IntakeL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align L"
           }
         },
         {
@@ -101,6 +119,12 @@
           "type": "path",
           "data": {
             "pathName": "IntakeA"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align A"
           }
         },
         {

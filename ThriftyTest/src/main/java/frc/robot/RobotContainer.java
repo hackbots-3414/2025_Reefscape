@@ -22,7 +22,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,9 +57,11 @@ import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.AlignLeftCommand;
 import frc.robot.commands.AlignRightCommand;
+import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.CoralL1Command;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ElevatorToPointCommand;
@@ -88,6 +92,8 @@ public class RobotContainer {
 
     private final VisionHandler m_vision = new VisionHandler(m_drivetrain);
 
+    private final PowerDistribution pdp = new PowerDistribution(1, ModuleType.kRev);
+
     public RobotContainer() {
         configureSubsystems();
         configureNamedCommands();
@@ -104,6 +110,10 @@ public class RobotContainer {
 
     private void confiureSimulation() {
         DriverStation.silenceJoystickConnectionWarning(true);
+    }
+
+    public void enablePDPSwitch() {
+        pdp.setSwitchableChannel(true);
     }
     
     private void configureDashboard() {
@@ -367,7 +377,6 @@ public class RobotContainer {
             bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoard.net).and(manualModeOn));
         
             bindAutoCancelButton(controller.button(ButtonBoard.cancelAuto));
-            
 
             bindClimbSetupCommand(controller.button(ButtonBoard.climb));
         } else {
@@ -398,7 +407,7 @@ public class RobotContainer {
             bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate())/*.and(manualModeOn)*/);
             bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate())/*.and(manualModeOn)*/);
 
-            controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate()).onFalse(coralScoreCommand(1));
+            controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate()).onFalse(new CoralL1Command(m_coralRollers, m_elevator));
             controller.pov(ButtonBoardAlternate.L2).and(algaeOn.negate()).onFalse(coralScoreCommand(2));
             controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate()).onFalse(coralScoreCommand(3));
             controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate()).onFalse(coralScoreCommand(4));
@@ -416,6 +425,8 @@ public class RobotContainer {
             controller.button(ButtonBoardAlternate.climb).whileTrue(new ClimberCommand(m_climber));
 
             controller.PS().onTrue(new StowCommand(m_elevator, m_algaePivot));
+
+            controller.button(11).and(controller.button(12)).whileTrue(new ClimbReadyCommand(m_climber));
         }
     }
 
@@ -546,7 +557,8 @@ public class RobotContainer {
 
     // ** BUTTON BOARD HELPERS **
     private void bindManualCoralIntakeCommand(Trigger trigger) {
-        trigger.whileTrue(coralIntakeCommand()); 
+        trigger.whileTrue(coralIntakeCommand());
+        trigger.onFalse(coralIntakeCommand().onlyWhile(m_coralRollers::presentPiece));
     }
 
     /**
@@ -624,7 +636,7 @@ public class RobotContainer {
     }
 
     private Command coralPrepCommand(int level) {
-        return new ElevatorToPointCommand(level, m_elevator);
+        return new ElevatorToPointCommand(level, m_elevator).onlyIf(m_coralRollers::getCANrangeTriggered);
     }
 
     private Command coralScoreCommand(int level) {

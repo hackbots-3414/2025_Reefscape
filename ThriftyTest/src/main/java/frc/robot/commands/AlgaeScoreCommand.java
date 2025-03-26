@@ -31,12 +31,12 @@ public class AlgaeScoreCommand extends Command {
     isDone = false;
     switch (location) {
       case NET -> {
-        isDone = !CommandBounds.netBounds.isActive();
+        // isDone = !CommandBounds.netBounds.isActive();
         elevator.setNet();
         pivot.setNet();
       }
       case PROCESSOR -> {
-        isDone = !CommandBounds.processorBounds.isActive();
+        // isDone = !CommandBounds.processorBounds.isActive();
         elevator.setProcessor();
         pivot.setProcessor();
       }
@@ -47,7 +47,7 @@ public class AlgaeScoreCommand extends Command {
   @Override
   public void execute() {
     if (elevator.atSetpoint() && pivot.atSetpoint()) {
-      if (location != AlgaeLocationPresets.PROCESSOR) {
+      if (location == AlgaeLocationPresets.NET) {
         rollers.ejectAlgae();
       }
     } else {

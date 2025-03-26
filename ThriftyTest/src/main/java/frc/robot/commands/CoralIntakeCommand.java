@@ -39,6 +39,6 @@ public class CoralIntakeCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return coral.getCANrangeTriggered();
+    return coral.holdingPiece();
   }
 }

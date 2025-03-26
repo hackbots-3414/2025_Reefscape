@@ -51,7 +51,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -111,6 +110,7 @@ public class Constants {
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
         public static final int coralCANrange = 59;
+        public static final int upperCANrange = 58;
 
         public static final int frontIR = 2;
         public static final int rearIR = 3;
@@ -413,7 +413,7 @@ public class Constants {
         public static final double k_noisyDistance = 4.0;
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
-        public static final double k_targetMultiplier = 20;
+        public static final double k_targetMultiplier = 30;
         public static final double k_differenceThreshold = 0.14;
         public static final double k_differenceMultiplier = 100.0;
         public static final double k_latencyMultiplier = 0.3;
@@ -460,8 +460,6 @@ public class Constants {
 
         public static double translationTolerance = 0.03; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
-
-        private static Pose2d tolerance = new Pose2d(translationTolerance, translationTolerance, Rotation2d.fromRadians(rotationTolerance.in(Radians)));
 
         public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static double stage2Distance = 1;
@@ -517,7 +515,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.105224609375; // -0.427979;
+        public static final double encoderOffset = -0.42626953125; // -0.427979;
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
         // approx 7.96
@@ -535,7 +533,7 @@ public class Constants {
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.424 + 0.1 * inch;
         public static final double processor = 0;
-        public static final double L1 = 2.472;
+        public static final double L1 = stow + 3.5 * inch;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
@@ -728,13 +726,14 @@ public class Constants {
         public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
 
         public static final double spitOutVoltage = -6;
+        public static final double fastEjectVoltage = -10;
 
         public static final double l1LeftEjectVoltage = 8;
         public static final double l1RightEjectVoltage = 6;
 
         public static final boolean rightMotorInvert = true;
 
-        public static final double supplyCurrentLimit = 20;
+        public static final double supplyCurrentLimit = 20.0;
 
         public static final double IRThreshold = 0.51;
 
@@ -759,8 +758,18 @@ public class Constants {
                         .withFOVRangeX(6.5)
                         .withFOVRangeY(6.5))
                 .withProximityParams(new ProximityParamsConfigs()
-                        .withMinSignalStrengthForValidMeasurement(1500)
-                        .withProximityThreshold(0.2))
+                        .withMinSignalStrengthForValidMeasurement(15015)
+                        .withProximityThreshold(0.1))
+                .withToFParams(new ToFParamsConfigs()
+                        .withUpdateMode(UpdateModeValue.ShortRange100Hz));
+        
+        public static final CANrangeConfiguration upperRangeConfig = new CANrangeConfiguration()
+                .withFovParams(new FovParamsConfigs()
+                        .withFOVRangeX(6.5)
+                        .withFOVRangeY(15))
+                .withProximityParams(new ProximityParamsConfigs()
+                        .withMinSignalStrengthForValidMeasurement(2500)
+                        .withProximityThreshold(0.65))
                 .withToFParams(new ToFParamsConfigs()
                         .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
@@ -780,9 +789,9 @@ public class Constants {
 
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.250;
-        public static final double climbPosition = -0.090;
+        public static final double climbPosition = -0.115;
 
-        public static final double encoderOffset = 0.284423828125;
+        public static final double encoderOffset = 0.21533203125;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
@@ -820,7 +829,7 @@ public class Constants {
         public static final double k_closedServoPosition = 1.0;
         public static final double k_servoTolerance = 0.01;
 
-        public static final double climbReadyTolerance = 0.0;
+        public static final double climbReadyTolerance = -0.001;
     }
 
     public static final class AlgaeRollerConstants {
@@ -832,9 +841,9 @@ public class Constants {
 
         public static final double torqueCurrentThreshold = 75;
 
-        public static final double supplyCurrentLimit = 20.0;
+        public static final double supplyCurrentLimit = 25.0;
 
-        public static final double holdVoltage = 1.5;
+        public static final double holdVoltage = 2.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.3;
@@ -866,23 +875,25 @@ public class Constants {
     }
 
     public enum ScoringLocations {
-        A(new Pose2d(3.188, 4.191, Rotation2d.fromDegrees(0))), // GOOD
-        B(new Pose2d(3.188, 3.861, Rotation2d.fromDegrees(0))), // GOOD
+        A(new Pose2d(3.197, 4.192, Rotation2d.fromDegrees(0))), // GOOD
+        B(new Pose2d(3.178, 3.880, Rotation2d.fromDegrees(0))), // GOOD
 
-        C(new Pose2d(3.72, 2.982, Rotation2d.fromDegrees(58.7))), // GOOD
-        D(new Pose2d(3.967, 2.810, Rotation2d.fromDegrees(58.2))), // GOOD
+        C(new Pose2d(3.703, 2.989, Rotation2d.fromDegrees(60))), // GOOD
+        D(new Pose2d(3.971, 2.819, Rotation2d.fromDegrees(60))), // GOOD
 
-        E(new Pose2d(4.998, 2.816, Rotation2d.fromDegrees(120))), // GOOD
-        F(new Pose2d(5.283, 2.981, Rotation2d.fromDegrees(120))), // GOOD
+        E(new Pose2d(4.991, 2.822, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.275, 2.981, Rotation2d.fromDegrees(120))), // GOOD
 
-        G(new Pose2d(5.791, 3.861, Rotation2d.fromDegrees(180))), // GOOD
-        H(new Pose2d(5.791, 4.191, Rotation2d.fromDegrees(180))), // GOOD
+        G(new Pose2d(5.783, 3.852, Rotation2d.fromDegrees(180))), // GOOD
+        H(new Pose2d(5.794, 4.184, Rotation2d.fromDegrees(180))), // GOOD
 
-        I(new Pose2d(5.283, 5.071, Rotation2d.fromDegrees(-120))), // GOOD
-        J(new Pose2d(4.998, 5.236, Rotation2d.fromDegrees(-120))), // GOOD
+        I(new Pose2d(5.282, 5.063, Rotation2d.fromDegrees(-120))), // GOOD
+        J(new Pose2d(4.997, 5.240, Rotation2d.fromDegrees(-120))), // GOOD
 
-        K(new Pose2d(3.951, 5.236, Rotation2d.fromDegrees(-60))), // GOOD
-        L(new Pose2d(3.696, 5.071, Rotation2d.fromDegrees(-60))), // GOOD
+        K(new Pose2d(3.988, 5.220, Rotation2d.fromDegrees(-60))), // GOOD
+        L(new Pose2d(3.691, 5.072, Rotation2d.fromDegrees(-60))), // GOOD
+
+
 
         RIGHTHP(new Pose2d(1.227, 1.048, Rotation2d.fromDegrees(55))),
         LEFTHP(new Pose2d(1.227, 6.983, Rotation2d.fromDegrees(-55))),

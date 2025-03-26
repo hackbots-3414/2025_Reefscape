@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
@@ -49,6 +48,8 @@ public class Elevator extends SubsystemBase {
 
     private double m_reference;
 
+    private double m_compensation;
+
     private ElevatorSim m_elevatorSim;
     private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
 
@@ -63,7 +64,7 @@ public class Elevator extends SubsystemBase {
         configEncoder();
         configMotor();
         configSim();
-        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator));
+        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator).ignoringDisable(true));
     }
 
     private void configEncoder() {
@@ -149,19 +150,19 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setL1() {
-        setPosition(ElevatorConstants.L1 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L1 + m_compensation);
     }
 
     public void setL2() {
-        setPosition(ElevatorConstants.L2 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L2 + m_compensation);
     }
 
     public void setL3() {
-        setPosition(ElevatorConstants.L3 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L3 + m_compensation);
     }
 
     public void setL4() {
-        setPosition(ElevatorConstants.L4 + getCANRangeCompensation());
+        setPosition(ElevatorConstants.L4 + m_compensation);
     }
 
     private double getCANRangeCompensation() {
@@ -175,7 +176,6 @@ public class Elevator extends SubsystemBase {
             ElevatorConstants.k_maxCanCompensation,
             (distance.get() - DriveConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch
         );
-        SmartDashboard.putNumber("canrange comp", comp);
         return comp;
     }
 
@@ -239,11 +239,9 @@ public class Elevator extends SubsystemBase {
     }
 
     private void zeroElevator() {
-        m_cancoder.clearStickyFaults();
-        CANcoderConfiguration config = ElevatorConstants.encoderConfig;
-        config.MagnetSensor.MagnetOffset = m_cancoder.getAbsolutePosition(true).getValueAsDouble() - ElevatorConstants.encoderOffset;
-
-        m_cancoder.getConfigurator().apply(config, 0.2);
+        m_elevatorRight.setPosition(0.0, 0.2);
+        m_elevatorLeft.setPosition(0.0, 0.2);
+        m_logger.info("Cancoder Error: {}", m_cancoder.setPosition(0.0, 0.2));
     }
 
     @Override
@@ -258,7 +256,7 @@ public class Elevator extends SubsystemBase {
             }
 
             SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
-            SmartDashboard.putNumber("Elevator Compensatin", getCANRangeCompensation());
+            m_compensation = getCANRangeCompensation();
         }
     }
 

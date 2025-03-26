@@ -5,33 +5,42 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Climber;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class PivotOutCommand extends Command {
-  private final Pivot m_pivot;
-  /** Creates a new PivotOutCommand. */
-  public PivotOutCommand(Pivot pivot) {
-    addRequirements(pivot);
-    m_pivot = pivot;
+public class ClimbReadyCommand extends Command {
+  private final Climber m_climber;
+
+  /** Creates a new ClimbReadyCommand. */
+  public ClimbReadyCommand(Climber climber) {
+    addRequirements(climber);
+    m_climber = climber;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_climber.setUp();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (m_climber.getVelocity() < 0) {
+      m_climber.setDown();
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_climber.stopMotor();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_climber.climbReady();
   }
 }
