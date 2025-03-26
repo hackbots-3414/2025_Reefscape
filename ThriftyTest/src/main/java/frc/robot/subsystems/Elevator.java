@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -50,7 +50,7 @@ public class Elevator extends SubsystemBase {
     private double m_compensation;
 
     private ElevatorSim m_elevatorSim;
-    private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60(2); // 2 motors (left and right)
+    private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60Foc(2); // 2 motors (left and right)
 
     private Mechanism2d m_mechVisual;
     private MechanismRoot2d m_mechRoot;
@@ -100,13 +100,16 @@ public class Elevator extends SubsystemBase {
     }
 
     // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
-    private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
+    private final DynamicMotionMagicTorqueCurrentFOC control = new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0, 0);
 
     public void setPosition(double goal) {
+        if (RobotObserver.getNoElevatorZone()) {
+            m_elevatorRight.stopMotor();
+            return;
+        }
         // floor values for the goal between our two extrema for their positions
         goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
         goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
-        m_logger.info("Setpoint is: {}", goal);
         if (goal >= getPosition()) {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
@@ -123,7 +126,6 @@ public class Elevator extends SubsystemBase {
                 .withSlot(1));
         }
 
-        // m_elevatorRight.setControl(control.withPosition(goal));
         m_reference = goal;
     }
 
@@ -164,8 +166,13 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.L4 + m_compensation);
     }
 
+    public void setPrep() {
+        // no compensation
+        setPosition(ElevatorConstants.prep);
+    }
+
     private double getCANRangeCompensation() {
-        if (RobotObserver.getManualMode() || !ElevatorConstants.enableCANRange) {
+        if (!ElevatorConstants.enableCANRange) {
             m_logger.debug("not doing compensation");
             return 0.0;
         };
@@ -245,24 +252,26 @@ public class Elevator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (ElevatorConstants.enable) {
-            m_position = getPositionUncached();
-            m_velocity = getVelocityUncached();
+        m_position = getPositionUncached();
+        m_velocity = getVelocityUncached();
 
-            if (m_speedChanged) {
-                m_elevatorRight.setControl(new DutyCycleOut(m_speed));
-                m_speedChanged = false;
-            }
+        SmartDashboard.putNumber("Elevator setpoint", m_reference);
+        SmartDashboard.putNumber("Elevator position", m_position);
+        SmartDashboard.putBoolean("Elevator up", elevatorUp());
 
-            SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
-            m_compensation = getCANRangeCompensation();
+        if (m_speedChanged) {
+            m_elevatorRight.setControl(new DutyCycleOut(m_speed));
+            m_speedChanged = false;
         }
+
+        SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
+        m_compensation = getCANRangeCompensation();
     }
 
     @Override
     public void simulationPeriodic() {
         // Update the simulation with the motor voltage
-        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage() * 10;
+        double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage() * 2;
 
         m_elevatorSim.setInput(appliedVolts);
         m_elevatorSim.update(SimConstants.k_simPeriodic);
@@ -282,6 +291,6 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean elevatorUp() {
-        return getPosition() > ElevatorConstants.L2 && RobotObserver.getAlgaePieceHeld();
+        return getPosition() > ElevatorConstants.unsafeRange;
     }
 }

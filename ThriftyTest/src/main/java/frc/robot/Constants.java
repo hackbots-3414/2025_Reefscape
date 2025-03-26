@@ -62,7 +62,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.generated.TunerConstants;
 import frc.robot.utils.Shape;
@@ -187,16 +186,15 @@ public class Constants {
 
     public static class ButtonBindingConstants {
         public static enum DriverChoice {DRAGONREINS, BACKUP;}
-        public static enum ButtonBoardChoice {BUTTONBOARD, BACKUP, KEYBOARD;}
+        public static enum ButtonBoardChoice {PS5, KEYBOARD;}
 
         public static final DriverChoice driverChoice = DriverChoice.DRAGONREINS;
-        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.BACKUP;
+        public static final ButtonBoardChoice buttonBoardChoice = ButtonBoardChoice.PS5;
 
         public static final String dragonReinsName = "spark";
         public static final String driverBackupName = "inter";
 
-        public static final String buttonBoardName = "dragon";
-        public static final String operatorBackupName = "dual";
+        public static final String ps5Name = "dual";
 
         public static final int driverPort = 0;
         public static final int buttonBoardPort = 1;
@@ -216,58 +214,7 @@ public class Constants {
             public static final double deadband = 0.01;
         }
 
-        public static class BackupDriver {
-            public static final int xAxis = Axis.kLeftY.value;
-            public static final int yAxis = Axis.kLeftX.value;
-            public static final int rotAxis = Axis.kRightY.value;
-
-            public static final boolean flipX = false;
-            public static final boolean flipY = true;
-            public static final boolean flipRot = true;
-
-            public static final int resetHeading = Button.kCircle.value;
-        }
-
-        public static class ButtonBoard {
-            public static final int manualModeSwitch = 26;
-
-            // WHEN SAFETY ON - AUTOMATION BASED
-            public static final int L1 = 5;
-            public static final int L2 = 8;
-            public static final int L3 = 7;
-            public static final int L4 = 6;
-
-            public static final int A = 12;
-            public static final int B = 16;
-            public static final int C = 22;
-            public static final int D = 17;
-            public static final int E = 23;
-            public static final int F = 20;
-            public static final int G = 19;
-            public static final int H = 15;
-            public static final int I = 10;
-            public static final int J = 14;
-            public static final int K = 9;
-            public static final int L = 13;
-
-            public static final int lowAlgae = 2;
-            public static final int highAlgae = 3;
-            public static final int groundAlgae = 1;
-            public static final int processor = 23;
-            public static final int net = 4;
-
-            public static final int leftIntake = 11;
-            public static final int rightIntake = 18;
-
-            public static final int climb = 25;
-
-            public static final int cancelAuto = 21;
-        }
-
-        public static class ButtonBoardAlternate {
-            public static final int manualModeSwitch = 15; // Share button
-
-            // Mutual Buttons
+        public static class PS5 {
             public static final int L1 = 180; // POV
             public static final int L2 = 270; // POV
             public static final int L3 = 90; // POV
@@ -292,22 +239,12 @@ public class Constants {
             public static final int climbReady = Button.kCreate.value;
             public static final int climb = Button.kOptions.value;
 
-            // Safety Mode "swaps"
-
-            public static final int manualElevatorUp = Axis.kLeftY.value;
-            public static final int manualElevatorDown = Axis.kLeftY.value;
-            public static final int manualPivotUp = Axis.kRightY.value;
-            public static final int manualPivotDown = Axis.kRightY.value;
-
-            public static final double manualThresholds = 0.5;
+            public static final int stow = Button.kPS.value;
 
             public static final int intake = Button.kL1.value; // LB
-            public static final int spitPiece = Button.kL2.value; // LT
         }
     
         public static class ButtonBoardKeyboard {
-            public static final int manualModeSwitch = 26;
-
             // WHEN SAFETY ON - AUTOMATION BASED
             public static final int L1 = 1;
             public static final int L2 = 2;
@@ -345,10 +282,9 @@ public class Constants {
     public static class VisionConstants {
         public static final boolean enableVision = true;
         public static final boolean k_enableLogging = false;
-        public static final boolean k_debugCameras = false;
 
-        public static final double k_rotationCoefficient = Math.PI * 20; // 0.35
-        public static final double k_translationCoefficient = 0.2;
+        public static final double k_rotationCoefficient = Math.PI * 20;
+        public static final double k_translationCoefficient = 0.1;
 
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
@@ -407,14 +343,14 @@ public class Constants {
 
         // Some configuration variables:
         public static final boolean k_useStdDevs = true;
-        public static final double k_distanceMultiplier = 7.0;
+        public static final double k_distanceMultiplier = 5.0;
         public static final double k_noisyDistance = 4.0;
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
-        public static final double k_targetMultiplier = 30;
-        public static final double k_differenceThreshold = 0.14;
-        public static final double k_differenceMultiplier = 100.0;
-        public static final double k_latencyMultiplier = 0.3;
+        public static final double k_targetMultiplier = 40;
+        public static final double k_differenceThreshold = 0.10;
+        public static final double k_differenceMultiplier = 200.0;
+        public static final double k_latencyMultiplier = 1.3;
 
         public static final double k_headingThreshold = Units.degreesToRadians(3);
 
@@ -443,6 +379,7 @@ public class Constants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
+        public static final double k_reefReady = 1.5;
     }
 
     public static final class StateSpaceConstants {
@@ -451,11 +388,6 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final boolean useSuperAuton = false;
-        public static final int numWaypoints = 5;
-
-        public static final boolean useQueue = false;
-
         public static double translationTolerance = 0.03; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
 
@@ -474,7 +406,7 @@ public class Constants {
             .withUpdateMode(UpdateModeValue.ShortRange100Hz)
         );
         // .withProximityParams(null)
-        public final static double farAlignedDistanceMeters = 0.18; 
+        public static final double farAlignedDistanceMeters = 0.18; 
         public static final double tolerance = 0.2; // 20% tolerance
         public static final double closeAlignedDistanceMeters = 0.12; 
         public static final int k_filterWindow = 5; // 5 measurements
@@ -506,10 +438,8 @@ public class Constants {
 
         public static final double momentOfInertia = netMass * Math.pow(drumRadius, 2);
 
-        public static final double rangeDistanceGain = 64; // how much higher, per unit of range
-
         public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
-            .createElevatorSystem(TalonFXConstants.TalonFXDCMotor, netMass, drumRadius, gearRatio);
+            .createElevatorSystem(KrakenX60FOCConstants.KrakenX60FOCMotor, netMass, drumRadius, gearRatio);
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
@@ -519,6 +449,8 @@ public class Constants {
         // approx 7.96
 
         public static final boolean enableCANRange = true;
+
+        public static final double rangeDistanceGain = 64; // how much higher, per unit of range
 
         /* Please note:
          * The maximum height of the elevator (in inches) was calculated to be 80.44 inches.
@@ -538,6 +470,7 @@ public class Constants {
         public static final double net = 79 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
+        public static final double prep = L3;
 
         public static final double forwardSoftLimit = 11.15;
         public static final double reverseSoftLimit = 0;
@@ -611,8 +544,6 @@ public class Constants {
     }
 
     public static final class PivotConstants {
-        public static final boolean enable = true;
-
         public static final double encoderOffset = 0.665283203125;
 
         public static final double rotorOffset = 0.344;
@@ -712,8 +643,6 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final boolean enable = true;
-    
         public static final double intakeVoltage = 2.71;
         public static final double retractVoltage = -3.5;
         public static final double ejectVoltage = 5;
@@ -777,8 +706,6 @@ public class Constants {
     }
 
     public static final class ClimberConstants {
-        public static final boolean enable = true;
-        
         public static final boolean rightMotorInvert = true;
         public static final double climberUpVolts = 12.0; // 12.0
         public static final double climbDownVolts = -12.0;
@@ -833,8 +760,6 @@ public class Constants {
     }
 
     public static final class AlgaeRollerConstants {
-        public static final boolean enable = true;
-        
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = -7.0; // 1.5
         public static final double processorEjectVoltage = -4;
@@ -860,17 +785,43 @@ public class Constants {
     }
 
     public static final class TalonFXConstants {
-        public final static double nominalVoltageVolts = 12.0; // DC Volts
-        public final static double stallTorqueNewtonMeters = 4.69; // Nm
-        public final static double stallCurrentAmps = 257.0; // Amps
-        public final static double freeCurrentAmps = 1.5; // Amps
-        public final static double freeSpeedRadPerSec = 6380.0 * 2.0 * Math.PI / 60.0; // RPM * 2pi / 60 = Rad per
+        public static final double nominalVoltageVolts = 12.0; // DC Volts
+        public static final double stallTorqueNewtonMeters = 4.69; // Nm
+        public static final double stallCurrentAmps = 257.0; // Amps
+        public static final double freeCurrentAmps = 1.5; // Amps
+        public static final double freeSpeedRadPerSec = 6380.0 * 2.0 * Math.PI / 60.0; // RPM * 2pi / 60 = Rad per
                                                                                        // second
 
-        public final static double positionStdDevs = 1.0 / 2048.0; // rotations
-        public final static double velocityStdDevs = 2.0 / 2048.0; // rotations
+        public static final double positionStdDevs = 1.0 / 2048.0; // rotations
+        public static final double velocityStdDevs = 2.0 / 2048.0; // rotations
 
-        public final static DCMotor TalonFXDCMotor = new DCMotor(nominalVoltageVolts, stallTorqueNewtonMeters,
+        public static final DCMotor TalonFXDCMotor = new DCMotor(nominalVoltageVolts, stallTorqueNewtonMeters,
+                stallCurrentAmps, freeCurrentAmps, freeSpeedRadPerSec, 1);
+    }
+
+    public static final class KrakenX60Constants {
+        public static final double nominalVoltageVolts = 12.0;
+        public static final double stallTorqueNewtonMeters = 7.16;
+        public static final double stallCurrentAmps = 374.38;
+        public static final double freeCurrentAmps = 2.0;
+        public static final double freeSpeedRadPerSec = Units.rotationsToRadians(6000);
+        public static final double positionStdDevs = 1.0 / 2048.0;
+        public static final double velocityStdDevs = 2.0 / 2048.0;
+
+        public static final DCMotor KrakenX60Motor = new DCMotor(nominalVoltageVolts, stallTorqueNewtonMeters,
+                stallCurrentAmps, freeCurrentAmps, freeSpeedRadPerSec, 1);
+    }
+
+    public static final class KrakenX60FOCConstants {
+        public static final double nominalVoltageVolts = 12.0;
+        public static final double stallTorqueNewtonMeters = 9.37;
+        public static final double stallCurrentAmps = 483;
+        public static final double freeCurrentAmps = 2.0;
+        public static final double freeSpeedRadPerSec = Units.rotationsToRadians(5800);
+        public static final double positionStdDevs = 1.0 / 2048.0;
+        public static final double velocityStdDevs = 2.0 / 2048.0;
+
+        public static final DCMotor KrakenX60FOCMotor = new DCMotor(nominalVoltageVolts, stallTorqueNewtonMeters,
                 stallCurrentAmps, freeCurrentAmps, freeSpeedRadPerSec, 1);
     }
 

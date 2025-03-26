@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "StartG"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align G"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GGH"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlgaeLower"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GHProcessor"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -62,6 +62,7 @@
       "/SmartDashboard/camera testing spot 2": "Command",
       "/SmartDashboard/drive to other pose": "Command",
       "/SmartDashboard/drive to reef": "Command",
+      "/SmartDashboard/elevator up": "Command",
       "/SmartDashboard/open funnel": "Command",
       "/SmartDashboard/runme hehe": "Command",
       "/SmartDashboard/teleport": "Command"
@@ -155,6 +156,16 @@
         "width": 17.54825210571289,
         "window": {
           "visible": false
+        }
+      },
+      "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Elevator Visualization": {
+        "window": {
+          "visible": true
         }
       },
       "/SmartDashboard/Super Field": {
@@ -507,6 +518,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/elevator up": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -515,9 +531,6 @@
       "open": false
     },
     "transitory": {
-      "PathPlanner": {
-        "open": true
-      },
       "SmartDashboard": {
         "open": true
       }
@@ -535,9 +548,7 @@
         {
           "axis": [
             {
-              "label": "Velocity",
-              "lockMax": true,
-              "lockMin": true,
+              "label": "Axis",
               "max": 5.0
             }
           ],
@@ -548,29 +559,12 @@
             0.8500000238418579
           ],
           "height": 318,
-          "name": "Robot Velocity",
-          "series": [
-            {
-              "color": [
-                0.3333333432674408,
-                0.658823549747467,
-                0.4078431725502014,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/FF magC"
-            },
-            {
-              "color": [
-                0.7686275243759155,
-                0.30588236451148987,
-                0.32156863808631897,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/FF magI"
-            }
-          ]
+          "name": "Plot"
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

@@ -6,11 +6,8 @@ package frc.robot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +16,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,16 +30,10 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.ButtonBindingConstants.BackupDriver;
-import frc.robot.Constants.ButtonBindingConstants.ButtonBoard;
-import frc.robot.Constants.ButtonBindingConstants.ButtonBoardAlternate;
-import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
-import frc.robot.Constants.ButtonBindingConstants.DragonReins;
-import frc.robot.Constants.ButtonBindingConstants.DriverChoice;
 import frc.robot.Constants.ClimbLocations;
-import frc.robot.Constants.CommandBounds;
+import frc.robot.Constants.ButtonBindingConstants.PS5;
+import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ReefClipLocations;
 import frc.robot.Constants.ScoringLocations;
@@ -64,6 +53,7 @@ import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralL1Command;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
+import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.ElevatorToPointCommand;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
@@ -79,7 +69,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
-import frc.robot.utils.Shape;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
@@ -95,9 +84,10 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureSubsystems();
+        generateScoringLocations();
         configureNamedCommands();
         configureDriverBindings();
-        configureButtonBoard();
+        configureOperatorBindings();
         configureAutonChooser();
         configureVision();
         //addBoundsToField();
@@ -107,113 +97,12 @@ public class RobotContainer {
         RobotObserver.setFFEnabledSupplier(this::getFFEnabled);
     }
 
-    private void confiureSimulation() {
-        DriverStation.silenceJoystickConnectionWarning(true);
-    }
+    public List<Pose2d> scoringLocationsListLeft;
+    public List<Pose2d> scoringLocationsRightList;
+    public List<Pose2d> scoringLocationsMiddleList;
+    public List<Pose2d> climbLocationsList;
 
-    public void enablePDPSwitch() {
-        pdp.setSwitchableChannel(true);
-    }
-    
-    private void configureDashboard() {
-        SmartDashboard.putBoolean("SAFETY MODE", false);
-        SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
-        SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
-        SmartDashboard.putData("AlignLEFT " , new  AlignLeftCommand(m_drivetrain));
-        SmartDashboard.putData("AlignRight", new AlignRightCommand(m_drivetrain));
-    }
-
-    private void configureTesting() {
-        SmartDashboard.putData("Go To B", new DriveToPointCommand(ScoringLocations.B.value, m_drivetrain));
-
-        Pose2d point = new Pose2d(8.795, 4.906, Rotation2d.fromDegrees(15.949));
-        SmartDashboard.putData("camera testing spot", new DriveToPointCommand(point, m_drivetrain));
-
-        Pose2d point2 = new Pose2d(9.936, 4.736, Rotation2d.fromDegrees(-9.001));
-        SmartDashboard.putData("camera testing spot 2", new DriveToPointCommand(point2, m_drivetrain));
-    }
-
-    private void addBoundsToField() {
-        for (Map.Entry<String, Shape> entry : CommandBounds.displayBounds.entrySet()) {
-            RobotObserver.getField().getObject(entry.getKey()).setPoses(
-                entry.getValue().getVertices().stream()
-                    .map(t -> new Pose2d(t.getX(), t.getY(), Rotation2d.kZero))
-                    .collect(Collectors.toList())
-            );
-        }
-    }
-
-    // ********** BINDINGS **********
-
-    private void configureDriverBindings() {
-        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
-        // controller.setRumble(RumbleType.kRightRumble, 1.0);
-
-        int xAxis;
-        int yAxis;
-        int rAxis; // rotation
-        int resetHeading;
-
-        double flipX;
-        double flipY;
-        double flipR;
-
-        if (ButtonBindingConstants.driverChoice == DriverChoice.DRAGONREINS) {
-            xAxis = DragonReins.xAxis;
-            yAxis = DragonReins.yAxis;
-            rAxis = DragonReins.rotAxis;
-
-            resetHeading = DragonReins.resetHeading;
-
-            flipX = DragonReins.flipX ? -1.0 : 1.0;
-            flipY = DragonReins.flipY ? -1.0 : 1.0;
-            flipR = DragonReins.flipRot ? -1.0 : 1.0;
-        } else {
-            xAxis = BackupDriver.xAxis;
-            yAxis = BackupDriver.yAxis;
-            rAxis = BackupDriver.rotAxis;
-
-            resetHeading = BackupDriver.resetHeading;
-
-            flipX = BackupDriver.flipX ? -1.0 : 1.0;
-            flipY = BackupDriver.flipY ? -1.0 : 1.0;
-            flipR = BackupDriver.flipRot ? -1.0 : 1.0;
-        }
-
-        Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
-        Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
-        Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
-
-        m_drivetrain.setDefaultCommand(
-            new TeleopCommand(m_drivetrain, xSup, ySup, rSup)
-        );
-
-        controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
-        controller.button(resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
-
-        controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
-            .or(controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
-            .or(controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
-            .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
-
-        controller.button(13).onTrue(new InstantCommand(() -> m_drivetrain.resetPose(ScoringLocationsMiddle.GH.value)));
-    }
-
-    // private void configureSysId() {
-    //     CommandPS5Controller controller = new CommandPS5Controller(3);
-
-    //     controller.povUp().whileTrue(m_drivetrain.sysIdQuasistaticTranslation(Direction.kForward));
-    //     controller.povDown().whileTrue(m_drivetrain.sysIdQuasistaticTranslation(Direction.kReverse));
-    //     controller.povRight().whileTrue(m_drivetrain.sysIdDynamicTranslation(Direction.kForward));
-    //     controller.povLeft().whileTrue(m_drivetrain.sysIdDynamicTranslation(Direction.kReverse));
-
-    //     controller.triangle().whileTrue(m_drivetrain.sysIdQuasistaticRotation(Direction.kForward));
-    //     controller.cross().whileTrue(m_drivetrain.sysIdQuasistaticRotation(Direction.kReverse));
-    //     controller.circle().whileTrue(m_drivetrain.sysIdDynamicRotation(Direction.kForward));
-    //     controller.square().whileTrue(m_drivetrain.sysIdDynamicRotation(Direction.kReverse));
-    // }
-
-    private void configureButtonBoard() {
+    private void generateScoringLocations() {
         // initializes lists of poses of all the enums - to use in auton util
         ScoringLocationsLeft[] locationsLeft = ScoringLocationsLeft.values();
         this.scoringLocationsListLeft = new ArrayList<>();
@@ -238,289 +127,149 @@ public class RobotContainer {
         for (ClimbLocations location : climbLocations) {
             this.climbLocationsList.add(location.value);
         }
+    }
 
+    private void confiureSimulation() {
+        DriverStation.silenceJoystickConnectionWarning(true);
+    }
+
+    public void enablePDPSwitch() {
+        pdp.setSwitchableChannel(true);
+    }
+    
+    private void configureDashboard() {
+        SmartDashboard.putBoolean("SAFETY MODE", false);
+        SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
+        SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
+        SmartDashboard.putData("AlignLEFT " , new  AlignLeftCommand(m_drivetrain));
+        SmartDashboard.putData("AlignRight", new AlignRightCommand(m_drivetrain));
+    }
+
+    private void configureTesting() {
+        SmartDashboard.putData("elevator up", m_elevator.run(m_elevator::setL4).until(m_elevator::atSetpoint));
+    }
+
+    // ********** BINDINGS **********
+
+    private void configureDriverBindings() {
+        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
+        // controller.setRumble(RumbleType.kRightRumble, 1.0);
+
+        int xAxis;
+        int yAxis;
+        int rAxis; // rotation
+        int resetHeading;
+
+        double flipX;
+        double flipY;
+        double flipR;
+
+        xAxis = DragonReins.xAxis;
+        yAxis = DragonReins.yAxis;
+        rAxis = DragonReins.rotAxis;
+
+        resetHeading = DragonReins.resetHeading;
+
+        flipX = DragonReins.flipX ? -1.0 : 1.0;
+        flipY = DragonReins.flipY ? -1.0 : 1.0;
+        flipR = DragonReins.flipRot ? -1.0 : 1.0;
+
+        Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
+        Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
+        Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
+
+        m_drivetrain.setDefaultCommand(
+            new TeleopCommand(m_drivetrain, xSup, ySup, rSup)
+        );
+
+        controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
+        controller.button(resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
+
+        controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
+            .or(controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
+            .or(controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
+            .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
+    }
+
+    private void configureOperatorBindings() {
+        System.out.println(PS5.groundAlgae);
+        System.out.println(PS5.lowAlgae);
+        System.out.println(PS5.highAlgae);
+        System.out.println(PS5.groundAlgae);
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
-        controller.setRumble(RumbleType.kBothRumble, 1.0);
 
-        if (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD) {
-            controller.button(ButtonBoard.manualModeSwitch).onChange(new InstantCommand(() -> RobotObserver.toggleManualMode()));
-            BooleanSupplier manualModeOn = () -> RobotObserver.getManualMode();
-            BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
+        Trigger algaeOn = controller.button(PS5.algaeModeButton);
 
-            Trigger A = controller.button(ButtonBoard.A);
-            Trigger B = controller.button(ButtonBoard.B);
-            Trigger C = controller.button(ButtonBoard.C);
-            Trigger D = controller.button(ButtonBoard.D);
-            Trigger E = controller.button(ButtonBoard.E);
-            Trigger F = controller.button(ButtonBoard.F);
-            Trigger G = controller.button(ButtonBoard.G);
-            Trigger H = controller.button(ButtonBoard.H);
-            Trigger I = controller.button(ButtonBoard.I);
-            Trigger J = controller.button(ButtonBoard.J);
-            Trigger K = controller.button(ButtonBoard.K);
-            Trigger L = controller.button(ButtonBoard.L);
+        controller.button(PS5.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
-            Trigger L1 = controller.button(ButtonBoard.L1);
-            Trigger L2 = controller.button(ButtonBoard.L2);
-            Trigger L3 = controller.button(ButtonBoard.L3);
-            Trigger L4 = controller.button(ButtonBoard.L4);
+        bindAlignCommand(ReefClipLocations.LEFT, controller.button(PS5.leftReef));
+        bindAlignCommand(ReefClipLocations.RIGHT, controller.button(PS5.rightReef));
 
-            bindButtonBoardAuto(ScoringLocations.A, 1, A.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 1, B.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 1, C.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 1, D.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 1, E.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 1, F.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 1, G.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 1, H.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 1, I.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 1, J.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 1, K.and(L1).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 1, L.and(L1).and(manualModeOff));
-            
-            bindButtonBoardAuto(ScoringLocations.A, 2, A.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 2, B.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 2, C.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 2, D.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 2, E.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 2, F.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 2, G.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 2, H.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 2, I.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 2, J.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 2, K.and(L2).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 2, L.and(L2).and(manualModeOff));
+        bindCoralCommands(1, controller.pov(PS5.L1).and(algaeOn.negate()));
+        bindCoralCommands(2, controller.pov(PS5.L2).and(algaeOn.negate()));
+        bindCoralCommands(3, controller.pov(PS5.L3).and(algaeOn.negate()));
+        bindCoralCommands(4, controller.pov(PS5.L4).and(algaeOn.negate()));
 
-            bindButtonBoardAuto(ScoringLocations.A, 3, A.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 3, B.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 3, C.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 3, D.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 3, E.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 3, F.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 3, G.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 3, H.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 3, I.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 3, J.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 3, K.and(L3).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 3, L.and(L3).and(manualModeOff));
+        bindCoralIntakeCommand(controller.button(PS5.intake));
 
-            bindButtonBoardAuto(ScoringLocations.A, 4, A.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 4, B.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 4, C.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 4, D.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 4, E.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 4, F.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 4, G.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 4, H.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 4, I.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 4, J.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 4, K.and(L4).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 4, L.and(L4).and(manualModeOff));
+        bindAlgaeIntakeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(PS5.lowAlgae));
+        bindAlgaeIntakeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(PS5.highAlgae));
+        bindAlgaeIntakeCommand(AlgaeLocationPresets.GROUND, controller.pov(PS5.groundAlgae).and(algaeOn));
+        bindAlgaeIntakeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(PS5.highGround).and(algaeOn));
 
-            
-            
-            Trigger algaeLow = controller.button(ButtonBoard.lowAlgae);
-            Trigger algaeHigh = controller.button(ButtonBoard.highAlgae);
+        bindAlgaeScoreCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(PS5.processor).and(algaeOn));
+        bindAlgaeScoreCommand(AlgaeLocationPresets.NET, controller.pov(PS5.net).and(algaeOn));
 
-            bindButtonBoardAuto(ScoringLocations.A, 5, A.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 5, B.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 5, C.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 5, D.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 5, E.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 5, F.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 5, G.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 5, H.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 5, I.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 5, J.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 5, K.and(algaeLow).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 5, L.and(algaeLow).and(manualModeOff));
+        bindClimbSetupCommand(controller.button(PS5.climbReady));
+        controller.button(PS5.climb).whileTrue(new ClimberCommand(m_climber));
 
-            bindButtonBoardAuto(ScoringLocations.A, 6, A.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.B, 6, B.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.C, 6, C.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.D, 6, D.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.E, 6, E.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.F, 6, F.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.G, 6, G.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.H, 6, H.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.I, 6, I.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.J, 6, J.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.K, 6, K.and(algaeHigh).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.L, 6, L.and(algaeHigh).and(manualModeOff));
+        controller.button(PS5.stow).onTrue(new StowCommand(m_elevator, m_algaePivot));
 
+        // very bad
+        controller.button(11).and(controller.button(12)).whileTrue(new ClimbReadyCommand(m_climber));
+    }
 
-            bindButtonBoardAuto(ScoringLocations.LEFTHP, 0, controller.button(ButtonBoard.leftIntake).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.RIGHTHP, 0, controller.button(ButtonBoard.rightIntake).and(manualModeOff));
-
-            bindButtonBoardAuto(ScoringLocations.PROCESSOR, 0, controller.button(ButtonBoard.processor).and(manualModeOff));
-            bindButtonBoardAuto(ScoringLocations.NET, 0, controller.button(ButtonBoard.net).and(manualModeOff));
-
-
-            // MANUAL CORAL SCORE COMMANDS
-            bindManualCoralPrepCommand(1, L1.and(manualModeOn));
-            bindManualCoralPrepCommand(2, L2.and(manualModeOn));
-            bindManualCoralPrepCommand(3, L3.and(manualModeOn));
-            bindManualCoralPrepCommand(4, L4.and(manualModeOn));
-
-            bindManualCoralIntakeCommand(controller.button(ButtonBoard.leftIntake).and(manualModeOn));
-
-            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.button(ButtonBoard.groundAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoard.lowAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoard.highAlgae).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.button(ButtonBoard.processor).and(manualModeOn));
-            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.button(ButtonBoard.net).and(manualModeOn));
-        
-            bindAutoCancelButton(controller.button(ButtonBoard.cancelAuto));
-
-            bindClimbSetupCommand(controller.button(ButtonBoard.climb));
+    private void bindCoralCommands(int level, Trigger trigger) {
+        if (level == 1) {
+            // L1 is special, but not in a good way
+            trigger.whileTrue(elevatorPrepCommand(1));
+            trigger.onFalse(new CoralL1Command(m_coralRollers, m_elevator));
         } else {
-            controller.button(ButtonBoardAlternate.manualModeSwitch).onTrue(new InstantCommand(() -> RobotObserver.toggleManualMode()));
-            BooleanSupplier manualModeOff = () -> !RobotObserver.getManualMode();
-
-            Trigger algaeOn = controller.button(ButtonBoardAlternate.algaeModeButton);
-
-            controller.button(ButtonBoardAlternate.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
-
-            // Manual Mode Off
-            // bindAutoCoralCommand(1, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            // bindAutoCoralCommand(2, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            // bindAutoCoralCommand(3, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            // bindAutoCoralCommand(4, ReefClipLocations.LEFT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.leftReef)).and(manualModeOff));
-            // bindAutoCoralCommand(1, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L1).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            // bindAutoCoralCommand(2, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L2).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            // bindAutoCoralCommand(3, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L3).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-            // bindAutoCoralCommand(4, ReefClipLocations.RIGHT, controller.pov(ButtonBoardAlternate.L4).and(controller.button(ButtonBoardAlternate.rightReef)).and(manualModeOff));
-
-            bindReefClipCommand(ReefClipLocations.LEFT, controller.button(ButtonBoardAlternate.leftReef).and(manualModeOff));
-            bindReefClipCommand(ReefClipLocations.RIGHT, controller.button(ButtonBoardAlternate.rightReef).and(manualModeOff));
-
-            // Manual Mode On
-            bindManualCoralPrepCommand(1, controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate())/*.and(manualModeOn)*/);
-            bindManualCoralPrepCommand(2, controller.pov(ButtonBoardAlternate.L2).and(algaeOn.negate())/*.and(manualModeOn)*/);
-            bindManualCoralPrepCommand(3, controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate())/*.and(manualModeOn)*/);
-            bindManualCoralPrepCommand(4, controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate())/*.and(manualModeOn)*/);
-
-            controller.pov(ButtonBoardAlternate.L1).and(algaeOn.negate()).onFalse(new CoralL1Command(m_coralRollers, m_elevator));
-            controller.pov(ButtonBoardAlternate.L2).and(algaeOn.negate()).onFalse(coralScoreCommand(2));
-            controller.pov(ButtonBoardAlternate.L3).and(algaeOn.negate()).onFalse(coralScoreCommand(3));
-            controller.pov(ButtonBoardAlternate.L4).and(algaeOn.negate()).onFalse(coralScoreCommand(4));
-
-            bindManualCoralIntakeCommand(controller.button(ButtonBoardAlternate.intake)/*.and(manualModeOn)*/);
-
-            bindManualAlgaeCommand(AlgaeLocationPresets.GROUND, controller.pov(ButtonBoardAlternate.groundAlgae).and(algaeOn)/*.and(manualModeOn)*/);
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(ButtonBoardAlternate.lowAlgae)/*.and(manualModeOn)*/);
-            bindManualAlgaeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(ButtonBoardAlternate.highAlgae)/*.and(manualModeOn)*/);
-            bindManualAlgaeCommand(AlgaeLocationPresets.NET, controller.pov(ButtonBoardAlternate.net).and(algaeOn)/*.and(manualModeOn)*/);
-            bindManualAlgaeCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(ButtonBoardAlternate.processor).and(algaeOn)/*.and(manualModeOn)*/);
-            bindManualAlgaeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(ButtonBoardAlternate.highGround).and(algaeOn)/*.and(manualModeOn)*/);
-
-            bindClimbSetupCommand(controller.button(ButtonBoardAlternate.climbReady));
-            controller.button(ButtonBoardAlternate.climb).whileTrue(new ClimberCommand(m_climber));
-
-            controller.PS().onTrue(new StowCommand(m_elevator, m_algaePivot));
-
-            controller.button(11).and(controller.button(12)).whileTrue(new ClimbReadyCommand(m_climber));
+            trigger.whileTrue(coralPrepAndScoreCommand(level));
+            trigger.onFalse(coralScoreCommand(level));
         }
     }
 
-    public List<Pose2d> scoringLocationsListLeft;
-    public List<Pose2d> scoringLocationsRightList;
-    public List<Pose2d> scoringLocationsMiddleList;
-    public List<Pose2d> climbLocationsList;
-
     // ********** AUTONOMOUS **********
-
-    private final ArrayList<SendableChooser<Pose2d>> scoringLocationsChooser = new ArrayList<>();
-    private final SendableChooser<Pose2d> pickupLocation = new SendableChooser<>();
-    private final ArrayList<SendableChooser<Supplier<Command>>> scoringHeightsChooser = new ArrayList<>();
 
     private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     private void configureAutonChooser() {
-        if (AutonConstants.useSuperAuton) {
-            for (int i = 0; i < AutonConstants.numWaypoints; i++) {
-                SendableChooser<Pose2d> placeChooser = new SendableChooser<>();
-                configurePlaceChooser(placeChooser);
-                scoringLocationsChooser.add(placeChooser);
-                SmartDashboard.putData("Place to Score #" + (i), placeChooser);
-
-                SendableChooser<Supplier<Command>> heightChooser = new SendableChooser<>();
-                configureHeightChooser(heightChooser);
-                scoringHeightsChooser.add(heightChooser);
-                SmartDashboard.putData("Height to Score #" + (i), heightChooser);
-            }
-
-            pickupLocation.setDefaultOption("CLOSE", ScoringLocations.LEFTHP.value);
-            pickupLocation.addOption("FAR", ScoringLocations.RIGHTHP.value);
-            SmartDashboard.putData(pickupLocation);
-        } else {
-            boolean isCompetition = false;
-
-            // Filter any autos with the "comp" prefix
-            autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
-            (stream) -> isCompetition
-            ? stream.filter(auto -> auto.getName().startsWith("comp"))
-            : stream
-            );
-    
-            autoChooser = AutoBuilder.buildAutoChooser();
-    
-            SmartDashboard.putData("Auto Chooser", autoChooser);
-        }
-    }
-
-    private void configurePlaceChooser(SendableChooser<Pose2d> chooser) {
-        chooser.setDefaultOption("A", ScoringLocations.A.value);
-        chooser.addOption("B", ScoringLocations.B.value);
-        chooser.addOption("C", ScoringLocations.C.value);
-        chooser.addOption("D", ScoringLocations.D.value);
-        chooser.addOption("E", ScoringLocations.E.value);
-        chooser.addOption("F", ScoringLocations.F.value);
-        chooser.addOption("G", ScoringLocations.G.value);
-        chooser.addOption("H", ScoringLocations.H.value);
-        chooser.addOption("I", ScoringLocations.I.value);
-        chooser.addOption("J", ScoringLocations.J.value);
-        chooser.addOption("K", ScoringLocations.K.value);
-        chooser.addOption("L", ScoringLocations.L.value);
-    }
-
-    private void configureHeightChooser(SendableChooser<Supplier<Command>> chooser) {
-        chooser.addOption("L1", () -> coralPrepCommand(1));
-        chooser.addOption("L2", () -> coralPrepCommand(2));
-        chooser.addOption("L3", () -> coralPrepCommand(3));
-        chooser.setDefaultOption("L4", () -> coralPrepCommand(4));
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     public Command getAutonomousCommand() {
-        if (AutonConstants.useSuperAuton) {
-            Pose2d[] locations = new Pose2d[scoringLocationsChooser.size()];
-            for (int i = 0; i < scoringLocationsChooser.size(); i++) {
-                locations[i] = scoringLocationsChooser.get(i).getSelected();
-            }
-    
-            Command[] heights = new Command[scoringHeightsChooser.size()];
-            for (int i = 0; i < scoringHeightsChooser.size(); i++) {
-                heights[i] = scoringHeightsChooser.get(i).getSelected().get();
-            }
-    
-            return AutonomousUtil.generateRoutineWithCommands(m_drivetrain, pickupLocation.getSelected(), locations, heights, this::coralIntakeCommand);
-        } else {
-            return autoChooser.getSelected();
-        }
+        return autoChooser.getSelected();
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("L4", coralPrepCommand(4).andThen(coralScoreCommand(4)));
-        NamedCommands.registerCommand("L3", coralPrepCommand(3).andThen(coralScoreCommand(3)));
+        NamedCommands.registerCommand("L4", coralScoreCommand(4));
+        NamedCommands.registerCommand("L3", coralScoreCommand(3));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
+        NamedCommands.registerCommand("Intake wait", new WaitUntilCommand(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
             NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true)
-                .alongWith(m_elevator.runOnce(m_elevator::setL3))
-                .withTimeout(3.0));
+                .alongWith(elevatorPrepCommand())
+                .withTimeout(9.0));
         }
+        NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
+            .until(m_algaeRollers::algaeHeld));
+        NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
+            .until(m_algaeRollers::algaeHeld));
     }
 
     private void configureVision() {
@@ -552,69 +301,42 @@ public class RobotContainer {
     }
 
     // ** BUTTON BOARD HELPERS **
-    private void bindManualCoralIntakeCommand(Trigger trigger) {
+    private void bindCoralIntakeCommand(Trigger trigger) {
         trigger.whileTrue(coralIntakeCommand());
         trigger.onFalse(coralIntakeCommand().onlyWhile(m_coralRollers::presentPiece));
     }
 
-    /**
-     * @param level 1, 2, 3, 4 for coral score; 5 for algae pickup low; 6 for algae pickup high; 
-     * */
-    @SuppressWarnings("incomplete-switch")
-    private void bindButtonBoardAuto(ScoringLocations location, int level, Trigger trigger) {
-        if (level == 5) {
-            switch (location) {
-                case A, B -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
-                case C, D -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
-                case E, F -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
-                case G, H -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
-                case I, J -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
-                case K, L -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)), Set.of()));
-            }
-        } else if (level == 6) {
-            switch (location) {
-                case A, B -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.AB.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
-                case C, D -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.CD.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
-                case E, F -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.EF.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
-                case G, H -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.GH.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
-                case I, J -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.IJ.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
-                case K, L -> trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(ScoringLocationsMiddle.KL.value, () -> algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)), Set.of()));
-            }
-        } else {
-            trigger.whileTrue(new DeferredCommand(() -> AutonomousUtil.pathThenRunCommand(location.value, () -> coralPrepCommand(level)), Set.of()));
-        }
-    }
-
-    private void bindAutoCancelButton(Trigger trigger) {
-        trigger.onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
-    }
-
-    private void bindReefClipCommand(ReefClipLocations location, Trigger trigger) {
+    private void bindAlignCommand(ReefClipLocations location, Trigger trigger) {
         switch (location) {
             case LEFT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> new InstantCommand(), scoringLocationsListLeft).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.LEFT)))), Set.of()));
             case RIGHT -> trigger.whileTrue(new DeferredCommand(() -> (AutonomousUtil.closestPathThenRunCommand(() -> new InstantCommand(), scoringLocationsRightList).beforeStarting(new InstantCommand(() -> RobotObserver.setReefClipLocation(ReefClipLocations.RIGHT)))), Set.of()));
         }   
     }
 
-    private void bindManualCoralPrepCommand(int level, Trigger trigger) {
-        trigger.whileTrue(coralPrepCommand(level));    
+    private void bindAlgaeIntakeCommand(AlgaeLocationPresets location, Trigger trigger) {
+        trigger.whileTrue(algaeIntakeCommand(location));
     }
 
-    private void bindManualAlgaeCommand(AlgaeLocationPresets type, Trigger trigger) {
+    private void bindAlgaeScoreCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
-            case GROUND, REEFLOWER, REEFUPPER, HIGHGROUND -> trigger.whileTrue(algaeIntakeCommand(type));
             case NET -> trigger.whileTrue(algaeScoreCommand(type));
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
-                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, m_elevator).andThen(new WaitCommand(2).andThen(new InstantCommand(() -> {m_algaeRollers.stopMotor(); m_algaePivot.setStow();}))));
+                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, m_elevator)
+                    .andThen(new WaitCommand(2)
+                    .andThen(new InstantCommand(() -> {
+                        m_algaeRollers.stopMotor();
+                        m_algaePivot.setStow();
+                    }, m_algaePivot, m_algaeRollers))));
             }
+            default -> {}
         }
     }
 
     private void bindClimbSetupCommand(Trigger trigger) {
         trigger.whileTrue(new SequentialCommandGroup(
             new OpenFunnel(m_climber),
-            new ClimberCommand(m_climber, false)
+            new ClimbReadyCommand(m_climber)
         ));
     }
 
@@ -624,13 +346,28 @@ public class RobotContainer {
         return new CoralIntakeCommand(m_coralRollers, m_elevator);
     }
 
-    private Command coralPrepCommand(int level) {
-        return new ElevatorToPointCommand(level, m_elevator).onlyIf(m_coralRollers::getCANrangeTriggered);
+    private Command coralPrepAndScoreCommand(int level) {
+        return new ElevatorToPointCommand(level, m_elevator)
+            .andThen(new WaitUntilCommand(m_drivetrain::isAligned))
+            .andThen(coralScoreCommand(level))
+            .onlyIf(m_coralRollers::holdingPiece);
+    }
+
+    private Command elevatorPrepCommand() {
+        return m_elevator.run(m_elevator::setPrep)
+            .onlyIf(m_coralRollers::holdingPiece);
+    }
+
+    private Command elevatorPrepCommand(int level) {
+        return new ElevatorToPointCommand(level, m_elevator)
+            .onlyIf(m_coralRollers::holdingPiece);
     }
 
     private Command coralScoreCommand(int level) {
         return new CoralScoreCommand(m_coralRollers, m_elevator, level)
-                .andThen(new WaitUntilCommand(m_elevator::atSetpoint));
+            .andThen(new WaitUntilCommand(m_elevator::atSetpoint)
+            .onlyIf(m_coralRollers::holdingPiece)
+            );
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
@@ -654,8 +391,11 @@ public class RobotContainer {
         m_algaePivot.setStow();
     }
 
+    public void startElevator() {
+        m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
+    }
+
     public boolean getFFEnabled() {
-        return true;
-        //return m_elevator.elevatorUp() && m_algaeRollers.algaeHeld();
+        return m_elevator.elevatorUp() || m_algaeRollers.algaeHeld();
     }
 }

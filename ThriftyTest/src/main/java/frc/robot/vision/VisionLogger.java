@@ -33,7 +33,6 @@ public class VisionLogger implements AutoCloseable {
         m_builder = new StringBuilder();
         String filepath = VisionConstants.k_logPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
         if (Robot.isSimulation()) {
-            logger.trace("Simulation detected, using local logging path");
             filepath = VisionConstants.k_simLogPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
         }
         try {

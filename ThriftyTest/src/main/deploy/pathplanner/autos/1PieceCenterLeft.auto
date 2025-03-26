@@ -7,7 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Backup1Piece"
+            "pathName": "StartH"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align H"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
           }
         }
       ]

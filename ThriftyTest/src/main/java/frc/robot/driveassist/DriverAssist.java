@@ -7,12 +7,11 @@ import org.slf4j.LoggerFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotObserver;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
+import frc.robot.RobotObserver;
 
 public class DriverAssist {
-    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriverAssist.class);
 
     /**
@@ -44,7 +43,8 @@ public class DriverAssist {
         Translation2d t = x.times(
             Math.sqrt(2 * FFConstants.k_decceleration/ x.getNorm())
         );
-        boolean active = t.getNorm() < DriveConstants.k_maxTeleopLinearSpeed;
+        boolean active = t.getNorm() < DriveConstants.k_maxTeleopLinearSpeed
+            && RobotObserver.getFFEnabled();
         SmartDashboard.putBoolean("Force Field Active", active);
         if (!active) {
             RobotObserver.getField().getObject("FF").setPoses();
@@ -64,7 +64,7 @@ public class DriverAssist {
         if (d <= 0) {
             return c;
         }
-        double magI = dot(c, t) / t.getNorm();
+        double magI = d / t.getNorm();
         if (magI <= 0) {
             return c;
         }

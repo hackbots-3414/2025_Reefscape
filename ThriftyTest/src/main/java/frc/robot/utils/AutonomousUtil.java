@@ -157,24 +157,4 @@ public class AutonomousUtil {
         }
         onTheFlyCommands = new ArrayList<>();
     }
-
-    private static boolean ranCommand = false;
-
-    public static void handleQueue() {
-        if (AutonConstants.useQueue) {
-            if (!onTheFlyCommands.isEmpty()) {
-                if (!ranCommand) {
-                    onTheFlyCommands.get(0).schedule();
-                    ranCommand = true;
-                }
-                if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
-                    onTheFlyCommands.get(0).cancel();
-                    onTheFlyCommands.remove(0);
-                    ranCommand = false;
-                }
-            } else {
-                ranCommand = false;
-            }
-        }
-    }
 }
