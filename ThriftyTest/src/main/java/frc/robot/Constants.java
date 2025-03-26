@@ -1011,10 +1011,10 @@ public class Constants {
         public static final Shape netBounds = Shape.fromUnsortedVertices(net, "Net");
 
         public static final List<Translation2d> tooClose = List.of(
-            new Translation2d(8.6 ,4.25 ),
-            new Translation2d(11.7,4.25),
-            new Translation2d(11.7,8),
-            new Translation2d(8.6,8)
+            new Translation2d(10 ,4.25 ), // 8.6, 4.25
+            new Translation2d(13.1,4.25), // 11.7 , 4.25
+            new Translation2d(13.1,8), // 11.7 , 8
+            new Translation2d(10,8) // 8.6 , 8
 
         );
 
