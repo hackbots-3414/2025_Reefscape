@@ -258,6 +258,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("L4", coralScoreCommand(4));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
+        NamedCommands.registerCommand("Intake wait", new WaitUntilCommand(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());

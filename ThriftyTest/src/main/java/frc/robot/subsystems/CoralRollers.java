@@ -194,6 +194,10 @@ public class CoralRollers extends SubsystemBase {
         return getBackIR() || getCANrangeTriggered();
     }
 
+    public boolean intakeReady() {
+        return getUpperCANrange();
+    }
+
     @Override
     public void periodic() {
         if (Robot.isReal()) {

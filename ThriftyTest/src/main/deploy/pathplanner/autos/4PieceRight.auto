@@ -27,24 +27,37 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "FIntake"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Intake"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "FIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake Wait"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "IntakeD"
+                      }
+                    }
+                  ]
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IntakeD"
           }
         },
         {
@@ -64,24 +77,37 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "DIntake"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Intake"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "DIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake Wait"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "IntakeC"
+                      }
+                    }
+                  ]
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IntakeC"
           }
         },
         {
@@ -101,24 +127,37 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "CIntake"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Intake"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "CIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake Wait"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "IntakeB"
+                      }
+                    }
+                  ]
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "IntakeB"
           }
         },
         {
