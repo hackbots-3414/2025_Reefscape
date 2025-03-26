@@ -265,6 +265,10 @@ public class RobotContainer {
                 .alongWith(elevatorPrepCommand())
                 .withTimeout(9.0));
         }
+        NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
+            .until(m_algaeRollers::algaeHeld));
+        NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
+            .until(m_algaeRollers::algaeHeld));
     }
 
     private void configureVision() {

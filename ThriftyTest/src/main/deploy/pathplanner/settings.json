@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "IntakeX",
+    "Processor",
     "StartX",
     "Testing",
     "XIntake"

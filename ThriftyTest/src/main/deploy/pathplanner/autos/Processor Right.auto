@@ -7,19 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartH"
+            "pathName": "StartF"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Align H"
+            "name": "Align F"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FEF"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlgaeUpper"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EFProcessor"
           }
         }
       ]
