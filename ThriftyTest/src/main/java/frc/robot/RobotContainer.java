@@ -298,7 +298,7 @@ public class RobotContainer {
     private LedFeedback m_ledFeedback;
 
     private void configureSubsystems() {
-        m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
+        // m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
         m_elevator = new Elevator();
         m_algaePivot = new Pivot();
         m_climber = new Climber();
