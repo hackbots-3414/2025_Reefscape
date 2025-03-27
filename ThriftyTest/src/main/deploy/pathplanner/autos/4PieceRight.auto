@@ -53,6 +53,12 @@
                       "data": {
                         "pathName": "IntakeD"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Stop"
+                      }
                     }
                   ]
                 }
@@ -103,6 +109,12 @@
                       "data": {
                         "pathName": "IntakeC"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Stop"
+                      }
                     }
                   ]
                 }
@@ -152,6 +164,12 @@
                       "type": "path",
                       "data": {
                         "pathName": "IntakeB"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Stop"
                       }
                     }
                   ]

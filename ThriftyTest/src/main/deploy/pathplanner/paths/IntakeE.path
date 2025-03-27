@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.552710503472221,
-        "y": 0.7168366608796294
+        "x": 1.5584016393442621,
+        "y": 0.9981045081967216
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9056410856786041,
-        "y": 0.8889292077850861
+        "x": 1.9113322215506454,
+        "y": 1.1701970551021783
       },
       "isLocked": false,
       "linkedName": "RightIntake"
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.5,
+    "velocity": 0.0,
     "rotation": 119.99999999999999
   },
   "reversed": false,

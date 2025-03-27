@@ -106,9 +106,8 @@ public class LedFeedback extends SubsystemBase {
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
         algaeInRange = CommandBounds.netBounds.isActive();
-        bargeTooClose = CommandBounds.netTooCloseBounds.isActive(); // need to change
+        bargeTooClose = RobotObserver.getNoElevatorZone();
         climbed = RobotObserver.getClimbed();
-        // algaeTooClose = RobotObserver.getNoElevatorZone();
 
         if (badController()) {
 

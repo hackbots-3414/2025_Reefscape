@@ -6,33 +6,33 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Pivot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class StowCommand extends Command {
-  private final Pivot m_pivot;
+public class ElevatorZero extends Command {
   private final Elevator m_elevator;
-
-  /** Creates a new StowCommand. */
-  public StowCommand(Elevator elevator, Pivot pivot) {
-    m_pivot = pivot;
+  /** Creates a new ElevatorZero. */
+  public ElevatorZero(Elevator elevator) {
     m_elevator = elevator;
-    addRequirements(m_pivot, m_elevator);
+    addRequirements(elevator);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_pivot.setStow();
-    m_elevator.setStow();
+    m_elevator.goDownNoStopping();
   }
 
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_pivot.stop();
+    m_elevator.zeroElevator();
+    m_elevator.stop();
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevator.atSetpoint() && m_pivot.atSetpoint();
+    return m_elevator.atZero();
   }
 }

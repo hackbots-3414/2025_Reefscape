@@ -97,9 +97,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         if (m_voltageChanged) {
             m_algaeRoller.setVoltage(m_voltage);
             m_voltageChanged = false;
-            SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
         }
-        SmartDashboard.putNumber("algae temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
     }
 
     @Override

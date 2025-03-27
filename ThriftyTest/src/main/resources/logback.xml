@@ -10,7 +10,7 @@
  <logger name="frc.robot.subsystems" level="INFO"/>
  <logger name="frc.robot.subsystems.CommandSwerveDrivetrain" level="INFO"/>
 
- <root level="WARN">
+ <root level="INFO">
    <appender-ref ref="STDOUT"/>
  </root>
 

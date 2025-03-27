@@ -1,5 +1,15 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,15 +56,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -138,7 +139,7 @@ public class Constants {
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
-        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(20, 0.0, 0.0); // 0.18836
+        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(20, 0.0, 0); // 0.18836
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
@@ -147,7 +148,7 @@ public class Constants {
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public static final double k_driveToPointSpeed = 4.0;
-        public static final double k_driveToPointAcceleration = 2.0;
+        public static final double k_driveToPointAcceleration = 1.0;
 
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
@@ -347,7 +348,7 @@ public class Constants {
         public static final double k_noisyDistance = 4.0;
         public static final double k_ambiguityMultiplier = 0.4;
         public static final double k_ambiguityShifter = 0.2;
-        public static final double k_targetMultiplier = 40;
+        public static final double k_targetMultiplier = 80;
         public static final double k_differenceThreshold = 0.10;
         public static final double k_differenceMultiplier = 200.0;
         public static final double k_latencyMultiplier = 1.3;
@@ -417,7 +418,8 @@ public class Constants {
 
         public static final boolean invertLeftMotorFollower = true;
 
-        public static final double supplyCurrentLimit = 60;
+        public static final double supplyCurrentLimit = 100;
+        public static final double k_zeroCurrentThreshold = 5;
 
         public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
@@ -443,7 +445,7 @@ public class Constants {
 
         public static final double absoluteSensorRange = 0.5;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
-        public static final double encoderOffset = -0.42626953125; // -0.427979;
+        public static final double encoderOffset = 0.291015625 ; //0.490234375
 
         public static final double metersToRotations = 1 / (drumRadius * 2 * Math.PI);
         // approx 7.96
@@ -461,34 +463,37 @@ public class Constants {
 
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
-        public static final double stow = 0.424 + 0.1 * inch;
+        public static final double stow = 0.425;
         public static final double processor = 0;
-        public static final double L1 = stow + 3.5 * inch;
+        // public static final double L1 = stow + 3.5 * inch;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
+        public static final double L1 = L2 - 2.5 * inch;
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
-        public static final double net = 79 * inch; // 67 - short, // 72 - long
+        public static final double net = 9.31; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
-        public static final double prep = L3;
+        public static final double prep = (L2 + L3) / 2.0;
 
         public static final double forwardSoftLimit = 11.15;
         public static final double reverseSoftLimit = 0;
 
         public static final double unsafeRange = L2 + 2 * inch;
 
-        public static final double tolerance = forwardSoftLimit * 0.01; // 1% tolerance
+        public static final double tolerance = 0.06;
 
         public static final double k_maxCanCompensation = 2 * inch;
 
         public static final double manualUpSpeed = 0.2;
-        public static final double manualDownSpeed = -0.2;
+        public static final double manualDownSpeed = -0.4;
 
-        public static final double maxSpeedUp = 16; // 12
-        public static final double accelerationMultiplierUp = 3; // 3
+        public static final double maxSpeedUp = 32; // 16
+        public static final double maxAccelerationUp = 48; // 48
+        public static final double maxJerkUp = 480; // 480
 
         public static final double maxSpeedDown = 10; // 10
-        public static final double accelerationMultiplierDown = 3; // 3
+        public static final double maxAccelerationDown = 30; // 30
+        public static final double maxJerkDown = 300; // 300
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
                 .withMagnetSensor(new MagnetSensorConfigs()
@@ -502,10 +507,8 @@ public class Constants {
                         .withInverted(motorInverted))
 
                 .withFeedback(new FeedbackConfigs()
-                        .withFeedbackRemoteSensorID(IDConstants.elevatorEncoder)
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-                        .withRotorToSensorRatio(rotorToSensorRatio)
-                        .withSensorToMechanismRatio(sensorToMechanismRatio))
+                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                        .withSensorToMechanismRatio(gearRatio))
 
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withSupplyCurrentLimitEnable(true)
@@ -519,10 +522,10 @@ public class Constants {
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Elevator_Static)
-                        .withKP(5)
+                        .withKP(20)
                         .withKI(0)
                         .withKD(0)
-                        .withKS(0)
+                        .withKS(0.125)
                         .withKV(3.59 * (drumRadius * 2 * Math.PI))
                         .withKA(0.05 * (drumRadius * 2 * Math.PI))
                         .withKG(0.42))
@@ -539,8 +542,8 @@ public class Constants {
 
                 .withMotionMagic(new MotionMagicConfigs()
                         .withMotionMagicCruiseVelocity(maxSpeedUp)
-                        .withMotionMagicAcceleration(maxSpeedUp * accelerationMultiplierUp)
-                        .withMotionMagicJerk(maxSpeedUp * accelerationMultiplierUp * 10));
+                        .withMotionMagicAcceleration(maxAccelerationUp)
+                        .withMotionMagicJerk(maxJerkUp));
     }
 
     public static final class PivotConstants {
@@ -647,10 +650,10 @@ public class Constants {
         public static final double retractVoltage = -3.5;
         public static final double ejectVoltage = 5;
 
-        public static final double l1EjectVoltage = 3.0;
+        public static final double l1EjectVoltage = 2.5;
         public static final double l2EjectVoltage = 4.0; // 5.1
         public static final double l3EjectVoltage = 4.0; // 5.1
-        public static final double l4EjectVoltage = 6.2;
+        public static final double l4EjectVoltage = 5.5;
 
         public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
 
@@ -761,7 +764,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -7.0; // 1.5
+        public static final double ejectVoltage = -3.0; // 1.5
         public static final double processorEjectVoltage = -4;
 
         public static final double torqueCurrentThreshold = 75;
@@ -771,7 +774,7 @@ public class Constants {
         public static final double holdVoltage = 2.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
-        public static final double algaeEjectTime = 0.3;
+        public static final double algaeEjectTime = 0.6;
         public static final double reefPickupSafetyDistance = 1.75; 
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
@@ -965,7 +968,7 @@ public class Constants {
             new Translation2d(8.6 ,4.25 ),
             new Translation2d(11.7,4.25),
             new Translation2d(11.7,8),
-            new Translation2d(11.7,8)
+            new Translation2d(8.6,8)
 
         );
 
@@ -1003,7 +1006,7 @@ public class Constants {
 
     public static class FFConstants {
         public static final double k_bargeX = 8.774176;
-        public static final double k_radius = 1.40;
+        public static final double k_radius = 1.3;
         public static final double k_decceleration = 1.2;
     }
 }

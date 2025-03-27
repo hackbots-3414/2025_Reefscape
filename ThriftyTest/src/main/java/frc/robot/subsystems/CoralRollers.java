@@ -190,6 +190,10 @@ public class CoralRollers extends SubsystemBase {
         m_coralLeft.setVoltage(CoralConstants.fastEjectVoltage);
     }
 
+    public void slowScore() {
+        m_coralLeft.setVoltage(CoralConstants.l1EjectVoltage);
+    }
+
     public boolean presentPiece() {
         return getBackIR() || getCANrangeTriggered();
     }

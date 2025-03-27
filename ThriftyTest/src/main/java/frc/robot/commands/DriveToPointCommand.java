@@ -27,9 +27,9 @@ public class DriveToPointCommand extends Command {
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
     private final ProfiledPIDController xController = new ProfiledPIDController(
-            DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, DriveConstants.k_driveToPointConstraints);
+            DriveConstants.k_driveToPointTranslationPID.kP, 0, DriveConstants.k_driveToPointTranslationPID.kD, DriveConstants.k_driveToPointConstraints);
     private final ProfiledPIDController yController = new ProfiledPIDController(
-            DriveConstants.k_driveToPointTranslationPID.kP, 0, 0, DriveConstants.k_driveToPointConstraints);
+            DriveConstants.k_driveToPointTranslationPID.kP, 0, DriveConstants.k_driveToPointRotationPID.kD, DriveConstants.k_driveToPointConstraints);
 
     private static Rotation2d m_targetRotation;
 

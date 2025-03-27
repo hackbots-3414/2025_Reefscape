@@ -67,7 +67,7 @@ public class AlgaeIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        elevator.setStow();
+        elevator.release();
         pivot.setStow();
         rollers.smartStop();
     }

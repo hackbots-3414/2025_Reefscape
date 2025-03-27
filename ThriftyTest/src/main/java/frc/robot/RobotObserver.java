@@ -181,6 +181,6 @@ public class RobotObserver {
     }
 
     public static boolean getReefReady() {
-        return getInstance().m_reefReadySupplier.getAsBoolean();
+        return getInstance().m_reefReadySupplier.getAsBoolean() && getCoralPieceHeld();
     }
 }

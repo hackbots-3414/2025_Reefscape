@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +18,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -25,15 +26,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.ClimbLocations;
-import frc.robot.Constants.ButtonBindingConstants.PS5;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
+import frc.robot.Constants.ButtonBindingConstants.PS5;
+import frc.robot.Constants.ClimbLocations;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ReefClipLocations;
 import frc.robot.Constants.ScoringLocations;
@@ -55,6 +55,7 @@ import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.ElevatorToPointCommand;
+import frc.robot.commands.ElevatorZero;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
@@ -143,10 +144,19 @@ public class RobotContainer {
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
         SmartDashboard.putData("AlignLEFT " , new  AlignLeftCommand(m_drivetrain));
         SmartDashboard.putData("AlignRight", new AlignRightCommand(m_drivetrain));
+        SmartDashboard.putData("Zero Elevator", new ElevatorZero(m_elevator));
+        SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
     }
 
+    private double m_time;
+
     private void configureTesting() {
-        SmartDashboard.putData("elevator up", m_elevator.run(m_elevator::setL4).until(m_elevator::atSetpoint));
+        SmartDashboard.putData("elevator up", m_elevator.startEnd(() -> {
+            m_elevator.setNet();
+            m_time = System.currentTimeMillis();
+        }, () -> {
+            m_logger.info("Ended with {} s", (System.currentTimeMillis() - m_time) / 1e+3);
+        }).until(m_elevator::atSetpoint));
     }
 
     // ********** BINDINGS **********
@@ -192,10 +202,6 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        System.out.println(PS5.groundAlgae);
-        System.out.println(PS5.lowAlgae);
-        System.out.println(PS5.highAlgae);
-        System.out.println(PS5.groundAlgae);
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
@@ -221,19 +227,18 @@ public class RobotContainer {
         bindAlgaeScoreCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(PS5.processor).and(algaeOn));
         bindAlgaeScoreCommand(AlgaeLocationPresets.NET, controller.pov(PS5.net).and(algaeOn));
 
-        bindClimbSetupCommand(controller.button(PS5.climbReady));
+        controller.button(PS5.climbReady).whileTrue(new ClimbReadyCommand(m_climber));
         controller.button(PS5.climb).whileTrue(new ClimberCommand(m_climber));
 
         controller.button(PS5.stow).onTrue(new StowCommand(m_elevator, m_algaePivot));
 
-        // very bad
-        controller.button(11).and(controller.button(12)).whileTrue(new ClimbReadyCommand(m_climber));
+        bindFunnelOpenCommand(controller.button(11).and(controller.button(12)));
     }
 
     private void bindCoralCommands(int level, Trigger trigger) {
         if (level == 1) {
             // L1 is special, but not in a good way
-            trigger.whileTrue(elevatorPrepCommand(1));
+            trigger.whileTrue(elevatorPrepCommand(1).andThen(m_elevator.run(m_elevator::setL1)).onlyIf(m_coralRollers::holdingPiece));
             trigger.onFalse(new CoralL1Command(m_coralRollers, m_elevator));
         } else {
             trigger.whileTrue(coralPrepAndScoreCommand(level));
@@ -258,18 +263,20 @@ public class RobotContainer {
         NamedCommands.registerCommand("L4", coralScoreCommand(4));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));
         NamedCommands.registerCommand("Intake", coralIntakeCommand());
-        NamedCommands.registerCommand("Intake wait", new WaitUntilCommand(m_coralRollers::intakeReady));
+        NamedCommands.registerCommand("Intake Wait", new WaitUntilCommand(m_coralRollers::intakeReady)
+            .alongWith(m_drivetrain.runOnce(m_drivetrain::stop)));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
             NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true)
-                .alongWith(elevatorPrepCommand())
-                .withTimeout(9.0));
+                .deadlineFor(elevatorPrepCommand(4))
+                .withTimeout(5.0));
         }
         NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
             .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
             .until(m_algaeRollers::algaeHeld));
+        NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop));
     }
 
     private void configureVision() {
@@ -319,7 +326,10 @@ public class RobotContainer {
 
     private void bindAlgaeScoreCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
-            case NET -> trigger.whileTrue(algaeScoreCommand(type));
+            case NET -> {
+                trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
+                trigger.onFalse(algaeScoreCommand(type).onlyIf(m_algaeRollers::algaeHeld).onlyIf(m_elevator::atSetpoint));
+            }
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
                 trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, m_elevator)
@@ -333,11 +343,8 @@ public class RobotContainer {
         }
     }
 
-    private void bindClimbSetupCommand(Trigger trigger) {
-        trigger.whileTrue(new SequentialCommandGroup(
-            new OpenFunnel(m_climber),
-            new ClimbReadyCommand(m_climber)
-        ));
+    private void bindFunnelOpenCommand(Trigger trigger) {
+        trigger.whileTrue(new OpenFunnel(m_climber));
     }
 
     // ** SUBSYSTEM PASS IN HELPERS **
@@ -350,11 +357,6 @@ public class RobotContainer {
         return new ElevatorToPointCommand(level, m_elevator)
             .andThen(new WaitUntilCommand(m_drivetrain::isAligned))
             .andThen(coralScoreCommand(level))
-            .onlyIf(m_coralRollers::holdingPiece);
-    }
-
-    private Command elevatorPrepCommand() {
-        return m_elevator.run(m_elevator::setPrep)
             .onlyIf(m_coralRollers::holdingPiece);
     }
 
@@ -387,12 +389,13 @@ public class RobotContainer {
     }
 
     public void resetReferences() {
-        m_elevator.setPosition(m_elevator.getPosition());
+        // m_elevator.setPosition(m_elevator.getPosition());
         m_algaePivot.setStow();
     }
 
     public void startElevator() {
         m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
+        m_elevator.release();
     }
 
     public boolean getFFEnabled() {

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -56,26 +57,29 @@ public class Elevator extends SubsystemBase {
     private MechanismRoot2d m_mechRoot;
     private MechanismLigament2d m_elevatorArm;
 
+    private boolean m_taken;
+
     private double m_speed;
     private boolean m_speedChanged;
 
     public Elevator() {
-        configEncoder();
+        // configEncoder();
         configMotor();
         configSim();
-        SmartDashboard.putData("Zero Elevator", new InstantCommand(this::zeroElevator).ignoringDisable(true));
+        m_taken = false;
     }
 
-    private void configEncoder() {
-        m_cancoder.clearStickyFaults();
-        m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
-    }
+    // private void configEncoder() {
+    //     m_cancoder.clearStickyFaults();
+    //     m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
+    // }
 
     private void configMotor() {
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
         Follower follower = new Follower(IDConstants.elevatorRight, ElevatorConstants.invertLeftMotorFollower);
         m_elevatorLeft.setControl(follower);
+        m_elevatorRight.setPosition(0);
     }
 
     private void configSim() {
@@ -100,29 +104,29 @@ public class Elevator extends SubsystemBase {
     }
 
     // private final MotionMagicVoltage control = new MotionMagicVoltage(0);
-    private final DynamicMotionMagicTorqueCurrentFOC control = new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0, 0);
+    private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0,0,0,0);
 
     public void setPosition(double goal) {
-        if (RobotObserver.getNoElevatorZone()) {
-            m_elevatorRight.stopMotor();
+        m_taken = true;
+        if (RobotObserver.getNoElevatorZone() && (m_position > ElevatorConstants.unsafeRange || goal > ElevatorConstants.unsafeRange)) {
             return;
         }
         // floor values for the goal between our two extrema for their positions
         goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
         goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
-        if (goal >= getPosition()) {
+        if (goal >= getPosition() || true) {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
                 .withVelocity(ElevatorConstants.maxSpeedUp)
-                .withAcceleration(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedUp * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withAcceleration(ElevatorConstants.maxAccelerationUp)
+                .withJerk(ElevatorConstants.maxJerkUp)
                 .withSlot(0));
         } else {
             m_elevatorRight.setControl(control
                 .withPosition(goal)
                 .withVelocity(ElevatorConstants.maxSpeedDown)
-                .withAcceleration(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp)
-                .withJerk(ElevatorConstants.maxSpeedDown * ElevatorConstants.accelerationMultiplierUp * 10)
+                .withAcceleration(ElevatorConstants.maxAccelerationDown)
+                .withJerk(ElevatorConstants.maxJerkDown)
                 .withSlot(1));
         }
 
@@ -207,6 +211,7 @@ public class Elevator extends SubsystemBase {
             case 2 -> setL2();
             case 3 -> setL3();
             case 4 -> setL4();
+            case 5 -> setNet();
             case 0 -> setStow();
             default -> setStow();
         }
@@ -244,10 +249,17 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    private void zeroElevator() {
+    public void zeroElevator() {
         m_elevatorRight.setPosition(0.0, 0.2);
-        m_elevatorLeft.setPosition(0.0, 0.2);
-        m_logger.info("Cancoder Error: {}", m_cancoder.setPosition(0.0, 0.2));
+    }
+
+    public boolean atZero() {
+        return m_elevatorRight.getSupplyCurrent().getValueAsDouble() >= ElevatorConstants.k_zeroCurrentThreshold;
+    }
+
+    public void goDownNoStopping() {
+        m_elevatorRight.setPosition(1);
+        m_elevatorRight.set(ElevatorConstants.manualDownSpeed);
     }
 
     @Override
@@ -292,5 +304,13 @@ public class Elevator extends SubsystemBase {
 
     public boolean elevatorUp() {
         return getPosition() > ElevatorConstants.unsafeRange;
+    }
+
+    public void release() {
+        m_taken = false;
+    }
+
+    public boolean taken() {
+        return m_taken;
     }
 }
