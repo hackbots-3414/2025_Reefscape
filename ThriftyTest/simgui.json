@@ -168,6 +168,26 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Module 0": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 2": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 3": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
         "Blue Alliance Left Intake": {
           "arrows": false,
@@ -527,10 +547,13 @@
     }
   },
   "NetworkTables": {
-    "Retained Values": {
-      "open": false
-    },
     "transitory": {
+      "DriveState": {
+        "ChassisSpeeds##v_/DriveState/Speeds": {
+          "open": true
+        },
+        "open": true
+      },
       "SmartDashboard": {
         "open": true
       }
