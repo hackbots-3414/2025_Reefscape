@@ -9,10 +9,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -249,7 +251,13 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    public void prepZero() {
+        m_elevatorRight.getConfigurator().apply(new SoftwareLimitSwitchConfigs());
+        m_elevatorRight.setControl(new DutyCycleOut(ElevatorConstants.manualDownSpeed).withLimitReverseMotion(false).withIgnoreHardwareLimits(true));
+    }
+
     public void zeroElevator() {
+        m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig.SoftwareLimitSwitch);
         m_elevatorRight.setPosition(0.0, 0.2);
     }
 

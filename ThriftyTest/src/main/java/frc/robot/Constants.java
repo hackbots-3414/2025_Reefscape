@@ -243,6 +243,8 @@ public class Constants {
             public static final int stow = Button.kPS.value;
 
             public static final int intake = Button.kL1.value; // LB
+
+            public static final int zeroElevator = 15; // old safety mode button (little bar below PS button)
         }
     
         public static class ButtonBoardKeyboard {
@@ -419,7 +421,7 @@ public class Constants {
         public static final boolean invertLeftMotorFollower = true;
 
         public static final double supplyCurrentLimit = 100;
-        public static final double k_zeroCurrentThreshold = 5;
+        public static final double k_zeroCurrentThreshold = 12;
 
         public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
@@ -485,7 +487,7 @@ public class Constants {
         public static final double k_maxCanCompensation = 2 * inch;
 
         public static final double manualUpSpeed = 0.2;
-        public static final double manualDownSpeed = -0.4;
+        public static final double manualDownSpeed = -0.3;
 
         public static final double maxSpeedUp = 32; // 16
         public static final double maxAccelerationUp = 48; // 48
@@ -518,7 +520,7 @@ public class Constants {
                         .withForwardSoftLimitThreshold(forwardSoftLimit)
                         .withForwardSoftLimitEnable(true)
                         .withReverseSoftLimitThreshold(reverseSoftLimit)
-                        .withReverseSoftLimitEnable(true))
+                        .withReverseSoftLimitEnable(false))
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Elevator_Static)

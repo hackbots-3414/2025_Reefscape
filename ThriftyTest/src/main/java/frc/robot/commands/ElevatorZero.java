@@ -17,17 +17,16 @@ public class ElevatorZero extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_elevator.goDownNoStopping();
+    m_elevator.prepZero();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_elevator.zeroElevator();
-    m_elevator.stop();
+    m_elevator.release();
   }
 
   // Returns true when the command should end.

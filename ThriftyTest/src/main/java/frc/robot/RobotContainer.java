@@ -233,6 +233,12 @@ public class RobotContainer {
         controller.button(PS5.stow).onTrue(new StowCommand(m_elevator, m_algaePivot));
 
         bindFunnelOpenCommand(controller.button(11).and(controller.button(12)));
+
+        bindElevatorZeroCommand(controller.button(PS5.zeroElevator));
+    }
+
+    private void bindElevatorZeroCommand(Trigger trigger) {
+        trigger.whileTrue(new ElevatorZero(m_elevator));
     }
 
     private void bindCoralCommands(int level, Trigger trigger) {
@@ -399,6 +405,6 @@ public class RobotContainer {
     }
 
     public boolean getFFEnabled() {
-        return m_elevator.elevatorUp() || m_algaeRollers.algaeHeld();
+        return m_elevator.elevatorUp();
     }
 }

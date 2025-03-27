@@ -40,7 +40,7 @@ public class LedFeedback extends SubsystemBase {
     private boolean climbed = false;
     private boolean algaeOnBoard = false;
     private boolean algaeInRange = false;
-    private boolean bargeTooClose = false;
+    private boolean noElevatorZoneActive = false;
     private boolean inAuton = false;
     private boolean inTeleop = false;
     private double rangeLeft = 0.0;
@@ -56,7 +56,7 @@ public class LedFeedback extends SubsystemBase {
     };
 
     private static enum LED_COLOR {
-        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE, BLUE_VIOLET, DEEP_PINK;
+        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE, BLUE_VIOLET, DEEP_PINK, GOLD;
     };
 
     private static enum LED_PATTERN {
@@ -106,7 +106,7 @@ public class LedFeedback extends SubsystemBase {
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
         algaeInRange = CommandBounds.netBounds.isActive();
-        bargeTooClose = RobotObserver.getNoElevatorZone();
+        noElevatorZoneActive = RobotObserver.getNoElevatorZone();
         climbed = RobotObserver.getClimbed();
 
         if (badController()) {
@@ -185,10 +185,10 @@ public class LedFeedback extends SubsystemBase {
 
                 }   
                 // Check if Algae is On Board and Too Close to Net
-            } else if (algaeOnBoard && bargeTooClose) {
+            } else if (noElevatorZoneActive) {
                 if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
                     mode = LED_MODE.ALGAE_TOO_CLOSE;
-                    setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
+                    setAll(LED_COLOR.GOLD, LED_PATTERN.STROBE);
 
                 }
                 // Check if Algae is On Board and In range to Net
@@ -325,7 +325,7 @@ public class LedFeedback extends SubsystemBase {
             case YELLOW -> c = Color.kYellow;
             case PURPLE -> c = Color.kPurple;
             case WHITE -> c = Color.kWhite;
-            case BROWN -> c = Color.kBrown;
+            case GOLD -> c = Color.kGold;
             case ORANGE -> c = Color.kOrange;
             case DEEP_PINK -> c = Color.kDeepPink;
             case OFF -> c = Color.kBlack;
