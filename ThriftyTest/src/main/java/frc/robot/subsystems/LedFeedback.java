@@ -56,7 +56,7 @@ public class LedFeedback extends SubsystemBase {
     };
 
     private static enum LED_COLOR {
-        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE, BLUE_VIOLET, DEEP_PINK, GOLD;
+        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE, BLUE_VIOLET, DEEP_PINK, SKYBLUE;
     };
 
     private static enum LED_PATTERN {
@@ -188,7 +188,7 @@ public class LedFeedback extends SubsystemBase {
             } else if (noElevatorZoneActive) {
                 if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
                     mode = LED_MODE.ALGAE_TOO_CLOSE;
-                    setAll(LED_COLOR.GOLD, LED_PATTERN.STROBE);
+                    setAll(LED_COLOR.SKYBLUE, LED_PATTERN.STROBE);
 
                 }
                 // Check if Algae is On Board and In range to Net
@@ -325,7 +325,7 @@ public class LedFeedback extends SubsystemBase {
             case YELLOW -> c = Color.kYellow;
             case PURPLE -> c = Color.kPurple;
             case WHITE -> c = Color.kWhite;
-            case GOLD -> c = Color.kGold;
+            case SKYBLUE -> c = Color.kRoyalBlue;
             case ORANGE -> c = Color.kOrange;
             case DEEP_PINK -> c = Color.kDeepPink;
             case OFF -> c = Color.kBlack;

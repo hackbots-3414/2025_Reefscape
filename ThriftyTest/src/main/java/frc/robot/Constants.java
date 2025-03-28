@@ -381,7 +381,7 @@ public class Constants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
-        public static final double k_reefReady = 1.5;
+        public static final double k_reefReady = 2.1;
     }
 
     public static final class StateSpaceConstants {
@@ -471,7 +471,7 @@ public class Constants {
         public static final double L1 = L2 - 2.5 * inch;
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
-        public static final double net = 9.31 + 2 * inch; // 67 - short, // 72 - long
+        public static final double net = 9.31 + 4 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
         public static final double prep = L3;
