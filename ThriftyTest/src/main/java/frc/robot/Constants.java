@@ -200,7 +200,6 @@ public class Constants {
         public static final int driverPort = 0;
         public static final int buttonBoardPort = 1;
 
-
         public static class DragonReins {
             public static final int xAxis = 1;
             public static final int yAxis = 0;
@@ -421,7 +420,7 @@ public class Constants {
         public static final boolean invertLeftMotorFollower = true;
 
         public static final double supplyCurrentLimit = 100;
-        public static final double k_zeroCurrentThreshold = 12;
+        public static final double k_zeroCurrentThreshold = 23.5;
 
         public static final double rotorToSensorRatio = 5.2;
         public static final double sensorToMechanismRatio = 1;
@@ -472,10 +471,10 @@ public class Constants {
         public static final double L1 = L2 - 2.5 * inch;
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
-        public static final double net = 9.31; // 67 - short, // 72 - long
+        public static final double net = 9.31 + 2 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
-        public static final double prep = (L2 + L3) / 2.0;
+        public static final double prep = L3;
 
         public static final double forwardSoftLimit = 11.15;
         public static final double reverseSoftLimit = 0;
@@ -648,7 +647,7 @@ public class Constants {
     }
 
     public static class CoralConstants {
-        public static final double intakeVoltage = 2.71;
+        public static final double intakeVoltage = 2.4;
         public static final double retractVoltage = -3.5;
         public static final double ejectVoltage = 5;
 
@@ -767,7 +766,7 @@ public class Constants {
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
         public static final double ejectVoltage = -3.0; // 1.5
-        public static final double processorEjectVoltage = -4;
+        public static final double processorEjectVoltage = -3.2;
 
         public static final double torqueCurrentThreshold = 75;
 

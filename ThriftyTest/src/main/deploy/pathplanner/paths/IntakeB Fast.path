@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.791,
-        "y": 3.861
+        "x": 1.4624999999999997,
+        "y": 0.7703381147540983
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.849210632760425,
-        "y": 4.1063086960028095
+        "x": 2.2067765949550386,
+        "y": 2.3523953446953265
       },
       "isLocked": false,
-      "linkedName": "G"
+      "linkedName": "RightIntake"
     },
     {
       "anchor": {
-        "x": 5.791,
-        "y": 4.046021773726852
+        "x": 2.9369877049180326,
+        "y": 3.6953381147540982
       },
       "prevControl": {
-        "x": 5.7556715282884925,
-        "y": 3.746950403460353
+        "x": 2.5268701190274485,
+        "y": 2.7496275721645556
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AlgaeGH"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 7.0,
-    "maxAcceleration": 6.0,
+    "maxVelocity": 9.0,
+    "maxAcceleration": 11.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 2852.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 180.0
+    "velocity": 0.0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Processor",
+  "folder": "IntakeX",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 55.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

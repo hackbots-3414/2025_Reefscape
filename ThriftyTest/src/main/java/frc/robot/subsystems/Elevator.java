@@ -156,6 +156,10 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.processor);
     }
 
+    public void setZero() {
+        setPosition(0);
+    }
+
     public void setL1() {
         setPosition(ElevatorConstants.L1 + m_compensation);
     }
@@ -253,12 +257,17 @@ public class Elevator extends SubsystemBase {
 
     public void prepZero() {
         m_elevatorRight.getConfigurator().apply(new SoftwareLimitSwitchConfigs());
-        m_elevatorRight.setControl(new DutyCycleOut(ElevatorConstants.manualDownSpeed).withLimitReverseMotion(false).withIgnoreHardwareLimits(true));
+        m_elevatorRight.setControl(new DutyCycleOut(ElevatorConstants.manualDownSpeed)
+                .withLimitReverseMotion(false)
+                .withIgnoreHardwareLimits(true));
     }
 
     public void zeroElevator() {
-        m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig.SoftwareLimitSwitch);
         m_elevatorRight.setPosition(0.0, 0.2);
+    }
+
+    public void enableLimits() {
+        m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig.SoftwareLimitSwitch);
     }
 
     public boolean atZero() {
@@ -278,6 +287,7 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("Elevator setpoint", m_reference);
         SmartDashboard.putNumber("Elevator position", m_position);
         SmartDashboard.putBoolean("Elevator up", elevatorUp());
+        SmartDashboard.putNumber("Elevator Current", m_elevatorRight.getSupplyCurrent().getValueAsDouble());
 
         if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));

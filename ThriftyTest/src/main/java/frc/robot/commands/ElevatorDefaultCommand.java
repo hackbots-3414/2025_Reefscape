@@ -17,7 +17,7 @@ public class ElevatorDefaultCommand extends Command {
 
     @Override
     public void execute() {
-        if (m_elevator.taken() || DriverStation.isAutonomous()) return;
+        if (m_elevator.taken()) return;
         if (RobotObserver.getReefReady()) {
             m_elevator.setPrep();
         } else {

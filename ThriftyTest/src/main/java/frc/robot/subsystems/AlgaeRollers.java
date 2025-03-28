@@ -93,6 +93,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Algae Temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
         updateObjectState();
         if (m_voltageChanged) {
             m_algaeRoller.setVoltage(m_voltage);

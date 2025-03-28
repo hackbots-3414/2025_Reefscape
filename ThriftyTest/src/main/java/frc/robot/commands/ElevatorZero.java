@@ -5,33 +5,43 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.Elevator;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorZero extends Command {
+  private boolean applied;
+
   private final Elevator m_elevator;
   /** Creates a new ElevatorZero. */
   public ElevatorZero(Elevator elevator) {
     m_elevator = elevator;
     addRequirements(elevator);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   @Override
   public void initialize() {
-    m_elevator.prepZero();
+    applied = false;
+    m_elevator.setStow();
   }
 
-  // Called once the command ends or is interrupted.
+  @Override
+  public void execute() {
+    if (m_elevator.atSetpoint() && !RobotObserver.getCoralPieceHeld()) {
+      applied = true;
+      m_elevator.prepZero();
+    } 
+  }
+
   @Override
   public void end(boolean interrupted) {
-    m_elevator.zeroElevator();
+    if (!interrupted && !RobotObserver.getCoralPieceHeld()) m_elevator.zeroElevator();
+    m_elevator.enableLimits();
     m_elevator.release();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevator.atZero();
+    return m_elevator.atZero() && applied || RobotObserver.getCoralPieceHeld();
   }
 }

@@ -245,11 +245,15 @@ public class RobotContainer {
         if (level == 1) {
             // L1 is special, but not in a good way
             trigger.whileTrue(elevatorPrepCommand(1).andThen(m_elevator.run(m_elevator::setL1)).onlyIf(m_coralRollers::holdingPiece));
-            trigger.onFalse(new CoralL1Command(m_coralRollers, m_elevator));
+            trigger.onFalse(new CoralL1Command(m_coralRollers, m_elevator).andThen(zero()));
         } else {
             trigger.whileTrue(coralPrepAndScoreCommand(level));
-            trigger.onFalse(coralScoreCommand(level));
+            trigger.onFalse(coralScoreCommand(level).andThen(zero()));
         }
+    }
+
+    private Command zero() {
+        return new ElevatorZero(m_elevator);
     }
 
     // ********** AUTONOMOUS **********
@@ -268,7 +272,7 @@ public class RobotContainer {
     private void configureNamedCommands() {
         NamedCommands.registerCommand("L4", coralScoreCommand(4));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));
-        NamedCommands.registerCommand("Intake", coralIntakeCommand());
+        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow).until(m_elevator::atSetpoint).andThen(new ElevatorZero(m_elevator)).andThen(coralIntakeCommand()));
         NamedCommands.registerCommand("Intake Wait", new WaitUntilCommand(m_coralRollers::intakeReady)
             .alongWith(m_drivetrain.runOnce(m_drivetrain::stop)));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
@@ -311,6 +315,7 @@ public class RobotContainer {
         m_algaeRollers = new AlgaeRollers();
         m_coralRollers = new CoralRollers();
         m_ledFeedback = new LedFeedback(m_drivetrain);
+        m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
     }
 
     // ** BUTTON BOARD HELPERS **
@@ -327,23 +332,24 @@ public class RobotContainer {
     }
 
     private void bindAlgaeIntakeCommand(AlgaeLocationPresets location, Trigger trigger) {
-        trigger.whileTrue(algaeIntakeCommand(location));
+        trigger.whileTrue(algaeIntakeCommand(location).andThen(zero()));
     }
 
     private void bindAlgaeScoreCommand(AlgaeLocationPresets type, Trigger trigger) {
         switch (type) {
             case NET -> {
                 trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
-                trigger.onFalse(algaeScoreCommand(type).onlyIf(m_algaeRollers::algaeHeld).onlyIf(m_elevator::atSetpoint));
+                trigger.onFalse(algaeScoreCommand(type).onlyIf(m_algaeRollers::algaeHeld).onlyIf(m_elevator::atSetpoint).andThen(zero()));
             }
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
                 trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, m_elevator)
                     .andThen(new WaitCommand(2)
-                    .andThen(new InstantCommand(() -> {
-                        m_algaeRollers.stopMotor();
-                        m_algaePivot.setStow();
-                    }, m_algaePivot, m_algaeRollers))));
+                        .andThen(new InstantCommand(() -> {
+                            m_algaeRollers.stopMotor();
+                            m_algaePivot.setStow();
+                        }, m_algaePivot, m_algaeRollers)))
+                    .andThen(zero()));
             }
             default -> {}
         }
@@ -397,11 +403,6 @@ public class RobotContainer {
     public void resetReferences() {
         // m_elevator.setPosition(m_elevator.getPosition());
         m_algaePivot.setStow();
-    }
-
-    public void startElevator() {
-        m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
-        m_elevator.release();
     }
 
     public boolean getFFEnabled() {
