@@ -64,7 +64,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
-import frc.robot.generated.TunerConstants;
+import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.utils.Shape;
 
 /*
@@ -144,7 +144,7 @@ public class Constants {
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
-        public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double k_maxTeleopLinearSpeed = TestBotTunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
         public static final double k_driveToPointSpeed = 4.0;
@@ -160,7 +160,7 @@ public class Constants {
         public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
         public static final AngularAcceleration k_maxAlignAngularAcceleration = RotationsPerSecondPerSecond.of(1);
 
-        public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond) / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
+        public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond) / (TestBotTunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot speed
 
         public static final double k_elevatorHeightLinearVelocityGain = -0.357; // for every 1 rotation elevator up, subtract X: 1 mps at max elevator
         public static final double k_elevatorHeightLinearAccelerationGain = k_elevatorHeightLinearVelocityGain * 2;

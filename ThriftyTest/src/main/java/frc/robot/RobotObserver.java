@@ -73,7 +73,8 @@ public class RobotObserver {
     }
 
     public static double getElevatorHeightSupplier() {
-        return getInstance().m_elevatorHeightSupplier.get();
+        // return getInstance().m_elevatorHeightSupplier.get();
+        return 0.0;
     }
 
     private boolean m_reefMode = false;
@@ -108,11 +109,13 @@ public class RobotObserver {
     }
 
     public static boolean getCoralPieceHeld() {
-        return getInstance().m_coralPieceHeldSupplier.getAsBoolean();
+        // return getInstance().m_coralPieceHeldSupplier.getAsBoolean();
+        return false;
     }
 
     public static boolean getAlgaePieceHeld() {
-        return getInstance().m_algaeHeldSupplier.getAsBoolean();
+        // return getInstance().m_algaeHeldSupplier.getAsBoolean();
+        return false;
     }
 
     private boolean m_climbed = false;
@@ -122,7 +125,8 @@ public class RobotObserver {
     }
 
     public static boolean getClimbed() {
-        return getInstance().m_climbed;
+        // return getInstance().m_climbed;
+        return false;
     }
 
     private DoubleSupplier m_rangeDistanceSupplier;
@@ -171,7 +175,8 @@ public class RobotObserver {
     }
 
     public static boolean getNoElevatorZone() {
-        return getInstance().m_noElevatorSup.getAsBoolean();
+        // return getInstance().m_noElevatorSup.getAsBoolean();
+        return false;
     }
 
     private BooleanSupplier m_reefReadySupplier;
@@ -181,6 +186,7 @@ public class RobotObserver {
     }
 
     public static boolean getReefReady() {
-        return getInstance().m_reefReadySupplier.getAsBoolean() && getCoralPieceHeld();
+        return false;
+        // return getInstance().m_reefReadySupplier.getAsBoolean() && getCoralPieceHeld();
     }
 }

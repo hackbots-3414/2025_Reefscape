@@ -48,7 +48,7 @@ import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
-import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.utils.AutonomousUtil;
 import frc.robot.utils.FieldUtils;
 import frc.robot.vision.TimestampedPoseEstimate;
@@ -57,7 +57,7 @@ import frc.robot.vision.TimestampedPoseEstimate;
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
  */
-public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+public class CommandSwerveDrivetrain extends TestBotTunerConstants.TunerSwerveDrivetrain implements Subsystem {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
 

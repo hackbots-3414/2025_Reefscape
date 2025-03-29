@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.PS5;
@@ -61,6 +62,7 @@ import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
 import frc.robot.commands.StowCommand;
 import frc.robot.commands.TeleopCommand;
+import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
@@ -77,25 +79,44 @@ public class RobotContainer {
 
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain m_drivetrain = TestBotTunerConstants.createDrivetrain();
 
     private final VisionHandler m_vision = new VisionHandler(m_drivetrain);
 
     private final PowerDistribution pdp = new PowerDistribution(1, ModuleType.kRev);
 
     public RobotContainer() {
-        configureSubsystems();
-        generateScoringLocations();
-        configureNamedCommands();
+        // configureSubsystems();
+        // generateScoringLocations();
+        // configureNamedCommands();
         configureDriverBindings();
-        configureOperatorBindings();
-        configureAutonChooser();
+        // configureOperatorBindings();
+        // configureAutonChooser();
         configureVision();
-        //addBoundsToField();
+        // //addBoundsToField();
         configureTesting();
-        configureDashboard();
-        confiureSimulation();
-        RobotObserver.setFFEnabledSupplier(this::getFFEnabled);
+        // configureDashboard();
+        // confiureSimulation();
+        // RobotObserver.setFFEnabledSupplier(this::getFFEnabled);
+        // configureSysId();
+    }
+    
+    private void configureSysId() {
+        SmartDashboard.putData("a", m_drivetrain.sysIdDynamicSteer(Direction.kForward));
+        SmartDashboard.putData("b", m_drivetrain.sysIdDynamicSteer(Direction.kReverse));
+        SmartDashboard.putData("c", m_drivetrain.sysIdQuasistaticSteer(Direction.kForward));
+        SmartDashboard.putData("d", m_drivetrain.sysIdQuasistaticSteer(Direction.kReverse));
+
+        SmartDashboard.putData("e", m_drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        SmartDashboard.putData("f", m_drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        SmartDashboard.putData("g", m_drivetrain.sysIdQuasistaticTranslation(Direction.kForward));
+        SmartDashboard.putData("h", m_drivetrain.sysIdQuasistaticTranslation(Direction.kReverse));
+
+        SmartDashboard.putData("i", m_drivetrain.sysIdDynamicRotation(Direction.kForward));
+        SmartDashboard.putData("j", m_drivetrain.sysIdDynamicRotation(Direction.kReverse));
+        SmartDashboard.putData("k", m_drivetrain.sysIdQuasistaticRotation(Direction.kForward));
+        SmartDashboard.putData("l", m_drivetrain.sysIdQuasistaticRotation(Direction.kReverse));
+
     }
 
     public List<Pose2d> scoringLocationsListLeft;
@@ -151,53 +172,46 @@ public class RobotContainer {
     private double m_time;
 
     private void configureTesting() {
-        SmartDashboard.putData("elevator up", m_elevator.startEnd(() -> {
-            m_elevator.setNet();
-            m_time = System.currentTimeMillis();
-        }, () -> {
-            m_logger.info("Ended with {} s", (System.currentTimeMillis() - m_time) / 1e+3);
-        }).until(m_elevator::atSetpoint));
+        // SmartDashboard.putData("elevator up", m_elevator.startEnd(() -> {
+        //     m_elevator.setNet();
+        //     m_time = System.currentTimeMillis();
+        // }, () -> {
+        //     m_logger.info("Ended with {} s", (System.currentTimeMillis() - m_time) / 1e+3);
+        // }).until(m_elevator::atSetpoint));
+
+        SmartDashboard.putData("drive to center", new DriveToPointCommand(new Pose2d(), m_drivetrain));
     }
 
     // ********** BINDINGS **********
 
     private void configureDriverBindings() {
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
-        // controller.setRumble(RumbleType.kRightRumble, 1.0);
-
-        int xAxis;
-        int yAxis;
-        int rAxis; // rotation
-        int resetHeading;
 
         double flipX;
         double flipY;
         double flipR;
 
-        xAxis = DragonReins.xAxis;
-        yAxis = DragonReins.yAxis;
-        rAxis = DragonReins.rotAxis;
-
-        resetHeading = DragonReins.resetHeading;
-
         flipX = DragonReins.flipX ? -1.0 : 1.0;
         flipY = DragonReins.flipY ? -1.0 : 1.0;
         flipR = DragonReins.flipRot ? -1.0 : 1.0;
 
-        Supplier<Double> xSup = () -> controller.getRawAxis(xAxis) * flipX;
-        Supplier<Double> ySup = () -> controller.getRawAxis(yAxis) * flipY;
-        Supplier<Double> rSup = () -> controller.getRawAxis(rAxis) * flipR;
+        Supplier<Double> xSup = () -> controller.getRawAxis(DragonReins.xAxis) * flipX;
+        Supplier<Double> ySup = () -> controller.getRawAxis(DragonReins.yAxis) * flipY;
+        Supplier<Double> rSup = () -> controller.getRawAxis(DragonReins.rotAxis) * flipR;
 
         m_drivetrain.setDefaultCommand(
             new TeleopCommand(m_drivetrain, xSup, ySup, rSup)
         );
 
-        controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
-        controller.button(resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
+        controller.button(DragonReins.resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
+        controller.button(DragonReins.resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
 
-        controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
-            .or(controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
-            .or(controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
+        // FIXME: testing purposes only, please remove later
+        bindAlignCommand(ReefClipLocations.LEFT, controller.button(2));
+
+        controller.axisMagnitudeGreaterThan(DragonReins.xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
+            .or(controller.axisMagnitudeGreaterThan(DragonReins.yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
+            .or(controller.axisMagnitudeGreaterThan(DragonReins.rotAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
             .onTrue(new InstantCommand(() -> AutonomousUtil.clearQueue()));
     }
 
@@ -402,7 +416,7 @@ public class RobotContainer {
 
     public void resetReferences() {
         // m_elevator.setPosition(m_elevator.getPosition());
-        m_algaePivot.setStow();
+        // m_algaePivot.setStow();
     }
 
     public boolean getFFEnabled() {

@@ -63,13 +63,14 @@ public class TeleopCommand extends Command {
         }
         Transform2d fieldRelative = getFieldRelative(robotRelative);
         // avoid obstacles using drive assist
-        Translation2d filtered = m_assist.calculate(
-            fieldRelative.getTranslation(),
-            m_drivetrain.getPose(),
-            m_drivetrain.getNearestAntitarget()
-        );
-        Transform2d out = new Transform2d(filtered, fieldRelative.getRotation());
-        applyVelocities(out);
+        // Translation2d filtered = m_assist.calculate(
+        //     fieldRelative.getTranslation(),
+        //     m_drivetrain.getPose(),
+        //     m_drivetrain.getNearestAntitarget()
+        // );
+        // Transform2d out = new Transform2d(filtered, fieldRelative.getRotation());
+        // applyVelocities(out);
+        applyVelocities(fieldRelative);
     }
 
     /**
