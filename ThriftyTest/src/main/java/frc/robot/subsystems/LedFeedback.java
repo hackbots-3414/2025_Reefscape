@@ -28,6 +28,7 @@ import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
 import frc.robot.RobotObserver;
+import edu.wpi.first.wpilibj.RobotController;
 
 public class LedFeedback extends SubsystemBase {
     @SuppressWarnings("unused")
@@ -43,8 +44,10 @@ public class LedFeedback extends SubsystemBase {
     private boolean bargeTooClose = false;
     private boolean inAuton = false;
     private boolean inTeleop = false;
+    private double batteryVoltage = 0.0;
     private double rangeLeft = 0.0;
     private double rangeRight = 0.0;
+
     private CommandSwerveDrivetrain drivetrain;
 
     private int selectedSlot = 0;
@@ -52,7 +55,7 @@ public class LedFeedback extends SubsystemBase {
     private static enum LED_MODE {
         CORAL_ON_BOARD, CORAL_READY, END_GAME_WARNING, END_GAME_ALERT, DEFAULT,
         BADCONTROLLER, IN_RANGE, CLIMBED, ALGAE_ON_BOARD, DEFAULT_ENDGAME, ALGAE_READY, ALGAE_TOO_CLOSE, ALIGNED, CLOSE,
-        ALIGNED_REEF, ALIGNED_BRANCH, ALIGNED_RIGHT, ALIGNED_LEFT;
+        ALIGNED_REEF, ALIGNED_BRANCH, ALIGNED_RIGHT, ALIGNED_LEFT, BAD_BATTERY;
     };
 
     private static enum LED_COLOR {
@@ -80,7 +83,6 @@ public class LedFeedback extends SubsystemBase {
         ledcontroller2.configAllSettings(config, 20);
         this.drivetrain = m_drivetrain;
 
-
         // SmartDashboard.putBoolean("AlignedRight", alignedRight());
         // SmartDashboard.putBoolean("AlignedLeft", alignedLeft());
         // SmartDashboard.putBoolean("coralOnBoard", coralOnBoard);
@@ -95,13 +97,14 @@ public class LedFeedback extends SubsystemBase {
 
     @Override
     public void periodic() {
-        matchTime = (DriverStation.getMatchType() == MatchType.None) ? Double.POSITIVE_INFINITY : DriverStation.getMatchTime();
+        matchTime = (DriverStation.getMatchType() == MatchType.None) ? Double.POSITIVE_INFINITY
+                : DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
+        batteryVoltage = RobotController.getBatteryVoltage();
+        rangeRight = drivetrain.getRangeRightDistance();
+        rangeLeft = drivetrain.getRangeLeftDistance();
 
-        rangeRight =  drivetrain.getRangeRightDistance();
-        rangeLeft =  drivetrain.getRangeLeftDistance();
-        
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
@@ -130,8 +133,8 @@ public class LedFeedback extends SubsystemBase {
                 // Check if Coral on Board and At reef and not aligned to Branch
             }
             // Check for endgame
-           else if (matchTime <= LedConstants.endgameWarning && !inAuton) {
-                // Check for Final Seconds of  Endgame
+            else if (matchTime <= LedConstants.endgameWarning && !inAuton) {
+                // Check for Final Seconds of Endgame
                 if (matchTime <= LedConstants.endgameAlert) {
                     if (mode != LED_MODE.END_GAME_ALERT) {
                         mode = LED_MODE.END_GAME_ALERT;
@@ -145,8 +148,7 @@ public class LedFeedback extends SubsystemBase {
 
                     }
                 }
-            }
-            else if (coralOnBoard && alignedReef()) {
+            } else if (coralOnBoard && alignedReef()) {
                 if (mode != LED_MODE.ALIGNED_REEF) {
                     mode = LED_MODE.ALIGNED_REEF;
                     setAll(LED_COLOR.ORANGE, LED_PATTERN.STROBE);
@@ -184,7 +186,7 @@ public class LedFeedback extends SubsystemBase {
                     mode = LED_MODE.CORAL_ON_BOARD;
                     setAll(LED_COLOR.WHITE, LED_PATTERN.SOLID);
 
-                }   
+                }
                 // Check if Algae is On Board and Too Close to Net
             } else if (algaeOnBoard && bargeTooClose) {
                 if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
@@ -214,13 +216,17 @@ public class LedFeedback extends SubsystemBase {
             }
 
             // Run this when robot is disabled
-        } else {
-            if (mode != LED_MODE.DEFAULT) {
-                defaultColors();
-                mode = LED_MODE.DEFAULT;
-                return;
-            }
+        } else if (batteryVoltage <= 12) {
+            if (mode != LED_MODE.BAD_BATTERY) {
+                mode = LED_MODE.BAD_BATTERY;
+                setAll(LED_COLOR.WHITE, LED_PATTERN.STROBE);
+            } 
+        } else if (mode != LED_MODE.DEFAULT) {
+            defaultColors();
+            mode = LED_MODE.DEFAULT;
+            return;
         }
+        
     }
 
     private boolean alignedReef() {
@@ -276,7 +282,8 @@ public class LedFeedback extends SubsystemBase {
         String driverName = DriverStation.getJoystickName(ButtonBindingConstants.driverPort).toLowerCase();
         String operatorName = DriverStation.getJoystickName(ButtonBindingConstants.buttonBoardPort).toLowerCase();
 
-        boolean driverOk = driverName.contains(ButtonBindingConstants.dragonReinsName) || driverName.contains(ButtonBindingConstants.driverBackupName);
+        boolean driverOk = driverName.contains(ButtonBindingConstants.dragonReinsName)
+                || driverName.contains(ButtonBindingConstants.driverBackupName);
 
         boolean operatorOk = operatorName.contains(ButtonBindingConstants.ps5Name);
 
