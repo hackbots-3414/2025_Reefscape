@@ -62,6 +62,7 @@
       "/SmartDashboard/camera testing spot 2": "Command",
       "/SmartDashboard/drive to other pose": "Command",
       "/SmartDashboard/drive to reef": "Command",
+      "/SmartDashboard/elevator up": "Command",
       "/SmartDashboard/open funnel": "Command",
       "/SmartDashboard/runme hehe": "Command",
       "/SmartDashboard/teleport": "Command"
@@ -162,7 +163,27 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Go To B": {
+      "/SmartDashboard/Elevator Visualization": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 0": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 2": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 3": {
         "window": {
           "visible": true
         }
@@ -279,6 +300,19 @@
           "length": 0.7599999904632568,
           "selectable": false,
           "width": 0.7599999904632568
+        },
+        "FF": {
+          "arrows": false,
+          "color": [
+            0.7843137383460999,
+            0.030757399275898933,
+            0.5626797080039978,
+            255.0
+          ],
+          "length": 2.5,
+          "selectable": false,
+          "weight": 9.0,
+          "width": 6.0
         },
         "Pathfind Trajectory": {
           "arrows": false,
@@ -468,7 +502,6 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "target": {
           "arrows": false,
@@ -505,7 +538,7 @@
           "visible": true
         }
       },
-      "/SmartDashboard/camera testing spot": {
+      "/SmartDashboard/elevator up": {
         "window": {
           "visible": true
         }
@@ -513,11 +546,11 @@
     }
   },
   "NetworkTables": {
-    "Retained Values": {
-      "open": false
-    },
     "transitory": {
-      "PathPlanner": {
+      "DriveState": {
+        "ChassisSpeeds##v_/DriveState/Speeds": {
+          "open": true
+        },
         "open": true
       },
       "SmartDashboard": {
@@ -528,7 +561,8 @@
   "NetworkTables Info": {
     "Server": {
       "open": true
-    }
+    },
+    "visible": true
   },
   "Plot": {
     "Plot <0>": {
@@ -536,11 +570,8 @@
         {
           "axis": [
             {
-              "label": "Velocity",
-              "lockMax": true,
-              "lockMin": true,
-              "max": 4.0,
-              "min": -4.0
+              "label": "Axis",
+              "max": 5.0
             }
           ],
           "backgroundColor": [
@@ -549,28 +580,8 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 0,
-          "name": "Robot Velocity",
-          "series": [
-            {
-              "color": [
-                0.2980392277240753,
-                0.44705885648727417,
-                0.6901960968971252,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/vx"
-            },
-            {
-              "color": [
-                0.8666667342185974,
-                0.5176470875740051,
-                0.32156863808631897,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/vy"
-            }
-          ]
+          "height": 318,
+          "name": "Plot"
         }
       ],
       "window": {

@@ -7,21 +7,21 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Pivot;
 
 public class AlgaeIntakeCommand extends Command {
-  private final AlgaeRollers rollers;
-  private final Elevator elevator;
-  private final Pivot pivot;
-  private final AlgaeLocationPresets location;
-  private boolean isDone;
+    private final AlgaeRollers rollers;
+    private final Elevator elevator;
+    private final Pivot pivot;
+    private final AlgaeLocationPresets location;
+    private boolean isDone;
 
-  public AlgaeIntakeCommand(AlgaeRollers rollers, Elevator elevator, Pivot pivot, AlgaeLocationPresets location) {
-   this.rollers = rollers;
-   this.elevator = elevator;
-   this.pivot = pivot;
-   this.location = location;
-   addRequirements(rollers, elevator, pivot);
-  }
+    public AlgaeIntakeCommand(AlgaeRollers rollers, Elevator elevator, Pivot pivot, AlgaeLocationPresets location) {
+        this.rollers = rollers;
+        this.elevator = elevator;
+        this.pivot = pivot;
+        this.location = location;
+        addRequirements(rollers, elevator, pivot);
+    }
 
-  @Override
+    @Override
     public void initialize() {
         rollers.intakeAlgae();
         isDone = false;
@@ -49,12 +49,12 @@ public class AlgaeIntakeCommand extends Command {
         switch (location) {
             case GROUND, HIGHGROUND -> {
                 if (elevator.atSetpoint()) pivot.setGroundPickup();
-                if (rollers.hasObject()) isDone = true; 
+                if (rollers.algaeHeld()) isDone = true; 
             }
             case REEFLOWER, REEFUPPER -> {
                 // isDone = !CommandBounds.reefBounds.isActive();
                 if (elevator.atSetpoint()) {
-                    if (rollers.hasObject()) {
+                    if (rollers.algaeHeld()) {
                         pivot.setReefExtract();
                     } else {
                         pivot.setReefPickup();
@@ -67,7 +67,7 @@ public class AlgaeIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        elevator.setStow();
+        elevator.release();
         pivot.setStow();
         rollers.smartStop();
     }

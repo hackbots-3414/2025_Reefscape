@@ -28,7 +28,6 @@ public class StowCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    m_elevator.stop();
     m_pivot.stop();
   }
 

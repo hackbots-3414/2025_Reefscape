@@ -66,18 +66,6 @@ public class RobotObserver {
         return getInstance().m_visionValidSupplier.get();
     }
 
-    /* Lets us keep track of if safety is enabled */
-    private boolean m_manualModeEnabled = false;
-
-    public static void toggleManualMode() {
-        getInstance().m_manualModeEnabled = !getInstance().m_manualModeEnabled;
-        SmartDashboard.putBoolean("SAFETY MODE", getInstance().m_manualModeEnabled);
-    }
-
-    public static boolean getManualMode() {
-        return getInstance().m_manualModeEnabled;
-    }
-
     private Supplier<Double> m_elevatorHeightSupplier;
 
     public static void setElevatorHeightSupplier(Supplier<Double> visionValidSupplier) {
@@ -122,6 +110,7 @@ public class RobotObserver {
     public static boolean getCoralPieceHeld() {
         return getInstance().m_coralPieceHeldSupplier.getAsBoolean();
     }
+
     public static boolean getAlgaePieceHeld() {
         return getInstance().m_algaeHeldSupplier.getAsBoolean();
     }
@@ -154,5 +143,44 @@ public class RobotObserver {
 
     public static Optional<Double> getCompensationDistance() {
         return getInstance().m_compDistanceSupplier.get();
+    }
+
+    private Supplier<Pose2d> m_antitargetSupplier;
+    
+    public static void setAntitargetSupplier(Supplier<Pose2d> antitargetSup) {
+        getInstance().m_antitargetSupplier = antitargetSup;
+    }
+
+    public static Pose2d getAntitarget() {
+        return getInstance().m_antitargetSupplier.get();
+    }
+
+    private BooleanSupplier m_ffEnabledSupplier; 
+
+    public static void setFFEnabledSupplier(BooleanSupplier ffSupplier) {
+        getInstance().m_ffEnabledSupplier = ffSupplier;
+    }
+    public static boolean getFFEnabled() {
+        return getInstance().m_ffEnabledSupplier.getAsBoolean();
+    }
+
+    private BooleanSupplier m_noElevatorSup;
+
+    public static void setNoElevatorZoneSupplier(BooleanSupplier noElevatorSup) {
+        getInstance().m_noElevatorSup = noElevatorSup;
+    }
+
+    public static boolean getNoElevatorZone() {
+        return getInstance().m_noElevatorSup.getAsBoolean();
+    }
+
+    private BooleanSupplier m_reefReadySupplier;
+
+    public static void setReefReadySupplier(BooleanSupplier rangeSupplier) {
+        getInstance().m_reefReadySupplier = rangeSupplier;
+    }
+
+    public static boolean getReefReady() {
+        return getInstance().m_reefReadySupplier.getAsBoolean() && getCoralPieceHeld();
     }
 }

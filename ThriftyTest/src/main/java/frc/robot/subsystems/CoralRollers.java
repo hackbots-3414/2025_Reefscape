@@ -140,7 +140,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     private double getCANRangeCompensation() {
-        if (RobotObserver.getManualMode() || !CoralConstants.enableCANRange) return 0.0;
+        if (!CoralConstants.enableCANRange) return 0.0;
         return (RobotObserver.getRangeDistance() - DriveConstants.rangeZero) * CoralConstants.rangeDistanceGain;
     }
 
@@ -177,39 +177,51 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean holdingPiece() {
-        return getCANrangeTriggered() && !getUpperCANrange();
+        if (Robot.isReal()) {
+            return getCANrangeTriggered() && !getUpperCANrange();
+        } else {
+            boolean present = SmartDashboard.getBoolean("Coral present", false);
+            SmartDashboard.putBoolean("Coral present", present);
+            return present;
+        }
     }
 
     public void fastEject() {
         m_coralLeft.setVoltage(CoralConstants.fastEjectVoltage);
     }
 
+    public void slowScore() {
+        m_coralLeft.setVoltage(CoralConstants.l1EjectVoltage);
+    }
+
     public boolean presentPiece() {
         return getBackIR() || getCANrangeTriggered();
     }
 
+    public boolean intakeReady() {
+        return getUpperCANrange();
+    }
+
     @Override
     public void periodic() {
-        if (CoralConstants.enable) {
-            if (Robot.isReal()) {
-                m_backSensorValue = m_backIR.getVoltage() > CoralConstants.IRThreshold;
-            }
-    
-            SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
-            SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
-            SmartDashboard.putBoolean("Coral CANrange", getCANrangeTriggered());
-            SmartDashboard.putBoolean("OCS", getUpperCANrange());
-    
-            SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
-    
-            SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
-            SmartDashboard.putNumber("Coral Compensatin", getCANRangeCompensation());
-    
-            if (m_voltageChanged) {
-                m_coralLeft.setVoltage(m_voltage);
-                m_voltageChanged = false;
-            }
+        if (Robot.isReal()) {
+            m_backSensorValue = m_backIR.getVoltage() > CoralConstants.IRThreshold;
         }
-        
+
+        SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
+        SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
+        SmartDashboard.putBoolean("Coral CANrange", getCANrangeTriggered());
+        SmartDashboard.putBoolean("OCS", getUpperCANrange());
+
+        SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
+
+        SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
+        SmartDashboard.putNumber("Coral Compensatin", getCANRangeCompensation());
+
+        if (m_voltageChanged) {
+            m_coralLeft.setVoltage(m_voltage);
+            m_voltageChanged = false;
+        }
     }
+        
 }

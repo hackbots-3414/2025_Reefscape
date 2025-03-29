@@ -29,6 +29,7 @@ public class CoralEjectCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     coral.stop();
+    elevator.release();
   }
 
   @Override

@@ -22,13 +22,13 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     private double m_voltage;
     private boolean m_voltageChanged;
 
-    private boolean m_hasObject;
+    private boolean m_hasAlgae;
 
     private MedianFilter m_filter = new MedianFilter(10);
 
     public AlgaeRollers() {
         configIntakeMotor();
-        RobotObserver.setAlgaePieceHeldSupplier(this::hasObject);
+        RobotObserver.setAlgaePieceHeldSupplier(this::algaeHeld);
 
     }
 
@@ -44,12 +44,12 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         m_voltage = voltage;
     }
 
-    public boolean hasObject() {
-        return m_hasObject;
+    public boolean algaeHeld() {
+        return m_hasAlgae;
     }
 
     public void intakeAlgae() {
-        if (hasObject()) {
+        if (algaeHeld()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
         } else {
             setMotor(AlgaeRollerConstants.intakeVoltage);
@@ -57,7 +57,7 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     }
 
     public void smartStop() {
-        if (hasObject()) {
+        if (algaeHeld()) {
             setMotor(AlgaeRollerConstants.holdVoltage);
         } else {
             stopMotor();
@@ -82,28 +82,23 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     }
 
     private void updateObjectState() {
-        if (AlgaeRollerConstants.enable) {
-            if (Robot.isReal()) {
-                m_hasObject = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
-            } else {
-                m_hasObject = SmartDashboard.getBoolean("Algae Holding Object", false);
-            }
-    
-            SmartDashboard.putBoolean("Algae Holding Object", m_hasObject);
+        if (Robot.isReal()) {
+            m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
+        } else {
+            m_hasAlgae = SmartDashboard.getBoolean("Algae Holding Object", false);
         }
+
+        SmartDashboard.putBoolean("Algae Holding Object", m_hasAlgae);
     }
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Algae Temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
         updateObjectState();
-        if (AlgaeRollerConstants.enable) {
-            if (m_voltageChanged) {
-                m_algaeRoller.setVoltage(m_voltage);
-                m_voltageChanged = false;
-                SmartDashboard.putNumber("ALGAE VOLTS", m_voltage);
-            }
+        if (m_voltageChanged) {
+            m_algaeRoller.setVoltage(m_voltage);
+            m_voltageChanged = false;
         }
-        SmartDashboard.putNumber("algae temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
     }
 
     @Override

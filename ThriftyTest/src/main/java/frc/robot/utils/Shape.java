@@ -73,7 +73,7 @@ public class Shape {
     }
 
     public boolean isActive() {
-        if (!RobotObserver.getVisionValid() || RobotObserver.getManualMode()) { // vision off or safety off = don't run shape logic
+        if (!RobotObserver.getVisionValid()) { // vision off = don't run shape logic
             return true;
         }
         boolean isInside = isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());

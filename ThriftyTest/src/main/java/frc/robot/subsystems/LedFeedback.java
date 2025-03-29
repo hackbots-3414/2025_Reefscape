@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.ButtonBindingConstants.ButtonBoardChoice;
 import frc.robot.Constants.CanRangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
@@ -41,7 +40,7 @@ public class LedFeedback extends SubsystemBase {
     private boolean climbed = false;
     private boolean algaeOnBoard = false;
     private boolean algaeInRange = false;
-    private boolean algaeTooClose = false;
+    private boolean noElevatorZoneActive = false;
     private boolean inAuton = false;
     private boolean inTeleop = false;
     private double rangeLeft = 0.0;
@@ -57,7 +56,7 @@ public class LedFeedback extends SubsystemBase {
     };
 
     private static enum LED_COLOR {
-        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE, BLUE_VIOLET, DEEP_PINK;
+        RED, YELLOW, GREEN, PURPLE, BLUE, WHITE, OFF, BROWN, ORANGE, BLUE_VIOLET, DEEP_PINK, SKYBLUE;
     };
 
     private static enum LED_PATTERN {
@@ -96,29 +95,18 @@ public class LedFeedback extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // System.out.println("PERIODIC ENTER");
         matchTime = (DriverStation.getMatchType() == MatchType.None) ? Double.POSITIVE_INFINITY : DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
 
         rangeRight =  drivetrain.getRangeRightDistance();
         rangeLeft =  drivetrain.getRangeLeftDistance();
-        // TODO FIX
         
-        // alignedRight = SmartDashboard.getBoolean("AlignedRight", alignedRight());
-        // alignedLeft = SmartDashboard.getBoolean("AlignedLeft", alignedLeft());
-        // coralOnBoard = SmartDashboard.getBoolean("coralOnBoard", coralOnBoard);
-        // coralInRange = SmartDashboard.getBoolean("coralInRange", coralInRange);
-        // algaeOnBoard = SmartDashboard.getBoolean("algaeOnBoard", algaeOnBoard);
-        // algaeInRange = SmartDashboard.getBoolean("ALGAEINRANGE", algaeInRange);
-        // algaeTooClose = SmartDashboard.getBoolean("ALGAETOOCLOSE", algaeTooClose);
-        // climbed = SmartDashboard.getBoolean("CLIMBED", climbed);
-
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
         coralInRange = CommandBounds.reefBounds.isActive();
         algaeInRange = CommandBounds.netBounds.isActive();
-        algaeTooClose = CommandBounds.netBounds.isActive(); // need to change
+        noElevatorZoneActive = RobotObserver.getNoElevatorZone();
         climbed = RobotObserver.getClimbed();
 
         if (badController()) {
@@ -128,8 +116,7 @@ public class LedFeedback extends SubsystemBase {
                 setAll(LED_COLOR.RED, LED_PATTERN.STROBE);
 
             }
-        } 
-        else if (inTeleop || inAuton) {
+        } else if (inTeleop || inAuton) {
             if (climbed) {
                 if (mode != LED_MODE.CLIMBED) {
                     if (matchTime < LedConstants.endgameWarning) {
@@ -142,7 +129,7 @@ public class LedFeedback extends SubsystemBase {
                 // Check if Coral on Board and At reef and not aligned to Branch
             }
             // Check for endgame
-           else if (matchTime <= LedConstants.endgameWarning) {
+           else if (matchTime <= LedConstants.endgameWarning && !inAuton) {
                 // Check for Final Seconds of  Endgame
                 if (matchTime <= LedConstants.endgameAlert) {
                     if (mode != LED_MODE.END_GAME_ALERT) {
@@ -174,14 +161,12 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.ALIGNED_RIGHT) {
                     mode = LED_MODE.ALIGNED_RIGHT;
                     setRight(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
-                    // System.out.println("CORAL_ON_BOARD && ALIGNED RIGHT");
 
                 }
             } else if (coralOnBoard && alignedLeft()) {
                 if (mode != LED_MODE.ALIGNED_LEFT) {
                     mode = LED_MODE.ALIGNED_LEFT;
                     setLeft(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
-                    // System.out.println("CORAL_ON_BOARD && ALIGNED LEFT");
 
                 }
             }
@@ -190,7 +175,6 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.CORAL_READY) {
                     mode = LED_MODE.CORAL_READY;
                     setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
-                    // System.out.println("CORAL_ON_BOARD && INRANGE");
 
                 }
                 // Check if Coral is On Board
@@ -198,15 +182,13 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.CORAL_ON_BOARD) {
                     mode = LED_MODE.CORAL_ON_BOARD;
                     setAll(LED_COLOR.WHITE, LED_PATTERN.SOLID);
-                    // System.out.println("CORAL_ON_BOARD");
 
                 }   
                 // Check if Algae is On Board and Too Close to Net
-            } else if (algaeOnBoard && algaeTooClose) {
+            } else if (noElevatorZoneActive) {
                 if (mode != LED_MODE.ALGAE_TOO_CLOSE) {
                     mode = LED_MODE.ALGAE_TOO_CLOSE;
-                    setAll(LED_COLOR.BROWN, LED_PATTERN.STROBE);
-                    // System.out.println("ALGAE_ON_BOARD && ALGAE_TOO_CLOSE");
+                    setAll(LED_COLOR.SKYBLUE, LED_PATTERN.STROBE);
 
                 }
                 // Check if Algae is On Board and In range to Net
@@ -214,20 +196,17 @@ public class LedFeedback extends SubsystemBase {
                 if (mode != LED_MODE.ALGAE_READY) {
                     mode = LED_MODE.ALGAE_READY;
                     setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
-                    // System.out.println("ALGAE IN RANGE");
                 }
                 // Check if Algae is on board
             } else if (algaeOnBoard) {
                 if (mode != LED_MODE.ALGAE_ON_BOARD) {
                     mode = LED_MODE.ALGAE_ON_BOARD;
                     setAll(LED_COLOR.GREEN, LED_PATTERN.SOLID);
-                    // System.out.println("ALGAE_ON_BOARD******************************************");
 
                 }
                 // If Everything is false make it Default Colors
             } else {
                 if (mode != LED_MODE.DEFAULT) {
-                    // System.out.println("DEFAULT2");
                     defaultColors();
                     mode = LED_MODE.DEFAULT;
                 }
@@ -236,13 +215,11 @@ public class LedFeedback extends SubsystemBase {
             // Run this when robot is disabled
         } else {
             if (mode != LED_MODE.DEFAULT) {
-                // System.out.println("DEFAULT");
                 defaultColors();
                 mode = LED_MODE.DEFAULT;
                 return;
             }
         }
-        // System.out.println("XPERIODIC END");
     }
 
     private boolean alignedReef() {
@@ -300,9 +277,7 @@ public class LedFeedback extends SubsystemBase {
 
         boolean driverOk = driverName.contains(ButtonBindingConstants.dragonReinsName) || driverName.contains(ButtonBindingConstants.driverBackupName);
 
-        boolean operatorOk = (ButtonBindingConstants.buttonBoardChoice == ButtonBoardChoice.BUTTONBOARD)
-                ? operatorName.contains(ButtonBindingConstants.buttonBoardName)
-                : operatorName.contains(ButtonBindingConstants.operatorBackupName);
+        boolean operatorOk = operatorName.contains(ButtonBindingConstants.ps5Name);
 
         return !(driverOk && operatorOk);
     }
@@ -350,7 +325,7 @@ public class LedFeedback extends SubsystemBase {
             case YELLOW -> c = Color.kYellow;
             case PURPLE -> c = Color.kPurple;
             case WHITE -> c = Color.kWhite;
-            case BROWN -> c = Color.kBrown;
+            case SKYBLUE -> c = Color.kRoyalBlue;
             case ORANGE -> c = Color.kOrange;
             case DEEP_PINK -> c = Color.kDeepPink;
             case OFF -> c = Color.kBlack;

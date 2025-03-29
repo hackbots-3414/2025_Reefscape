@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1449835526315788,
-        "y": 0.9652960526315791
+        "x": 1.4624999999999997,
+        "y": 0.7703381147540983
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.848472084412517,
-        "y": 1.7055976496009042
+        "x": 2.1837174467531826,
+        "y": 1.4554959036153075
       },
       "isLocked": false,
       "linkedName": "RightIntake"
     },
     {
       "anchor": {
-        "x": 3.6660000000000004,
-        "y": 2.6014999999999997
+        "x": 3.404508196721311,
+        "y": 2.520543032786885
       },
       "prevControl": {
-        "x": 2.9297835005436625,
-        "y": 1.8120923640163564
+        "x": 3.0483266915322913,
+        "y": 2.164756091903153
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "C"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.724,
+    "maxVelocity": 7.0,
     "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 2852.0,

@@ -26,7 +26,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -43,6 +42,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FFConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
@@ -57,10 +58,13 @@ import frc.robot.vision.TimestampedPoseEstimate;
  * Subsystem so it can easily be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
 
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+    private boolean m_aligned;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -111,11 +115,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Robot.isSimulation()) {
             startSimThread();
         }
+        m_aligned = false;
+
         RobotObserver.setVisionValidSupplier(this::getVisionValid);
         RobotObserver.setPoseSupplier(this::getPose);
         RobotObserver.setVelocitySupplier(this::getVelocity);
         RobotObserver.setRangeDistanceSupplier(this::getRangeDistance);
         RobotObserver.setCompensationDistanceSupplier(this::getCompensationDistance);
+        RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
+        RobotObserver.setReefReadySupplier(this::getReefReady);
 
         configureCANRange();
     }
@@ -150,6 +158,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Pose2d getPose() {
         return m_estimatedPose;
+    }
+
+    public Pose2d getNearestAntitarget() {
+        return new Pose2d(FFConstants.k_bargeX, m_estimatedPose.getY(), new Rotation2d());
     }
 
     /**
@@ -243,17 +255,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         rightRaw = rightRange.getDistance().getValueAsDouble();
         leftRaw = leftRange.getDistance().getValueAsDouble();
 
-        AutonomousUtil.handleQueue();
-
         handleVisionToggle();
 
+        SmartDashboard.putBoolean("Drivetrain Aligned?", m_aligned);
+        SmartDashboard.putBoolean("Drivetrain Reef ready", getReefReady());
+        SmartDashboard.putBoolean("Drivetrain No elevator", noElevatorZone());
         SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
         SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
         SmartDashboard.putNumber("REEF ALING RANGE DISANCE", getRangeDistance());
 
-        // Translation2d v = getVelocityComponents();
-        // SmartDashboard.putNumber("vx", v.getX());
-        // SmartDashboard.putNumber("vy", v.getY());
+         Translation2d v = getVelocityComponents();
+         SmartDashboard.putNumber("vx", v.getX());
+         SmartDashboard.putNumber("vy", v.getY());
         SmartDashboard.putNumber("LEFT", leftRange.getDistance().getValueAsDouble());
         SmartDashboard.putNumber("RIGHT", rightRange.getDistance().getValueAsDouble());
     }
@@ -337,17 +350,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void addPoseEstimate(TimestampedPoseEstimate estimate) {
         m_oldVisionTimestamp = estimate.timestamp();
         // This should NOT run in simulation!
-        if (Robot.isSimulation()) {
-            Transform2d error = getPose().minus(estimate.pose());
-            m_logger.debug(
-                "{} pose error: {}, {}\theading error: {}deg", 
-                estimate.source(),
-                error.getX(),
-                error.getY(),
-                error.getRotation().getDegrees()
-            );
-            return;
-        }
+        if (Robot.isSimulation()) return;
         // Depending on our configs, we should use or not use the std devs
         if (Constants.VisionConstants.k_useStdDevs) {
             addVisionMeasurement(
@@ -383,5 +386,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineRotation.dynamic(direction);
+    }
+
+    private boolean noElevatorZone() {
+        double distance = getNearestAntitarget()
+            .getTranslation()
+            .minus(m_estimatedPose.getTranslation())
+            .getNorm();
+        return distance < FFConstants.k_radius;
+    }
+
+    public void setAligned(boolean aligned) {
+        m_aligned = aligned;
+    }
+
+    public boolean isAligned() {
+        return m_aligned;
+    }
+
+    public boolean getReefReady() {
+        double distanceToReef = getBluePose().getTranslation()
+            .minus(FieldConstants.reefCenter)
+            .getNorm();
+        boolean inRange = distanceToReef <= FieldConstants.k_reefReady;
+        return inRange;
     }
 }

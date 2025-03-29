@@ -22,18 +22,18 @@ public class CoralL1Command extends Command {
   @Override
   public void execute() {
     if (elevator.atSetpoint()) {
-      coral.fastEject();
+      coral.slowScore();
     }
   }
 
   @Override
   public void end(boolean interrupted) {
     coral.stop();
-    elevator.setStow();
+    elevator.release();
   }
 
   @Override
   public boolean isFinished() {
-    return !coral.getUpperCANrange() && !coral.presentPiece();
+    return !coral.holdingPiece();
   }
 }

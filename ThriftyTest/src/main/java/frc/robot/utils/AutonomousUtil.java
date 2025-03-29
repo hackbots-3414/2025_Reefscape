@@ -1,7 +1,5 @@
 package frc.robot.utils;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,18 +88,6 @@ public class AutonomousUtil {
         return AutoBuilder.pathfindThenFollowPath(path, pathFindConstraints);
     }
 
-    private static Command preciseAlign(Pose2d pose) {        
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(m_drivetrain.getBluePose(), pose);
-        PathPlannerPath path = new PathPlannerPath(
-                waypoints,
-                finalAlignConstraints,
-                new IdealStartingState(DriveConstants.k_maxAlignLinearSpeed.in(MetersPerSecond), pose.getRotation()),
-                new GoalEndState(0, pose.getRotation()),
-                false);
-
-        return AutoBuilder.followPath(path);
-    }
-    
     private static Command pathFinder(Pose2d pose) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
@@ -112,14 +98,6 @@ public class AutonomousUtil {
     }
 
     private static Command driveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> RobotObserver.setReefMode(true)),
-            new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
-            new InstantCommand(() -> RobotObserver.setReefMode(false))
-        );
-    }
-
-    private static Command autoDriveToPoint(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> RobotObserver.setReefMode(true)),
             new DriveToPointCommand(FieldUtils.flipPose(pose), drivetrain),
@@ -178,25 +156,5 @@ public class AutonomousUtil {
             command.cancel();
         }
         onTheFlyCommands = new ArrayList<>();
-    }
-
-    private static boolean ranCommand = false;
-
-    public static void handleQueue() {
-        if (AutonConstants.useQueue) {
-            if (!onTheFlyCommands.isEmpty()) {
-                if (!ranCommand) {
-                    onTheFlyCommands.get(0).schedule();
-                    ranCommand = true;
-                }
-                if (!onTheFlyCommands.get(0).isScheduled() && ranCommand) {
-                    onTheFlyCommands.get(0).cancel();
-                    onTheFlyCommands.remove(0);
-                    ranCommand = false;
-                }
-            } else {
-                ranCommand = false;
-            }
-        }
     }
 }

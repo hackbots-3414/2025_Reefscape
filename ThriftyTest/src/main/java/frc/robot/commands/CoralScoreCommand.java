@@ -26,7 +26,8 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void initialize() {
-    finish = !coral.holdingPiece() || !elevator.atSetpoint() || elevator.getReference() == ElevatorConstants.stow;
+    // finish = !coral.holdingPiece();
+    elevator.setLevel(level);
   }
 
   @Override
@@ -44,9 +45,8 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    m_logger.warn("Elevator Reference: {}, Elevator Position: {}", elevator.getReference(), elevator.getPosition());
-    elevator.setStow();
     coral.stop();
+    elevator.release();
   }
 
   @Override

@@ -1,7 +1,22 @@
 {
+  "FMS": {
+    "window": {
+      "visible": false
+    }
+  },
   "Joysticks": {
     "window": {
       "visible": false
+    }
+  },
+  "Keyboard 0 Settings": {
+    "window": {
+      "visible": true
+    }
+  },
+  "Keyboard 1 Settings": {
+    "window": {
+      "visible": true
     }
   },
   "System Joysticks": {
@@ -70,32 +85,29 @@
     {
       "axisConfig": [
         {
+          "decKey": 263,
+          "decayRate": 0.8999999761581421,
+          "incKey": 262
+        },
+        {
           "decKey": 264,
           "decayRate": 0.8999999761581421,
-          "incKey": 265,
-          "keyRate": 0.8999999761581421
-        },
-        {
-          "decKey": 262,
-          "decayRate": 0.8999999761581421,
-          "incKey": 263,
-          "keyRate": 0.8999999761581421
+          "incKey": 265
         },
         {
           "decayRate": 0.8999999761581421,
           "keyRate": 0.8999999761581421
         },
         {
-          "decKey": 91,
+          "decKey": 93,
           "decayRate": 0.8999999761581421,
-          "incKey": 93,
-          "keyRate": 0.8999999761581421
+          "incKey": 91
         }
       ],
       "axisCount": 4,
-      "buttonCount": 0,
+      "buttonCount": 1,
       "buttonKeys": [
-        77,
+        96,
         44,
         46,
         47,
