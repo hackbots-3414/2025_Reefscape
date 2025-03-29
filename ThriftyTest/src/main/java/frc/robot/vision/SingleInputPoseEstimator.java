@@ -1,7 +1,5 @@
 package frc.robot.vision;
 
-import static edu.wpi.first.units.Units.Seconds;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -25,6 +23,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
@@ -68,7 +67,7 @@ public class SingleInputPoseEstimator implements Runnable {
     public void run() {
         if (!m_camera.isConnected()) {
             SmartDashboard.putBoolean(m_name + " Connected", false);
-            m_logger.error("Unable to read data from {}", m_name);
+            m_logger.warn("Unable to read data from {}", m_name);
         } else {
             SmartDashboard.putBoolean(m_name + " Connected", true);
         }
@@ -89,7 +88,7 @@ public class SingleInputPoseEstimator implements Runnable {
             time between when a result was sent and when we "see" it. This would
             mess up the timestamping logic.
             */
-            m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
+            m_logger.trace("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
         m_estimator.addHeadingData(
             RobotController.getMeasureTime().in(Seconds),

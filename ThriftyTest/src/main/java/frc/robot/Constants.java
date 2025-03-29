@@ -1,15 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,6 +46,15 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -137,10 +136,10 @@ public class Constants {
     }
     
     public static class DriveConstants {
-        public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
-        public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
-        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(15, 0.0, 0); // 0.18836
-        public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
+        public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0);
+        public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0);
+        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(9, 0.0, 0);
+        public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0);
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -308,26 +307,23 @@ public class Constants {
             Map.entry("test", new Transform3d())
         );
         public static Map<String, Transform3d> cameras = Map.ofEntries(
-            Map.entry("cam1", new Transform3d( // left tight
+            Map.entry("cam8", new Transform3d( // left tight
                 new Translation3d(0.256, 0.289, k_moduleHeight),
                 new Rotation3d(0, k_tightPitch, -k_tightYaw)
             )),
-            Map.entry("cam2", new Transform3d( // left wide
+            Map.entry("cam7", new Transform3d( // left wide
                 new Translation3d(0.337, 0.331, k_moduleHeight),
                 new Rotation3d(0, k_widePitch, -k_wideYaw)
             )),
-            Map.entry("cam3", new Transform3d( // right wide
+            Map.entry("cam6", new Transform3d( // right wide
                 new Translation3d(0.337, -0.331, k_moduleHeight),
                 new Rotation3d(0, k_widePitch, k_wideYaw)
             )),
-            Map.entry("cam4", new Transform3d( // right tight
+            Map.entry("cam11", new Transform3d( // right tight
                 new Translation3d(0.256, -0.289, k_moduleHeight),
                 new Rotation3d(0, k_tightPitch, k_tightYaw)
             ))
         );
-
-        public static final String k_leftAlignName = "cam1";
-        public static final String k_rightAlignName = "cam4";
 
         // The tick time for each pose estimator to run
         public static final double k_periodic = 0.02;

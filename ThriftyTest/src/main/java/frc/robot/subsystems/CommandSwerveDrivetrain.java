@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
-
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -14,9 +11,11 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
@@ -26,12 +25,15 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -41,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
 import frc.robot.Constants.FieldConstants;
@@ -89,6 +92,12 @@ public class CommandSwerveDrivetrain extends TestBotTunerConstants.TunerSwerveDr
     private MedianFilter rangeFilter;
     private double rightRaw = -1;
     private double leftRaw = -1;
+
+    private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
+        .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+        .withDeadband(DriveConstants.k_maxTeleopLinearSpeed * DragonReins.deadband)
+        .withRotationalDeadband(DriveConstants.k_maxTeleopAngularSpeed * DragonReins.deadband)
+        .withDriveRequestType(DriveRequestType.Velocity);
 
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
@@ -410,5 +419,17 @@ public class CommandSwerveDrivetrain extends TestBotTunerConstants.TunerSwerveDr
             .getNorm();
         boolean inRange = distanceToReef <= FieldConstants.k_reefReady;
         return inRange;
+    }
+
+    /**
+     * Applies a transform2d with field relative velocities to the drivetrain
+     */
+    public void applyVelocities(Transform2d fieldRelative) {
+        setControl(
+            driveClosedLoop
+                .withVelocityX(fieldRelative.getX())
+                .withVelocityY(fieldRelative.getY())
+                .withRotationalRate(fieldRelative.getRotation().getRadians())
+        );
     }
 }

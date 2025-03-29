@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.Radians;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,11 +8,10 @@ import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import static edu.wpi.first.units.Units.Radians;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
@@ -26,10 +23,10 @@ public class DriveToPointCommand extends Command {
     @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
-    private final ProfiledPIDController xController = new ProfiledPIDController(
-            DriveConstants.k_driveToPointTranslationPID.kP, 0, DriveConstants.k_driveToPointTranslationPID.kD, DriveConstants.k_driveToPointConstraints);
-    private final ProfiledPIDController yController = new ProfiledPIDController(
-            DriveConstants.k_driveToPointTranslationPID.kP, 0, DriveConstants.k_driveToPointRotationPID.kD, DriveConstants.k_driveToPointConstraints);
+    private final double maxAccelerationU = 2.0;
+    private final double maxAccelerationI = 2.0;
+
+    private final double dt = 0.02;
 
     private static Rotation2d m_targetRotation;
 
@@ -65,36 +62,81 @@ public class DriveToPointCommand extends Command {
         }
         m_targetRotation = m_goal.getRotation();
 
-        Pose2d currPose = m_drivetrain.getPose();
-        Translation2d currVelo = m_drivetrain.getVelocityComponents();
-
-        // so first is finished run doesn't break
-        xController.reset(currPose.getX(), currVelo.getX());
-        yController.reset(currPose.getY(), currVelo.getY());
-
-        xController.setGoal(m_goal.getX());
-        yController.setGoal(m_goal.getY());
-
-        xController.calculate(currPose.getX());
-        yController.calculate(currPose.getY());
-
         RobotObserver.getField().getObject("target").setPose(m_goal);
     }
 
     @Override
     public void execute() {
-        Pose2d pose = m_drivetrain.getPose();
-        double vx = xController.calculate(pose.getX());
-        double vy = yController.calculate(pose.getY());
+        Translation2d adjusted = adjust(m_drivetrain.getPose(), m_goal);
+        if (adjusted.getX() == 0 || adjusted.getY() == 0){
+            m_logger.info("X/Y is Zero, current pose is {}, velocity is {}", m_drivetrain.getPose(), m_drivetrain.getVelocityComponents());
+        }
+        m_drivetrain.setControl(m_request
+            .withVelocityX(adjusted.getX())
+            .withVelocityY(adjusted.getY())
+            .withTargetDirection(m_targetRotation)
+        );
+    }
 
-        SmartDashboard.putNumber("vx", vx);
-        SmartDashboard.putNumber("vy", vy);
+    private Translation2d adjust(Pose2d current, Pose2d goal) {
 
-        m_drivetrain.setControl(
-                m_request
-                        .withVelocityX(vx)
-                        .withVelocityY(vy)
-                        .withTargetDirection(m_targetRotation));
+        Translation2d robotToTarget = goal.getTranslation().minus(current.getTranslation());
+        
+        double distance = robotToTarget.getNorm();
+
+        if (distance == 0) {
+            return Translation2d.kZero;
+        }
+
+        double theoreticalMaxVelocity = Math.sqrt(2 * distance * maxAccelerationI);
+
+        Translation2d currentVelocity = m_drivetrain.getVelocityComponents();
+
+        Translation2d direction = robotToTarget.div(distance);
+
+        if (currentVelocity.getNorm() == 0) {
+            m_logger.trace("Current Velocity was Zero");
+            double velocity = Math.min(theoreticalMaxVelocity, dt * maxAccelerationI);
+
+            return direction.times(velocity);
+        }
+
+        double dot = direction.getX() * currentVelocity.getX() + direction.getY() * currentVelocity.getY();
+
+        if (dot == 0) {
+            m_logger.trace("Dot was Zero, currentVelocity {}, Distance {}, Direction {}", currentVelocity, distance, direction);
+            // if we are completely perpendicular with the ideal translation, we can assume that current velocity IS u
+            double velocityI = Math.min(theoreticalMaxVelocity, dt * maxAccelerationI);
+            Translation2d veloI = direction.times(velocityI);
+
+            double adjustmentU = Math.min(dt * maxAccelerationU, currentVelocity.getNorm());
+            // currentVelocity - maxAdjustmentU * currentVelocity hat
+            Translation2d directionU = currentVelocity.div(currentVelocity.getNorm());
+            Translation2d veloU = currentVelocity.minus(directionU.times(adjustmentU));
+
+            return veloI.plus(veloU);
+        }
+
+        double currentVelocityTowardsTarget = Math.pow(currentVelocity.getNorm(), 2) / dot;
+        Translation2d currentVeloI = direction.times(currentVelocityTowardsTarget);
+
+        Translation2d currentVeloU = currentVelocity.minus(currentVeloI);
+        double currentVelocityPerpendicularToTarget = currentVeloU.getNorm();
+
+        double adjustmentI = Math.min(theoreticalMaxVelocity, dt * maxAccelerationI + currentVelocityTowardsTarget);
+        Translation2d veloI = direction.times(adjustmentI);
+
+        double adjustmentU = Math.min(currentVeloU.getNorm(), dt * maxAccelerationU );
+        Translation2d veloU = Translation2d.kZero;
+        if (currentVelocityPerpendicularToTarget != 0) {
+            Translation2d directionU = currentVeloU.div(currentVelocityPerpendicularToTarget);
+            veloU = currentVeloU.minus(directionU.times(adjustmentU));
+        }
+        
+        Translation2d r = veloI.plus(veloU);
+        m_logger.trace("Adjust() returns {}" , r);
+
+        return r;
     }
 
     @Override

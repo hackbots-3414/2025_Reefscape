@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +16,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -86,18 +85,16 @@ public class RobotContainer {
     private final PowerDistribution pdp = new PowerDistribution(1, ModuleType.kRev);
 
     public RobotContainer() {
-        // configureSubsystems();
-        // generateScoringLocations();
+        configureSubsystems();
+        generateScoringLocations();
         // configureNamedCommands();
         configureDriverBindings();
-        // configureOperatorBindings();
+        configureOperatorBindings();
         // configureAutonChooser();
         configureVision();
-        // //addBoundsToField();
         configureTesting();
         // configureDashboard();
-        // confiureSimulation();
-        // RobotObserver.setFFEnabledSupplier(this::getFFEnabled);
+        confiureSimulation();
         // configureSysId();
     }
     
@@ -219,36 +216,36 @@ public class RobotContainer {
         // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
-        Trigger algaeOn = controller.button(PS5.algaeModeButton);
+        // Trigger algaeOn = controller.button(PS5.algaeModeButton);
 
-        controller.button(PS5.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
+        // controller.button(PS5.ejectCoral).whileTrue(new CoralEjectCommand(m_coralRollers, m_elevator));
 
         bindAlignCommand(ReefClipLocations.LEFT, controller.button(PS5.leftReef));
         bindAlignCommand(ReefClipLocations.RIGHT, controller.button(PS5.rightReef));
 
-        bindCoralCommands(1, controller.pov(PS5.L1).and(algaeOn.negate()));
-        bindCoralCommands(2, controller.pov(PS5.L2).and(algaeOn.negate()));
-        bindCoralCommands(3, controller.pov(PS5.L3).and(algaeOn.negate()));
-        bindCoralCommands(4, controller.pov(PS5.L4).and(algaeOn.negate()));
+        // bindCoralCommands(1, controller.pov(PS5.L1).and(algaeOn.negate()));
+        // bindCoralCommands(2, controller.pov(PS5.L2).and(algaeOn.negate()));
+        // bindCoralCommands(3, controller.pov(PS5.L3).and(algaeOn.negate()));
+        // bindCoralCommands(4, controller.pov(PS5.L4).and(algaeOn.negate()));
 
-        bindCoralIntakeCommand(controller.button(PS5.intake));
+        // bindCoralIntakeCommand(controller.button(PS5.intake));
 
-        bindAlgaeIntakeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(PS5.lowAlgae));
-        bindAlgaeIntakeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(PS5.highAlgae));
-        bindAlgaeIntakeCommand(AlgaeLocationPresets.GROUND, controller.pov(PS5.groundAlgae).and(algaeOn));
-        bindAlgaeIntakeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(PS5.highGround).and(algaeOn));
+        // bindAlgaeIntakeCommand(AlgaeLocationPresets.REEFLOWER, controller.button(PS5.lowAlgae));
+        // bindAlgaeIntakeCommand(AlgaeLocationPresets.REEFUPPER, controller.button(PS5.highAlgae));
+        // bindAlgaeIntakeCommand(AlgaeLocationPresets.GROUND, controller.pov(PS5.groundAlgae).and(algaeOn));
+        // bindAlgaeIntakeCommand(AlgaeLocationPresets.HIGHGROUND, controller.pov(PS5.highGround).and(algaeOn));
 
-        bindAlgaeScoreCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(PS5.processor).and(algaeOn));
-        bindAlgaeScoreCommand(AlgaeLocationPresets.NET, controller.pov(PS5.net).and(algaeOn));
+        // bindAlgaeScoreCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(PS5.processor).and(algaeOn));
+        // bindAlgaeScoreCommand(AlgaeLocationPresets.NET, controller.pov(PS5.net).and(algaeOn));
 
-        controller.button(PS5.climbReady).whileTrue(new ClimbReadyCommand(m_climber));
-        controller.button(PS5.climb).whileTrue(new ClimberCommand(m_climber));
+        // controller.button(PS5.climbReady).whileTrue(new ClimbReadyCommand(m_climber));
+        // controller.button(PS5.climb).whileTrue(new ClimberCommand(m_climber));
 
-        controller.button(PS5.stow).onTrue(new StowCommand(m_elevator, m_algaePivot));
+        // controller.button(PS5.stow).onTrue(new StowCommand(m_elevator, m_algaePivot));
 
-        bindFunnelOpenCommand(controller.button(11).and(controller.button(12)));
+        // bindFunnelOpenCommand(controller.button(11).and(controller.button(12)));
 
-        bindElevatorZeroCommand(controller.button(PS5.zeroElevator));
+        // bindElevatorZeroCommand(controller.button(PS5.zeroElevator));
     }
 
     private void bindElevatorZeroCommand(Trigger trigger) {
@@ -323,13 +320,13 @@ public class RobotContainer {
 
     private void configureSubsystems() {
         // m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
-        m_elevator = new Elevator();
-        m_algaePivot = new Pivot();
-        m_climber = new Climber();
-        m_algaeRollers = new AlgaeRollers();
-        m_coralRollers = new CoralRollers();
+        // m_elevator = new Elevator();
+        // m_algaePivot = new Pivot();
+        // m_climber = new Climber();
+        // m_algaeRollers = new AlgaeRollers();
+        // m_coralRollers = new CoralRollers();
         m_ledFeedback = new LedFeedback(m_drivetrain);
-        m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
+        // m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
     }
 
     // ** BUTTON BOARD HELPERS **

@@ -2,17 +2,11 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.driveassist.DriverAssist;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -26,12 +20,6 @@ public class TeleopCommand extends Command {
     private final double maxRotationalVelocity = DriveConstants.k_maxTeleopAngularSpeed;
 
     private final DriverAssist m_assist = new DriverAssist();
-
-    private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
-        .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-        .withDeadband(maxTranslationalVelocity * DragonReins.deadband)
-        .withRotationalDeadband(maxRotationalVelocity * DragonReins.deadband)
-        .withDriveRequestType(DriveRequestType.Velocity);
 
     public TeleopCommand(
         CommandSwerveDrivetrain drivetrain,
@@ -62,7 +50,7 @@ public class TeleopCommand extends Command {
             m_drivetrain.setAligned(false);
         }
         Transform2d fieldRelative = getFieldRelative(robotRelative);
-        // avoid obstacles using drive assist
+        // avoid barge using drive assist
         // Translation2d filtered = m_assist.calculate(
         //     fieldRelative.getTranslation(),
         //     m_drivetrain.getPose(),
@@ -70,7 +58,7 @@ public class TeleopCommand extends Command {
         // );
         // Transform2d out = new Transform2d(filtered, fieldRelative.getRotation());
         // applyVelocities(out);
-        applyVelocities(fieldRelative);
+        m_drivetrain.applyVelocities(fieldRelative);
     }
 
     /**
@@ -89,17 +77,5 @@ public class TeleopCommand extends Command {
         double py = y * forward.getCos() + x * forward.getSin();
         // combine the results
         return new Transform2d(new Translation2d(px, py), theta);
-    }
-
-    /**
-     * Applies a transform2d with field relative velocities to the drivetrain
-     */
-    private void applyVelocities(Transform2d fieldRelative) {
-        m_drivetrain.setControl(
-            driveClosedLoop
-                .withVelocityX(fieldRelative.getX())
-                .withVelocityY(fieldRelative.getY())
-                .withRotationalRate(fieldRelative.getRotation().getRadians())
-        );
     }
 }
