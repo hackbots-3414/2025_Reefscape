@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -16,8 +18,12 @@ import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -30,9 +36,11 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.RobotObserver;
 
@@ -43,7 +51,9 @@ public class Elevator extends SubsystemBase {
     private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
     private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*");
 
-    private final CANcoder m_cancoder = new CANcoder(IDConstants.elevatorEncoder);
+    private final CANrange m_CANrange = new CANrange(IDConstants.elevatorCANrange);
+
+    private final Debouncer m_debouncer = new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
 
     private double m_position;
     private double m_velocity;
@@ -65,16 +75,15 @@ public class Elevator extends SubsystemBase {
     private boolean m_speedChanged;
 
     public Elevator() {
-        // configEncoder();
         configMotor();
+        configCANrange();
         configSim();
         m_taken = false;
     }
 
-    // private void configEncoder() {
-    //     m_cancoder.clearStickyFaults();
-    //     m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
-    // }
+    private void configCANrange() {
+        m_CANrange.getConfigurator().apply(ElevatorConstants.kCANrangeConfig, RobotConstants.globalCanTimeout.in(Seconds));
+    }
 
     private void configMotor() {
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
@@ -271,7 +280,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atZero() {
-        return m_elevatorRight.getSupplyCurrent().getValueAsDouble() >= ElevatorConstants.k_zeroCurrentThreshold;
+        return m_debouncer.calculate(m_CANrange.getIsDetected().getValue());
+        // return m_elevatorRight.getSupplyCurrent().getValueAsDouble() >= ElevatorConstants.k_zeroCurrentThreshold;
     }
 
     public void goDownNoStopping() {

@@ -56,6 +56,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -102,7 +103,7 @@ public class Constants {
 
         public static final int elevatorLeft = 51;
         public static final int elevatorRight = 52;
-        public static final int elevatorEncoder = 53;
+        public static final int elevatorCANrange = 53;
 
         public static final int pivot = 57;
         public static final int pivotEncoder = 58;
@@ -547,6 +548,16 @@ public class Constants {
                         .withMotionMagicCruiseVelocity(maxSpeedUp)
                         .withMotionMagicAcceleration(maxAccelerationUp)
                         .withMotionMagicJerk(maxJerkUp));
+
+        public static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
+            .withFovParams(new FovParamsConfigs()
+                .withFOVRangeX(6.75)
+                .withFOVRangeY(6.75))
+            .withProximityParams(new ProximityParamsConfigs()
+                .withMinSignalStrengthForValidMeasurement(1500)
+                .withProximityThreshold(0.01));
+
+        public static final Time kRangeDebounceTime = Seconds.of(0.2);
     }
 
     public static final class PivotConstants {
