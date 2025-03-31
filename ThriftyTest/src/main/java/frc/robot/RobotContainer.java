@@ -45,8 +45,6 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlgaeEjectCommand;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AlgaeScoreCommand;
-import frc.robot.commands.AlignLeftCommand;
-import frc.robot.commands.AlignRightCommand;
 import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
@@ -155,8 +153,6 @@ public class RobotContainer {
         SmartDashboard.putBoolean("SAFETY MODE", false);
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
-        SmartDashboard.putData("AlignLEFT " , new  AlignLeftCommand(m_drivetrain));
-        SmartDashboard.putData("AlignRight", new AlignRightCommand(m_drivetrain));
         SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
     }
 

@@ -1,6 +1,5 @@
 package frc.robot;
 
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -123,26 +122,6 @@ public class RobotObserver {
 
     public static boolean getClimbed() {
         return getInstance().m_climbed;
-    }
-
-    private DoubleSupplier m_rangeDistanceSupplier;
-
-    public static void setRangeDistanceSupplier(DoubleSupplier rangeDistanceSupplier) {
-        getInstance().m_rangeDistanceSupplier = rangeDistanceSupplier;
-    }
-    
-    public static double getRangeDistance(){
-        return getInstance().m_rangeDistanceSupplier.getAsDouble();
-    }
-
-    private Supplier<Optional<Double>> m_compDistanceSupplier;
-
-    public static void setCompensationDistanceSupplier(Supplier<Optional<Double>> sup) {
-        getInstance().m_compDistanceSupplier = sup;
-    }
-
-    public static Optional<Double> getCompensationDistance() {
-        return getInstance().m_compDistanceSupplier.get();
     }
 
     private Supplier<Pose2d> m_antitargetSupplier;

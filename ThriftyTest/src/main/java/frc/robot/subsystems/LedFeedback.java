@@ -98,9 +98,6 @@ public class LedFeedback extends SubsystemBase {
         matchTime = (DriverStation.getMatchType() == MatchType.None) ? Double.POSITIVE_INFINITY : DriverStation.getMatchTime();
         inAuton = DriverStation.isAutonomousEnabled();
         inTeleop = DriverStation.isTeleopEnabled();
-
-        rangeRight =  drivetrain.getRangeRightDistance();
-        rangeLeft =  drivetrain.getRangeLeftDistance();
         
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();

@@ -83,13 +83,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private SwerveSetpoint previousSetpoint;
     private final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
-    private CANrange leftRange;
-    private CANrange rightRange;
-
-    private MedianFilter rangeFilter;
-    private double rightRaw = -1;
-    private double leftRaw = -1;
-
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
             SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
@@ -120,19 +113,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setVisionValidSupplier(this::getVisionValid);
         RobotObserver.setPoseSupplier(this::getPose);
         RobotObserver.setVelocitySupplier(this::getVelocity);
-        RobotObserver.setRangeDistanceSupplier(this::getRangeDistance);
-        RobotObserver.setCompensationDistanceSupplier(this::getCompensationDistance);
         RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
         RobotObserver.setReefReadySupplier(this::getReefReady);
-
-        configureCANRange();
-    }
-
-    private void configureCANRange() {
-        leftRange = new CANrange(IDConstants.leftRange);
-        rightRange = new CANrange(IDConstants.rightRange);
-
-        rangeFilter = new MedianFilter(5);
     }
 
     public void initializeSetpointGenerator(RobotConfig config) {
@@ -205,39 +187,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    public double getRangeDistance() {
-        double leftRaw = getRangeLeftDistance();
-        double rightRaw = getRangeRightDistance();
-        double leftValue = leftRaw > DriveConstants.rangeZero && leftRaw < DriveConstants.rangeMax ? leftRaw : DriveConstants.rangeZero;
-        double rightValue = rightRaw > DriveConstants.rangeZero && rightRaw < DriveConstants.rangeMax ? rightRaw : DriveConstants.rangeZero;
-        return rangeFilter.calculate(Math.min(leftValue, rightValue));
-    }
-
-    public double getRangeRightDistance() {
-        return rightRaw;
-    }
-
-    public double getRangeLeftDistance() {
-        return leftRaw;
-    }
-
-    public Optional<Double> getCompensationDistance() {
-        double leftRaw = leftRange.getDistance().getValueAsDouble();
-        boolean leftOk = leftRange.getIsDetected().getValue();
-        double rightRaw = rightRange.getDistance().getValueAsDouble();
-        boolean rightOk = rightRange.getIsDetected().getValue();
-        if (!(rightOk || leftOk)) return Optional.empty();
-        double measurement;
-        if (!rightOk) {
-            measurement = leftRaw;
-        } else if (!leftOk) {
-            measurement = rightRaw;
-        } else {
-            measurement = Math.min(leftRaw, rightRaw);
-        }
-        return Optional.of(rangeFilter.calculate(measurement));
-    }
-
     @Override
     public void periodic() {
         m_estimatedPose = this.getState().Pose;
@@ -252,9 +201,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        rightRaw = rightRange.getDistance().getValueAsDouble();
-        leftRaw = leftRange.getDistance().getValueAsDouble();
-
         handleVisionToggle();
 
         SmartDashboard.putBoolean("Drivetrain Aligned?", m_aligned);
@@ -262,13 +208,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putBoolean("Drivetrain No elevator", noElevatorZone());
         SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
         SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
-        SmartDashboard.putNumber("REEF ALING RANGE DISANCE", getRangeDistance());
 
          Translation2d v = getVelocityComponents();
          SmartDashboard.putNumber("vx", v.getX());
          SmartDashboard.putNumber("vy", v.getY());
-        SmartDashboard.putNumber("LEFT", leftRange.getDistance().getValueAsDouble());
-        SmartDashboard.putNumber("RIGHT", rightRange.getDistance().getValueAsDouble());
     }
 
     private void startSimThread() {
