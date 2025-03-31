@@ -1,15 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,6 +46,15 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
@@ -106,7 +105,6 @@ public class Constants {
         public static final int elevatorCANrange = 53;
 
         public static final int pivot = 57;
-        public static final int pivotEncoder = 58;
 
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
@@ -142,8 +140,8 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final double kMaxAccelerationPerpendicularToTarget = 2.0;
-        public static final double kMaxAccelerationTowardsTarget = 2.0;
+        public static final double kMaxAccelerationPerpendicularToTarget = 3.0;
+        public static final double kMaxAccelerationTowardsTarget = 3.0;
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -477,7 +475,7 @@ public class Constants {
         public static final double net = 9.31 + 4 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
-        public static final double prep = L3;
+        public static final double prep = L2;
 
         public static final double forwardSoftLimit = 11.15;
         public static final double reverseSoftLimit = 0;
@@ -554,10 +552,10 @@ public class Constants {
                 .withFOVRangeX(6.75)
                 .withFOVRangeY(6.75))
             .withProximityParams(new ProximityParamsConfigs()
-                .withMinSignalStrengthForValidMeasurement(1500)
-                .withProximityThreshold(0.01));
+                .withMinSignalStrengthForValidMeasurement(3500)
+                .withProximityThreshold(0.12));
 
-        public static final Time kRangeDebounceTime = Seconds.of(0.2);
+        public static final Time kRangeDebounceTime = Seconds.of(0.06);
     }
 
     public static final class PivotConstants {
@@ -584,7 +582,7 @@ public class Constants {
         public static final double tolerance = 0.03;
 
         public static final double groundPickup = 0.0669;
-        public static final double processor = 0.0669;
+        public static final double processor = 0.085;
         public static final double reefPickup = 0.2;
         public static final double reefExtract = 0.281;
         public static final double net = 0.342;

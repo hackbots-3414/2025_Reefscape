@@ -28,7 +28,6 @@ import frc.robot.RobotObserver;
 
 public class Pivot extends SubsystemBase {
     private final TalonFX m_pivot = new TalonFX(IDConstants.pivot);
-    private final CANcoder m_cancoder = new CANcoder(IDConstants.pivotEncoder);
 
     private double m_position;
     private double m_velocity;
@@ -47,14 +46,7 @@ public class Pivot extends SubsystemBase {
 
     public Pivot() {
         configSim();
-        configEncoder();
         configMotor();
-    }
-
-    private void configEncoder() {
-        m_cancoder.clearStickyFaults();
-        m_cancoder.getConfigurator().apply(new CANcoderConfiguration(), 0.05);
-        m_cancoder.getConfigurator().apply(PivotConstants.encoderConfig, 0.2);
     }
 
     private void configMotor() {
@@ -181,10 +173,6 @@ public class Pivot extends SubsystemBase {
         double appliedVolts = m_pivot.get() * RobotController.getBatteryVoltage();
         m_armSim.setInput(appliedVolts);
         m_armSim.update(SimConstants.k_simPeriodic);
-
-        // Update the simulated encoder values
-        m_cancoder.getSimState().setRawPosition(m_position / (2 * Math.PI)); // Convert radians to rotations
-        m_cancoder.getSimState().setVelocity(m_velocity / (2 * Math.PI)); // Convert rad/s to RPM
 
         // Simulate battery voltage
         RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(m_armSim.getCurrentDrawAmps()));
