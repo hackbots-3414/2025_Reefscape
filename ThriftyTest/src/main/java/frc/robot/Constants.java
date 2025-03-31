@@ -1008,11 +1008,11 @@ public class Constants {
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8; // 8
         public static final int elevatorOffset = 95; // 94
-        public static final int funnelNumLED = 87; // 85 
+        public static final int funnelNumLED = 81; // 85 
         public static final int elevatorNumLED = 40; // 40
         public static final int funnelOffset2 = 8; // 8
-        public static final int elevatorOffset2 = 95; // 94
-        public static final int funnelNumLED2 = 87; // 85
+        public static final int elevatorOffset2 = 93; // 94
+        public static final int funnelNumLED2 = elevatorOffset2 - funnelOffset2; // 85
         public static final int elevatorNumLED2 = 40; // 40
     }
 
