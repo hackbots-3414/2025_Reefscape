@@ -730,10 +730,10 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
         public static final double forwardSoftLimit = 0.0;
-        public static final double reverseSoftLimit = -0.250;
+        public static final double reverseSoftLimit = -0.23;
         public static final double climbPosition = -0.115;
 
-        public static final double encoderOffset = 0.21533203125;
+        public static final double encoderOffset = -0.01318359;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
