@@ -465,7 +465,7 @@ public class Constants {
 
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
-        public static final double stow = 0.425;
+        public static final double stow = 0.31;
         public static final double processor = 0;
         // public static final double L1 = stow + 3.5 * inch;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
@@ -731,7 +731,7 @@ public class Constants {
 
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.23;
-        public static final double climbPosition = -0.115;
+        public static final double climbPosition = -0.110;
 
         public static final double encoderOffset = -0.01318359;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
