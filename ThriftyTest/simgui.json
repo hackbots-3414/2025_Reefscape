@@ -177,26 +177,6 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Module 0": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Module 1": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Module 2": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Module 3": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Super Field": {
         "Blue Alliance Left Intake": {
           "arrows": false,
@@ -511,7 +491,7 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
         "right": 2932,
         "target": {
           "arrows": false,
@@ -570,6 +550,9 @@
   },
   "NetworkTables Info": {
     "Server": {
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "visible": true

@@ -23,9 +23,27 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "AlgaeLower"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "HWall"
+            "pathName": "HBarge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Net"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BargeWall"
           }
         }
       ]
