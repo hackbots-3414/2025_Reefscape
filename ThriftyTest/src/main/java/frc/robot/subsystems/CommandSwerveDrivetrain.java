@@ -203,15 +203,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         handleVisionToggle();
 
-        SmartDashboard.putBoolean("Drivetrain Aligned?", m_aligned);
-        SmartDashboard.putBoolean("Drivetrain Reef ready", getReefReady());
-        SmartDashboard.putBoolean("Drivetrain No elevator", noElevatorZone());
-        SmartDashboard.putString("REEF CLIP LOCATION", RobotObserver.getReefClipLocation().toString());
-        SmartDashboard.putBoolean("REEF MODE ON", RobotObserver.getReefMode());
-
          Translation2d v = getVelocityComponents();
-         SmartDashboard.putNumber("vx", v.getX());
-         SmartDashboard.putNumber("vy", v.getY());
     }
 
     private void startSimThread() {

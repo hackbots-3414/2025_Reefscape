@@ -150,7 +150,6 @@ public class RobotContainer {
     }
     
     private void configureDashboard() {
-        SmartDashboard.putBoolean("SAFETY MODE", false);
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
         SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
@@ -158,14 +157,7 @@ public class RobotContainer {
 
     private double m_time;
 
-    private void configureTesting() {
-        SmartDashboard.putData("elevator up", m_elevator.startEnd(() -> {
-            m_elevator.setNet();
-            m_time = System.currentTimeMillis();
-        }, () -> {
-            m_logger.info("Ended with {} s", (System.currentTimeMillis() - m_time) / 1e+3);
-        }).until(m_elevator::atSetpoint));
-    }
+    private void configureTesting() {}
 
     // ********** BINDINGS **********
 

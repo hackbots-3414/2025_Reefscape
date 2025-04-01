@@ -268,11 +268,6 @@ public class Elevator extends SubsystemBase {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
 
-        SmartDashboard.putNumber("Elevator setpoint", m_reference);
-        SmartDashboard.putNumber("Elevator position", m_position);
-        SmartDashboard.putBoolean("Elevator up", elevatorUp());
-        SmartDashboard.putNumber("Elevator Current", m_elevatorRight.getSupplyCurrent().getValueAsDouble());
-
         if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;

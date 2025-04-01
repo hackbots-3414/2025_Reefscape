@@ -240,7 +240,6 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose2d pose
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
-        SmartDashboard.putNumber(m_name + " multiplier", multiplier);
         Matrix<N3, N1> stdDevs = VecBuilder.fill(
             multiplier * VisionConstants.k_translationCoefficient,
             multiplier * VisionConstants.k_translationCoefficient,

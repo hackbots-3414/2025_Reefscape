@@ -80,15 +80,6 @@ public class LedFeedback extends SubsystemBase {
         ledcontroller2.configAllSettings(config, 20);
         this.drivetrain = m_drivetrain;
 
-
-        // SmartDashboard.putBoolean("AlignedRight", alignedRight());
-        // SmartDashboard.putBoolean("AlignedLeft", alignedLeft());
-        // SmartDashboard.putBoolean("coralOnBoard", coralOnBoard);
-        // SmartDashboard.putBoolean("coralInRange", coralInRange);
-        // SmartDashboard.putBoolean("algaeOnBoard", algaeOnBoard);
-        // SmartDashboard.putBoolean("ALGAEINRANGE", algaeInRange);
-        // SmartDashboard.putBoolean("ALGAETOOCLOSE", algaeTooClose);
-        // SmartDashboard.putBoolean("CLIMBED", climbed);
         defaultColors();
 
     }

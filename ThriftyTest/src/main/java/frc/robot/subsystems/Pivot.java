@@ -161,9 +161,6 @@ public class Pivot extends SubsystemBase {
             m_speedChanged = false;
         }
 
-        SmartDashboard.putNumber("REFERENCE FOR PIVOT", getReference());
-        SmartDashboard.putNumber("POSITION FOR PIVOT", getPosition());
-
         SmartDashboard.putBoolean("PIVOT AT POSITION", atSetpoint());
     }
 

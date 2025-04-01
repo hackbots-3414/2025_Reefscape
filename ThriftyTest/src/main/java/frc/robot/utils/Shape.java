@@ -77,7 +77,6 @@ public class Shape {
             return true;
         }
         boolean isInside = isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());
-        SmartDashboard.putBoolean("SHAPE: " + m_name + "; INSIDE?", isInside);
         return isInside;
     }
 

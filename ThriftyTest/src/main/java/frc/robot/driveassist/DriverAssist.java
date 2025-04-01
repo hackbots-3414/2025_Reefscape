@@ -29,7 +29,6 @@ public class DriverAssist {
     ) {
         Translation2d x = antitarget.getTranslation().minus(current.getTranslation());
         double xNorm = x.getNorm();
-        SmartDashboard.putNumber("FF x", xNorm);
         if (xNorm == 0) {
             m_logger.warn("position is exactly ff center");
             return velocity;
@@ -45,13 +44,11 @@ public class DriverAssist {
         );
         boolean active = t.getNorm() < DriveConstants.k_maxTeleopLinearSpeed
             && RobotObserver.getFFEnabled();
-        SmartDashboard.putBoolean("Force Field Active", active);
         if (!active) {
             RobotObserver.getField().getObject("FF").setPoses();
             return velocity;
         }
         RobotObserver.getField().getObject("FF").setPose(antitarget);
-        SmartDashboard.putBoolean("FF inside", inside);
         return adjust(velocity, t, inside);
     }
 
