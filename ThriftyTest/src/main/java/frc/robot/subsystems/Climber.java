@@ -88,6 +88,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         }
         SmartDashboard.putBoolean("Climb Ready", climbReady());
         SmartDashboard.putBoolean("Climbed", atClimb());
+        SmartDashboard.putNumber("climber pos", m_encoder.getPosition().getValueAsDouble());
     }
 
     public double getVelocity() {
