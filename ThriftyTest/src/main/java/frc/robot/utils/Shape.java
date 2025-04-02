@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.Meters;
 import frc.robot.Constants.FieldConstants;
