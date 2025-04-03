@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.336475409836066,
-        "y": 5.001997950819672
+        "x": 5.791,
+        "y": 4.191
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.01280737704918,
-        "y": 7.219723360655737
+        "x": 6.014945520522332,
+        "y": 4.079876627850024
       },
       "isLocked": false,
-      "linkedName": "Barge"
+      "linkedName": "H"
     },
     {
       "anchor": {
-        "x": 5.03483606557377,
-        "y": 7.255686475409835
+        "x": 5.791,
+        "y": 4.046021773726852
       },
       "prevControl": {
-        "x": 6.806026048781875,
-        "y": 7.309194742097373
+        "x": 5.529638731936954,
+        "y": 4.15184281952201
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "AlgaeGH"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -37.84892022271177
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "XWall",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 20.556045219583446
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "HGH"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "AlgaeLower"
