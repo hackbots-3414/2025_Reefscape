@@ -149,6 +149,10 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.stow);
     }
 
+    public void setEject() {
+        setPosition(ElevatorConstants.eject);
+    }
+
     public void setProcessor() {
         setPosition(ElevatorConstants.processor);
     }

@@ -141,7 +141,7 @@ public class Constants {
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final double kMaxAccelerationPerpendicularToTarget = 3.0;
-        public static final double kMaxAccelerationTowardsTarget = 3.0;
+        public static final double kMaxAccelerationTowardsTarget = 4.0;
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -466,6 +466,7 @@ public class Constants {
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.31;
+        public static final double eject = stow + 2 * inch;
         public static final double processor = 0;
         // public static final double L1 = stow + 3.5 * inch;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
@@ -553,7 +554,8 @@ public class Constants {
                 .withFOVRangeY(6.75))
             .withProximityParams(new ProximityParamsConfigs()
                 .withMinSignalStrengthForValidMeasurement(3500)
-                .withProximityThreshold(0.12));
+                .withProximityThreshold(0.12)
+                .withProximityHysteresis(0));
 
         public static final Time kRangeDebounceTime = Seconds.of(0.06);
     }
@@ -1017,6 +1019,6 @@ public class Constants {
     public static class FFConstants {
         public static final double k_bargeX = 8.774176;
         public static final double k_radius = 1.3;
-        public static final double k_decceleration = 1.8;
+        public static final double k_decceleration = 2.5;
     }
 }

@@ -281,7 +281,7 @@ public class RobotContainer {
     private void configureNamedCommands() {
         NamedCommands.registerCommand("L4", coralScoreCommand(4));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));
-        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow).until(m_elevator::atSetpoint).andThen(zero()).andThen(coralIntakeCommand()));
+        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow).until(m_elevator::atSetpoint).andThen(zero()).andThen(coralIntakeCommand().withTimeout(5)));
         NamedCommands.registerCommand("Intake Wait", new WaitUntilCommand(m_coralRollers::intakeReady)
             .alongWith(m_drivetrain.runOnce(m_drivetrain::stop)));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
@@ -361,7 +361,7 @@ public class RobotContainer {
                         .unless(RobotObserver::getNoElevatorZone))
                     ).andThen(m_elevator::release)
                     .andThen(new InstantCommand(() -> {
-                        m_logger.debug("released elevator");
+                        m_logger.info("released elevator");
                     }))
                 );
             }
