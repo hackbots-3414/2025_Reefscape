@@ -344,7 +344,7 @@ public class RobotContainer {
             case NET -> {
                 trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
                 trigger.onFalse(
-                    algaeEjectCommand()
+                    algaeEjectCommand().onlyIf(m_elevator::atSetpoint)
                     .andThen(zero()
                         .onlyIf(m_algaeRollers::algaeHeld)
                         .onlyIf(m_elevator::atSetpoint)
