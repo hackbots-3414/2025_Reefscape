@@ -1,5 +1,5 @@
 # 2025_Reefscape
-Hackbots code for the 2025 FRC Reefscape game.
+Hackbots code for the 2025 FRC Reefscape season.
 
 ## DriveTrain CAN IDs:
 |Device|ID|
