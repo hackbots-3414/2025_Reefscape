@@ -32,6 +32,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Robot;
 import frc.robot.RobotObserver;
 
 public class Elevator extends SubsystemBase {
@@ -211,6 +212,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
+        if (Robot.isSimulation()) return true;
         return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
     }
 

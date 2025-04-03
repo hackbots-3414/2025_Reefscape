@@ -45,6 +45,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "LIntake Align"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "Intake Wait"
                       }
                     },
@@ -52,6 +58,12 @@
                       "type": "path",
                       "data": {
                         "pathName": "IntakeK"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Stop"
                       }
                     }
                   ]
@@ -95,6 +107,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "LIntake Align"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "Intake Wait"
                       }
                     },
@@ -102,6 +120,12 @@
                       "type": "path",
                       "data": {
                         "pathName": "IntakeL"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Stop"
                       }
                     }
                   ]
@@ -145,6 +169,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "LIntake Align"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "Intake Wait"
                       }
                     },
@@ -152,6 +182,12 @@
                       "type": "path",
                       "data": {
                         "pathName": "IntakeA"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Stop"
                       }
                     }
                   ]

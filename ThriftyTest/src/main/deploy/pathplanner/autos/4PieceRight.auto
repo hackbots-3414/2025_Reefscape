@@ -45,6 +45,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "RIntake Align"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "Intake Wait"
                       }
                     },
@@ -101,6 +107,12 @@
                     {
                       "type": "named",
                       "data": {
+                        "name": "RIntake Align"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
                         "name": "Intake Wait"
                       }
                     },
@@ -152,6 +164,12 @@
                       "type": "path",
                       "data": {
                         "pathName": "CIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RIntake Align"
                       }
                     },
                     {

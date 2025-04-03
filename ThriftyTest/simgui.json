@@ -19,6 +19,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/AUTOALIGN SLOWDOWN (LAST RESTORT)!!!!!!!!!!!!!!!!!!!!": "Command",
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/AlignLEFT ": "Command",
       "/SmartDashboard/AlignRight": "Command",
@@ -168,11 +169,6 @@
         }
       },
       "/SmartDashboard/Auto Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Elevator Visualization": {
         "window": {
           "visible": true
         }
@@ -491,7 +487,7 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "right": 2932,
         "target": {
           "arrows": false,
@@ -527,11 +523,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/elevator up": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },
@@ -554,8 +545,7 @@
         "open": true
       },
       "open": true
-    },
-    "visible": true
+    }
   },
   "Plot": {
     "Plot <0>": {

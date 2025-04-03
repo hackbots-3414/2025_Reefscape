@@ -53,6 +53,7 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -141,7 +142,7 @@ public class Constants {
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final double kMaxAccelerationPerpendicularToTarget = 3.0;
-        public static final double kMaxAccelerationTowardsTarget = 4.0;
+        public static double kMaxAccelerationTowardsTarget = 4.5;
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -383,6 +384,9 @@ public class Constants {
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
         public static final double k_reefReady = 2.1;
         public static final Pose2d k_processor = new Pose2d(5.987542, 0.842, Rotation2d.kCCW_90deg);
+
+        public static final Pose2d kRightIntake = new Pose2d(1.247, 0.950, Rotation2d.fromDegrees(55));
+        public static final Pose2d kLeftIntake = new Pose2d(1.211, 7.016, Rotation2d.fromDegrees(-55));
     }
 
     public static final class StateSpaceConstants {
@@ -391,11 +395,11 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static double translationTolerance = 0.03; // 0.04
+        public static final double translationTolerance = 0.03; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
 
-        public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
-        public static double stage2Distance = 1;
+        public static final double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
+        public static final double stage2Distance = 1;
     }
 
     public static final class CanRangeConstants {

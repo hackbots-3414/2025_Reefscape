@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.2467213114754097,
-        "y": 0.95015368852459
+        "x": 2.3735655737704917,
+        "y": 1.4776127049180332
       },
       "prevControl": {
-        "x": 2.1408619457996596,
-        "y": 1.732380146411427
+        "x": 3.2677062080947423,
+        "y": 2.2598391628048695
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "RightIntake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 3.0,
     "rotation": 55.0
   },
   "reversed": false,
