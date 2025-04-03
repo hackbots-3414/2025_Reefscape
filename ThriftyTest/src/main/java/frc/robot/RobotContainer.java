@@ -343,7 +343,14 @@ public class RobotContainer {
         switch (type) {
             case NET -> {
                 trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
-                trigger.onFalse(algaeScoreCommand(type).andThen(zero()).onlyIf(m_algaeRollers::algaeHeld).onlyIf(m_elevator::atSetpoint).unless(RobotObserver::getNoElevatorZone));
+                trigger.onFalse(
+                    algaeEjectCommand()
+                    .andThen(zero()
+                        .onlyIf(m_algaeRollers::algaeHeld)
+                        .onlyIf(m_elevator::atSetpoint)
+                        .unless(RobotObserver::getNoElevatorZone)
+                    )
+                );
             }
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
@@ -394,6 +401,10 @@ public class RobotContainer {
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
         return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_algaePivot, scoreLocation);
+    }
+
+    private Command algaeEjectCommand() {
+        return m_algaeRollers.startEnd(m_algaeRollers::ejectAlgae, m_algaeRollers::stopMotor).until(m_algaeRollers::algaeHeld);
     }
 
     private Command processorCommand() {
