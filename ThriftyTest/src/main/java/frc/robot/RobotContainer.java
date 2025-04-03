@@ -356,12 +356,12 @@ public class RobotContainer {
                     .andThen(
                         zero()
                         .andThen(new InstantCommand(() -> {
-                            m_logger.info("zeroed elevator");
+                            m_logger.debug("zeroed elevator");
                         })
                         .unless(RobotObserver::getNoElevatorZone))
                     ).andThen(m_elevator::release)
                     .andThen(new InstantCommand(() -> {
-                        m_logger.info("released elevator");
+                        m_logger.debug("released elevator");
                     }))
                 );
             }
