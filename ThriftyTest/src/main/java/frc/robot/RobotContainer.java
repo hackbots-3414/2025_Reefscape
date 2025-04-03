@@ -351,7 +351,14 @@ public class RobotContainer {
         switch (type) {
             case NET -> {
                 trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
-                trigger.onFalse(algaeScoreCommand(type).andThen(zero()).onlyIf(m_algaeRollers::algaeHeld).onlyIf(m_elevator::atSetpoint).unless(RobotObserver::getNoElevatorZone));
+                trigger.onFalse(
+                    algaeEjectCommand().onlyIf(m_elevator::atSetpoint)
+                    .andThen(zero()
+                        .onlyIf(m_algaeRollers::algaeHeld)
+                        .onlyIf(m_elevator::atSetpoint)
+                        .unless(RobotObserver::getNoElevatorZone)
+                    )
+                );
             }
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
@@ -369,6 +376,10 @@ public class RobotContainer {
 
     private void bindFunnelOpenCommand(Trigger trigger) {
         trigger.whileTrue(new OpenFunnel(m_climber));
+    }
+
+    private Command algaeEjectCommand() {
+        return m_algaeRollers.startEnd(m_algaeRollers::ejectAlgae, m_algaeRollers::stopMotor);
     }
 
     // ** SUBSYSTEM PASS IN HELPERS **
