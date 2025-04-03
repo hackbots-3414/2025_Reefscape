@@ -357,7 +357,7 @@ public class RobotContainer {
                         .onlyIf(m_algaeRollers::algaeHeld)
                         .onlyIf(m_elevator::atSetpoint)
                         .unless(RobotObserver::getNoElevatorZone)
-                    )
+                    ).andThen(m_elevator::release)
                 );
             }
             case PROCESSOR -> {
