@@ -45,7 +45,6 @@ public class LedFeedback extends SubsystemBase {
     private boolean inTeleop = false;
     private double rangeLeft = 0.0;
     private double rangeRight = 0.0;
-    private CommandSwerveDrivetrain drivetrain;
 
     private int selectedSlot = 0;
 
@@ -72,13 +71,12 @@ public class LedFeedback extends SubsystemBase {
     private CANdle ledcontroller = new CANdle(IDConstants.candle1);
     private CANdle ledcontroller2 = new CANdle(IDConstants.candle2);
 
-    public LedFeedback(CommandSwerveDrivetrain m_drivetrain) {
+    public LedFeedback() {
         CANdleConfiguration config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB; // set the strip type to RGB
         config.brightnessScalar = 0.7; // dim the LEDs to 70% brightness
         ledcontroller.configAllSettings(config, 20);
         ledcontroller2.configAllSettings(config, 20);
-        this.drivetrain = m_drivetrain;
 
         defaultColors();
 
