@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.848460333243824,
-        "y": 6.352589868160498
+        "x": 2.125539279513888,
+        "y": 7.026804470486111
       },
       "isLocked": false,
       "linkedName": "LeftIntake"
     },
     {
       "anchor": {
-        "x": 3.860097656249999,
-        "y": 5.539441189236111
+        "x": 3.7488161892361105,
+        "y": 5.66184497974537
       },
       "prevControl": {
-        "x": 3.648283192386461,
-        "y": 5.7183637475067455
+        "x": 3.3620388454861105,
+        "y": 6.363250144675926
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
+    "velocity": 0.75,
     "rotation": -59.99999999999999
   },
   "reversed": false,

@@ -4,10 +4,12 @@
   "holonomicMode": true,
   "pathFolders": [
     "IntakeX",
+    "XBarge",
     "Processor",
     "StartX",
     "Testing",
-    "XIntake"
+    "XIntake",
+    "XWall"
   ],
   "autoFolders": [],
   "defaultMaxVel": 7.0,

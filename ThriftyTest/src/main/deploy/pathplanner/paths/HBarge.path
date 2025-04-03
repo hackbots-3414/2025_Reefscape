@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2467213114754097,
-        "y": 0.95015368852459
+        "x": 5.791,
+        "y": 4.191
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9679387582285925,
-        "y": 1.635311477385799
+        "x": 6.952918836805555,
+        "y": 4.753948929398148
       },
       "isLocked": false,
-      "linkedName": "RightIntake"
+      "linkedName": "H"
     },
     {
       "anchor": {
-        "x": 3.0874164496527765,
-        "y": 2.388562644675925
+        "x": 7.462099971064814,
+        "y": 5.056056857638889
       },
       "prevControl": {
-        "x": 2.7235061261953533,
-        "y": 2.0903297247362613
+        "x": 6.7962745949074055,
+        "y": 4.635970775462963
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Barge"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.75,
-    "rotation": 59.99999999999999
+    "velocity": 0,
+    "rotation": 39.874439627652734
   },
   "reversed": false,
-  "folder": "IntakeX",
+  "folder": "XBarge",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 55.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

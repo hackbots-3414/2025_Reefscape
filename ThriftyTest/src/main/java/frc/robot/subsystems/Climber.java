@@ -86,11 +86,9 @@ public class Climber extends SubsystemBase implements AutoCloseable {
             m_leftClimbMotor.setControl(m_request.withOutput(m_voltage));
             m_voltageChanged = false;
         }
-        SmartDashboard.putNumber("climber servo pos", m_servo.getPosition());
-        SmartDashboard.putNumber("climber pos", getEncoderValue());
-
         SmartDashboard.putBoolean("Climb Ready", climbReady());
         SmartDashboard.putBoolean("Climbed", atClimb());
+        SmartDashboard.putNumber("climber pos", m_encoder.getPosition().getValueAsDouble());
     }
 
     public double getVelocity() {

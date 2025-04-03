@@ -1,15 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,6 +46,16 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -102,10 +102,9 @@ public class Constants {
 
         public static final int elevatorLeft = 51;
         public static final int elevatorRight = 52;
-        public static final int elevatorEncoder = 53;
+        public static final int elevatorCANrange = 53;
 
         public static final int pivot = 57;
-        public static final int pivotEncoder = 58;
 
         public static final int coralLeft = 55;
         public static final int coralRight = 56;
@@ -139,8 +138,10 @@ public class Constants {
     public static class DriveConstants {
         public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
-        public static final PIDConstants k_driveToPointTranslationPID = new PIDConstants(15, 0.0, 0); // 0.18836
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
+
+        public static final double kMaxAccelerationPerpendicularToTarget = 3.0;
+        public static final double kMaxAccelerationTowardsTarget = 3.0;
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -464,7 +465,7 @@ public class Constants {
 
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
-        public static final double stow = 0.425;
+        public static final double stow = 0.31;
         public static final double processor = 0;
         // public static final double L1 = stow + 3.5 * inch;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
@@ -474,7 +475,7 @@ public class Constants {
         public static final double net = 9.31 + 4 * inch; // 67 - short, // 72 - long
         public static final double reefLower = 2;
         public static final double reefUpper = 4.5;
-        public static final double prep = L3;
+        public static final double prep = L2;
 
         public static final double forwardSoftLimit = 11.15;
         public static final double reverseSoftLimit = 0;
@@ -545,6 +546,16 @@ public class Constants {
                         .withMotionMagicCruiseVelocity(maxSpeedUp)
                         .withMotionMagicAcceleration(maxAccelerationUp)
                         .withMotionMagicJerk(maxJerkUp));
+
+        public static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
+            .withFovParams(new FovParamsConfigs()
+                .withFOVRangeX(6.75)
+                .withFOVRangeY(6.75))
+            .withProximityParams(new ProximityParamsConfigs()
+                .withMinSignalStrengthForValidMeasurement(3500)
+                .withProximityThreshold(0.12));
+
+        public static final Time kRangeDebounceTime = Seconds.of(0.06);
     }
 
     public static final class PivotConstants {
@@ -571,7 +582,7 @@ public class Constants {
         public static final double tolerance = 0.03;
 
         public static final double groundPickup = 0.0669;
-        public static final double processor = 0.0669;
+        public static final double processor = 0.085;
         public static final double reefPickup = 0.2;
         public static final double reefExtract = 0.281;
         public static final double net = 0.342;
@@ -719,10 +730,10 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
         public static final double forwardSoftLimit = 0.0;
-        public static final double reverseSoftLimit = -0.250;
-        public static final double climbPosition = -0.115;
+        public static final double reverseSoftLimit = -0.23;
+        public static final double climbPosition = -0.110;
 
-        public static final double encoderOffset = 0.21533203125;
+        public static final double encoderOffset = -0.01318359;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
 
         public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
@@ -830,25 +841,23 @@ public class Constants {
     }
 
     public enum ScoringLocations {
-        A(new Pose2d(3.197, 4.192, Rotation2d.fromDegrees(0))), // GOOD
-        B(new Pose2d(3.178, 3.880, Rotation2d.fromDegrees(0))), // GOOD
+        A(new Pose2d(3.188, 4.191, Rotation2d.fromDegrees(0))), // GOOD
+        B(new Pose2d(3.188, 3.861, Rotation2d.fromDegrees(0))), // GOOD
 
-        C(new Pose2d(3.703, 2.989, Rotation2d.fromDegrees(60))), // GOOD
-        D(new Pose2d(3.971, 2.819, Rotation2d.fromDegrees(60))), // GOOD
+        C(new Pose2d(3.72, 2.982, Rotation2d.fromDegrees(58.7))), // GOOD
+        D(new Pose2d(3.967, 2.810, Rotation2d.fromDegrees(58.2))), // GOOD
 
-        E(new Pose2d(4.991, 2.822, Rotation2d.fromDegrees(120))), // GOOD
-        F(new Pose2d(5.275, 2.981, Rotation2d.fromDegrees(120))), // GOOD
+        E(new Pose2d(4.998, 2.816, Rotation2d.fromDegrees(120))), // GOOD
+        F(new Pose2d(5.283, 2.981, Rotation2d.fromDegrees(120))), // GOOD
 
-        G(new Pose2d(5.783, 3.852, Rotation2d.fromDegrees(180))), // GOOD
-        H(new Pose2d(5.794, 4.184, Rotation2d.fromDegrees(180))), // GOOD
+        G(new Pose2d(5.791, 3.861, Rotation2d.fromDegrees(180))), // GOOD
+        H(new Pose2d(5.791, 4.191, Rotation2d.fromDegrees(180))), // GOOD
 
-        I(new Pose2d(5.282, 5.063, Rotation2d.fromDegrees(-120))), // GOOD
-        J(new Pose2d(4.997, 5.240, Rotation2d.fromDegrees(-120))), // GOOD
+        I(new Pose2d(5.283, 5.071, Rotation2d.fromDegrees(-120))), // GOOD
+        J(new Pose2d(4.998, 5.236, Rotation2d.fromDegrees(-120))), // GOOD
 
-        K(new Pose2d(3.988, 5.220, Rotation2d.fromDegrees(-60))), // GOOD
-        L(new Pose2d(3.691, 5.072, Rotation2d.fromDegrees(-60))), // GOOD
-
-
+        K(new Pose2d(3.951, 5.236, Rotation2d.fromDegrees(-60))), // GOOD
+        L(new Pose2d(3.696, 5.071, Rotation2d.fromDegrees(-60))), // GOOD
 
         RIGHTHP(new Pose2d(1.227, 1.048, Rotation2d.fromDegrees(55))),
         LEFTHP(new Pose2d(1.227, 6.983, Rotation2d.fromDegrees(-55))),
@@ -997,11 +1006,11 @@ public class Constants {
         public static final double endgameAlert = 15;
         public static final int funnelOffset = 8; // 8
         public static final int elevatorOffset = 95; // 94
-        public static final int funnelNumLED = 87; // 85 
+        public static final int funnelNumLED = 81; // 85 
         public static final int elevatorNumLED = 40; // 40
         public static final int funnelOffset2 = 8; // 8
-        public static final int elevatorOffset2 = 95; // 94
-        public static final int funnelNumLED2 = 87; // 85
+        public static final int elevatorOffset2 = 93; // 94
+        public static final int funnelNumLED2 = elevatorOffset2 - funnelOffset2; // 85
         public static final int elevatorNumLED2 = 40; // 40
     }
 

@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CoralConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -124,24 +123,19 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setL1Eject() {
-        setVoltage(CoralConstants.l1EjectVoltage + getCANRangeCompensation());
+        setVoltage(CoralConstants.l1EjectVoltage);
     }
 
     public void setL2Eject() {
-        setVoltage(CoralConstants.l2EjectVoltage + getCANRangeCompensation());
+        setVoltage(CoralConstants.l2EjectVoltage);
     }
 
     public void setL3Eject() {
-        setVoltage(CoralConstants.l3EjectVoltage + getCANRangeCompensation());
+        setVoltage(CoralConstants.l3EjectVoltage);
     }
 
     public void setL4Eject() {
-        setVoltage(CoralConstants.l4EjectVoltage + getCANRangeCompensation());
-    }
-
-    private double getCANRangeCompensation() {
-        if (!CoralConstants.enableCANRange) return 0.0;
-        return (RobotObserver.getRangeDistance() - DriveConstants.rangeZero) * CoralConstants.rangeDistanceGain;
+        setVoltage(CoralConstants.l4EjectVoltage);
     }
 
     public void setSpitOut() {
@@ -209,14 +203,9 @@ public class CoralRollers extends SubsystemBase {
         }
 
         SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
-        SmartDashboard.putNumber("Rear IR Voltage", m_backIR.getVoltage());
         SmartDashboard.putBoolean("Coral CANrange", getCANrangeTriggered());
         SmartDashboard.putBoolean("OCS", getUpperCANrange());
-
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
-
-        SmartDashboard.putNumber("CORAL VOLTAGE", m_voltage);
-        SmartDashboard.putNumber("Coral Compensatin", getCANRangeCompensation());
 
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);

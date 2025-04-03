@@ -4,20 +4,19 @@
 
 package frc.robot.subsystems;
 
-import java.util.Optional;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
@@ -28,11 +27,10 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.RobotObserver;
 
@@ -43,14 +41,14 @@ public class Elevator extends SubsystemBase {
     private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
     private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*");
 
-    private final CANcoder m_cancoder = new CANcoder(IDConstants.elevatorEncoder);
+    private final CANrange m_CANrange = new CANrange(IDConstants.elevatorCANrange);
+
+    private final Debouncer m_debouncer = new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
 
     private double m_position;
     private double m_velocity;
 
     private double m_reference;
-
-    private double m_compensation;
 
     private ElevatorSim m_elevatorSim;
     private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60Foc(2); // 2 motors (left and right)
@@ -65,16 +63,15 @@ public class Elevator extends SubsystemBase {
     private boolean m_speedChanged;
 
     public Elevator() {
-        // configEncoder();
         configMotor();
+        configCANrange();
         configSim();
         m_taken = false;
     }
 
-    // private void configEncoder() {
-    //     m_cancoder.clearStickyFaults();
-    //     m_cancoder.getConfigurator().apply(ElevatorConstants.encoderConfig, 0.2);
-    // }
+    private void configCANrange() {
+        m_CANrange.getConfigurator().apply(ElevatorConstants.kCANrangeConfig, RobotConstants.globalCanTimeout.in(Seconds));
+    }
 
     private void configMotor() {
         m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
@@ -161,38 +158,24 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setL1() {
-        setPosition(ElevatorConstants.L1 + m_compensation);
+        setPosition(ElevatorConstants.L1);
     }
 
     public void setL2() {
-        setPosition(ElevatorConstants.L2 + m_compensation);
+        setPosition(ElevatorConstants.L2);
     }
 
     public void setL3() {
-        setPosition(ElevatorConstants.L3 + m_compensation);
+        setPosition(ElevatorConstants.L3);
     }
 
     public void setL4() {
-        setPosition(ElevatorConstants.L4 + m_compensation);
+        setPosition(ElevatorConstants.L4);
     }
 
     public void setPrep() {
         // no compensation
         setPosition(ElevatorConstants.prep);
-    }
-
-    private double getCANRangeCompensation() {
-        if (!ElevatorConstants.enableCANRange) {
-            m_logger.debug("not doing compensation");
-            return 0.0;
-        };
-        Optional<Double> distance = RobotObserver.getCompensationDistance();
-        if (distance.isEmpty()) return 0.0;
-        double comp = Math.min(
-            ElevatorConstants.k_maxCanCompensation,
-            (distance.get() - DriveConstants.rangeZero) * ElevatorConstants.rangeDistanceGain * ElevatorConstants.inch
-        );
-        return comp;
     }
 
     public void setReefLower() {
@@ -271,7 +254,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atZero() {
-        return m_elevatorRight.getSupplyCurrent().getValueAsDouble() >= ElevatorConstants.k_zeroCurrentThreshold;
+        return m_debouncer.calculate(m_CANrange.getIsDetected().getValue());
+        // return m_elevatorRight.getSupplyCurrent().getValueAsDouble() >= ElevatorConstants.k_zeroCurrentThreshold;
     }
 
     public void goDownNoStopping() {
@@ -284,18 +268,12 @@ public class Elevator extends SubsystemBase {
         m_position = getPositionUncached();
         m_velocity = getVelocityUncached();
 
-        SmartDashboard.putNumber("Elevator setpoint", m_reference);
-        SmartDashboard.putNumber("Elevator position", m_position);
-        SmartDashboard.putBoolean("Elevator up", elevatorUp());
-        SmartDashboard.putNumber("Elevator Current", m_elevatorRight.getSupplyCurrent().getValueAsDouble());
-
         if (m_speedChanged) {
             m_elevatorRight.setControl(new DutyCycleOut(m_speed));
             m_speedChanged = false;
         }
 
         SmartDashboard.putBoolean("ELEVATOR AT POSITION", atSetpoint());
-        m_compensation = getCANRangeCompensation();
     }
 
     @Override

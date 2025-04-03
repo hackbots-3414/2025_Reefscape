@@ -7,25 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartH"
+            "pathName": "IntakeE"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Align H"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "L4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HWall"
+            "name": "Align E"
           }
         }
       ]

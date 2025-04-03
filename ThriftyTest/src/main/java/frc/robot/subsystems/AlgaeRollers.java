@@ -85,10 +85,10 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
         if (Robot.isReal()) {
             m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
         } else {
-            m_hasAlgae = SmartDashboard.getBoolean("Algae Holding Object", false);
+            m_hasAlgae = SmartDashboard.getBoolean("Algae Held", false);
         }
 
-        SmartDashboard.putBoolean("Algae Holding Object", m_hasAlgae);
+        SmartDashboard.putBoolean("Algae Held", m_hasAlgae);
     }
 
     @Override

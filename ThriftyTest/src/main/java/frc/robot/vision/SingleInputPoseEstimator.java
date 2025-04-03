@@ -89,7 +89,7 @@ public class SingleInputPoseEstimator implements Runnable {
             time between when a result was sent and when we "see" it. This would
             mess up the timestamping logic.
             */
-            m_logger.info("Possibly too many results: {} ({})", results.size(), m_camera.getName());
+            m_logger.trace("Possibly too many results: {} ({})", results.size(), m_camera.getName());
         }
         m_estimator.addHeadingData(
             RobotController.getMeasureTime().in(Seconds),
@@ -240,7 +240,6 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose2d pose
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
-        SmartDashboard.putNumber(m_name + " multiplier", multiplier);
         Matrix<N3, N1> stdDevs = VecBuilder.fill(
             multiplier * VisionConstants.k_translationCoefficient,
             multiplier * VisionConstants.k_translationCoefficient,

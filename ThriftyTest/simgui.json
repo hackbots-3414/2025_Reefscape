@@ -34,6 +34,7 @@
       "/SmartDashboard/Height to Score #4": "String Chooser",
       "/SmartDashboard/LIFT CLIMB": "Command",
       "/SmartDashboard/LOWER CLIMB": "Command",
+      "/SmartDashboard/Lazy Zero Elevator": "Command",
       "/SmartDashboard/ManualClimberCommand": "Command",
       "/SmartDashboard/Module 0": "Mechanism2d",
       "/SmartDashboard/Module 1": "Mechanism2d",
@@ -58,11 +59,19 @@
       "/SmartDashboard/Testing Command": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/Zero Elevator": "Command",
+      "/SmartDashboard/a": "Command",
+      "/SmartDashboard/b": "Command",
+      "/SmartDashboard/c": "Command",
       "/SmartDashboard/camera testing spot": "Command",
       "/SmartDashboard/camera testing spot 2": "Command",
+      "/SmartDashboard/d": "Command",
       "/SmartDashboard/drive to other pose": "Command",
       "/SmartDashboard/drive to reef": "Command",
+      "/SmartDashboard/e": "Command",
       "/SmartDashboard/elevator up": "Command",
+      "/SmartDashboard/f": "Command",
+      "/SmartDashboard/g": "Command",
+      "/SmartDashboard/h": "Command",
       "/SmartDashboard/open funnel": "Command",
       "/SmartDashboard/runme hehe": "Command",
       "/SmartDashboard/teleport": "Command"
@@ -164,26 +173,6 @@
         }
       },
       "/SmartDashboard/Elevator Visualization": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Module 0": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Module 1": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Module 2": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Module 3": {
         "window": {
           "visible": true
         }
@@ -502,6 +491,7 @@
           ]
         },
         "height": 8.051901817321777,
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
         "right": 2932,
         "target": {
           "arrows": false,
@@ -560,6 +550,9 @@
   },
   "NetworkTables Info": {
     "Server": {
+      "Subscribers": {
+        "open": true
+      },
       "open": true
     },
     "visible": true
