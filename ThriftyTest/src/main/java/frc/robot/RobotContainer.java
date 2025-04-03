@@ -353,11 +353,16 @@ public class RobotContainer {
                 trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
                 trigger.onFalse(
                     algaeEjectCommand().onlyIf(m_elevator::atSetpoint)
-                    .andThen(zero()
-                        .onlyIf(m_algaeRollers::algaeHeld)
-                        .onlyIf(m_elevator::atSetpoint)
-                        .unless(RobotObserver::getNoElevatorZone)
+                    .andThen(
+                        zero()
+                        .andThen(new InstantCommand(() -> {
+                            m_logger.info("zeroed elevator");
+                        })
+                        .unless(RobotObserver::getNoElevatorZone))
                     ).andThen(m_elevator::release)
+                    .andThen(new InstantCommand(() -> {
+                        m_logger.info("released elevator");
+                    }))
                 );
             }
             case PROCESSOR -> {
@@ -379,7 +384,7 @@ public class RobotContainer {
     }
 
     private Command algaeEjectCommand() {
-        return m_algaeRollers.startEnd(m_algaeRollers::ejectAlgae, m_algaeRollers::stopMotor);
+        return m_algaeRollers.startEnd(m_algaeRollers::ejectAlgae, m_algaeRollers::stopMotor).onlyWhile(m_algaeRollers::algaeHeld);
     }
 
     // ** SUBSYSTEM PASS IN HELPERS **

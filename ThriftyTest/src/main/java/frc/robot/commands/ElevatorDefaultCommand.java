@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.Elevator;
 
