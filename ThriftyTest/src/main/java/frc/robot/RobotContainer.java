@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +37,7 @@ import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.PS5;
 import frc.robot.Constants.ClimbLocations;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ReefClipLocations;
 import frc.robot.Constants.ScoringLocations;
 import frc.robot.Constants.ScoringLocationsLeft;
@@ -227,6 +229,8 @@ public class RobotContainer {
         bindAlgaeScoreCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(PS5.processor).and(algaeOn));
         bindAlgaeScoreCommand(AlgaeLocationPresets.NET, controller.pov(PS5.net).and(algaeOn));
 
+        bindAutoProcessCommand(controller.pov(PS5.autoProcessor).and(algaeOn));
+
         controller.button(PS5.climbReady).whileTrue(new ClimbReadyCommand(m_climber));
         controller.button(PS5.climb).whileTrue(new ClimberCommand(m_climber));
 
@@ -250,6 +254,10 @@ public class RobotContainer {
             trigger.whileTrue(coralPrepAndScoreCommand(level));
             trigger.onFalse(coralScoreCommand(level).andThen(zero()));
         }
+    }
+
+    private void bindAutoProcessCommand(Trigger trigger) {
+        trigger.whileTrue(new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true));
     }
 
     private Command zero() {

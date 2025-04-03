@@ -234,8 +234,7 @@ public class Constants {
             public static final int net = 0; // POV
             public static final int algaeModeButton = Button.kR2.value; // R2
             
-            public static final int leftIntake = Button.kL1.value; // LB
-            public static final int rightIntake = Button.kR1.value; // RB
+            public static final int autoProcessor = Button.kR1.value;
             
             public static final int climbReady = Button.kCreate.value;
             public static final int climb = Button.kOptions.value;
@@ -383,6 +382,7 @@ public class Constants {
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
         public static final double k_reefReady = 2.1;
+        public static final Pose2d k_processor = new Pose2d(5.987542, 0.842, Rotation2d.kCCW_90deg);
     }
 
     public static final class StateSpaceConstants {
