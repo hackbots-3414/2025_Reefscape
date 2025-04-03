@@ -4,10 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "IntakeX",
-    "XBarge",
     "Processor",
     "StartX",
     "Testing",
+    "Barge",
     "XIntake",
     "XWall"
   ],

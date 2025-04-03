@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.791,
-        "y": 4.046021773726852
+        "x": 5.154713114754099,
+        "y": 5.193801229508197
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.39641393442623,
-        "y": 3.539497950819672
+        "x": 6.041803278688524,
+        "y": 6.140829918032787
       },
       "isLocked": false,
-      "linkedName": "AlgaeGH"
+      "linkedName": "AlgaeIJ"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 5.001997950819672
       },
       "prevControl": {
-        "x": 6.964856557377049,
-        "y": 4.414600409836066
+        "x": 6.832991803278689,
+        "y": 5.8171618852459
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 7.0,
     "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 2852.0,
@@ -48,7 +48,7 @@
   "folder": "Barge",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
