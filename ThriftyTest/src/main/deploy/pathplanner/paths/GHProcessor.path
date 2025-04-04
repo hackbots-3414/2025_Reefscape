@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.146463035300925,
-        "y": 3.894967809606481
+        "x": 8.187602459016393,
+        "y": 3.9950307377049183
       },
       "isLocked": false,
       "linkedName": "AlgaeGH"
     },
     {
       "anchor": {
-        "x": 5.987542,
-        "y": 0.7
+        "x": 6.017827868852459,
+        "y": 1.32
       },
       "prevControl": {
-        "x": 5.834239104689004,
-        "y": 0.897479675635914
+        "x": 6.017827868852459,
+        "y": 1.5699999999999998
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Processor"
+      "linkedName": "Processor Setup"
     }
   ],
   "rotationTargets": [],

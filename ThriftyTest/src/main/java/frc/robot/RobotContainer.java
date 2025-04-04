@@ -301,6 +301,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop).unless(m_coralRollers::holdingPiece));
         NamedCommands.registerCommand("Net", algaeScoreCommand(AlgaeLocationPresets.NET)
             .andThen(zero()));
+        NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
+            .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)));
     }
 
     private void configureVision() {
