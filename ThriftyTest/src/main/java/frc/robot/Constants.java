@@ -592,7 +592,7 @@ public class Constants {
         public static final double reefPickup = 0.2;
         public static final double reefExtract = 0.281;
         public static final double net = 0.342;
-        public static final double stow = 0.342;
+        public static final double stow = 0.344;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
