@@ -63,19 +63,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Stop"
+                        "name": "Align K"
                       }
                     }
                   ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Align K"
           }
         },
         {
@@ -125,19 +119,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Stop"
+                        "name": "Align L"
                       }
                     }
                   ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Align L"
           }
         },
         {
@@ -187,19 +175,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Stop"
+                        "name": "Align A"
                       }
                     }
                   ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Align A"
           }
         },
         {

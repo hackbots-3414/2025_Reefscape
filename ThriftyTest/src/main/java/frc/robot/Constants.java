@@ -140,8 +140,8 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final double kMaxAccelerationPerpendicularToTarget = 3.0;
-        public static double kMaxAccelerationTowardsTarget = 4.5;
+        public static final double kMaxAccelerationPerpendicularToTarget = 5.0;
+        public static double kMaxAccelerationTowardsTarget = 5.0;
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -287,7 +287,7 @@ public class Constants {
         public static final boolean k_enableLogging = false;
 
         public static final double k_rotationCoefficient = Math.PI * 20;
-        public static final double k_translationCoefficient = 0.1;
+        public static final double k_translationCoefficient = 0.05;
 
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
@@ -778,6 +778,8 @@ public class Constants {
         public static final double k_servoTolerance = 0.01;
 
         public static final double climbReadyTolerance = -0.001;
+
+        public static final double kClimbTime = 40.0;
     }
 
     public static final class AlgaeRollerConstants {
@@ -1023,6 +1025,6 @@ public class Constants {
     public static class FFConstants {
         public static final double k_bargeX = 8.774176;
         public static final double k_radius = 1.27;
-        public static final double k_decceleration = 5.0;
+        public static final double k_decceleration = 6.0;
     }
 }

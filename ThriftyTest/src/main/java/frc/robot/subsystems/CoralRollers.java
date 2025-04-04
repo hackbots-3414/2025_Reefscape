@@ -193,7 +193,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean intakeReady() {
-        return getUpperCANrange();
+        return getUpperCANrange() || presentPiece();
     }
 
     @Override
