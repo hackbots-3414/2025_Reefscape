@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.041803278688524,
-        "y": 6.140829918032787
+        "x": 5.826024590163935,
+        "y": 6.20076844262295
       },
       "isLocked": false,
       "linkedName": "AlgaeIJ"
     },
     {
       "anchor": {
-        "x": 7.336475409836066,
-        "y": 5.001997950819672
+        "x": 6.832991803278689,
+        "y": 6.380584016393442
       },
       "prevControl": {
-        "x": 6.832991803278689,
-        "y": 5.8171618852459
+        "x": 6.089754098360656,
+        "y": 6.824129098360656
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Barge"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 20.556045219583446
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "Barge",
