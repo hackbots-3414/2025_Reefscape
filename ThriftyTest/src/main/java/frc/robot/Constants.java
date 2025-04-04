@@ -558,7 +558,7 @@ public class Constants {
                 .withFOVRangeY(6.75))
             .withProximityParams(new ProximityParamsConfigs()
                 .withMinSignalStrengthForValidMeasurement(3500)
-                .withProximityThreshold(0.12)
+                .withProximityThreshold(0.13)
                 .withProximityHysteresis(0));
 
         public static final Time kRangeDebounceTime = Seconds.of(0.06);
