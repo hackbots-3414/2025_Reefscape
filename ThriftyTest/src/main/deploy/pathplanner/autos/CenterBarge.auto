@@ -63,18 +63,6 @@
           "data": {
             "pathName": "IJBarge"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Net"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BargeWall"
-          }
         }
       ]
     }

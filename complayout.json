@@ -29,9 +29,9 @@
           },
           {
             "title": "Auto Chooser",
-            "x": 896.0,
-            "y": 0.0,
-            "width": 384.0,
+            "x": 0.0,
+            "y": 384.0,
+            "width": 896.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
@@ -84,7 +84,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 896.0,
-            "height": 512.0,
+            "height": 384.0,
             "type": "Match Time",
             "properties": {
               "topic": "/SmartDashboard/Match Time",
@@ -98,9 +98,9 @@
           {
             "title": "Drivetrain Aligned",
             "x": 896.0,
-            "y": 128.0,
+            "y": 0.0,
             "width": 384.0,
-            "height": 128.0,
+            "height": 256.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/SmartDashboard/Drivetrain Aligned",
