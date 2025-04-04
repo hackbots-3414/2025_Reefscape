@@ -18,6 +18,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -157,7 +158,9 @@ public class RobotContainer {
         SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
     }
 
-    private void configureTesting() {}
+    private void configureTesting() {
+        SmartDashboard.putData("Reset Pose", m_drivetrain.runOnce(() -> {m_drivetrain.setPose(new Pose2d(0, 0, Rotation2d.kCCW_90deg));}));
+    }
 
     // ********** BINDINGS **********
 
@@ -195,6 +198,8 @@ public class RobotContainer {
         controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
         controller.button(resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
 
+        bindAutoProcessCommand(controller.button(DragonReins.processor));
+
         controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
             .or(controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
             .or(controller.axisMagnitudeGreaterThan(rAxis, DriveConstants.k_closedLoopOverrideToleranceRotation))
@@ -226,8 +231,6 @@ public class RobotContainer {
 
         bindAlgaeScoreCommand(AlgaeLocationPresets.PROCESSOR, controller.pov(PS5.processor).and(algaeOn));
         bindAlgaeScoreCommand(AlgaeLocationPresets.NET, controller.pov(PS5.net).and(algaeOn));
-
-        bindAutoProcessCommand(controller.pov(PS5.autoProcessor).and(algaeOn));
 
         controller.button(PS5.climbReady).whileTrue(new ClimbReadyCommand(m_climber));
         controller.button(PS5.climb).whileTrue(new ClimberCommand(m_climber));
@@ -362,8 +365,8 @@ public class RobotContainer {
                         zero()
                         .andThen(new InstantCommand(() -> {
                             m_logger.debug("zeroed elevator");
-                        })
-                        .unless(RobotObserver::getNoElevatorZone))
+                        }))
+                        .unless(RobotObserver::getNoElevatorZone)
                     ).andThen(m_elevator::release)
                     .andThen(new InstantCommand(() -> {
                         m_logger.info("released elevator");

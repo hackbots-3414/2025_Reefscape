@@ -211,6 +211,7 @@ public class Constants {
             public static final boolean flipRot = false;
 
             public static final int resetHeading = 1;
+            public static final int processor = 2;
 
             public static final double deadband = 0.01;
         }
@@ -382,7 +383,7 @@ public class Constants {
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
         public static final double k_reefReady = 2.1;
-        public static final Pose2d k_processor = new Pose2d(6.030, 0.986, Rotation2d.kCCW_90deg);
+        public static final Pose2d k_processor = new Pose2d(5.987542, 0.89281, Rotation2d.kCW_90deg);
 
         public static final Pose2d kRightIntake = new Pose2d(1.247, 0.950, Rotation2d.fromDegrees(55));
         public static final Pose2d kLeftIntake = new Pose2d(1.211, 7.016, Rotation2d.fromDegrees(-55));
@@ -1021,7 +1022,7 @@ public class Constants {
 
     public static class FFConstants {
         public static final double k_bargeX = 8.774176;
-        public static final double k_radius = 1.3;
-        public static final double k_decceleration = 2.5;
+        public static final double k_radius = 1.27;
+        public static final double k_decceleration = 5.0;
     }
 }
