@@ -75,6 +75,7 @@ import frc.robot.vision.VisionHandler;
 public class RobotContainer {
     private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
 
+    @SuppressWarnings("unused")
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
@@ -155,8 +156,6 @@ public class RobotContainer {
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
         SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
     }
-
-    private double m_time;
 
     private void configureTesting() {}
 
@@ -332,7 +331,7 @@ public class RobotContainer {
         m_climber = new Climber();
         m_algaeRollers = new AlgaeRollers();
         m_coralRollers = new CoralRollers();
-        m_ledFeedback = new LedFeedback(m_drivetrain);
+        m_ledFeedback = new LedFeedback();
         m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
     }
 

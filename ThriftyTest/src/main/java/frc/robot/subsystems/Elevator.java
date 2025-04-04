@@ -37,6 +37,7 @@ import frc.robot.RobotObserver;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
 
     private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
