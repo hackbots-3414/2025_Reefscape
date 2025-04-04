@@ -21,7 +21,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -288,7 +287,6 @@ public class RobotContainer {
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
             NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true)
-                .deadlineFor(elevatorPrepCommand(4))
                 .withTimeout(5.0));
         }
         NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(FieldConstants.kLeftIntake, m_drivetrain, true));
@@ -303,6 +301,10 @@ public class RobotContainer {
             .andThen(zero()));
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
             .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)));
+        // NamedCommands.registerCommand("L4 Prep", new WaitUntilCommand(RobotObserver::getReefReady)
+        //     .andThen(elevatorPrepCommand(4)));
+        // NamedCommands.registerCommand("L3 Prep", new WaitUntilCommand(RobotObserver::getReefReady)
+        //     .andThen(elevatorPrepCommand(3)));
     }
 
     private void configureVision() {

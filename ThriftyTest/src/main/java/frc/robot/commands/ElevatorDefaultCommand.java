@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.Elevator;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ElevatorDefaultCommand extends Command {
@@ -17,7 +17,11 @@ public class ElevatorDefaultCommand extends Command {
     public void execute() {
         if (m_elevator.taken()) return;
         if (RobotObserver.getReefReady()) {
-            m_elevator.setPrep();
+            if (DriverStation.isAutonomousEnabled()) {
+                m_elevator.setL4();
+            } else {
+                m_elevator.setPrep();
+            }
         } else {
             m_elevator.setStow();
         }
