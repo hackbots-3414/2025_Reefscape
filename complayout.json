@@ -224,6 +224,19 @@
               "true_icon": "None",
               "false_icon": "None"
             }
+          },
+          {
+            "title": "Set pose manually",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Set pose manually",
+              "period": 0.06,
+              "show_type": true
+            }
           }
         ]
       }
