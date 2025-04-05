@@ -156,7 +156,11 @@ public class RobotContainer {
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
         SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
+        SmartDashboard.putData("Set pose manually", new InstantCommand(() -> {
+            m_drivetrain.setPose(new Pose2d(7.6, 4.025, Rotation2d.k180deg));
+        }).ignoringDisable(true));
     }
+
 
     private void configureTesting() {
         SmartDashboard.putData("Reset Pose", m_drivetrain.runOnce(() -> {m_drivetrain.setPose(new Pose2d(0, 0, Rotation2d.kCCW_90deg));}));
@@ -303,6 +307,7 @@ public class RobotContainer {
             .andThen(zero()));
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
             .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)));
+        NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup).alongWith(m_elevator.run(m_elevator::setGroundIntake)));
         // NamedCommands.registerCommand("L4 Prep", new WaitUntilCommand(RobotObserver::getReefReady)
         //     .andThen(elevatorPrepCommand(4)));
         // NamedCommands.registerCommand("L3 Prep", new WaitUntilCommand(RobotObserver::getReefReady)

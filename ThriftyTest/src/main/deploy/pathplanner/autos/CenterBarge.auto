@@ -63,6 +63,12 @@
           "data": {
             "pathName": "IJBarge"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Algae End"
+          }
         }
       ]
     }
