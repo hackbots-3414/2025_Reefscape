@@ -1,5 +1,7 @@
 package frc.robot.vision;
 
+import java.util.List;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
@@ -10,7 +12,8 @@ public record TimestampedPoseEstimate (
     String source,
     double timestamp,
     Matrix<N3, N1> stdDevs,
-    EstimationAlgorithm algorithm
+    EstimationAlgorithm algorithm,
+    List<Integer> tags
 ) {
     public enum EstimationAlgorithm {
         Trig, PnP, Ambiguity, Heading;

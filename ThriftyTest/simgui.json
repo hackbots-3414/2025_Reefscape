@@ -413,14 +413,15 @@
           "width": 0.9399999976158142
         },
         "alt": {
-          "arrows": false,
           "color": [
             0.0,
             0.14705896377563477,
             1.0,
             255.0
           ],
-          "style": "Hidden"
+          "length": 0.9399999976158142,
+          "style": "Box/Image",
+          "width": 0.9399999976158142
         },
         "apriltag": {
           "arrows": false,
@@ -428,15 +429,16 @@
           "style": "Hidden"
         },
         "best": {
-          "arrows": false,
           "color": [
             0.0,
             1.0,
             0.11764693260192871,
             255.0
           ],
+          "length": 0.9399999976158142,
           "selectable": false,
-          "style": "Hidden"
+          "style": "Box/Image",
+          "width": 0.9399999976158142
         },
         "bottom": 1347,
         "builtin": "",
@@ -449,7 +451,6 @@
           ],
           "arrowSize": 100,
           "arrowWeight": 2.0,
-          "arrows": false,
           "color": [
             255.0,
             167.8480987548828,
@@ -489,7 +490,7 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
         "right": 2932,
         "target": {
           "arrows": false,
@@ -547,7 +548,8 @@
         "open": true
       },
       "open": true
-    }
+    },
+    "visible": true
   },
   "Plot": {
     "Plot <0>": {

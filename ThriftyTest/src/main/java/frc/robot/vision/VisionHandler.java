@@ -1,5 +1,7 @@
 package frc.robot.vision;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants.VisionConstants;
@@ -27,6 +28,7 @@ public class VisionHandler implements AutoCloseable {
     private CommandSwerveDrivetrain m_drivetrain;
     private final Notifier m_notifier;
     private List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
+    private List<TimestampedPoseEstimate> m_estimates = new ArrayList<>();
 
     private VisionSystemSim m_visionSim = new VisionSystemSim("main");
     private SimCameraProperties m_simProps = new SimCameraProperties();
@@ -34,6 +36,8 @@ public class VisionHandler implements AutoCloseable {
     private final Field2d m_field;
 
     private LogBuilder m_logBuilder = new LogBuilder();
+
+    private final MultiInputFilter m_filter = new MultiInputFilter();
 
     public VisionHandler(CommandSwerveDrivetrain drivetrain) {
         m_drivetrain = drivetrain;
@@ -93,13 +97,24 @@ public class VisionHandler implements AutoCloseable {
     }
 
     private void updateEstimators() {
+        m_estimates.clear();
         // clear previous output from the estimators.
         m_field.getObject(VisionConstants.k_estimationName).setPoses();
         m_field.getObject("best").setPoses();
         m_field.getObject("alt").setPoses();
+        // setup filter
+        m_filter.clear();
         for (SingleInputPoseEstimator estimator : m_estimators) {
             estimator.run();
         }
+        List<Pose2d> poses = new ArrayList<>();
+        for (TimestampedPoseEstimate estimate : m_estimates) {
+            if (m_filter.verify(estimate.pose())) {
+                m_drivetrain.addPoseEstimate(estimate);
+                poses.add(estimate.pose());
+            }
+        }
+        m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
         Pose2d currPose = m_drivetrain.getPose();
         m_visionSim.update(currPose);
         // finish logging
@@ -111,12 +126,8 @@ public class VisionHandler implements AutoCloseable {
     }
 
     private void addEstimate(TimestampedPoseEstimate estimate) {
-        List<Pose2d> poses = m_field.getObject(VisionConstants.k_estimationName)
-            .getPoses();
-
-        m_drivetrain.addPoseEstimate(estimate);
-        poses.add(estimate.pose());
-        m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
+        m_filter.addEstimate(estimate);
+        m_estimates.add(estimate);
 
         // pose logging
         m_logBuilder.addEstimate(estimate);
