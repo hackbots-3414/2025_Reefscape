@@ -108,12 +108,16 @@ public class VisionHandler implements AutoCloseable {
             estimator.run();
         }
         List<Pose2d> poses = new ArrayList<>();
+        List<Pose2d> rejected = new ArrayList<>();
         for (TimestampedPoseEstimate estimate : m_estimates) {
             if (m_filter.verify(estimate.pose())) {
                 m_drivetrain.addPoseEstimate(estimate);
                 poses.add(estimate.pose());
+            } else {
+                rejected.add(estimate.pose());
             }
         }
+        m_field.getObject(VisionConstants.kRejectedName).setPoses(rejected);
         m_field.getObject(VisionConstants.k_estimationName).setPoses(poses);
         Pose2d currPose = m_drivetrain.getPose();
         m_visionSim.update(currPose);

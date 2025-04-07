@@ -292,6 +292,7 @@ public class Constants {
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
         public static final String k_estimationName = "estimation";
+        public static final String kRejectedName = "rejected";
 
         public static final String k_logPath = "/home/lvuser/logs/vision";
         public static final String k_simLogPath = "logs/vision";
@@ -305,10 +306,10 @@ public class Constants {
         private static final double k_wideYaw = Units.degreesToRadians(-7.0);
 
         // The camera names
-        public static Map<String, Transform3d> cameras = Map.ofEntries(
-            Map.entry("test", new Transform3d(0, 0, 0.5, new Rotation3d()))
+        public static Map<String, Transform3d> fakecameras = Map.ofEntries(
+            Map.entry("test", new Transform3d(0, 0, 1.5, new Rotation3d()))
         );
-        public static Map<String, Transform3d> fcameras = Map.ofEntries(
+        public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d( // left tight
                 new Translation3d(0.256, 0.289, k_moduleHeight),
                 new Rotation3d(0, k_tightPitch, -k_tightYaw)
@@ -361,6 +362,7 @@ public class Constants {
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
         public static final Rotation2d k_fov = Rotation2d.fromDegrees(82.0);
+        public static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
 
 
         // Simulated error:

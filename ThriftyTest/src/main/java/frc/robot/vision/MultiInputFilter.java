@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
+import frc.robot.RobotObserver;
 import frc.robot.Constants.VisionConstants;
 
 public class MultiInputFilter {
@@ -29,16 +29,16 @@ public class MultiInputFilter {
     private boolean verifyTarget(Pose2d source, int tag) {
         Optional<Pose3d> tagPose = VisionConstants.k_layout.getTagPose(tag);
         if (tagPose.isEmpty()) return false;
-        // check that we are not BEHIND taregt
-        // Pose2d targetOffset = tagPose.get().toPose2d().relativeTo(source);
-        Transform2d sourceRelative = tagPose.get().toPose2d().minus(source);
-        m_logger.info("target relative: {}", sourceRelative);
-        double angleDifference = Math.atan2(
-            sourceRelative.getY(),
-            sourceRelative.getX()
-        );
-        m_logger.info("angle difference is {}", Units.radiansToDegrees(Math.abs(angleDifference)));
-        return false;
+        Transform2d relative = tagPose.get().toPose2d().minus(source);
+        double angleToTag = Math.abs(Math.atan2(relative.getY(), relative.getX()));
+        boolean angleToTagOk = angleToTag < VisionConstants.kHorizontalFov.getRadians() / 2;
+        double tagFacingAngle = Math.abs(relative.getRotation().getRotations());
+        boolean tagFacingAngleOk = tagFacingAngle > 0.25;
+        if (angleToTagOk && tagFacingAngleOk) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
