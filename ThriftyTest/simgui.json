@@ -420,7 +420,9 @@
             1.0,
             255.0
           ],
-          "style": "Hidden"
+          "length": 0.9399999976158142,
+          "style": "Hidden",
+          "width": 0.9399999976158142
         },
         "apriltag": {
           "arrows": false,
@@ -435,8 +437,10 @@
             0.11764693260192871,
             255.0
           ],
+          "length": 0.9399999976158142,
           "selectable": false,
-          "style": "Hidden"
+          "style": "Hidden",
+          "width": 0.9399999976158142
         },
         "bottom": 1347,
         "builtin": "",
@@ -449,7 +453,6 @@
           ],
           "arrowSize": 100,
           "arrowWeight": 2.0,
-          "arrows": false,
           "color": [
             255.0,
             167.8480987548828,
@@ -480,7 +483,6 @@
           ]
         },
         "estimation": {
-          "arrows": false,
           "color": [
             0.9588443040847778,
             0.970588207244873,
@@ -490,6 +492,18 @@
         },
         "height": 8.051901817321777,
         "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "rejected": {
+          "arrows": false,
+          "color": [
+            0.8480392098426819,
+            0.3034650385379791,
+            0.3835495412349701,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "selectable": false,
+          "width": 0.9399999976158142
+        },
         "right": 2932,
         "target": {
           "arrows": false,
