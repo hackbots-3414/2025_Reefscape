@@ -9,6 +9,7 @@
  <logger name="frc.robot.commands" level="INFO"/>
  <logger name="frc.robot.subsystems" level="INFO"/>
  <logger name="frc.robot.subsystems.CommandSwerveDrivetrain" level="INFO"/>
+ <logger name="frc.robot.commands.ElevatorDefaultCommand" level="DEBUG"/>
 
  <root level="INFO">
    <appender-ref ref="STDOUT"/>

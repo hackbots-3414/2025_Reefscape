@@ -284,9 +284,14 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("L4", coralScoreCommand(4));
-        NamedCommands.registerCommand("L3", coralScoreCommand(3));
-        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow).until(m_elevator::atSetpoint).andThen(zero()).andThen(coralIntakeCommand().withTimeout(5)));
+        NamedCommands.registerCommand("L4", coralScoreCommand(4).asProxy());
+        NamedCommands.registerCommand("L3", coralScoreCommand(3).asProxy());
+        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow)
+            .until(m_elevator::atSetpoint)
+            .andThen(zero())
+            .andThen(coralIntakeCommand()
+                .withTimeout(5))
+            .asProxy());
         NamedCommands.registerCommand("Intake Wait", new WaitUntilCommand(m_coralRollers::intakeReady)
             .alongWith(m_drivetrain.runOnce(m_drivetrain::stop)));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
@@ -295,23 +300,26 @@ public class RobotContainer {
             NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true)
                 .withTimeout(5.0));
         }
-        NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(FieldConstants.kLeftIntake, m_drivetrain, true));
-        NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(FieldConstants.kRightIntake, m_drivetrain, true));
+        NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(FieldConstants.kLeftIntake, m_drivetrain, true)
+            .until(m_coralRollers::intakeReady));
+        NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(FieldConstants.kRightIntake, m_drivetrain, true)
+            .until(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
-            .until(m_algaeRollers::algaeHeld));
+            .until(m_algaeRollers::algaeHeld)
+            .asProxy());
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
-            .until(m_algaeRollers::algaeHeld));
+            .until(m_algaeRollers::algaeHeld)
+            .asProxy());
         // we don't want to stop the drivetrain if intake has actually finished.
         NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop).unless(m_coralRollers::holdingPiece));
         NamedCommands.registerCommand("Net", algaeScoreCommand(AlgaeLocationPresets.NET)
-            .andThen(zero()));
+            .andThen(zero())
+            .asProxy());
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
-            .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)));
-        NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup).alongWith(m_elevator.run(m_elevator::setGroundIntake)));
-        // NamedCommands.registerCommand("L4 Prep", new WaitUntilCommand(RobotObserver::getReefReady)
-        //     .andThen(elevatorPrepCommand(4)));
-        // NamedCommands.registerCommand("L3 Prep", new WaitUntilCommand(RobotObserver::getReefReady)
-        //     .andThen(elevatorPrepCommand(3)));
+            .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)
+                .asProxy()));
+        NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup)
+            .alongWith(m_elevator.run(m_elevator::setGroundIntake).asProxy()));
     }
 
     private void configureVision() {
