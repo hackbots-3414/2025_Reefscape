@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +17,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -51,7 +50,6 @@ import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
 import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.CoralL1Command;
 import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ElevatorDefaultCommand;
@@ -221,7 +219,8 @@ public class RobotContainer {
         bindAlignCommand(ReefClipLocations.LEFT, controller.button(PS5.leftReef));
         bindAlignCommand(ReefClipLocations.RIGHT, controller.button(PS5.rightReef));
 
-        bindCoralCommands(1, controller.pov(PS5.L1).and(algaeOn.negate()));
+        bindL1Command(false, controller.pov(PS5.L1).and(algaeOn.negate()).and(controller.button(PS5.secondaryL1).negate()));
+        bindL1Command(true, controller.pov(PS5.L1).and(controller.button(PS5.secondaryL1)).and(algaeOn.negate()));
         bindCoralCommands(2, controller.pov(PS5.L2).and(algaeOn.negate()));
         bindCoralCommands(3, controller.pov(PS5.L3).and(algaeOn.negate()));
         bindCoralCommands(4, controller.pov(PS5.L4).and(algaeOn.negate()));
@@ -250,15 +249,23 @@ public class RobotContainer {
         trigger.whileTrue(zero());
     }
 
+    private void bindL1Command(boolean higher, Trigger trigger) {
+        Runnable elevatorCommand = (higher) ? m_elevator::setSecondaryL1 : m_elevator::setL1;
+        trigger.whileTrue(
+            m_elevator.run(elevatorCommand)
+                .until(m_elevator::atSetpoint)
+            .andThen(
+                m_coralRollers.run(m_coralRollers::setL1Eject)
+                    .onlyWhile(m_coralRollers::getCANrangeTriggered)
+            )
+            .finallyDo(m_coralRollers::stop)
+        );
+        trigger.onFalse(m_elevator.runOnce(m_elevator::release));
+    }
+
     private void bindCoralCommands(int level, Trigger trigger) {
-        if (level == 1) {
-            // L1 is special, but not in a good way
-            trigger.whileTrue(elevatorPrepCommand(1).andThen(m_elevator.run(m_elevator::setL1)).onlyIf(m_coralRollers::holdingPiece));
-            trigger.onFalse(new CoralL1Command(m_coralRollers, m_elevator).andThen(zero()));
-        } else {
-            trigger.whileTrue(coralPrepAndScoreCommand(level));
-            trigger.onFalse(coralScoreCommand(level).andThen(zero()));
-        }
+        trigger.whileTrue(coralPrepAndScoreCommand(level));
+        trigger.onFalse(coralScoreCommand(level).andThen(zero()));
     }
 
     private void bindAutoProcessCommand(Trigger trigger) {

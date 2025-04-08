@@ -167,6 +167,10 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.L1);
     }
 
+    public void setSecondaryL1() {
+        setPosition(ElevatorConstants.secondaryL1);
+    }
+
     public void setL2() {
         setPosition(ElevatorConstants.L2);
     }

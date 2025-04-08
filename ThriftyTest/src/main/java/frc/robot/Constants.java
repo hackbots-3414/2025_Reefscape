@@ -245,6 +245,8 @@ public class Constants {
             public static final int intake = Button.kL1.value; // LB
 
             public static final int zeroElevator = 15; // old safety mode button (little bar below PS button)
+
+            public static final int secondaryL1 = 14;
         }
     
         public static class ButtonBoardKeyboard {
@@ -476,8 +478,9 @@ public class Constants {
         public static final double eject = stow + 2 * inch;
         public static final double processor = 0;
         // public static final double L1 = stow + 3.5 * inch;
-        public static final double L2 = 4.016 + 2 * inch; // 35.5
-        public static final double L1 = L2 - 2.5 * inch;
+        public static final double L2 = 4.016 + 3 * inch; // 35.5
+        public static final double L1 = 2.63;
+        public static final double secondaryL1 = L1 + 8 * inch;
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
         public static final double net = 9.31 + 4 * inch; // 67 - short, // 72 - long
@@ -681,8 +684,8 @@ public class Constants {
         public static final double spitOutVoltage = -6;
         public static final double fastEjectVoltage = -10;
 
-        public static final double l1LeftEjectVoltage = 8;
-        public static final double l1RightEjectVoltage = 6;
+        public static final double l1LeftEjectVoltage = 2;
+        public static final double l1RightEjectVoltage = 4;
 
         public static final boolean rightMotorInvert = true;
 
@@ -691,6 +694,8 @@ public class Constants {
         public static final double IRThreshold = 0.51;
 
         public static final boolean enableCANRange = true;
+
+        public static final InvertedValue kInvertRight = InvertedValue.Clockwise_Positive;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
