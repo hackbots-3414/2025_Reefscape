@@ -111,6 +111,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setVelocitySupplier(this::getVelocity);
         RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
         RobotObserver.setReefReadySupplier(this::getReefReady);
+        RobotObserver.setAlginedSupplier(this::isAligned);
     }
 
     public void initializeSetpointGenerator(RobotConfig config) {

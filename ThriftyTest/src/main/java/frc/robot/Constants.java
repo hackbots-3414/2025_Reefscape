@@ -245,6 +245,8 @@ public class Constants {
             public static final int intake = Button.kL1.value; // LB
 
             public static final int zeroElevator = 15; // old safety mode button (little bar below PS button)
+
+            public static final int secondaryL1 = 14;
         }
     
         public static class ButtonBoardKeyboard {
@@ -292,6 +294,7 @@ public class Constants {
         public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
         public static final String k_estimationName = "estimation";
+        public static final String kRejectedName = "rejected";
 
         public static final String k_logPath = "/home/lvuser/logs/vision";
         public static final String k_simLogPath = "logs/vision";
@@ -306,7 +309,7 @@ public class Constants {
 
         // The camera names
         public static Map<String, Transform3d> fakecameras = Map.ofEntries(
-            Map.entry("test", new Transform3d())
+            Map.entry("test", new Transform3d(0, 0, 1.5, new Rotation3d()))
         );
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d( // left tight
@@ -361,6 +364,8 @@ public class Constants {
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
         public static final Rotation2d k_fov = Rotation2d.fromDegrees(82.0);
+        public static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
+
 
         // Simulated error:
         public static final Time k_avgLatency = Milliseconds.of(18);
@@ -473,8 +478,9 @@ public class Constants {
         public static final double eject = stow + 2 * inch;
         public static final double processor = 0;
         // public static final double L1 = stow + 3.5 * inch;
-        public static final double L2 = 4.016 + 2 * inch; // 35.5
-        public static final double L1 = L2 - 2.5 * inch;
+        public static final double L2 = 4.016 + 3 * inch; // 35.5
+        public static final double L1 = 2.63;
+        public static final double secondaryL1 = L1 + 8 * inch;
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
         public static final double net = 9.31 + 4 * inch; // 67 - short, // 72 - long
@@ -678,8 +684,8 @@ public class Constants {
         public static final double spitOutVoltage = -6;
         public static final double fastEjectVoltage = -10;
 
-        public static final double l1LeftEjectVoltage = 8;
-        public static final double l1RightEjectVoltage = 6;
+        public static final double l1LeftEjectVoltage = 2;
+        public static final double l1RightEjectVoltage = 4;
 
         public static final boolean rightMotorInvert = true;
 
@@ -688,6 +694,8 @@ public class Constants {
         public static final double IRThreshold = 0.51;
 
         public static final boolean enableCANRange = true;
+
+        public static final InvertedValue kInvertRight = InvertedValue.Clockwise_Positive;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()

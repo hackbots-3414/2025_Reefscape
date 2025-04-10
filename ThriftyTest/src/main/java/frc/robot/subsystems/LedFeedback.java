@@ -36,7 +36,7 @@ public class LedFeedback extends SubsystemBase {
     // private Supplier<Boolean> isInRange;
     // private boolean algaeOnBoard = false;
     private boolean coralOnBoard = false;
-    private boolean coralInRange = false;
+    private boolean aligned = false;
     private boolean climbed = false;
     private boolean algaeOnBoard = false;
     private boolean algaeInRange = false;
@@ -90,7 +90,7 @@ public class LedFeedback extends SubsystemBase {
         
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
-        coralInRange = CommandBounds.reefBounds.isActive();
+        aligned = RobotObserver.getAligned();
         algaeInRange = CommandBounds.netBounds.isActive();
         noElevatorZoneActive = RobotObserver.getNoElevatorZone();
         climbed = RobotObserver.getClimbed();
@@ -157,7 +157,7 @@ public class LedFeedback extends SubsystemBase {
                 }
             }
             // Check if Coral is On Board and In range of reef
-            else if (coralOnBoard && coralInRange) {
+            else if (coralOnBoard && aligned) {
                 if (mode != LED_MODE.CORAL_READY) {
                     mode = LED_MODE.CORAL_READY;
                     setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);

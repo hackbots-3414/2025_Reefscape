@@ -51,9 +51,9 @@ public class CoralRollers extends SubsystemBase {
         m_coralRight.clearStickyFaults();
 
         m_coralLeft.getConfigurator().apply(CoralConstants.motorConfig);
-        m_coralRight.getConfigurator().apply(CoralConstants.motorConfig);
+        m_coralRight.getConfigurator().apply(CoralConstants.motorConfig.withMotorOutput(CoralConstants.motorConfig.MotorOutput.withInverted(CoralConstants.kInvertRight)));
 
-        m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
+        // m_coralRight.setControl(new Follower(IDConstants.coralLeft, CoralConstants.rightMotorInvert));
     }
 
     private void configDashboard() {
@@ -70,8 +70,10 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setVoltage(double voltage) {
-        m_voltageChanged = (voltage != m_voltage);
-        m_voltage = voltage;
+        m_coralLeft.setVoltage(voltage);
+        m_coralRight.setVoltage(voltage);
+        // m_voltageChanged = (voltage != m_voltage);
+        // m_voltage = voltage;
     }
 
     public void setIntake() {
@@ -122,10 +124,6 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.ejectVoltage);
     }
 
-    public void setL1Eject() {
-        setVoltage(CoralConstants.l1EjectVoltage);
-    }
-
     public void setL2Eject() {
         setVoltage(CoralConstants.l2EjectVoltage);
     }
@@ -142,7 +140,7 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(CoralConstants.spitOutVoltage);
     }
 
-    public void setIndividualEject() {
+    public void setL1Eject() {
         m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
         m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
     }
@@ -152,10 +150,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void stop() {
-        // setVoltage(0);
-        m_voltage = 0;
-        m_voltageChanged = false;
-        m_coralLeft.setVoltage(0.0);
+        setVoltage(0);
     }
 
     public boolean getCANrangeTriggered() {
@@ -181,11 +176,11 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void fastEject() {
-        m_coralLeft.setVoltage(CoralConstants.fastEjectVoltage);
+        setVoltage(CoralConstants.fastEjectVoltage);
     }
 
     public void slowScore() {
-        m_coralLeft.setVoltage(CoralConstants.l1EjectVoltage);
+        setVoltage(CoralConstants.l1EjectVoltage);
     }
 
     public boolean presentPiece() {
@@ -209,6 +204,7 @@ public class CoralRollers extends SubsystemBase {
 
         if (m_voltageChanged) {
             m_coralLeft.setVoltage(m_voltage);
+            m_coralRight.setVoltage(m_voltage);
             m_voltageChanged = false;
         }
     }

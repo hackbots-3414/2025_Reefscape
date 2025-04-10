@@ -10,6 +10,7 @@
  <logger name="frc.robot.subsystems" level="INFO"/>
  <logger name="frc.robot.subsystems.CommandSwerveDrivetrain" level="INFO"/>
  <logger name="frc.robot.commands.ElevatorDefaultCommand" level="DEBUG"/>
+ <logger name="frc.robot.vision.MultiInputFilter" level="DEBUG"/>
 
  <root level="INFO">
    <appender-ref ref="STDOUT"/>
