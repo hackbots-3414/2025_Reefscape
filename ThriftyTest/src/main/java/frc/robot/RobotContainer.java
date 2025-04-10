@@ -314,8 +314,7 @@ public class RobotContainer {
             .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
             .until(m_algaeRollers::algaeHeld));
-        // we don't want to stop the drivetrain if intake has actually finished.
-        NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop).unless(m_coralRollers::holdingPiece));
+        NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop));
         NamedCommands.registerCommand("Net", algaeScoreCommand(AlgaeLocationPresets.NET)
             .andThen(zero()));
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
