@@ -294,14 +294,13 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("L4", coralScoreCommand(4).asProxy());
-        NamedCommands.registerCommand("L3", coralScoreCommand(3).asProxy());
+        NamedCommands.registerCommand("L4", coralScoreCommand(4));
+        NamedCommands.registerCommand("L3", coralScoreCommand(3));
         NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow)
             .until(m_elevator::atSetpoint)
             .andThen(zero())
             .andThen(coralIntakeCommand()
-                .withTimeout(5))
-            .asProxy());
+                .withTimeout(5)));
         NamedCommands.registerCommand("Intake Wait", new WaitUntilCommand(m_coralRollers::intakeReady)
             .alongWith(m_drivetrain.runOnce(m_drivetrain::stop)));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
@@ -318,24 +317,16 @@ public class RobotContainer {
         NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(FieldConstants.kRightIntake, m_drivetrain, true)
             .until(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
-            .until(m_algaeRollers::algaeHeld)
-            .andThen(m_elevator.runOnce(m_elevator::setReefUpper))
-            .asProxy());
+            .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
-            .until(m_algaeRollers::algaeHeld)
-            .andThen(m_elevator.runOnce(m_elevator::setReefLower))
-            .asProxy());
-        // we don't want to stop the drivetrain if intake has actually finished.
+            .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop));
         NamedCommands.registerCommand("Net", algaeScoreCommand(AlgaeLocationPresets.NET)
-            .asProxy()
-            .andThen(Commands.none().onlyWhile(m_elevator::elevatorUp)));
+            .andThen(zero()));
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
-            .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)
-                .asProxy()));
+            .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)));
         NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup)
-            .alongWith(m_elevator.run(m_elevator::setGroundIntake).asProxy()));
-        
+            .alongWith(m_elevator.run(m_elevator::setGroundIntake)));
     }
 
     private void configureVision() {
