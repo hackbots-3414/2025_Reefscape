@@ -326,7 +326,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .getTranslation()
             .minus(m_estimatedPose.getTranslation())
             .getNorm();
-        return distance < FFConstants.k_radius;
+        return distance < FFConstants.k_radius && !DriverStation.isAutonomous();
     }
 
     public void setAligned(boolean aligned) {

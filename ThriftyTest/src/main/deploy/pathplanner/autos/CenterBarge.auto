@@ -23,21 +23,34 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "HGH"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AlgaeLower"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Align GH"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlgaeLower"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "HBarge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Barge"
           }
         },
         {
@@ -53,21 +66,46 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "AlgaeUpper"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AlgaeUpper"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Align IJ"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "IJBarge"
+            "pathName": "IJBarge2"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Algae End"
+            "name": "Align Barge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Net"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Barge2Backup"
           }
         }
       ]

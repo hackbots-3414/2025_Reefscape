@@ -388,10 +388,15 @@ public class Constants {
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
         public static final double k_reefReady = 2.1;
-        public static final Pose2d k_processor = new Pose2d(5.987542, 0.89281, Rotation2d.kCW_90deg);
+        public static final Pose2d k_processor = new Pose2d(5.974, 1.16, Rotation2d.kCW_90deg);
 
         public static final Pose2d kRightIntake = new Pose2d(1.247, 0.950, Rotation2d.fromDegrees(55));
         public static final Pose2d kLeftIntake = new Pose2d(1.211, 7.016, Rotation2d.fromDegrees(-55));
+
+        public static final Pose2d kGH = new Pose2d(5.791, 4.046, Rotation2d.k180deg);
+        public static final Pose2d kIJ = new Pose2d(5.155, 5.194, Rotation2d.fromDegrees(-120));
+
+        public static final Pose2d kBarge1 = new Pose2d(7.459, 4.717, Rotation2d.fromDegrees(21.0));
     }
 
     public static final class StateSpaceConstants {
@@ -746,6 +751,7 @@ public class Constants {
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.25;
         public static final double climbPosition = -0.110;
+        public static final double kShakePosition = -0.02;
 
         public static final double encoderOffset = -0.01318359;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;

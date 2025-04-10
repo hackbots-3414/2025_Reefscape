@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -69,6 +70,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
 import frc.robot.utils.AutonomousUtil;
+import frc.robot.utils.FieldUtils;
 import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
@@ -99,15 +101,15 @@ public class RobotContainer {
     }
 
     private void configureSysId() {
-        SmartDashboard.putData("a", m_drivetrain.sysIdQuasistaticSteer(Direction.kForward));
-        SmartDashboard.putData("b", m_drivetrain.sysIdQuasistaticSteer(Direction.kReverse));
-        SmartDashboard.putData("c", m_drivetrain.sysIdDynamicSteer(Direction.kForward));
-        SmartDashboard.putData("d", m_drivetrain.sysIdDynamicSteer(Direction.kReverse));
+        SmartDashboard.putData("quasistatic forward steer", m_drivetrain.sysIdQuasistaticSteer(Direction.kForward));
+        SmartDashboard.putData("quasistatic reverse steer", m_drivetrain.sysIdQuasistaticSteer(Direction.kReverse));
+        SmartDashboard.putData("dynamic forward steer", m_drivetrain.sysIdDynamicSteer(Direction.kForward));
+        SmartDashboard.putData("dynamic reverse steer", m_drivetrain.sysIdDynamicSteer(Direction.kReverse));
 
-        SmartDashboard.putData("e", m_drivetrain.sysIdQuasistaticTranslation(Direction.kForward));
-        SmartDashboard.putData("f", m_drivetrain.sysIdQuasistaticTranslation(Direction.kReverse));
-        SmartDashboard.putData("g", m_drivetrain.sysIdDynamicTranslation(Direction.kForward));
-        SmartDashboard.putData("h", m_drivetrain.sysIdDynamicTranslation(Direction.kReverse));
+        SmartDashboard.putData("quasistatic forward translation", m_drivetrain.sysIdQuasistaticTranslation(Direction.kForward));
+        SmartDashboard.putData("quasistatic reverse translation", m_drivetrain.sysIdQuasistaticTranslation(Direction.kReverse));
+        SmartDashboard.putData("dynamic forward translation", m_drivetrain.sysIdDynamicTranslation(Direction.kForward));
+        SmartDashboard.putData("dynamic reverse translation", m_drivetrain.sysIdDynamicTranslation(Direction.kReverse));
     }
 
     public List<Pose2d> scoringLocationsListLeft;
@@ -154,8 +156,8 @@ public class RobotContainer {
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
         SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
-        SmartDashboard.putData("Set pose manually", new InstantCommand(() -> {
-            m_drivetrain.setPose(new Pose2d(7.6, 4.025, Rotation2d.k180deg));
+        SmartDashboard.putData("Set Center", new InstantCommand(() -> {
+            m_drivetrain.setPose(FieldUtils.flipPose(new Pose2d(7.6, 4.025, Rotation2d.k180deg)));
         }).ignoringDisable(true));
     }
 
@@ -284,6 +286,7 @@ public class RobotContainer {
     private void configureAutonChooser() {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
+        autoChooser.getSelected();
     }
 
     public Command getAutonomousCommand() {
@@ -307,26 +310,32 @@ public class RobotContainer {
             NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true)
                 .withTimeout(5.0));
         }
+        NamedCommands.registerCommand("Align IJ", new DriveToPointCommand(Constants.FieldConstants.kIJ, m_drivetrain, true));
+        NamedCommands.registerCommand("Align GH", new DriveToPointCommand(Constants.FieldConstants.kGH, m_drivetrain, true));
+        NamedCommands.registerCommand("Align Barge", new DriveToPointCommand(FieldConstants.kBarge1, m_drivetrain, true));
         NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(FieldConstants.kLeftIntake, m_drivetrain, true)
             .until(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(FieldConstants.kRightIntake, m_drivetrain, true)
             .until(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
             .until(m_algaeRollers::algaeHeld)
+            .andThen(m_elevator.runOnce(m_elevator::setReefUpper))
             .asProxy());
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
             .until(m_algaeRollers::algaeHeld)
+            .andThen(m_elevator.runOnce(m_elevator::setReefLower))
             .asProxy());
         // we don't want to stop the drivetrain if intake has actually finished.
-        NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop).unless(m_coralRollers::holdingPiece));
+        NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop));
         NamedCommands.registerCommand("Net", algaeScoreCommand(AlgaeLocationPresets.NET)
-            .andThen(zero())
-            .asProxy());
+            .asProxy()
+            .andThen(Commands.none().onlyWhile(m_elevator::elevatorUp)));
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
             .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)
                 .asProxy()));
         NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup)
             .alongWith(m_elevator.run(m_elevator::setGroundIntake).asProxy()));
+        
     }
 
     private void configureVision() {
@@ -462,6 +471,6 @@ public class RobotContainer {
     }
 
     public boolean getFFEnabled() {
-        return m_elevator.elevatorUp();
+        return m_elevator.elevatorUp() && !DriverStation.isAutonomous();
     }
 }
