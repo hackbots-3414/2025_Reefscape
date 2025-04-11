@@ -28,7 +28,7 @@ public class ElevatorDefaultCommand extends Command {
         if (m_elevator.taken()) return;
         if (RobotObserver.getReefReady()) {
             if (DriverStation.isAutonomous()) {
-                // m_elevator.set();
+                m_elevator.setL4();
             } else {
                 m_elevator.setPrep();
             }
