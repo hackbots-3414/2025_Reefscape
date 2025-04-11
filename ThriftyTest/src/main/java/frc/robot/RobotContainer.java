@@ -276,7 +276,7 @@ public class RobotContainer {
 
     private Command zero() {
         // return new InstantCommand();
-        return new ElevatorZero(m_elevator).withTimeout(2);
+        return new ElevatorZero(m_elevator).withTimeout(2).asProxy();
     }
 
     // ********** AUTONOMOUS **********
@@ -290,15 +290,15 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        Command autonCommand = autoChooser.getSelected();
+        m_logger.info("Requirements: {}", autonCommand.getRequirements());
+        return autonCommand;
     }
 
     private void configureNamedCommands() {
         NamedCommands.registerCommand("L4", coralScoreCommand(4));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));
-        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow)
-            .until(m_elevator::atSetpoint)
-            .andThen(zero())
+        NamedCommands.registerCommand("Intake", zero()
             .andThen(coralIntakeCommand()
                 .withTimeout(5)));
         NamedCommands.registerCommand("Intake Wait", new WaitUntilCommand(m_coralRollers::intakeReady)
@@ -418,7 +418,15 @@ public class RobotContainer {
     // ** SUBSYSTEM PASS IN HELPERS **
 
     private Command coralIntakeCommand() {
-        return new CoralIntakeCommand(m_coralRollers, m_elevator);
+        // return new CoralIntakeCommand(m_coralRollers, m_elevator);
+        return Commands.sequence(
+            m_elevator.runOnce(m_elevator::setStow).asProxy(),
+            m_coralRollers.runOnce(m_coralRollers::setIntake),
+            Commands.waitUntil(m_coralRollers::holdingPiece)
+        )
+            .finallyDo(m_elevator::release)
+            .finallyDo(m_coralRollers::stop)
+            .unless(m_coralRollers::holdingPiece);
     }
 
     private Command coralPrepAndScoreCommand(int level) {
@@ -434,10 +442,30 @@ public class RobotContainer {
     }
 
     private Command coralScoreCommand(int level) {
-        return new CoralScoreCommand(m_coralRollers, m_elevator, level)
-            .andThen(new WaitUntilCommand(m_elevator::atSetpoint)
-            .onlyIf(m_coralRollers::holdingPiece)
-            );
+        // return new CoralScoreCommand(m_coralRollers, m_elevator, level)
+        //     .andThen(new WaitUntilCommand(m_elevator::atSetpoint)
+        //     .onlyIf(m_coralRollers::holdingPiece)
+        //     );
+        Runnable elevatorCommand = () -> {
+            m_elevator.setLevel(level);
+        };
+        Runnable coralCommand = () -> {
+            switch (level) {
+                case 1 -> m_coralRollers.setL1Eject();
+                case 2 -> m_coralRollers.setL2Eject();
+                case 3 -> m_coralRollers.setL3Eject();
+                case 4 -> m_coralRollers.setL4Eject();
+            }
+        };
+        return Commands.sequence(
+            m_elevator.runOnce(elevatorCommand).asProxy(),
+            Commands.waitUntil(m_elevator::atSetpoint),
+            m_coralRollers.run(coralCommand)
+                .onlyWhile(m_coralRollers::holdingPiece)
+        )
+            .finallyDo(m_elevator::release)
+            .finallyDo(m_coralRollers::stop)
+            .onlyIf(m_coralRollers::holdingPiece);
     }
 
     private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {

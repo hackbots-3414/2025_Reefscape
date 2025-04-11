@@ -55,6 +55,7 @@
       "/SmartDashboard/Reef mode on": "Command",
       "/SmartDashboard/Reset Pose": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Set Center": "Command",
       "/SmartDashboard/Set pose manually": "Command",
       "/SmartDashboard/Single Tag": "Command",
       "/SmartDashboard/Stow Elevator": "Command",
@@ -70,12 +71,20 @@
       "/SmartDashboard/d": "Command",
       "/SmartDashboard/drive to other pose": "Command",
       "/SmartDashboard/drive to reef": "Command",
+      "/SmartDashboard/dynamic forward steer": "Command",
+      "/SmartDashboard/dynamic forward translation": "Command",
+      "/SmartDashboard/dynamic reverse steer": "Command",
+      "/SmartDashboard/dynamic reverse translation": "Command",
       "/SmartDashboard/e": "Command",
       "/SmartDashboard/elevator up": "Command",
       "/SmartDashboard/f": "Command",
       "/SmartDashboard/g": "Command",
       "/SmartDashboard/h": "Command",
       "/SmartDashboard/open funnel": "Command",
+      "/SmartDashboard/quasistatic forward steer": "Command",
+      "/SmartDashboard/quasistatic forward translation": "Command",
+      "/SmartDashboard/quasistatic reverse steer": "Command",
+      "/SmartDashboard/quasistatic reverse translation": "Command",
       "/SmartDashboard/runme hehe": "Command",
       "/SmartDashboard/teleport": "Command"
     },
@@ -491,7 +500,7 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "rejected": {
           "arrows": false,
           "color": [
