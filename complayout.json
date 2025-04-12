@@ -412,23 +412,6 @@
             }
           },
           {
-            "title": "SAFETY MODE",
-            "x": 768.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/SAFETY MODE",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "VIABLE POSE",
             "x": 768.0,
             "y": 384.0,
@@ -512,23 +495,6 @@
               "divisions": 6,
               "inverted": false,
               "orientation": "horizontal"
-            }
-          },
-          {
-            "title": "Climb Ready",
-            "x": 1024.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Climb Ready",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
             }
           },
           {
