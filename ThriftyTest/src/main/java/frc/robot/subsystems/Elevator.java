@@ -310,7 +310,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean elevatorUp() {
-        return getPosition() > ElevatorConstants.unsafeRange;
+        return getPosition() > ElevatorConstants.unsafeRange || m_reference > ElevatorConstants.unsafeRange;
     }
 
     public void release() {

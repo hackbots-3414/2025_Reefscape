@@ -651,7 +651,7 @@ public class Constants {
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(15)
+                        .withKP(25)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
@@ -660,7 +660,7 @@ public class Constants {
                         .withKG(0.625))
                 .withSlot1(new Slot1Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(20)
+                        .withKP(30)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
