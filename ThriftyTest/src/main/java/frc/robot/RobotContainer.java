@@ -258,7 +258,7 @@ public class RobotContainer {
                 .until(m_elevator::atSetpoint)
             .andThen(
                 m_coralRollers.run(m_coralRollers::setL1Eject)
-                    .onlyWhile(m_coralRollers::getCANrangeTriggered)
+                    .onlyWhile(m_coralRollers::getFrontCANrange)
             )
             .finallyDo(m_coralRollers::stop)
         );
@@ -361,7 +361,7 @@ public class RobotContainer {
     // ** BUTTON BOARD HELPERS **
     private void bindCoralIntakeCommand(Trigger trigger) {
         trigger.whileTrue(coralIntakeCommand());
-        trigger.onFalse(coralIntakeCommand().onlyWhile(m_coralRollers::intakeReady));
+        trigger.onFalse(coralIntakeCommand().onlyWhile(m_coralRollers::presentPiece));
     }
 
     private void bindAlignCommand(ReefClipLocations location, Trigger trigger) {
