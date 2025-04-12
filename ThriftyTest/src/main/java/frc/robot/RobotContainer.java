@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,6 +37,7 @@ import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.PS5;
 import frc.robot.Constants.ClimbLocations;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ReefClipLocations;
@@ -491,5 +493,16 @@ public class RobotContainer {
 
     public boolean getFFEnabled() {
         return m_elevator.elevatorUp() && !DriverStation.isAutonomous();
+    }
+
+    public void setupAutoclimb() {
+        SmartDashboard.putBoolean("Match mode?", false);
+        Command autoclimb = Commands.sequence(Commands.waitUntil(() -> {
+            return (DriverStation.getMatchType() != MatchType.None || SmartDashboard.getBoolean("Match mode?", false))
+                && (DriverStation.getMatchTime() < ClimberConstants.kClimbTime)
+                && (DriverStation.isTeleopEnabled());
+        }),
+        new ClimbReadyCommand(m_climber).asProxy());
+        autoclimb.schedule();
     }
 }

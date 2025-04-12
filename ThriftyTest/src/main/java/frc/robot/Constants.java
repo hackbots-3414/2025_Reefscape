@@ -807,7 +807,7 @@ public class Constants {
 
         public static final double climbReadyTolerance = -0.001;
 
-        public static final double kClimbTime = 40.0;
+        public static final double kClimbTime = 30.0;
     }
 
     public static final class AlgaeRollerConstants {
