@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2107581967213117,
-        "y": 7.01593237704918
+        "x": 5.154713114754099,
+        "y": 5.193801229508197
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.311479767901867,
-        "y": 6.384114524039919
+        "x": 5.826024590163935,
+        "y": 6.20076844262295
       },
       "isLocked": false,
-      "linkedName": "LeftIntake"
+      "linkedName": "AlgaeIJ"
     },
     {
       "anchor": {
-        "x": 5.119657118055555,
-        "y": 5.414242259837963
+        "x": 6.49733606557377,
+        "y": 6.692264344262294
       },
       "prevControl": {
-        "x": 4.8810803674768515,
-        "y": 5.89465675636574
+        "x": 6.017827868852459,
+        "y": 6.140829918032788
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -119.99999999999999
+    "velocity": 0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "IntakeX",
+  "folder": "Barge",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

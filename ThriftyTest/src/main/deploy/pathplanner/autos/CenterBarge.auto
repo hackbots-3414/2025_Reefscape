@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "HGH"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "AlgaeLower"
@@ -43,7 +49,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BargeWall"
+            "pathName": "BargeIJ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlgaeUpper"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IJBarge"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Algae End"
           }
         }
       ]

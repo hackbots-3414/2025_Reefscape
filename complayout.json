@@ -9,10 +9,10 @@
         "containers": [
           {
             "title": "Super Field",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 1024.0,
-            "height": 512.0,
+            "x": 896.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 256.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Super Field",
@@ -28,27 +28,10 @@
             }
           },
           {
-            "title": "SAFETY MODE",
-            "x": 1024.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/SAFETY MODE",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "Auto Chooser",
-            "x": 1280.0,
-            "y": 0.0,
-            "width": 256.0,
+            "x": 0.0,
+            "y": 384.0,
+            "width": 896.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
@@ -58,28 +41,11 @@
             }
           },
           {
-            "title": "Climb Ready",
-            "x": 1280.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Climb Ready",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "climber pos",
-            "x": 1024.0,
-            "y": 128.0,
+            "x": 1280.0,
+            "y": 0.0,
             "width": 256.0,
-            "height": 384.0,
+            "height": 256.0,
             "type": "Radial Gauge",
             "properties": {
               "topic": "/SmartDashboard/climber pos",
@@ -93,6 +59,57 @@
               "wrap_value": false,
               "show_pointer": true,
               "show_ticks": false
+            }
+          },
+          {
+            "title": "Vision Cam",
+            "x": 1280.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/dragoneyes_Port_1182_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "fps": 30,
+              "resolution": [
+                150.0,
+                120.0
+              ]
+            }
+          },
+          {
+            "title": "Match Time",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 896.0,
+            "height": 384.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/SmartDashboard/Match Time",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 15,
+              "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Drivetrain Aligned",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 256.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Drivetrain Aligned",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
@@ -206,6 +223,19 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Set pose manually",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Set pose manually",
+              "period": 0.06,
+              "show_type": true
             }
           }
         ]
@@ -382,23 +412,6 @@
             }
           },
           {
-            "title": "SAFETY MODE",
-            "x": 768.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/SAFETY MODE",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "VIABLE POSE",
             "x": 768.0,
             "y": 384.0,
@@ -467,19 +480,6 @@
             }
           },
           {
-            "title": "Zero Elevator",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/Zero Elevator",
-              "period": 0.06,
-              "show_type": true
-            }
-          },
-          {
             "title": "Algae Temperature",
             "x": 512.0,
             "y": 384.0,
@@ -495,23 +495,6 @@
               "divisions": 6,
               "inverted": false,
               "orientation": "horizontal"
-            }
-          },
-          {
-            "title": "Climb Ready",
-            "x": 1024.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/SmartDashboard/Climb Ready",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
             }
           },
           {
@@ -533,6 +516,19 @@
               "wrap_value": false,
               "show_pointer": true,
               "show_ticks": false
+            }
+          },
+          {
+            "title": "Lazy Zero Elevator",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Lazy Zero Elevator",
+              "period": 0.06,
+              "show_type": true
             }
           }
         ]

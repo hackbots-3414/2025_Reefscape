@@ -140,8 +140,8 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final double kMaxAccelerationPerpendicularToTarget = 3.0;
-        public static final double kMaxAccelerationTowardsTarget = 3.0;
+        public static final double kMaxAccelerationPerpendicularToTarget = 5.0;
+        public static double kMaxAccelerationTowardsTarget = 5.0;
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
@@ -211,6 +211,7 @@ public class Constants {
             public static final boolean flipRot = false;
 
             public static final int resetHeading = 1;
+            public static final int processor = 2;
 
             public static final double deadband = 0.01;
         }
@@ -234,8 +235,7 @@ public class Constants {
             public static final int net = 0; // POV
             public static final int algaeModeButton = Button.kR2.value; // R2
             
-            public static final int leftIntake = Button.kL1.value; // LB
-            public static final int rightIntake = Button.kR1.value; // RB
+            public static final int autoProcessor = Button.kR1.value;
             
             public static final int climbReady = Button.kCreate.value;
             public static final int climb = Button.kOptions.value;
@@ -383,6 +383,10 @@ public class Constants {
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
         public static final double k_reefReady = 2.1;
+        public static final Pose2d k_processor = new Pose2d(5.987542, 0.89281, Rotation2d.kCW_90deg);
+
+        public static final Pose2d kRightIntake = new Pose2d(1.247, 0.950, Rotation2d.fromDegrees(55));
+        public static final Pose2d kLeftIntake = new Pose2d(1.211, 7.016, Rotation2d.fromDegrees(-55));
     }
 
     public static final class StateSpaceConstants {
@@ -391,11 +395,11 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static double translationTolerance = 0.03; // 0.04
+        public static final double translationTolerance = 0.03; // 0.04
         public static Angle rotationTolerance = Degrees.of(2);
 
-        public static double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
-        public static double stage2Distance = 1;
+        public static final double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
+        public static final double stage2Distance = 1;
     }
 
     public static final class CanRangeConstants {
@@ -466,6 +470,7 @@ public class Constants {
         public static final double groundIntake = 0;
         public static final double highGroundIntake = Units.inchesToMeters(12.0) * metersToRotations;
         public static final double stow = 0.31;
+        public static final double eject = stow + 2 * inch;
         public static final double processor = 0;
         // public static final double L1 = stow + 3.5 * inch;
         public static final double L2 = 4.016 + 2 * inch; // 35.5
@@ -553,7 +558,8 @@ public class Constants {
                 .withFOVRangeY(6.75))
             .withProximityParams(new ProximityParamsConfigs()
                 .withMinSignalStrengthForValidMeasurement(3500)
-                .withProximityThreshold(0.12));
+                .withProximityThreshold(0.13)
+                .withProximityHysteresis(0));
 
         public static final Time kRangeDebounceTime = Seconds.of(0.06);
     }
@@ -586,7 +592,7 @@ public class Constants {
         public static final double reefPickup = 0.2;
         public static final double reefExtract = 0.281;
         public static final double net = 0.342;
-        public static final double stow = 0.342;
+        public static final double stow = 0.343;
 
         public static final double manualUpSpeed = 0.1;
         public static final double manualDownSpeed = -0.1;
@@ -730,7 +736,7 @@ public class Constants {
         public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
 
         public static final double forwardSoftLimit = 0.0;
-        public static final double reverseSoftLimit = -0.23;
+        public static final double reverseSoftLimit = -0.25;
         public static final double climbPosition = -0.110;
 
         public static final double encoderOffset = -0.01318359;
@@ -772,6 +778,8 @@ public class Constants {
         public static final double k_servoTolerance = 0.01;
 
         public static final double climbReadyTolerance = -0.001;
+
+        public static final double kClimbTime = 40.0;
     }
 
     public static final class AlgaeRollerConstants {
@@ -1016,7 +1024,7 @@ public class Constants {
 
     public static class FFConstants {
         public static final double k_bargeX = 8.774176;
-        public static final double k_radius = 1.3;
-        public static final double k_decceleration = 1.2;
+        public static final double k_radius = 1.27;
+        public static final double k_decceleration = 6.0;
     }
 }

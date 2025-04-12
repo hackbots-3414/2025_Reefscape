@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.599651893681793,
+        "x": 1.5996518936817932,
         "y": 1.1222462354300466
       },
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 7.0,
+    "maxVelocity": 4.724,
     "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 2852.0,
@@ -47,7 +47,7 @@
   "reversed": false,
   "folder": "IntakeX",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 55.0
   },
   "useDefaultConstraints": true

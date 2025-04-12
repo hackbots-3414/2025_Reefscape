@@ -18,6 +18,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -36,6 +37,7 @@ import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.PS5;
 import frc.robot.Constants.ClimbLocations;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ReefClipLocations;
 import frc.robot.Constants.ScoringLocations;
 import frc.robot.Constants.ScoringLocationsLeft;
@@ -74,6 +76,7 @@ import frc.robot.vision.VisionHandler;
 public class RobotContainer {
     private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
 
+    @SuppressWarnings("unused")
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
@@ -153,11 +156,15 @@ public class RobotContainer {
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
         SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
+        SmartDashboard.putData("Set pose manually", new InstantCommand(() -> {
+            m_drivetrain.setPose(new Pose2d(7.6, 4.025, Rotation2d.k180deg));
+        }).ignoringDisable(true));
     }
 
-    private double m_time;
 
-    private void configureTesting() {}
+    private void configureTesting() {
+        SmartDashboard.putData("Reset Pose", m_drivetrain.runOnce(() -> {m_drivetrain.setPose(new Pose2d(0, 0, Rotation2d.kCCW_90deg));}));
+    }
 
     // ********** BINDINGS **********
 
@@ -194,6 +201,8 @@ public class RobotContainer {
 
         controller.button(resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
         controller.button(resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
+
+        bindAutoProcessCommand(controller.button(DragonReins.processor));
 
         controller.axisMagnitudeGreaterThan(xAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation)
             .or(controller.axisMagnitudeGreaterThan(yAxis, DriveConstants.k_closedLoopOverrideToleranceTranslation))
@@ -252,6 +261,10 @@ public class RobotContainer {
         }
     }
 
+    private void bindAutoProcessCommand(Trigger trigger) {
+        trigger.whileTrue(new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true));
+    }
+
     private Command zero() {
         // return new InstantCommand();
         return new ElevatorZero(m_elevator).withTimeout(2);
@@ -273,16 +286,17 @@ public class RobotContainer {
     private void configureNamedCommands() {
         NamedCommands.registerCommand("L4", coralScoreCommand(4));
         NamedCommands.registerCommand("L3", coralScoreCommand(3));
-        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow).until(m_elevator::atSetpoint).andThen(zero()).andThen(coralIntakeCommand()));
+        NamedCommands.registerCommand("Intake", m_elevator.run(m_elevator::setStow).until(m_elevator::atSetpoint).andThen(zero()).andThen(coralIntakeCommand().withTimeout(5)));
         NamedCommands.registerCommand("Intake Wait", new WaitUntilCommand(m_coralRollers::intakeReady)
             .alongWith(m_drivetrain.runOnce(m_drivetrain::stop)));
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
             NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true)
-                .deadlineFor(elevatorPrepCommand(4))
                 .withTimeout(5.0));
         }
+        NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(FieldConstants.kLeftIntake, m_drivetrain, true));
+        NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(FieldConstants.kRightIntake, m_drivetrain, true));
         NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
             .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
@@ -291,6 +305,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop).unless(m_coralRollers::holdingPiece));
         NamedCommands.registerCommand("Net", algaeScoreCommand(AlgaeLocationPresets.NET)
             .andThen(zero()));
+        NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
+            .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)));
+        NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup).alongWith(m_elevator.run(m_elevator::setGroundIntake)));
+        // NamedCommands.registerCommand("L4 Prep", new WaitUntilCommand(RobotObserver::getReefReady)
+        //     .andThen(elevatorPrepCommand(4)));
+        // NamedCommands.registerCommand("L3 Prep", new WaitUntilCommand(RobotObserver::getReefReady)
+        //     .andThen(elevatorPrepCommand(3)));
     }
 
     private void configureVision() {
@@ -318,7 +339,7 @@ public class RobotContainer {
         m_climber = new Climber();
         m_algaeRollers = new AlgaeRollers();
         m_coralRollers = new CoralRollers();
-        m_ledFeedback = new LedFeedback(m_drivetrain);
+        m_ledFeedback = new LedFeedback();
         m_elevator.setDefaultCommand(new ElevatorDefaultCommand(m_elevator));
     }
 
@@ -343,7 +364,19 @@ public class RobotContainer {
         switch (type) {
             case NET -> {
                 trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
-                trigger.onFalse(algaeScoreCommand(type).andThen(zero()).onlyIf(m_algaeRollers::algaeHeld).onlyIf(m_elevator::atSetpoint).unless(RobotObserver::getNoElevatorZone));
+                trigger.onFalse(
+                    algaeEjectCommand().onlyIf(m_elevator::atSetpoint)
+                    .andThen(
+                        zero()
+                        .andThen(new InstantCommand(() -> {
+                            m_logger.debug("zeroed elevator");
+                        }))
+                        .unless(RobotObserver::getNoElevatorZone)
+                    ).andThen(m_elevator::release)
+                    .andThen(new InstantCommand(() -> {
+                        m_logger.info("released elevator");
+                    }))
+                );
             }
             case PROCESSOR -> {
                 trigger.whileTrue(processorCommand());
@@ -361,6 +394,10 @@ public class RobotContainer {
 
     private void bindFunnelOpenCommand(Trigger trigger) {
         trigger.whileTrue(new OpenFunnel(m_climber));
+    }
+
+    private Command algaeEjectCommand() {
+        return m_algaeRollers.startEnd(m_algaeRollers::ejectAlgae, m_algaeRollers::stopMotor).onlyWhile(m_algaeRollers::algaeHeld);
     }
 
     // ** SUBSYSTEM PASS IN HELPERS **

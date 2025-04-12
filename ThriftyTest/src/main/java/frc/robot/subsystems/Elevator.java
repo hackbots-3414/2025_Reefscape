@@ -32,10 +32,12 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Robot;
 import frc.robot.RobotObserver;
 
 public class Elevator extends SubsystemBase {
     // we want to have a logger, even if we're not using it... yet
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
 
     private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
@@ -149,6 +151,10 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.stow);
     }
 
+    public void setEject() {
+        setPosition(ElevatorConstants.eject);
+    }
+
     public void setProcessor() {
         setPosition(ElevatorConstants.processor);
     }
@@ -207,6 +213,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
+        if (Robot.isSimulation()) return true;
         return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
     }
 

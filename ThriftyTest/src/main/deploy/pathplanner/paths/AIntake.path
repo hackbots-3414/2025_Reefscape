@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 1.6003443287037027,
-        "y": 7.3540686487268525
+        "x": 2.3256147540983605,
+        "y": 5.529456967213114
       },
       "prevControl": {
-        "x": 1.8038430344559162,
-        "y": 6.8564659706975615
+        "x": 2.5291134598505733,
+        "y": 5.031854289183823
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "LeftIntake"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 7.0,
+    "maxVelocity": 4.724,
     "maxAcceleration": 6.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 2852.0,
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
+    "velocity": 3.0,
     "rotation": -55.0
   },
   "reversed": false,

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2107581967213117,
-        "y": 7.01593237704918
+        "x": 6.017827868852459,
+        "y": 0.986
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.311479767901867,
-        "y": 6.384114524039919
+        "x": 6.005840163934426,
+        "y": 1.2618340163934432
       },
       "isLocked": false,
-      "linkedName": "LeftIntake"
+      "linkedName": "Processor"
     },
     {
       "anchor": {
-        "x": 5.119657118055555,
-        "y": 5.414242259837963
+        "x": 5.150582525927948,
+        "y": 2.8614163994268553
       },
       "prevControl": {
-        "x": 4.8810803674768515,
-        "y": 5.89465675636574
+        "x": 6.013697280026309,
+        "y": 1.2550639404104618
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "AlgaeEF"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -119.99999999999999
+    "velocity": 0,
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "IntakeX",
+  "folder": "Processor",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": -90.0
   },
   "useDefaultConstraints": true
 }

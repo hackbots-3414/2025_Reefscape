@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.CANcoder;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,6 +47,9 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     public void openFunnel() {
+        if (DriverStation.getMatchTime() > ClimberConstants.kClimbTime || DriverStation.isAutonomous()) {
+            return;
+        }
         m_servo.set(ClimberConstants.k_openServoPosition);
     }
 

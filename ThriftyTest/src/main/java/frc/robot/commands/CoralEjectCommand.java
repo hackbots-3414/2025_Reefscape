@@ -16,7 +16,7 @@ public class CoralEjectCommand extends Command {
 
   @Override
   public void initialize() {
-    elevator.setStow();
+    elevator.setEject();
   }
 
   @Override

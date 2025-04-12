@@ -24,14 +24,6 @@ public class ClimbReadyCommand extends Command {
     m_climber.setUp();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    if (m_climber.getVelocity() < 0) {
-      m_climber.setDown();
-    }
-  }
-
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {

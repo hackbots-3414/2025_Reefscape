@@ -39,6 +39,36 @@
           "data": {
             "pathName": "GHProcessor"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Process"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ProcessorEF"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlgaeUpper"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EFProcessor"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Process"
+          }
         }
       ]
     }
