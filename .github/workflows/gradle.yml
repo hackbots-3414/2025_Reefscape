@@ -6,9 +6,9 @@ name: CI
 # events but only for the main branch.
 on:
   push:
-    branches: [ main, Ferndale, District-2, States ]
+    branches: [ main, Ferndale, District-2, States, Worlds ]
   pull_request:
-    branches: [ main, Ferndale, District-2, States ]
+    branches: [ main, Ferndale, District-2, States, Worlds ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
