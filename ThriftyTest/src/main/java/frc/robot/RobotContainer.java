@@ -52,8 +52,6 @@ import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
-import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.CoralScoreCommand;
 import frc.robot.commands.DriveToPointCommand;
 import frc.robot.commands.ElevatorDefaultCommand;
 import frc.robot.commands.ElevatorToPointCommand;
