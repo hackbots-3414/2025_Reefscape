@@ -50,6 +50,6 @@ public class CoralScoreCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return !coral.getCANrangeTriggered() || finish;
+    return !coral.getFrontCANrange() || finish;
   }
 }

@@ -27,12 +27,9 @@ public class CoralRollers extends SubsystemBase {
     private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
     private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
 
-    private final AnalogInput m_backIR = new AnalogInput(IDConstants.rearIR);
-
-    private final CANrange m_range = new CANrange(IDConstants.coralCANrange);
+    private final CANrange m_frontRange = new CANrange(IDConstants.coralCANrange);
     private final CANrange m_upperRange = new CANrange(IDConstants.upperCANrange);
-
-    private boolean m_backSensorValue = false;
+    private final CANrange m_innerRange = new CANrange(IDConstants.innerCANrange);
 
     private double m_voltage;
     private boolean m_voltageChanged;
@@ -65,8 +62,9 @@ public class CoralRollers extends SubsystemBase {
     }
 
     private void configCANrange() {
-        m_range.getConfigurator().apply(CoralConstants.rangeConfig);
+        m_frontRange.getConfigurator().apply(CoralConstants.frontRangeConfig);
         m_upperRange.getConfigurator().apply(CoralConstants.upperRangeConfig);
+        m_innerRange.getConfigurator().apply(CoralConstants.innerRangeConfig);
     }
 
     public void setVoltage(double voltage) {
@@ -153,21 +151,21 @@ public class CoralRollers extends SubsystemBase {
         setVoltage(0);
     }
 
-    public boolean getCANrangeTriggered() {
-        return m_range.getIsDetected().getValue();
+    public boolean getFrontCANrange() {
+        return m_frontRange.getIsDetected().getValue();
     }
 
     public boolean getUpperCANrange() {
         return m_upperRange.getIsDetected().getValue();
     }
 
-    public boolean getBackIR() {
-        return m_backSensorValue;
+    public boolean getInnerCANrange() {
+        return m_innerRange.getIsDetected().getValue();
     }
 
     public boolean holdingPiece() {
         if (Robot.isReal()) {
-            return getCANrangeTriggered() && !getUpperCANrange();
+            return getFrontCANrange() && !getUpperCANrange();
         } else {
             boolean present = SmartDashboard.getBoolean("Coral present", false);
             SmartDashboard.putBoolean("Coral present", present);
@@ -184,7 +182,7 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean presentPiece() {
-        return getBackIR() || getCANrangeTriggered();
+        return getInnerCANrange() || getFrontCANrange();
     }
 
     public boolean intakeReady() {
@@ -193,12 +191,8 @@ public class CoralRollers extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (Robot.isReal()) {
-            m_backSensorValue = m_backIR.getVoltage() > CoralConstants.IRThreshold;
-        }
-
-        SmartDashboard.putBoolean("Rear IR Triggered", m_backSensorValue);
-        SmartDashboard.putBoolean("Coral CANrange", getCANrangeTriggered());
+        SmartDashboard.putBoolean("Inner CANrange", getInnerCANrange());
+        SmartDashboard.putBoolean("Coral CANrange", getFrontCANrange());
         SmartDashboard.putBoolean("OCS", getUpperCANrange());
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
 

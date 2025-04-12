@@ -361,7 +361,7 @@ public class RobotContainer {
     // ** BUTTON BOARD HELPERS **
     private void bindCoralIntakeCommand(Trigger trigger) {
         trigger.whileTrue(coralIntakeCommand());
-        trigger.onFalse(coralIntakeCommand().onlyWhile(m_coralRollers::presentPiece));
+        trigger.onFalse(coralIntakeCommand().onlyWhile(m_coralRollers::intakeReady));
     }
 
     private void bindAlignCommand(ReefClipLocations location, Trigger trigger) {

@@ -20,6 +20,7 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.ToFParamsConfigs;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -110,6 +111,7 @@ public class Constants {
         public static final int coralRight = 56;
         public static final int coralCANrange = 59;
         public static final int upperCANrange = 58;
+        public static final int innerCANrange = 54;
 
         public static final int frontIR = 2;
         public static final int rearIR = 3;
@@ -405,8 +407,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final double translationTolerance = 0.03; // 0.04
-        public static Angle rotationTolerance = Degrees.of(2);
+        public static final double translationTolerance = 0.02; // 0.04
+        public static Angle rotationTolerance = Degrees.of(1);
 
         public static final double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static final double stage2Distance = 1;
@@ -716,7 +718,7 @@ public class Constants {
                         .withS1CloseState(S1CloseStateValue.CloseWhenHigh)
                         .withS2CloseState(S2CloseStateValue.CloseWhenHigh));
 
-        public static final CANrangeConfiguration rangeConfig = new CANrangeConfiguration()
+        public static final CANrangeConfiguration frontRangeConfig = new CANrangeConfiguration()
                 .withFovParams(new FovParamsConfigs()
                         .withFOVRangeX(6.5)
                         .withFOVRangeY(6.5))
@@ -725,7 +727,8 @@ public class Constants {
                         .withProximityThreshold(0.1))
                 .withToFParams(new ToFParamsConfigs()
                         .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-        
+
+
         public static final CANrangeConfiguration upperRangeConfig = new CANrangeConfiguration()
                 .withFovParams(new FovParamsConfigs()
                         .withFOVRangeX(6.5)
@@ -733,6 +736,17 @@ public class Constants {
                 .withProximityParams(new ProximityParamsConfigs()
                         .withMinSignalStrengthForValidMeasurement(2500)
                         .withProximityThreshold(0.65))
+                .withToFParams(new ToFParamsConfigs()
+                        .withUpdateMode(UpdateModeValue.ShortRange100Hz));
+
+        public static final CANrangeConfiguration innerRangeConfig = new CANrangeConfiguration()
+                .withFovParams(new FovParamsConfigs()
+                        .withFOVRangeX(27)
+                        .withFOVRangeY(27))
+                .withProximityParams(new ProximityParamsConfigs()
+                        .withMinSignalStrengthForValidMeasurement(1500)
+                        .withProximityHysteresis(0)
+                        .withProximityThreshold(0.06))
                 .withToFParams(new ToFParamsConfigs()
                         .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
