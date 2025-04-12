@@ -142,8 +142,8 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final double kMaxAccelerationPerpendicularToTarget = 3.0; // 5.0
-        public static double kMaxAccelerationTowardsTarget = 3.0; // 5.0
+        public static final double kAcceleration = 6.0;
+        public static final double kDecceleration = 3.0;
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
