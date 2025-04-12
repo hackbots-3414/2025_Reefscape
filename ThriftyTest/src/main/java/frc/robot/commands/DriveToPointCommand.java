@@ -11,18 +11,23 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+
 import static edu.wpi.first.units.Units.Radians;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.driveassist.Autopilot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 
 public class DriveToPointCommand extends Command {
+    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
-
-    private final double dt = 0.02;
 
     private static Rotation2d m_targetRotation;
 
@@ -36,6 +41,10 @@ public class DriveToPointCommand extends Command {
     private final CommandSwerveDrivetrain m_drivetrain;
 
     private boolean m_flip;
+
+    private List<Pose2d> m_poses = new ArrayList<>();
+
+    private Autopilot m_autopilot = new Autopilot(DriveConstants.kAutopilotConstraints);
 
     public DriveToPointCommand(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         this(pose, drivetrain, false);
@@ -59,80 +68,21 @@ public class DriveToPointCommand extends Command {
         m_targetRotation = m_goal.getRotation();
 
         RobotObserver.getField().getObject("target").setPose(m_goal);
+        m_poses.clear();
     }
 
     @Override
     public void execute() {
-        Translation2d adjusted = adjust(m_drivetrain.getPose(), m_goal);
-        if (adjusted.getX() == 0 || adjusted.getY() == 0){
-            m_logger.info("X/Y is Zero, current pose is {}, velocity is {}", m_drivetrain.getPose(), m_drivetrain.getVelocityComponents());
-        }
+        Pose2d pose = m_drivetrain.getPose();
+        m_poses.add(pose);
+        RobotObserver.getField().getObject("path").setPoses(m_poses);
+        Translation2d velo = m_drivetrain.getVelocityComponents();
+        Translation2d adjusted = m_autopilot.adjust(pose, m_goal, velo);
         m_drivetrain.setControl(m_request
             .withVelocityX(adjusted.getX())
             .withVelocityY(adjusted.getY())
             .withTargetDirection(m_targetRotation)
         );
-    }
-
-    private Translation2d adjust(Pose2d current, Pose2d goal) {
-
-        Translation2d robotToTarget = goal.getTranslation().minus(current.getTranslation());
-        
-        double distance = robotToTarget.getNorm();
-
-        if (distance == 0) {
-            return Translation2d.kZero;
-        }
-
-        double theoreticalMaxVelocity = Math.sqrt(2 * distance * DriveConstants.kMaxAccelerationTowardsTarget);
-
-        Translation2d currentVelocity = m_drivetrain.getVelocityComponents();
-
-        Translation2d direction = robotToTarget.div(distance);
-
-        if (currentVelocity.getNorm() == 0) {
-            m_logger.trace("Current Velocity was Zero");
-            double velocity = Math.min(theoreticalMaxVelocity, dt * DriveConstants.kMaxAccelerationTowardsTarget);
-
-            return direction.times(velocity);
-        }
-
-        double dot = direction.getX() * currentVelocity.getX() + direction.getY() * currentVelocity.getY();
-
-        if (dot == 0) {
-            m_logger.trace("Dot was Zero, currentVelocity {}, Distance {}, Direction {}", currentVelocity, distance, direction);
-            // if we are completely perpendicular with the ideal translation, we can assume that current velocity IS u
-            double velocityI = Math.min(theoreticalMaxVelocity, dt * DriveConstants.kMaxAccelerationTowardsTarget);
-            Translation2d veloI = direction.times(velocityI);
-
-            double adjustmentU = Math.min(dt * DriveConstants.kMaxAccelerationPerpendicularToTarget, currentVelocity.getNorm());
-            // currentVelocity - maxAdjustmentU * currentVelocity hat
-            Translation2d directionU = currentVelocity.div(currentVelocity.getNorm());
-            Translation2d veloU = currentVelocity.minus(directionU.times(adjustmentU));
-
-            return veloI.plus(veloU);
-        }
-
-        double currentVelocityTowardsTarget = Math.pow(currentVelocity.getNorm(), 2) / dot;
-        Translation2d currentVeloI = direction.times(currentVelocityTowardsTarget);
-
-        Translation2d currentVeloU = currentVelocity.minus(currentVeloI);
-        double currentVelocityPerpendicularToTarget = currentVeloU.getNorm();
-
-        double adjustmentI = Math.min(theoreticalMaxVelocity, dt * DriveConstants.kMaxAccelerationTowardsTarget + currentVelocityTowardsTarget);
-        Translation2d veloI = direction.times(adjustmentI);
-
-        double adjustmentU = Math.min(currentVeloU.getNorm(), dt * DriveConstants.kMaxAccelerationPerpendicularToTarget);
-        Translation2d veloU = Translation2d.kZero;
-        if (currentVelocityPerpendicularToTarget != 0) {
-            Translation2d directionU = currentVeloU.div(currentVelocityPerpendicularToTarget);
-            veloU = currentVeloU.minus(directionU.times(adjustmentU));
-        }
-        
-        Translation2d r = veloI.plus(veloU);
-        m_logger.trace("Adjust() returns {}" , r);
-
-        return r;
     }
 
     @Override

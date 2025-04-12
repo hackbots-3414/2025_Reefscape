@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
-import frc.robot.driveassist.DriverAssist;
+import frc.robot.driveassist.ForceField;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class TeleopCommand extends Command {
@@ -25,7 +25,7 @@ public class TeleopCommand extends Command {
     private final double maxTranslationalVelocity = DriveConstants.k_maxTeleopLinearSpeed;
     private final double maxRotationalVelocity = DriveConstants.k_maxTeleopAngularSpeed;
 
-    private final DriverAssist m_assist = new DriverAssist();
+    private final ForceField m_ff = new ForceField();
 
     private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
         .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
@@ -62,8 +62,8 @@ public class TeleopCommand extends Command {
             m_drivetrain.setAligned(false);
         }
         Transform2d fieldRelative = getFieldRelative(robotRelative);
-        // avoid obstacles using drive assist
-        Translation2d filtered = m_assist.calculate(
+        // avoid obstacles using force fields
+        Translation2d filtered = m_ff.calculate(
             fieldRelative.getTranslation(),
             m_drivetrain.getPose(),
             m_drivetrain.getNearestAntitarget()

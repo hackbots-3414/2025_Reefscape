@@ -501,6 +501,17 @@
         },
         "height": 8.051901817321777,
         "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "path": {
+          "arrows": false,
+          "color": [
+            0.4281767010688782,
+            0.6010612845420837,
+            0.8480392098426819,
+            255.0
+          ],
+          "style": "Line",
+          "weight": 8.0
+        },
         "rejected": {
           "arrows": false,
           "color": [
@@ -565,12 +576,6 @@
     }
   },
   "NetworkTables Info": {
-    "Server": {
-      "Subscribers": {
-        "open": true
-      },
-      "open": true
-    },
     "visible": true
   },
   "Plot": {

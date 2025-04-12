@@ -12,8 +12,6 @@ import frc.robot.subsystems.Climber;
 public class ClimberShakeCommand extends Command {
   private final Climber m_climber;
 
-  private int m_ticks;
-
   /** Creates a new ClimberShakeCommand. */
   public ClimberShakeCommand(Climber climber) {
     addRequirements(climber);

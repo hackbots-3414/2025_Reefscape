@@ -436,11 +436,6 @@ public class RobotContainer {
             .onlyIf(m_coralRollers::holdingPiece);
     }
 
-    private Command elevatorPrepCommand(int level) {
-        return new ElevatorToPointCommand(level, m_elevator)
-            .onlyIf(m_coralRollers::holdingPiece);
-    }
-
     private Command coralScoreCommand(int level) {
         // return new CoralScoreCommand(m_coralRollers, m_elevator, level)
         //     .andThen(new WaitUntilCommand(m_elevator::atSetpoint)
