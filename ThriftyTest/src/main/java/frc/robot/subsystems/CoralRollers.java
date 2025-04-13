@@ -151,14 +151,23 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public boolean getFrontCANrange() {
+        if (Robot.isSimulation()) {
+            return SmartDashboard.getBoolean("Coral - Front CANrange", false);
+        }
         return m_frontRange.getIsDetected().getValue();
     }
 
     public boolean getUpperCANrange() {
+        if (Robot.isSimulation()) {
+            return SmartDashboard.getBoolean("Coral - Upper CANrange", false);
+        }
         return m_upperRange.getIsDetected().getValue();
     }
 
     public boolean getInnerCANrange() {
+        if (Robot.isSimulation()) {
+            return SmartDashboard.getBoolean("Coral - Inner CANrange", false);
+        }
         return m_innerRange.getIsDetected().getValue();
     }
 
@@ -190,9 +199,9 @@ public class CoralRollers extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Inner CANrange", getInnerCANrange());
-        SmartDashboard.putBoolean("Coral CANrange", getFrontCANrange());
-        SmartDashboard.putBoolean("OCS", getUpperCANrange());
+        SmartDashboard.putBoolean("Coral - Inner CANrange", getInnerCANrange());
+        SmartDashboard.putBoolean("Coral - Front CANrange", getFrontCANrange());
+        SmartDashboard.putBoolean("Coral - Upper CANrange", getUpperCANrange());
         SmartDashboard.putBoolean("HAS CORAL", holdingPiece());
 
         if (m_voltageChanged) {

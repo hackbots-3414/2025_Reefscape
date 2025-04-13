@@ -144,7 +144,7 @@ public class Constants {
 
         private static final Autopilot.Constraints kAutopilotConstraintsI = new Autopilot.Constraints()
             .withAcceleration(8.5)
-            .withDecceleration(1.2);
+            .withDecceleration(0.7);
 
         private static final Autopilot.Constraints kAutopilotConstraintsU = new Autopilot.Constraints()
             .withAcceleration(4.0)

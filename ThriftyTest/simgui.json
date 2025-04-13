@@ -6,8 +6,15 @@
           "open": true
         }
       },
-      "window": {
-        "visible": false
+      "CANrange (v6)[58]": {
+        "header": {
+          "open": true
+        }
+      },
+      "CANrange (v6)[59]": {
+        "header": {
+          "open": true
+        }
       }
     },
     "Timing": {
@@ -106,26 +113,6 @@
       "/SmartDashboard/teleport": "Command"
     },
     "windows": {
-      "/SmartDashboard/Align A": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Align C": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Align E": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Align H": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/April Tag Debug Field": {
         "Robot": {
           "arrowColor": [

@@ -310,7 +310,6 @@ public class RobotContainer {
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
             Command alignCommand = new DriveToPointCommand(location.value, m_drivetrain, true);
-            SmartDashboard.putData(name, alignCommand);
             NamedCommands.registerCommand(name, alignCommand);
         }
         NamedCommands.registerCommand("Align IJ", new DriveToPointCommand(Constants.FieldConstants.kIJ, m_drivetrain, true));
