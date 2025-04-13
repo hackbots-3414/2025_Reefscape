@@ -21,6 +21,22 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/AUTOALIGN SLOWDOWN (LAST RESTORT)!!!!!!!!!!!!!!!!!!!!": "Command",
       "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Align A": "Command",
+      "/SmartDashboard/Align B": "Command",
+      "/SmartDashboard/Align C": "Command",
+      "/SmartDashboard/Align D": "Command",
+      "/SmartDashboard/Align E": "Command",
+      "/SmartDashboard/Align F": "Command",
+      "/SmartDashboard/Align G": "Command",
+      "/SmartDashboard/Align H": "Command",
+      "/SmartDashboard/Align I": "Command",
+      "/SmartDashboard/Align J": "Command",
+      "/SmartDashboard/Align K": "Command",
+      "/SmartDashboard/Align L": "Command",
+      "/SmartDashboard/Align LEFTHP": "Command",
+      "/SmartDashboard/Align NET": "Command",
+      "/SmartDashboard/Align PROCESSOR": "Command",
+      "/SmartDashboard/Align RIGHTHP": "Command",
       "/SmartDashboard/AlignLEFT ": "Command",
       "/SmartDashboard/AlignRight": "Command",
       "/SmartDashboard/Auto Chooser": "String Chooser",
@@ -90,6 +106,26 @@
       "/SmartDashboard/teleport": "Command"
     },
     "windows": {
+      "/SmartDashboard/Align A": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Align C": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Align E": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Align H": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/April Tag Debug Field": {
         "Robot": {
           "arrowColor": [
@@ -428,12 +464,13 @@
           "arrowSize": 25,
           "arrowWeight": 2.0,
           "color": [
-            0.7045847773551941,
-            0.7914843559265137,
-            0.7941176295280457,
+            0.3744233250617981,
+            0.7675007581710815,
+            0.779411792755127,
             255.0
           ],
           "length": 0.9399999976158142,
+          "selectable": false,
           "style": "Box/Image",
           "width": 0.9399999976158142
         },
@@ -478,6 +515,7 @@
           ],
           "arrowSize": 100,
           "arrowWeight": 2.0,
+          "arrows": false,
           "color": [
             255.0,
             167.8480987548828,
@@ -541,15 +579,16 @@
           ],
           "length": 0.9399999976158142,
           "selectable": false,
+          "style": "Hidden",
           "width": 0.9399999976158142
         },
         "right": 2932,
         "robot path": {
           "arrows": false,
           "color": [
-            0.843137264251709,
-            0.6717382669448853,
-            0.45463284850120544,
+            0.8627451062202454,
+            0.29852771759033203,
+            0.17762400209903717,
             255.0
           ],
           "selectable": false,
@@ -586,6 +625,7 @@
             1.0,
             255.0
           ],
+          "arrows": false,
           "color": [
             0.676780104637146,
             0.20238924026489258,
@@ -594,6 +634,7 @@
           ],
           "length": 0.4000000059604645,
           "selectable": false,
+          "style": "Hidden",
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,
@@ -668,7 +709,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <1>": {
       "plots": [
@@ -707,7 +751,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

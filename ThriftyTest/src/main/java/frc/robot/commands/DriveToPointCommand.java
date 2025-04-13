@@ -49,7 +49,7 @@ public class DriveToPointCommand extends Command {
     private List<Pose2d> m_simPoses = new ArrayList<>();
     private List<Pose2d> m_realPoses = new ArrayList<>();
 
-    private Autopilot m_autopilot = new Autopilot(DriveConstants.kAutopilotConstraints);
+    private Autopilot m_autopilot = DriveConstants.kAutopilot;
 
     public DriveToPointCommand(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
         this(pose, drivetrain, false);

@@ -187,6 +187,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
         m_estimatedPose = this.getState().Pose;
+        SmartDashboard.putNumber("x", m_estimatedPose.getTranslation().getX());
+        SmartDashboard.putNumber("y", m_estimatedPose.getTranslation().getY());
 
         SmartDashboard.putBoolean("Drivetrain Aligned", m_aligned);
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());

@@ -165,7 +165,7 @@ public class RobotContainer {
     private void configureTesting() {
         SmartDashboard.putData("Reset Pose", m_drivetrain.runOnce(() -> {m_drivetrain.setPose(new Pose2d(0, 0, Rotation2d.kCCW_90deg));}));
         SmartDashboard.putData("Drive to center", new DriveToPointCommand(new Pose2d(
-            8.0,4.0,Rotation2d.kZero
+            8.0,4.0,Rotation2d.kCW_90deg
         ), m_drivetrain));
     }
 
@@ -309,8 +309,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("Interrupt", new WaitUntilCommand(() -> !DriverStation.isAutonomousEnabled()));
         for (ScoringLocations location : Constants.ScoringLocations.values()) {
             String name = "Align ".concat(location.toString());
-            NamedCommands.registerCommand(name, new DriveToPointCommand(location.value, m_drivetrain, true)
-                .withTimeout(5.0));
+            Command alignCommand = new DriveToPointCommand(location.value, m_drivetrain, true);
+            SmartDashboard.putData(name, alignCommand);
+            NamedCommands.registerCommand(name, alignCommand);
         }
         NamedCommands.registerCommand("Align IJ", new DriveToPointCommand(Constants.FieldConstants.kIJ, m_drivetrain, true));
         NamedCommands.registerCommand("Align GH", new DriveToPointCommand(Constants.FieldConstants.kGH, m_drivetrain, true));

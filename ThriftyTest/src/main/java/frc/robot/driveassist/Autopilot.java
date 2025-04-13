@@ -1,25 +1,24 @@
 package frc.robot.driveassist;
 
-import java.security.KeyStore.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotObserver;
 
 public class Autopilot {
     private static final Logger m_logger = LoggerFactory.getLogger(Autopilot.class);
-    private Constraints m_constraints;
+    private Constraints m_constraintsU;
+    private Constraints m_constraintsI;
 
     private final double dt = 0.020;
 
-    public Autopilot(Constraints constraints) {
-        m_constraints = constraints;
+    public Autopilot(Constraints constraintsI, Constraints constraintsU) {
+        m_constraintsI = constraintsI;
+        m_constraintsU = constraintsU;
+        SmartDashboard.putNumber("div", 1);
     }
 
     public Translation2d adjust(
@@ -27,8 +26,7 @@ public class Autopilot {
         Pose2d target,
         Translation2d velocity
     ) {
-        // Rotation2d entryAngle = target.getRotation();
-        Rotation2d entryAngle = Rotation2d.kZero;
+        Rotation2d entryAngle = target.getRotation();
         // direction and distance to actual target
         Translation2d offset = target.getTranslation().minus(current.getTranslation());
         double distance = offset.getNorm();
@@ -46,11 +44,12 @@ public class Autopilot {
         // current velocity (i & j)
         double veloI = project(velocity, directionI);
         double veloU = project(velocity, directionU);
+        // double veloU = 0.0;
         Translation2d entry = entryDirection.times(-distance);
         double entryDistance = project(entry, directionU);
         // drive towards goal state
-        double adjustedI = approach(distance, veloI);
-        double adjustedU = approach(entryDistance, veloU);
+        double adjustedI = approach(distance, veloI, m_constraintsI);
+        double adjustedU = approach(entryDistance, veloU, m_constraintsU);
         // combine
         Translation2d adjusted = directionI.times(adjustedI).plus(
             directionU.times(adjustedU));
@@ -62,9 +61,9 @@ public class Autopilot {
         return dot / Math.pow(axis.getNorm(), 2);
     }
 
-    private double approach(double distance, double initial) {
-        double goal = Math.sqrt(2 * m_constraints.m_decceleration * Math.abs(distance)) * Math.signum(distance);
-        if (Math.abs(goal - initial) < dt * m_constraints.m_acceleration) {
+    private double approach(double distance, double initial, Constraints c) {
+        double goal = Math.sqrt(2 * c.m_decceleration * Math.abs(distance)) * Math.signum(distance);
+        if (Math.abs(goal - initial) < dt * c.m_acceleration) {
             // we're within range, just adjust to what we need.
             return goal;
         }
@@ -72,9 +71,9 @@ public class Autopilot {
         if (goal < initial && goal > 0) return goal;
         if (goal > initial && goal < 0) return goal;
         if (goal > initial) {
-            return initial + dt * m_constraints.m_acceleration;
+            return initial + dt * c.m_acceleration;
         } else {
-            return initial - dt * m_constraints.m_acceleration;
+            return initial - dt * c.m_acceleration;
         }
     }
 
