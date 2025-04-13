@@ -143,8 +143,8 @@ public class Constants {
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         public static final Autopilot.Constraints kAutopilotConstraints = new Autopilot.Constraints()
-            .withAcceleration(5.0)
-            .withDecceleration(3.0);
+            .withAcceleration(4.0)
+            .withDecceleration(2.0);
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 

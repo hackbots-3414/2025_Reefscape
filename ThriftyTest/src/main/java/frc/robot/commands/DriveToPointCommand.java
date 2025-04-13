@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import static edu.wpi.first.units.Units.Radians;
@@ -42,7 +43,11 @@ public class DriveToPointCommand extends Command {
 
     private boolean m_flip;
 
-    private List<Pose2d> m_poses = new ArrayList<>();
+    private Pose2d m_simPose;
+    private Translation2d m_simVelocity;
+
+    private List<Pose2d> m_simPoses = new ArrayList<>();
+    private List<Pose2d> m_realPoses = new ArrayList<>();
 
     private Autopilot m_autopilot = new Autopilot(DriveConstants.kAutopilotConstraints);
 
@@ -68,14 +73,18 @@ public class DriveToPointCommand extends Command {
         m_targetRotation = m_goal.getRotation();
 
         RobotObserver.getField().getObject("target").setPose(m_goal);
-        m_poses.clear();
+        m_realPoses.clear();
+        m_simPoses.clear();
+        m_simPose = Pose2d.kZero.plus(new Transform2d(m_drivetrain.getPose().getTranslation(), Rotation2d.kZero));
+        m_simVelocity = m_drivetrain.getVelocityComponents();
     }
 
     @Override
     public void execute() {
+        /* real */
         Pose2d pose = m_drivetrain.getPose();
-        m_poses.add(pose);
-        RobotObserver.getField().getObject("path").setPoses(m_poses);
+        m_realPoses.add(pose);
+        RobotObserver.getField().getObject("robot path").setPoses(m_realPoses);
         Translation2d velo = m_drivetrain.getVelocityComponents();
         Translation2d adjusted = m_autopilot.adjust(pose, m_goal, velo);
         m_drivetrain.setControl(m_request
@@ -83,6 +92,14 @@ public class DriveToPointCommand extends Command {
             .withVelocityY(adjusted.getY())
             .withTargetDirection(m_targetRotation)
         );
+        /* sim */
+        m_simPoses.add(m_simPose);
+        RobotObserver.getField().getObject("sim path").setPoses(m_simPoses);
+        adjusted = m_autopilot.adjust(m_simPose, m_goal, m_simVelocity);
+        double hold = 0.0;
+        adjusted = m_simVelocity.times(hold).plus(adjusted.times(1 - hold));
+        m_simPose = m_simPose.plus(new Transform2d(adjusted.getX() * 0.02, adjusted.getY() * 0.02, Rotation2d.kZero));
+        m_simVelocity = adjusted;
     }
 
     @Override

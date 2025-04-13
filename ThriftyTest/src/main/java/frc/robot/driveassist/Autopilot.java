@@ -31,18 +31,13 @@ public class Autopilot {
         Rotation2d entryAngle = Rotation2d.kZero;
         // direction and distance to actual target
         Translation2d offset = target.getTranslation().minus(current.getTranslation());
-        double distanceToTarget = offset.getNorm();
-        if (distanceToTarget == 0) return Translation2d.kZero;
+        double distance = offset.getNorm();
+        if (distance == 0) return Translation2d.kZero;
         // create new target
         Translation2d entryDirection = new Translation2d(
                 entryAngle.getCos(),
                 entryAngle.getSin()
         );
-        offset = entryDirection.times(-distanceToTarget / 2);
-        Pose2d newTarget = new Pose2d(offset, Rotation2d.kZero).plus(new Transform2d(target.getTranslation(), Rotation2d.kZero));
-        offset = newTarget.getTranslation().minus(current.getTranslation());
-        RobotObserver.getField().getObject("foo").setPose(newTarget);
-        double distance = offset.getNorm();
         Translation2d directionI = offset.div(distance);
         Translation2d directionU = new Translation2d(
             directionI.getY(),
@@ -51,18 +46,14 @@ public class Autopilot {
         // current velocity (i & j)
         double veloI = project(velocity, directionI);
         double veloU = project(velocity, directionU);
-        // ideal state
-        double idealI = Math.sqrt(2 * m_constraints.m_decceleration * distance);
-        double idealU = 0.0;
+        Translation2d entry = entryDirection.times(-distance);
+        double entryDistance = project(entry, directionU);
         // drive towards goal state
-        double adjustedI = approach(idealI, veloI);
-        double adjustedU = approach(idealU, veloU);
-        SmartDashboard.putNumber("ri", adjustedI);
-        SmartDashboard.putNumber("ru", adjustedU);
-
+        double adjustedI = approach(distance, veloI);
+        double adjustedU = approach(entryDistance, veloU);
+        // combine
         Translation2d adjusted = directionI.times(adjustedI).plus(
             directionU.times(adjustedU));
-        
         return adjusted;
     }
 
@@ -71,11 +62,15 @@ public class Autopilot {
         return dot / Math.pow(axis.getNorm(), 2);
     }
 
-    private double approach(double goal, double initial) {
+    private double approach(double distance, double initial) {
+        double goal = Math.sqrt(2 * m_constraints.m_decceleration * Math.abs(distance)) * Math.signum(distance);
         if (Math.abs(goal - initial) < dt * m_constraints.m_acceleration) {
             // we're within range, just adjust to what we need.
             return goal;
         }
+        // check for a "out-of-bounds" position
+        if (goal < initial && goal > 0) return goal;
+        if (goal > initial && goal < 0) return goal;
         if (goal > initial) {
             return initial + dt * m_constraints.m_acceleration;
         } else {

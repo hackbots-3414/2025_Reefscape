@@ -195,6 +195,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Set Center": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
         "Blue Alliance Left Intake": {
           "arrows": false,
@@ -503,12 +508,15 @@
           ]
         },
         "estimation": {
+          "arrows": false,
           "color": [
             0.9588443040847778,
             0.970588207244873,
             0.042820051312446594,
             255.0
-          ]
+          ],
+          "selectable": false,
+          "style": "Hidden"
         },
         "height": 8.051901817321777,
         "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
@@ -536,6 +544,28 @@
           "width": 0.9399999976158142
         },
         "right": 2932,
+        "robot path": {
+          "arrows": false,
+          "color": [
+            0.843137264251709,
+            0.6717382669448853,
+            0.45463284850120544,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
+        "sim path": {
+          "arrows": false,
+          "color": [
+            0.22241443395614624,
+            0.8725489974021912,
+            0.6048464179039001,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
         "target": {
           "arrows": false,
           "color": [
@@ -596,7 +626,8 @@
           "axis": [
             {
               "label": "Axis",
-              "max": 5.0
+              "max": 5.0,
+              "min": -5.0
             }
           ],
           "backgroundColor": [
@@ -625,6 +656,54 @@
                 1.0
               ],
               "id": "NT:/SmartDashboard/ru"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/du"
+            }
+          ]
+        }
+      ]
+    },
+    "Plot <1>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "max": 0.1,
+              "min": -0.1
+            }
+          ],
+          "backgroundColor": [
+            0.05999999865889549,
+            0.05999999865889549,
+            0.05999999865889549,
+            0.9399999976158142
+          ],
+          "height": 317,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/u goal"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/i goal"
             }
           ]
         }
