@@ -144,7 +144,7 @@ public class Constants {
 
         public static final Autopilot.Constraints kAutopilotConstraints = new Autopilot.Constraints()
             .withAcceleration(5.0)
-            .withDecceleration(2.5);
+            .withDecceleration(3.0);
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 

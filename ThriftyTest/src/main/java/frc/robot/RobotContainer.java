@@ -164,6 +164,9 @@ public class RobotContainer {
 
     private void configureTesting() {
         SmartDashboard.putData("Reset Pose", m_drivetrain.runOnce(() -> {m_drivetrain.setPose(new Pose2d(0, 0, Rotation2d.kCCW_90deg));}));
+        SmartDashboard.putData("Drive to center", new DriveToPointCommand(new Pose2d(
+            8.0,4.0,Rotation2d.kZero
+        ), m_drivetrain));
     }
 
     // ********** BINDINGS **********

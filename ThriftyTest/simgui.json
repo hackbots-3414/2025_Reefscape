@@ -25,6 +25,7 @@
       "/SmartDashboard/AlignRight": "Command",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Drive To Center Command": "Command",
+      "/SmartDashboard/Drive to center": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Go To B": "Command",
@@ -180,6 +181,16 @@
         }
       },
       "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Drive to center": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Reset Pose": {
         "window": {
           "visible": true
         }
@@ -585,7 +596,6 @@
           "axis": [
             {
               "label": "Axis",
-              "lockMin": true,
               "max": 5.0
             }
           ],

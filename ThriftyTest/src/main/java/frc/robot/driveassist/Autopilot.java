@@ -1,11 +1,16 @@
 package frc.robot.driveassist;
 
+import java.security.KeyStore.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotObserver;
 
 public class Autopilot {
     private static final Logger m_logger = LoggerFactory.getLogger(Autopilot.class);
@@ -22,10 +27,22 @@ public class Autopilot {
         Pose2d target,
         Translation2d velocity
     ) {
-        // direction and distance
+        // Rotation2d entryAngle = target.getRotation();
+        Rotation2d entryAngle = Rotation2d.kZero;
+        // direction and distance to actual target
         Translation2d offset = target.getTranslation().minus(current.getTranslation());
+        double distanceToTarget = offset.getNorm();
+        if (distanceToTarget == 0) return Translation2d.kZero;
+        // create new target
+        Translation2d entryDirection = new Translation2d(
+                entryAngle.getCos(),
+                entryAngle.getSin()
+        );
+        offset = entryDirection.times(-distanceToTarget / 2);
+        Pose2d newTarget = new Pose2d(offset, Rotation2d.kZero).plus(new Transform2d(target.getTranslation(), Rotation2d.kZero));
+        offset = newTarget.getTranslation().minus(current.getTranslation());
+        RobotObserver.getField().getObject("foo").setPose(newTarget);
         double distance = offset.getNorm();
-        if (distance == 0) return Translation2d.kZero;
         Translation2d directionI = offset.div(distance);
         Translation2d directionU = new Translation2d(
             directionI.getY(),
