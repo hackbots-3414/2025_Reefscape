@@ -7,14 +7,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
-import com.sun.java.accessibility.util.Translator;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.Radians;
 
 import java.util.ArrayList;
@@ -72,9 +70,6 @@ public class DriveToPointCommand extends Command {
 
         RobotObserver.getField().getObject("target").setPose(m_goal);
         m_oldPoses.clear();
-        Pose2d pose = Pose2d.kZero.plus(new Transform2d(m_drivetrain.getPose().getTranslation(), Rotation2d.kZero));
-        Translation2d velo = m_drivetrain.getVelocityComponents();
-        path(pose, velo, "ideal");
     }
 
     @Override
@@ -90,7 +85,7 @@ public class DriveToPointCommand extends Command {
             .withVelocityY(adjusted.getY())
             .withTargetDirection(m_targetRotation)
         );
-        path(pose, velo, "transit");
+        path(pose, velo, "ideal");
     }
 
     private void path(Pose2d pose, Translation2d velo, String name) {
