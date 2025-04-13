@@ -143,11 +143,11 @@ public class Constants {
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
         private static final Autopilot.Constraints kAutopilotConstraintsI = new Autopilot.Constraints()
-            .withAcceleration(1.5)
+            .withAcceleration(8.5)
             .withDecceleration(1.2);
 
         private static final Autopilot.Constraints kAutopilotConstraintsU = new Autopilot.Constraints()
-            .withAcceleration(1.0)
+            .withAcceleration(4.0)
             .withDecceleration(0.7);
 
         public static final Autopilot kAutopilot = new Autopilot(kAutopilotConstraintsI, kAutopilotConstraintsU);

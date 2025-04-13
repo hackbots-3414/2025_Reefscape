@@ -556,8 +556,35 @@
           "selectable": false,
           "style": "Hidden"
         },
+        "f": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Line"
+        },
         "height": 8.051901817321777,
+        "ideal": {
+          "arrows": false,
+          "color": [
+            0.3892252743244171,
+            0.8725489974021912,
+            0.3892252743244171,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
         "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "past": {
+          "arrows": false,
+          "color": [
+            0.906862735748291,
+            0.7604258060455322,
+            0.2845059335231781,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
         "path": {
           "arrows": false,
           "color": [
@@ -617,6 +644,17 @@
           "selectable": false,
           "style": "Box/Image",
           "width": 0.9399999976158142
+        },
+        "transit": {
+          "arrows": false,
+          "color": [
+            0.7613812685012817,
+            0.35229238867759705,
+            0.8872548937797546,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
         },
         "visibleTargetPoses": {
           "arrowColor": [
