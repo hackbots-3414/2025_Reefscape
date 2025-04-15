@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -61,6 +62,7 @@ import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.ProcessorCommand;
 import frc.robot.commands.StowCommand;
 import frc.robot.commands.TeleopCommand;
+import frc.robot.driveassist.Autopilot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
@@ -167,6 +169,14 @@ public class RobotContainer {
         SmartDashboard.putData("Drive to center", new DriveToPointCommand(new Pose2d(
             8.0,4.0,Rotation2d.kCW_90deg
         ), m_drivetrain));
+        RobotObserver.getField().getObject("goal").setPose(new Pose2d(0,0, Rotation2d.kZero));
+        SmartDashboard.putData("test", Commands.defer(() -> {
+            Pose2d pose = RobotObserver.getField().getObject("goal").getPose();
+            Autopilot.Target target = new Autopilot.Target()
+                .withReference(pose)
+                .withVelocity(0);
+            return new DriveToPointCommand(target, m_drivetrain);
+        }, new HashSet<>()));
     }
 
     // ********** BINDINGS **********
@@ -315,9 +325,16 @@ public class RobotContainer {
         NamedCommands.registerCommand("Align IJ", new DriveToPointCommand(Constants.FieldConstants.kIJ, m_drivetrain, true));
         NamedCommands.registerCommand("Align GH", new DriveToPointCommand(Constants.FieldConstants.kGH, m_drivetrain, true));
         NamedCommands.registerCommand("Align Barge", new DriveToPointCommand(FieldConstants.kBarge1, m_drivetrain, true));
-        NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(FieldConstants.kLeftIntake, m_drivetrain, true)
+        Autopilot.Target leftIntake = new Autopilot.Target()
+            .withReference(FieldConstants.kLeftIntake)
+            .withEntryAngle(FieldConstants.kLeftIntake.getRotation().plus(Rotation2d.k180deg));
+        Autopilot.Target rightIntake = new Autopilot.Target()
+            .withReference(FieldConstants.kRightIntake)
+            .withEntryAngle(FieldConstants.kRightIntake.getRotation().plus(Rotation2d.k180deg));
+        SmartDashboard.putData("lintake", new DriveToPointCommand(leftIntake, m_drivetrain, true));
+        NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(leftIntake, m_drivetrain, true)
             .until(m_coralRollers::intakeReady));
-        NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(FieldConstants.kRightIntake, m_drivetrain, true)
+        NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(rightIntake, m_drivetrain, true)
             .until(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
             .until(m_algaeRollers::algaeHeld));

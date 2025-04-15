@@ -38,7 +38,7 @@ public class DriveToPointCommand extends Command {
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
             .withDriveRequestType(DriveRequestType.Velocity);
 
-    private Pose2d m_goal;
+    private Autopilot.Target m_target;
     private final CommandSwerveDrivetrain m_drivetrain;
 
     private boolean m_flip;
@@ -47,15 +47,23 @@ public class DriveToPointCommand extends Command {
 
     private Autopilot m_autopilot = DriveConstants.kAutopilot;
 
-    public DriveToPointCommand(Pose2d pose, CommandSwerveDrivetrain drivetrain) {
-        this(pose, drivetrain, false);
-    }
-
-    public DriveToPointCommand(Pose2d pose, CommandSwerveDrivetrain drivetrain, boolean flipPose) {
-        m_goal = pose;
+    public DriveToPointCommand(Autopilot.Target target, CommandSwerveDrivetrain drivetrain, boolean flipPose) {
+        m_target = target;
         m_drivetrain = drivetrain;
         m_flip = flipPose;
         addRequirements(drivetrain);
+    }
+
+    public DriveToPointCommand(Autopilot.Target target, CommandSwerveDrivetrain drivetrain) {
+        this(target, drivetrain, false);
+    }
+
+    public DriveToPointCommand(Pose2d reference, CommandSwerveDrivetrain drivetrain, boolean flipPose) {
+        this(new Autopilot.Target(reference, reference.getRotation()), drivetrain, flipPose);
+    }
+
+    public DriveToPointCommand(Pose2d reference, CommandSwerveDrivetrain drivetrain) {
+        this(reference, drivetrain, false);
     }
 
     @Override
@@ -63,12 +71,12 @@ public class DriveToPointCommand extends Command {
         m_drivetrain.setAligned(false);
         // flip goal if necessary
         if (m_flip) {
-            m_goal = FieldUtils.flipPose(m_goal);
+            m_target = FieldUtils.flipPose(m_target);
             m_flip = false;
         }
-        m_targetRotation = m_goal.getRotation();
+        m_targetRotation = m_target.getReference().getRotation();
 
-        RobotObserver.getField().getObject("target").setPose(m_goal);
+        RobotObserver.getField().getObject("target").setPose(m_target.getReference());
         m_oldPoses.clear();
     }
 
@@ -79,7 +87,7 @@ public class DriveToPointCommand extends Command {
         m_oldPoses.add(pose);
         RobotObserver.getField().getObject("past").setPoses(m_oldPoses);
         Translation2d velo = m_drivetrain.getVelocityComponents();
-        Translation2d adjusted = m_autopilot.adjust(pose, m_goal, velo);
+        Translation2d adjusted = m_autopilot.adjust(pose, velo, m_target);
         m_drivetrain.setControl(m_request
             .withVelocityX(adjusted.getX())
             .withVelocityY(adjusted.getY())
@@ -91,8 +99,9 @@ public class DriveToPointCommand extends Command {
     private void path(Pose2d pose, Translation2d velo, String name) {
         pose = new Pose2d(pose.getTranslation(), Rotation2d.kZero);
         List<Pose2d> poses = new ArrayList<>();
-        while (!atSetpoint(pose)) {
-            Translation2d adjusted = m_autopilot.adjust(pose, m_goal, velo);
+        int i = 0;
+        while (!atSetpoint(pose) && i++ < 300) {
+            Translation2d adjusted = m_autopilot.adjust(pose, velo, m_target);
             pose = pose.plus(new Transform2d(adjusted.times(0.02), Rotation2d.kZero));
             velo = adjusted;
             poses.add(pose);
@@ -101,8 +110,8 @@ public class DriveToPointCommand extends Command {
     }
 
     private boolean atSetpoint(Pose2d pose) {
-        double errX = pose.getX() - m_goal.getX();
-        double errY = pose.getY() - m_goal.getY();
+        double errX = pose.getX() - m_target.getReference().getX();
+        double errY = pose.getY() - m_target.getReference().getY();
         double err = Math.hypot(errX, errY);
 
         return err < AutonConstants.translationTolerance;
@@ -113,6 +122,9 @@ public class DriveToPointCommand extends Command {
         m_drivetrain.setAligned(!interrupted);
         m_drivetrain.stop();
         RobotObserver.getField().getObject("target").setPoses();
+        RobotObserver.getField().getObject("ideal").setPoses();
+        RobotObserver.getField().getObject("past").setPoses();
+        m_oldPoses.clear();
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.driveassist.Autopilot;
 
 public class FieldUtils {
     /**
@@ -16,10 +17,18 @@ public class FieldUtils {
      * This depends on the current Driver Station settinng for alliance. When this function is called, the driver station pose is read.
      */
     public static Pose2d flipPose(Pose2d pose) {
-        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+        if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
             return FlippingUtil.flipFieldPose(pose);
         } else {
             return pose;
+        }
+    }
+
+    public static Autopilot.Target flipPose(Autopilot.Target target) {
+        if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
+            return target.flip();
+        } else {
+            return target;
         }
     }
 }

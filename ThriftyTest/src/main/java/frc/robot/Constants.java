@@ -144,10 +144,10 @@ public class Constants {
 
         private static final Autopilot.Constraints kAutopilotConstraintsI = new Autopilot.Constraints()
             .withAcceleration(8.5)
-            .withDecceleration(0.7);
+            .withDecceleration(1.3);
 
         private static final Autopilot.Constraints kAutopilotConstraintsU = new Autopilot.Constraints()
-            .withAcceleration(4.0)
+            .withAcceleration(17.0)
             .withDecceleration(0.7);
 
         public static final Autopilot kAutopilot = new Autopilot(kAutopilotConstraintsI, kAutopilotConstraintsU);

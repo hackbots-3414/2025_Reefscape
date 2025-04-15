@@ -104,13 +104,16 @@
       "/SmartDashboard/f": "Command",
       "/SmartDashboard/g": "Command",
       "/SmartDashboard/h": "Command",
+      "/SmartDashboard/lintake": "Command",
       "/SmartDashboard/open funnel": "Command",
       "/SmartDashboard/quasistatic forward steer": "Command",
       "/SmartDashboard/quasistatic forward translation": "Command",
       "/SmartDashboard/quasistatic reverse steer": "Command",
       "/SmartDashboard/quasistatic reverse translation": "Command",
       "/SmartDashboard/runme hehe": "Command",
-      "/SmartDashboard/teleport": "Command"
+      "/SmartDashboard/teleport": "Command",
+      "/SmartDashboard/test": "Command",
+      "/SmartDashboard/test hi": "Command"
     },
     "windows": {
       "/SmartDashboard/April Tag Debug Field": {
@@ -204,21 +207,6 @@
         }
       },
       "/SmartDashboard/Auto Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Drive to center": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Reset Pose": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Set Center": {
         "window": {
           "visible": true
         }
@@ -470,6 +458,7 @@
             255.0
           ],
           "length": 0.9399999976158142,
+          "selectable": false,
           "style": "Hidden",
           "width": 0.9399999976158142
         },
@@ -620,7 +609,7 @@
           "style": "Line"
         },
         "target": {
-          "arrows": false,
+          "arrowSize": 42,
           "color": [
             0.8649789094924927,
             0.31752389669418335,
@@ -663,6 +652,11 @@
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/test": {
         "window": {
           "visible": true
         }
