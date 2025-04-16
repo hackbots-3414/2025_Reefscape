@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.CanRangeConstants;
+import frc.robot.Constants.CANrangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
@@ -208,32 +208,32 @@ public class LedFeedback extends SubsystemBase {
 
     private boolean alignedReef() {
         return (Math.abs(rangeRight
-                - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                        * CanRangeConstants.tolerance
+                - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                        * CANrangeConstants.tolerance
                 &&
                 Math.abs(rangeLeft
-                        - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                                * CanRangeConstants.tolerance);
+                        - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                                * CANrangeConstants.tolerance);
     }
 
     private boolean alignedLeft() {
         return (Math.abs(rangeRight
-                - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                        * CanRangeConstants.tolerance)
+                - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                        * CANrangeConstants.tolerance)
                 &&
                 (Math.abs(rangeLeft
-                        - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters
-                                * CanRangeConstants.tolerance);
+                        - CANrangeConstants.farAlignedDistanceMeters) < CANrangeConstants.farAlignedDistanceMeters
+                                * CANrangeConstants.tolerance);
     }
 
     private boolean alignedRight() {
         return (Math.abs(
-                rangeLeft - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                        * CanRangeConstants.tolerance)
+                rangeLeft - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                        * CANrangeConstants.tolerance)
                 &&
                 (Math.abs(rangeRight
-                        - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters
-                                * CanRangeConstants.tolerance);
+                        - CANrangeConstants.farAlignedDistanceMeters) < CANrangeConstants.farAlignedDistanceMeters
+                                * CANrangeConstants.tolerance);
     }
 
     private void clearAllAnimations() {

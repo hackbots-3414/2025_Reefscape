@@ -414,7 +414,7 @@ public class Constants {
         public static final double stage2Distance = 1;
     }
 
-    public static final class CanRangeConstants {
+    public static final class CANrangeConstants {
 
         public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration()
         .withFovParams(new FovParamsConfigs()
