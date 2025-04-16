@@ -105,9 +105,7 @@ public class LedFeedback extends SubsystemBase {
         } else if (inTeleop || inAuton) {
             if (climbed) {
                 if (mode != LED_MODE.CLIMBED) {
-                    if (matchTime < LedConstants.endgameWarning) {
                         setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
-                    }
                     mode = LED_MODE.CLIMBED;
 
                 }
