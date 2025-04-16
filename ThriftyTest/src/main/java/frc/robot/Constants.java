@@ -407,8 +407,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final double translationTolerance = 0.02; // 0.04
-        public static Angle rotationTolerance = Degrees.of(1);
+        public static final double translationTolerance = 0.03; // 0.04
+        public static Angle rotationTolerance = Degrees.of(2);
 
         public static final double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static final double stage2Distance = 1;
