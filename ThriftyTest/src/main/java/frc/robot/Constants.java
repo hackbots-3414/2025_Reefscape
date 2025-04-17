@@ -142,16 +142,13 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final double kMaxAccelerationPerpendicularToTarget = 5.0; // 5.0
-        public static double kMaxAccelerationTowardsTarget = 5.0; // 5.0
+        public static final double kMaxAccelerationPerpendicularToTarget = 3.5; // 5.0
+        public static double kMaxAccelerationTowardsTarget = 3.5; // 5.0
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
-
-        public static final double k_driveToPointSpeed = 4.0;
-        public static final double k_driveToPointAcceleration = 1.0;
 
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
@@ -176,11 +173,6 @@ public class Constants {
         public static final double rangeZero = 0.175;
         public static final double rangeMax = 0.3;
 
-        // These are the constraints solely used by the DriveToPoint commands
-        public static final Constraints k_driveToPointConstraints = new Constraints(
-            k_driveToPointSpeed,
-            k_driveToPointAcceleration
-        );
         // This one is as well, however it is only used in auton
         public static final Constraints k_rotationConstraints = new Constraints(
             k_maxAngularSpeed.in(RadiansPerSecond),
@@ -407,8 +399,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final double translationTolerance = 0.03; // 0.04
-        public static Angle rotationTolerance = Degrees.of(2);
+        public static final double translationTolerance = 0.02; // 0.04
+        public static Angle rotationTolerance = Degrees.of(1);
 
         public static final double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static final double stage2Distance = 1;
@@ -812,7 +804,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -3.0; // 1.5
+        public static final double ejectVoltage = -3.0; // 3.0  
         public static final double processorEjectVoltage = -3.2;
 
         public static final double torqueCurrentThreshold = 75;
