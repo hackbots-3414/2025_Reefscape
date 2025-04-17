@@ -28,11 +28,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
 import frc.robot.Constants.ButtonBindingConstants.PS5;
@@ -46,9 +46,6 @@ import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsMiddle;
 import frc.robot.Constants.ScoringLocationsRight;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.AlgaeEjectCommand;
-import frc.robot.commands.AlgaeIntakeCommand;
-import frc.robot.commands.AlgaeScoreCommand;
 import frc.robot.commands.ClimbReadyCommand;
 import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.CoralEjectCommand;
@@ -58,7 +55,6 @@ import frc.robot.commands.ElevatorToPointCommand;
 import frc.robot.commands.ElevatorZero;
 import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
-import frc.robot.commands.ProcessorCommand;
 import frc.robot.commands.StowCommand;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.generated.TunerConstants;
@@ -155,7 +151,7 @@ public class RobotContainer {
     private void configureDashboard() {
         SmartDashboard.putData("LIFT CLIMB", new ClimberCommand(m_climber, false));
         SmartDashboard.putData("LOWER CLIMB", new PitClimbSetupCommand(m_climber));
-        SmartDashboard.putData("Lazy Zero Elevator", m_elevator.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
+        SmartDashboard.putData("Lazy Zero Elevator", Commands.runOnce(m_elevator::zeroElevator).ignoringDisable(true));
         SmartDashboard.putData("Set Center", new InstantCommand(() -> {
             m_drivetrain.setPose(FieldUtils.flipPose(new Pose2d(7.6, 4.025, Rotation2d.k180deg)));
         }).ignoringDisable(true));
@@ -211,7 +207,6 @@ public class RobotContainer {
     }
 
     private void configureOperatorBindings() {
-        // handle bindings
         CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.buttonBoardPort);
 
         Trigger algaeOn = controller.button(PS5.algaeModeButton);
@@ -278,7 +273,8 @@ public class RobotContainer {
 
     private Command zero() {
         // return new InstantCommand();
-        return new ElevatorZero(m_elevator).withTimeout(2).asProxy();
+        return new ElevatorZero(m_elevator).withTimeout(2).asProxy()
+            .unless(RobotObserver::getNoElevatorZone);
     }
 
     // ********** AUTONOMOUS **********
@@ -323,10 +319,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
             .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop));
-        NamedCommands.registerCommand("Net", algaeScoreCommand(AlgaeLocationPresets.NET)
+        NamedCommands.registerCommand("Net", netCommand()
             .andThen(zero()));
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
-            .alongWith(algaeScoreCommand(AlgaeLocationPresets.PROCESSOR)));
+            .alongWith(processorSetupCommand()));
         NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup)
             .alongWith(m_elevator.run(m_elevator::setGroundIntake)));
     }
@@ -382,28 +378,15 @@ public class RobotContainer {
             case NET -> {
                 trigger.whileTrue(m_elevator.run(m_elevator::setNet).onlyIf(m_algaeRollers::algaeHeld));
                 trigger.onFalse(
-                    algaeEjectCommand().onlyIf(m_elevator::atSetpoint)
+                    netCommand().onlyIf(m_elevator::atSetpoint)
                     .andThen(
-                        zero()
-                        .andThen(new InstantCommand(() -> {
-                            m_logger.debug("zeroed elevator");
-                        }))
-                        .unless(RobotObserver::getNoElevatorZone)
-                    ).andThen(m_elevator::release)
-                    .andThen(new InstantCommand(() -> {
-                        m_logger.info("released elevator");
-                    }))
+                        zero().unless(RobotObserver::getNoElevatorZone)
+                    ).finallyDo(m_elevator::release)
                 );
             }
             case PROCESSOR -> {
-                trigger.whileTrue(processorCommand());
-                trigger.onFalse(new AlgaeEjectCommand(m_algaeRollers, m_elevator)
-                    .andThen(new WaitCommand(2)
-                        .andThen(new InstantCommand(() -> {
-                            m_algaeRollers.stopMotor();
-                            m_algaePivot.setStow();
-                        }, m_algaePivot, m_algaeRollers)))
-                    .andThen(zero()));
+                trigger.whileTrue(processorSetupCommand());
+                trigger.onFalse(processorCommand().andThen(zero()));
             }
             default -> {}
         }
@@ -414,7 +397,10 @@ public class RobotContainer {
     }
 
     private Command algaeEjectCommand() {
-        return m_algaeRollers.startEnd(m_algaeRollers::ejectAlgae, m_algaeRollers::stopMotor).onlyWhile(m_algaeRollers::algaeHeld);
+        return m_algaeRollers.startEnd(
+            m_algaeRollers::ejectAlgae,
+            m_algaeRollers::stopMotor
+        ).onlyWhile(m_algaeRollers::algaeHeld);
     }
 
     // ** SUBSYSTEM PASS IN HELPERS **
@@ -515,13 +501,41 @@ public class RobotContainer {
             .finallyDo(m_algaeRollers::smartStop);
     }
 
-    private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {
-        return new AlgaeScoreCommand(m_algaeRollers, m_elevator, m_algaePivot, scoreLocation);
+    private Command netCommand() {
+        return Commands.sequence(
+            m_elevator.runOnce(m_elevator::setNet).asProxy(),
+            m_algaePivot.runOnce(m_algaePivot::setNet),
+            Commands.waitUntil(m_elevator::atSetpoint),
+            Commands.waitUntil(m_algaePivot::atSetpoint),
+            m_algaeRollers.runOnce(m_algaeRollers::ejectAlgae),
+            Commands.waitSeconds(AlgaeRollerConstants.algaeEjectTime)
+        )
+            .onlyIf(m_algaeRollers::algaeHeld)
+            .finallyDo(m_algaeRollers::smartStop)
+            .finallyDo(m_algaePivot::setStow)
+            .finallyDo(m_elevator::release);
     }
 
     private Command processorCommand() {
-        return new ProcessorCommand(m_elevator, m_algaeRollers, m_algaePivot);
+        return Commands.sequence(
+            processorSetupCommand(),
+            Commands.waitUntil(m_elevator::atSetpoint),
+            m_algaeRollers.runOnce(m_algaeRollers::processorEjectAlgae),
+            Commands.waitSeconds(2)
+        )
+            .finallyDo(m_algaeRollers::smartStop)
+            .finallyDo(m_algaePivot::setStow)
+            .finallyDo(m_elevator::release);
     }
+
+    private Command processorSetupCommand() {
+        return Commands.sequence(
+            m_algaePivot.runOnce(m_algaePivot::setProcessor),
+            m_elevator.runOnce(m_elevator::setProcessor).asProxy()
+        )
+            .onlyIf(m_algaeRollers::algaeHeld);
+    }
+
 
     public enum AlgaeLocationPresets {
         REEFLOWER, REEFUPPER, PROCESSOR, GROUND, NET, HIGHGROUND;
