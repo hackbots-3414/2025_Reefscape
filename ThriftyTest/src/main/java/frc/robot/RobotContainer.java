@@ -255,14 +255,16 @@ public class RobotContainer {
         Runnable elevatorCommand = (higher) ? m_elevator::setSecondaryL1 : m_elevator::setL1;
         trigger.whileTrue(
             m_elevator.run(elevatorCommand)
-                .until(m_elevator::atSetpoint)
-            .andThen(
-                m_coralRollers.run(m_coralRollers::setL1Eject)
-                    .onlyWhile(m_coralRollers::getFrontCANrange)
-            )
-            .finallyDo(m_coralRollers::stop)
+                .onlyIf(m_coralRollers::holdingPiece)
         );
-        trigger.onFalse(m_elevator.runOnce(m_elevator::release));
+        trigger.onFalse(
+            m_coralRollers.run(m_coralRollers::setL1Eject)
+                .onlyWhile(m_coralRollers::getFrontCANrange)
+                .onlyIf(m_elevator::atSetpoint)
+                .onlyIf(m_coralRollers::holdingPiece)
+                .finallyDo(m_elevator::release)
+                .finallyDo(m_coralRollers::stop)
+        );
     }
 
     private void bindCoralCommands(int level, Trigger trigger) {
