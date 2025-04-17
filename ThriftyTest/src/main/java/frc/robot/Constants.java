@@ -280,12 +280,12 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
-        public static final boolean k_enableLogging = false;
+        public static final boolean k_enableLogging = true;
 
         public static final double k_rotationCoefficient = Math.PI * 20;
-        public static final double k_translationCoefficient = 0.1;
+        public static final double k_translationCoefficient = 0.10; // previously 0.10
 
-        public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+        public static final AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
         public static final String k_estimationName = "estimation";
         public static final String kRejectedName = "rejected";
@@ -399,8 +399,8 @@ public class Constants {
     }
 
     public static final class AutonConstants {
-        public static final double translationTolerance = 0.02; // 0.04
-        public static Angle rotationTolerance = Degrees.of(1);
+        public static final double translationTolerance = 0.03; // 0.04
+        public static Angle rotationTolerance = Degrees.of(2);
 
         public static final double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta end
         public static final double stage2Distance = 1;

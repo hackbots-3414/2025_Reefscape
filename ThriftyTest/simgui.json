@@ -6,6 +6,16 @@
           "open": true
         }
       },
+      "Talon FX (v6)[55]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[56]": {
+        "header": {
+          "open": true
+        }
+      },
       "window": {
         "visible": false
       }
@@ -500,6 +510,7 @@
           ]
         },
         "height": 8.051901817321777,
+        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
         "rejected": {
           "arrows": false,
           "color": [
@@ -612,7 +623,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

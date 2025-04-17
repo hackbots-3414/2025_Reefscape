@@ -449,9 +449,11 @@ public class RobotContainer {
         //     .onlyIf(m_coralRollers::holdingPiece)
         //     );
         Runnable elevatorCommand = () -> {
+            m_logger.trace("Running elevator command");
             m_elevator.setLevel(level);
         };
         Runnable coralCommand = () -> {
+            m_logger.trace("Doing coral command");
             switch (level) {
                 case 1 -> m_coralRollers.setL1Eject();
                 case 2 -> m_coralRollers.setL2Eject();
@@ -461,6 +463,7 @@ public class RobotContainer {
         };
         return Commands.sequence(
             m_elevator.runOnce(elevatorCommand).asProxy(),
+            Commands.runOnce(() -> {m_logger.trace("Finished elevator command");}),
             Commands.waitUntil(m_elevator::atSetpoint),
             m_coralRollers.run(coralCommand)
                 .onlyWhile(m_coralRollers::holdingPiece)
@@ -470,8 +473,46 @@ public class RobotContainer {
             .onlyIf(m_coralRollers::holdingPiece);
     }
 
-    private Command algaeIntakeCommand(AlgaeLocationPresets intakeLocation) {
-        return new AlgaeIntakeCommand(m_algaeRollers, m_elevator, m_algaePivot, intakeLocation);
+    private Command algaeIntakeCommand(AlgaeLocationPresets location) {
+        if (location == AlgaeLocationPresets.GROUND || location == AlgaeLocationPresets.HIGHGROUND) {
+            Runnable elevatorCommand = () -> {
+                if (location == AlgaeLocationPresets.GROUND) {
+                    m_elevator.setGroundIntake();
+                } else {
+                    m_elevator.setHighGroundIntake();
+                }
+            };
+            return Commands.sequence(
+                m_algaeRollers.runOnce(m_algaeRollers::intakeAlgae),
+                m_elevator.runOnce(elevatorCommand).asProxy(),
+                Commands.waitUntil(m_elevator::atSetpoint),
+                m_algaePivot.runOnce(m_algaePivot::setGroundPickup),
+                Commands.waitUntil(m_algaeRollers::algaeHeld)
+            )
+                .until(m_algaeRollers::algaeHeld)
+                .finallyDo(m_elevator::release)
+                .finallyDo(m_algaePivot::setStow)
+                .finallyDo(m_algaeRollers::smartStop);
+        }
+        /* reef intake */
+        Runnable elevatorCommand = () -> {
+            if (location == AlgaeLocationPresets.REEFLOWER) {
+                m_elevator.setReefLower();
+            } else {
+                m_elevator.setReefUpper();
+            }
+        };
+        return Commands.sequence(
+            m_algaeRollers.runOnce(m_algaeRollers::intakeAlgae),
+            m_elevator.runOnce(elevatorCommand).asProxy(),
+            Commands.waitUntil(m_elevator::atSetpoint),
+            m_algaePivot.runOnce(m_algaePivot::setReefPickup),
+            Commands.waitUntil(m_algaeRollers::algaeHeld),
+            m_algaePivot.runOnce(m_algaePivot::setReefExtract)
+        )
+            .finallyDo(m_elevator::release)
+            .finallyDo(m_algaePivot::setStow)
+            .finallyDo(m_algaeRollers::smartStop);
     }
 
     private Command algaeScoreCommand(AlgaeLocationPresets scoreLocation) {

@@ -123,14 +123,17 @@ public class CoralRollers extends SubsystemBase {
     }
 
     public void setL2Eject() {
+        m_logger.trace("Setting L2 eject");
         setVoltage(CoralConstants.l2EjectVoltage);
     }
 
     public void setL3Eject() {
+        m_logger.trace("Setting L3 eject");
         setVoltage(CoralConstants.l3EjectVoltage);
     }
 
     public void setL4Eject() {
+        m_logger.trace("Setting L4 eject");
         setVoltage(CoralConstants.l4EjectVoltage);
     }
 
@@ -165,7 +168,9 @@ public class CoralRollers extends SubsystemBase {
 
     public boolean holdingPiece() {
         if (Robot.isReal()) {
-            return getFrontCANrange() && !getUpperCANrange();
+            boolean holding = getFrontCANrange() && !getUpperCANrange();
+            m_logger.trace("holding: {}", holding);
+            return holding;
         } else {
             boolean present = SmartDashboard.getBoolean("Coral present", false);
             SmartDashboard.putBoolean("Coral present", present);

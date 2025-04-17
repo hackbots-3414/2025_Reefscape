@@ -8,7 +8,10 @@
 
  <logger name="frc.robot.commands" level="INFO"/>
  <logger name="frc.robot.subsystems" level="INFO"/>
+ <!-- <logger name="frc.robot.subsystems.Elevator" level="TRACE"/> -->
+ <!-- <logger name="frc.robot.subsystems.CoralRollers" level="TRACE"/> -->
  <logger name="frc.robot.subsystems.CommandSwerveDrivetrain" level="INFO"/>
+ <!-- <logger name="frc.robot.RobotContainer" level="TRACE"/> -->
  <!-- <logger name="frc.robot.commands.ElevatorDefaultCommand" level="DEBUG"/> -->
  <!-- <logger name="frc.robot.vision.MultiInputFilter" level="DEBUG"/> -->
 

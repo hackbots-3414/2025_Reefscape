@@ -218,7 +218,9 @@ public class Elevator extends SubsystemBase {
 
     public boolean atSetpoint() {
         if (Robot.isSimulation()) return true;
-        return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+        boolean at = Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+        m_logger.debug("Setpoint: {}", at);
+        return at;
     }
 
     public double getReference() {
