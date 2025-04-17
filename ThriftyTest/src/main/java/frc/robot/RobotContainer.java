@@ -303,9 +303,21 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        Command autonCommand = autoChooser.getSelected();
-        m_logger.info("Requirements: {}", autonCommand.getRequirements());
-        return autonCommand;
+        return Commands.none();
+    }
+
+    private Command rIntake() {
+        Autopilot.Target rightIntake = new Autopilot.Target()
+            .withReference(FieldConstants.kRightIntake)
+            .withEntryAngle(FieldConstants.kRightIntake.getRotation().plus(Rotation2d.k180deg));
+        return new DriveToPointCommand(rightIntake, m_drivetrain, true);
+    }
+
+    private Command lIntake() {
+        Autopilot.Target rightIntake = new Autopilot.Target()
+            .withReference(FieldConstants.kLeftIntake)
+            .withEntryAngle(FieldConstants.kRightIntake.getRotation().plus(Rotation2d.k180deg));
+        return new DriveToPointCommand(rightIntake, m_drivetrain, true);
     }
 
     private void configureNamedCommands() {
@@ -325,17 +337,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("Align IJ", new DriveToPointCommand(Constants.FieldConstants.kIJ, m_drivetrain, true));
         NamedCommands.registerCommand("Align GH", new DriveToPointCommand(Constants.FieldConstants.kGH, m_drivetrain, true));
         NamedCommands.registerCommand("Align Barge", new DriveToPointCommand(FieldConstants.kBarge1, m_drivetrain, true));
-        Autopilot.Target leftIntake = new Autopilot.Target()
-            .withReference(FieldConstants.kLeftIntake)
-            .withEntryAngle(FieldConstants.kLeftIntake.getRotation().plus(Rotation2d.k180deg));
-        Autopilot.Target rightIntake = new Autopilot.Target()
-            .withReference(FieldConstants.kRightIntake)
-            .withEntryAngle(FieldConstants.kRightIntake.getRotation().plus(Rotation2d.k180deg));
-        SmartDashboard.putData("lintake", new DriveToPointCommand(leftIntake, m_drivetrain, true));
-        NamedCommands.registerCommand("LIntake Align", new DriveToPointCommand(leftIntake, m_drivetrain, true)
-            .until(m_coralRollers::intakeReady));
-        NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(rightIntake, m_drivetrain, true)
-            .until(m_coralRollers::intakeReady));
+        NamedCommands.registerCommand("LIntake Align", lIntake());
+        NamedCommands.registerCommand("RIntake Align", rIntake());
         NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
             .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
@@ -368,7 +371,7 @@ public class RobotContainer {
     private LedFeedback m_ledFeedback;
 
     private void configureSubsystems() {
-        // m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
+        m_drivetrain.registerTelemetry(m_telemetry::telemeterize);
         m_elevator = new Elevator();
         m_algaePivot = new Pivot();
         m_climber = new Climber();

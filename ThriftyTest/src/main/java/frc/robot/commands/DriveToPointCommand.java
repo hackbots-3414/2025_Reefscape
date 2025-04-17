@@ -82,6 +82,7 @@ public class DriveToPointCommand extends Command {
 
     @Override
     public void execute() {
+        m_logger.debug("going");
         /* real */
         Pose2d pose = m_drivetrain.getPose();
         m_oldPoses.add(pose);
@@ -120,7 +121,7 @@ public class DriveToPointCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         m_drivetrain.setAligned(!interrupted);
-        m_drivetrain.stop();
+        // m_drivetrain.stop();
         RobotObserver.getField().getObject("target").setPoses();
         RobotObserver.getField().getObject("ideal").setPoses();
         RobotObserver.getField().getObject("past").setPoses();
