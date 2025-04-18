@@ -381,7 +381,8 @@ public class Constants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
-        public static final double k_reefReady = 2.1;
+        public static final double kReefReadyAuton = 2.6;
+        public static final double kReefReady = 2.1;
         public static final Pose2d k_processor = new Pose2d(5.974, 1.16, Rotation2d.kCW_90deg);
 
         public static final Pose2d kRightIntake = new Pose2d(1.247, 0.950, Rotation2d.fromDegrees(55));

@@ -341,7 +341,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double distanceToReef = getBluePose().getTranslation()
             .minus(FieldConstants.reefCenter)
             .getNorm();
-        boolean inRange = distanceToReef <= FieldConstants.k_reefReady;
+        boolean inRange = (DriverStation.isAutonomous()) ? distanceToReef <= FieldConstants.kReefReadyAuton : distanceToReef <= FieldConstants.kReefReady;
         return inRange;
     }
 }

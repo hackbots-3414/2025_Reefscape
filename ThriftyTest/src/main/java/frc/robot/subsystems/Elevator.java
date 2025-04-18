@@ -314,6 +314,7 @@ public class Elevator extends SubsystemBase {
     public boolean elevatorUp() {
         return getPosition() > ElevatorConstants.unsafeRange || m_reference > ElevatorConstants.unsafeRange;
     }
+    public boolean safe() {return !elevatorUp();}
 
     public void release() {
         m_taken = false;

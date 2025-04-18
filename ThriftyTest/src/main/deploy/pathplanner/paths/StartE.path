@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.693534614653112,
-        "y": 2.143633568799608
+        "x": 6.377459016393443,
+        "y": 1.6094774590163934
       },
       "isLocked": false,
       "linkedName": "RightStart"
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.75,
+    "velocity": 0.4,
     "rotation": 119.99999999999999
   },
   "reversed": false,

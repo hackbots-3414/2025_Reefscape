@@ -314,13 +314,12 @@ public class RobotContainer {
             .until(m_coralRollers::intakeReady));
         NamedCommands.registerCommand("RIntake Align", new DriveToPointCommand(FieldConstants.kRightIntake, m_drivetrain, true)
             .until(m_coralRollers::intakeReady));
-        NamedCommands.registerCommand("AlgaeUpper", algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER)
+        NamedCommands.registerCommand("AlgaeUpper", zero().andThen(algaeIntakeCommand(AlgaeLocationPresets.REEFUPPER))
             .until(m_algaeRollers::algaeHeld));
-        NamedCommands.registerCommand("AlgaeLower", algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER)
+        NamedCommands.registerCommand("AlgaeLower", zero().andThen(algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))
             .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop));
-        NamedCommands.registerCommand("Net", netCommand()
-            .andThen(zero()));
+        NamedCommands.registerCommand("Net", netCommand().andThen(Commands.waitUntil(m_elevator::safe)));
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
             .alongWith(processorSetupCommand()));
         NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup)
