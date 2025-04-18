@@ -102,18 +102,13 @@ public class LedFeedback extends SubsystemBase {
                 setAll(LED_COLOR.RED, LED_PATTERN.STROBE);
 
             }
-        } else if (inTeleop || inAuton) {
-            if (climbed) {
-                if (mode != LED_MODE.CLIMBED) {
-                        setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
-                    mode = LED_MODE.CLIMBED;
-
-                }
-
-                // Check if Coral on Board and At reef and not aligned to Branch
+        } else if (climbed) {
+            if (mode != LED_MODE.CLIMBED) {
+                    setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
+                mode = LED_MODE.CLIMBED;
             }
-            // Check for endgame
-           else if (matchTime <= LedConstants.endgameWarning && !inAuton) {
+        } else if (inTeleop || inAuton) {
+            if (matchTime <= LedConstants.endgameWarning && !inAuton) {
                 // Check for Final Seconds of  Endgame
                 if (matchTime <= LedConstants.endgameAlert) {
                     if (mode != LED_MODE.END_GAME_ALERT) {

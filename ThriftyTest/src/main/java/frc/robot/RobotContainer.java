@@ -157,9 +157,10 @@ public class RobotContainer {
         }).ignoringDisable(true));
     }
 
-
     private void configureTesting() {
         SmartDashboard.putData("Reset Pose", m_drivetrain.runOnce(() -> {m_drivetrain.setPose(new Pose2d(0, 0, Rotation2d.kCCW_90deg));}));
+        SmartDashboard.putData("Net", netCommand());
+        SmartDashboard.putData("Net Wait", netCommand().andThen(Commands.waitUntil(m_elevator::safe)));
     }
 
     // ********** BINDINGS **********
@@ -319,7 +320,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("AlgaeLower", zero().andThen(algaeIntakeCommand(AlgaeLocationPresets.REEFLOWER))
             .until(m_algaeRollers::algaeHeld));
         NamedCommands.registerCommand("Stop", m_drivetrain.runOnce(m_drivetrain::stop));
-        NamedCommands.registerCommand("Net", netCommand().andThen(Commands.waitUntil(m_elevator::safe)));
+        NamedCommands.registerCommand("Net", netCommand());
         NamedCommands.registerCommand("Process", new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true)
             .alongWith(processorSetupCommand()));
         NamedCommands.registerCommand("Algae End", m_algaePivot.run(m_algaePivot::setGroundPickup)

@@ -124,7 +124,7 @@ public class Constants {
         public static final int candle1 = 5; 
         public static final int candle2 = 6;
 
-        public static final int servo = 9;
+        public static final int servo = 7;
 
         public static final int climbEncoder = 9;
     }
@@ -815,7 +815,7 @@ public class Constants {
         public static final double holdVoltage = 2.5;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
-        public static final double algaeEjectTime = 0.6;
+        public static final double algaeEjectTime = 0.4; // was 0.6 but i want faster when we're done
         public static final double reefPickupSafetyDistance = 1.75; 
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
