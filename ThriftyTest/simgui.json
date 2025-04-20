@@ -550,7 +550,7 @@
             255.0
           ],
           "selectable": false,
-          "style": "Hidden"
+          "style": "Box/Image"
         },
         "f": {
           "arrows": false,
@@ -602,7 +602,7 @@
           ],
           "length": 0.9399999976158142,
           "selectable": false,
-          "style": "Hidden",
+          "style": "Box/Image",
           "width": 0.9399999976158142
         },
         "right": 2932,
@@ -659,7 +659,6 @@
             1.0,
             255.0
           ],
-          "arrows": false,
           "color": [
             0.676780104637146,
             0.20238924026489258,
@@ -668,7 +667,7 @@
           ],
           "length": 0.4000000059604645,
           "selectable": false,
-          "style": "Hidden",
+          "style": "Box/Image",
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,

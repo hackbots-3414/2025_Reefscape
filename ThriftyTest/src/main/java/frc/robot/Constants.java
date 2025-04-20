@@ -319,7 +319,7 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
-        public static final boolean k_enableLogging = false;
+        public static final boolean k_enableLogging = true;
 
         public static final double k_rotationCoefficient = Math.PI * 20;
         public static final double k_translationCoefficient = 0.1;
@@ -342,7 +342,7 @@ public class Constants {
 
         // The camera names
         public static Map<String, Transform3d> fakecameras = Map.ofEntries(
-            Map.entry("test", new Transform3d(0, 0, 1.5, new Rotation3d()))
+            Map.entry("test", new Transform3d(0, 0, 0, new Rotation3d()))
         );
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d( // left tight
@@ -394,8 +394,8 @@ public class Constants {
         public static final double k_headingThreshold = Units.degreesToRadians(3);
 
         // Stats about the camera for simulation
-        public static final int k_resWidth = 320;
-        public static final int k_resHeight = 240;
+        public static final int k_resWidth = 320 * 2;
+        public static final int k_resHeight = 240 * 2;
         public static final Rotation2d k_fov = Rotation2d.fromDegrees(82.0);
         public static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
 
@@ -403,7 +403,7 @@ public class Constants {
         // Simulated error:
         public static final Time k_avgLatency = Milliseconds.of(18);
         public static final Time k_latencyStdDev = Milliseconds.of(2);
-        public static final double k_avgErr = 0.18;
+        public static final double k_avgErr = 0.08;
         public static final double k_errStdDev = 0.02;
 
         // Stop using vision after X time

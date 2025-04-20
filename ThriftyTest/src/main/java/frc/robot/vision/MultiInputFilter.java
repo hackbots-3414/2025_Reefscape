@@ -28,16 +28,14 @@ public class MultiInputFilter {
     private boolean verifyTarget(Pose2d source, int tag) {
         Optional<Pose3d> tagPose = VisionConstants.k_layout.getTagPose(tag);
         if (tagPose.isEmpty()) return false;
-        Transform2d relative = tagPose.get().toPose2d().minus(source);
-        double angleToTag = Math.abs(Math.atan2(relative.getY(), relative.getX()));
-        boolean angleToTagOk = angleToTag < VisionConstants.kHorizontalFov.getRadians() / 2;
-        double tagFacingAngle = Math.abs(relative.getRotation().getRotations());
-        boolean tagFacingAngleOk = tagFacingAngle > 0.25;
-        if (angleToTagOk && tagFacingAngleOk) {
-            return true;
-        } else {
-            return false;
-        }
+        Pose2d tagPose2d = tagPose.get().toPose2d();
+        Transform2d sourceRelative = tagPose2d.minus(source);
+        Transform2d tagRelative = source.minus(tagPose2d);
+        double sourceAngle = Math.atan2(sourceRelative.getY(), sourceRelative.getX());
+        double tagAngle = Math.atan2(tagRelative.getY(), tagRelative.getX());
+        boolean sourceAngleOk = Math.abs(sourceAngle) <= VisionConstants.kHorizontalFov.getRadians() / 2.0;
+        boolean tagAngleOk = Math.abs(tagAngle) <= Math.PI / 2.0;
+        return sourceAngleOk && tagAngleOk;
     }
 
     /**
