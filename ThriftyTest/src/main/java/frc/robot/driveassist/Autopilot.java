@@ -1,5 +1,9 @@
 package frc.robot.driveassist;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,19 +12,18 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 
 public class Autopilot {
+    @SuppressWarnings("unused")
     private static final Logger m_logger = LoggerFactory.getLogger(Autopilot.class);
-    private Constraints m_constraintsU;
-    private Constraints m_constraintsI;
+    private Profile m_profile;
 
     private final double dt = 0.020;
 
-    public Autopilot(Constraints constraintsI, Constraints constraintsU) {
-        m_constraintsI = constraintsI;
-        m_constraintsU = constraintsU;
-        SmartDashboard.putNumber("div", 1);
+    public Autopilot(Profile profile) {
+        m_profile = profile;
     }
 
     public Translation2d adjust(
@@ -54,8 +57,8 @@ public class Autopilot {
         Translation2d entry = entryDirection.times(-distance);
         double entryDistance = project(entry, directionU);
         // drive towards goal state
-        double adjustedI = approach(distance, veloI, m_constraintsI) + Math.max(project(endVelocity, directionI), 0);
-        double adjustedU = approach(entryDistance, veloU, m_constraintsU);
+        double adjustedI = approach(distance, veloI, m_profile.getConstraintsI()) + Math.max(project(endVelocity, directionI), 0);
+        double adjustedU = approach(entryDistance, veloU, m_profile.getConstraintsU());
         // combine
         Translation2d adjusted = directionI.times(adjustedI).plus(
             directionU.times(adjustedU));
@@ -83,6 +86,12 @@ public class Autopilot {
         }
     }
 
+    public boolean atSetpoint(Pose2d current, Pose2d goal) {
+        boolean okXY = Math.hypot(current.getX() - goal.getX(), current.getY() - goal.getY()) <= m_profile.m_errorXY.in(Meters);
+        boolean okTheta = Math.abs(current.getRotation().minus(goal.getRotation()).getRadians()) <= m_profile.m_errorTheta.in(Radians);
+        return okXY && okTheta;
+    }
+
     /* Constraints to limit autopilot */
     public static class Constraints {
         private double m_acceleration;
@@ -106,6 +115,55 @@ public class Autopilot {
         }
     }
 
+    /* Profile (how to reach the goal) */
+    public static class Profile {
+        private Constraints m_constraintsI;
+        private Constraints m_constraintsU;
+        private Distance m_errorXY;
+        private Angle m_errorTheta;
+
+        public Profile() {
+            m_errorXY = Meters.of(0);
+            m_errorTheta = Rotations.of(0);
+        }
+
+        public Profile withErrorXY(Distance errorXY) {
+            m_errorXY = errorXY;
+            return this;
+        }
+
+        public Profile withErrorTheta(Angle errorTheta) {
+            m_errorTheta = errorTheta;
+            return this;
+        }
+
+        public Profile withConstraintsI(Constraints constraintsI) {
+            m_constraintsI = constraintsI;
+            return this;
+        }
+
+        public Profile withConstraintsU(Constraints constraintsU) {
+            m_constraintsU = constraintsU;
+            return this;
+        }
+
+        public Distance getErrorXY() {
+            return m_errorXY;
+        }
+
+        public Angle getErrorTheta() {
+            return m_errorTheta;
+        }
+
+        public Constraints getConstraintsI() {
+            return m_constraintsI;
+        }
+
+        public Constraints getConstraintsU() {
+            return m_constraintsU;
+        }
+    }
+
     /* End States (the goal to reach) */
     public static class Target {
         private Pose2d m_reference;
@@ -120,25 +178,6 @@ public class Autopilot {
          */
         public Target() {
             m_reference = Pose2d.kZero;
-            m_velocity = 0;
-        }
-
-        /**
-         * Constructs an autopilot target with a given pose and entry angle
-         */
-        public Target(Pose2d reference, Rotation2d entryAngle) {
-            m_reference = reference;
-            m_entryAngle = entryAngle;
-            m_velocity = 0;
-        }
-
-        /**
-         * Constructs an autopilot target with a given pose.
-         * Entry angle is set to be the rotation of the pose.
-         */
-        public Target(Pose2d reference) {
-            m_reference = reference;
-            m_entryAngle = reference.getRotation();
             m_velocity = 0;
         }
 

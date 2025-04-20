@@ -19,6 +19,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
@@ -78,7 +79,6 @@ import frc.robot.vision.VisionHandler;
 public class RobotContainer {
     private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
 
-    @SuppressWarnings("unused")
     private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
     public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
@@ -303,21 +303,23 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.none();
+        return autoChooser.getSelected();
     }
 
     private Command rIntake() {
         Autopilot.Target rightIntake = new Autopilot.Target()
             .withReference(FieldConstants.kRightIntake)
-            .withEntryAngle(FieldConstants.kRightIntake.getRotation().plus(Rotation2d.k180deg));
-        return new DriveToPointCommand(rightIntake, m_drivetrain, true);
+            .withEntryAngle(Rotation2d.k180deg);
+        return new DriveToPointCommand(rightIntake, m_drivetrain, true)
+            .withAutopilot(DriveConstants.kLooseAutopilot);
     }
 
     private Command lIntake() {
         Autopilot.Target rightIntake = new Autopilot.Target()
             .withReference(FieldConstants.kLeftIntake)
-            .withEntryAngle(FieldConstants.kRightIntake.getRotation().plus(Rotation2d.k180deg));
-        return new DriveToPointCommand(rightIntake, m_drivetrain, true);
+            .withEntryAngle(Rotation2d.k180deg);
+        return new DriveToPointCommand(rightIntake, m_drivetrain, true)
+            .withAutopilot(DriveConstants.kLooseAutopilot);
     }
 
     private void configureNamedCommands() {

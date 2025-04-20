@@ -46,6 +46,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+
+import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -142,15 +144,37 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        private static final Autopilot.Constraints kAutopilotConstraintsI = new Autopilot.Constraints()
+        private static final Autopilot.Constraints kTightAutopilotConstraintsI = new Autopilot.Constraints()
             .withAcceleration(8.5)
             .withDecceleration(1.3);
 
-        private static final Autopilot.Constraints kAutopilotConstraintsU = new Autopilot.Constraints()
+        private static final Autopilot.Constraints kTightAutopilotConstraintsU = new Autopilot.Constraints()
             .withAcceleration(17.0)
             .withDecceleration(0.7);
 
-        public static final Autopilot kAutopilot = new Autopilot(kAutopilotConstraintsI, kAutopilotConstraintsU);
+        private static final Autopilot.Profile kTightProfile = new Autopilot.Profile()
+            .withConstraintsI(kTightAutopilotConstraintsI)
+            .withConstraintsU(kTightAutopilotConstraintsU)
+            .withErrorXY(Centimeters.of(2))
+            .withErrorTheta(Degrees.of(2));
+
+        public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
+
+        private static final Autopilot.Constraints kLooseAutopilotConstraintsI = new Autopilot.Constraints()
+            .withAcceleration(8.5)
+            .withDecceleration(4);
+
+        private static final Autopilot.Constraints kLooseAutopilotConstraintsU = new Autopilot.Constraints()
+            .withAcceleration(8.5)
+            .withDecceleration(3);
+
+        private static final Autopilot.Profile kLooseProfile = new Autopilot.Profile()
+            .withConstraintsI(kLooseAutopilotConstraintsI)
+            .withConstraintsU(kLooseAutopilotConstraintsU)
+            .withErrorXY(Centimeters.of(6))
+            .withErrorTheta(Degrees.of(5));
+
+        public static final Autopilot kLooseAutopilot = new Autopilot(kLooseProfile);
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
