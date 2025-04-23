@@ -812,7 +812,7 @@ public class Constants {
 
         public static final double supplyCurrentLimit = 25.0;
 
-        public static final double holdVoltage = 2.5;
+        public static final double holdVoltage = 2.7;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
         public static final double algaeEjectTime = 0.4; // was 0.6 but i want faster when we're done
