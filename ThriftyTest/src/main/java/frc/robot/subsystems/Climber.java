@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Servo;
@@ -62,10 +62,16 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         m_voltage = voltage;
     }
 
+    /**
+     * Causes the climber to go up. NOT THE ROBOT
+     */
     public void setUp() {
         setMotor(ClimberConstants.climberUpVolts);
     }
 
+    /**
+     * Causes the climber to go down. NOT THE ROBOT.
+    */
     public void setDown() {
         setMotor(ClimberConstants.climbDownVolts);
     }
@@ -80,7 +86,7 @@ public class Climber extends SubsystemBase implements AutoCloseable {
         m_voltageChanged = false;
     }
 
-    public double getEncoderValue() {
+    public double getPosition() {
         return m_leftClimbMotor.getPosition().getValueAsDouble();
     }
 
@@ -100,11 +106,11 @@ public class Climber extends SubsystemBase implements AutoCloseable {
     }
 
     public boolean atClimb() {
-        return getEncoderValue() <= ClimberConstants.climbPosition;
+        return getPosition() <= ClimberConstants.climbPosition;
     }
 
     public boolean climbReady() {
-        return getEncoderValue() > ClimberConstants.climbReadyTolerance;
+        return getPosition() > ClimberConstants.climbReadyTolerance;
     }
 
     @Override

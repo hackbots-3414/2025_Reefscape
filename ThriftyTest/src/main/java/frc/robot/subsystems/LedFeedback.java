@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.CanRangeConstants;
+import frc.robot.Constants.CANrangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
@@ -36,7 +36,7 @@ public class LedFeedback extends SubsystemBase {
     // private Supplier<Boolean> isInRange;
     // private boolean algaeOnBoard = false;
     private boolean coralOnBoard = false;
-    private boolean coralInRange = false;
+    private boolean aligned = false;
     private boolean climbed = false;
     private boolean algaeOnBoard = false;
     private boolean algaeInRange = false;
@@ -90,7 +90,7 @@ public class LedFeedback extends SubsystemBase {
         
         coralOnBoard = RobotObserver.getCoralPieceHeld();
         algaeOnBoard = RobotObserver.getAlgaePieceHeld();
-        coralInRange = CommandBounds.reefBounds.isActive();
+        aligned = RobotObserver.getAligned();
         algaeInRange = CommandBounds.netBounds.isActive();
         noElevatorZoneActive = RobotObserver.getNoElevatorZone();
         climbed = RobotObserver.getClimbed();
@@ -102,20 +102,13 @@ public class LedFeedback extends SubsystemBase {
                 setAll(LED_COLOR.RED, LED_PATTERN.STROBE);
 
             }
-        } else if (inTeleop || inAuton) {
-            if (climbed) {
-                if (mode != LED_MODE.CLIMBED) {
-                    if (matchTime < LedConstants.endgameWarning) {
-                        setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
-                    }
-                    mode = LED_MODE.CLIMBED;
-
-                }
-
-                // Check if Coral on Board and At reef and not aligned to Branch
+        } else if (climbed) {
+            if (mode != LED_MODE.CLIMBED) {
+                    setAll(LED_COLOR.OFF, LED_PATTERN.RAINBOW);
+                mode = LED_MODE.CLIMBED;
             }
-            // Check for endgame
-           else if (matchTime <= LedConstants.endgameWarning && !inAuton) {
+        } else if (inTeleop || inAuton) {
+            if (matchTime <= LedConstants.endgameWarning && !inAuton) {
                 // Check for Final Seconds of  Endgame
                 if (matchTime <= LedConstants.endgameAlert) {
                     if (mode != LED_MODE.END_GAME_ALERT) {
@@ -157,7 +150,7 @@ public class LedFeedback extends SubsystemBase {
                 }
             }
             // Check if Coral is On Board and In range of reef
-            else if (coralOnBoard && coralInRange) {
+            else if (coralOnBoard && aligned) {
                 if (mode != LED_MODE.CORAL_READY) {
                     mode = LED_MODE.CORAL_READY;
                     setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
@@ -210,32 +203,32 @@ public class LedFeedback extends SubsystemBase {
 
     private boolean alignedReef() {
         return (Math.abs(rangeRight
-                - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                        * CanRangeConstants.tolerance
+                - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                        * CANrangeConstants.tolerance
                 &&
                 Math.abs(rangeLeft
-                        - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                                * CanRangeConstants.tolerance);
+                        - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                                * CANrangeConstants.tolerance);
     }
 
     private boolean alignedLeft() {
         return (Math.abs(rangeRight
-                - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                        * CanRangeConstants.tolerance)
+                - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                        * CANrangeConstants.tolerance)
                 &&
                 (Math.abs(rangeLeft
-                        - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters
-                                * CanRangeConstants.tolerance);
+                        - CANrangeConstants.farAlignedDistanceMeters) < CANrangeConstants.farAlignedDistanceMeters
+                                * CANrangeConstants.tolerance);
     }
 
     private boolean alignedRight() {
         return (Math.abs(
-                rangeLeft - CanRangeConstants.closeAlignedDistanceMeters) < CanRangeConstants.closeAlignedDistanceMeters
-                        * CanRangeConstants.tolerance)
+                rangeLeft - CANrangeConstants.closeAlignedDistanceMeters) < CANrangeConstants.closeAlignedDistanceMeters
+                        * CANrangeConstants.tolerance)
                 &&
                 (Math.abs(rangeRight
-                        - CanRangeConstants.farAlignedDistanceMeters) < CanRangeConstants.farAlignedDistanceMeters
-                                * CanRangeConstants.tolerance);
+                        - CANrangeConstants.farAlignedDistanceMeters) < CANrangeConstants.farAlignedDistanceMeters
+                                * CANrangeConstants.tolerance);
     }
 
     private void clearAllAnimations() {

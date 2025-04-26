@@ -6,6 +6,16 @@
           "open": true
         }
       },
+      "Talon FX (v6)[55]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX (v6)[56]": {
+        "header": {
+          "open": true
+        }
+      },
       "window": {
         "visible": false
       }
@@ -55,6 +65,7 @@
       "/SmartDashboard/Reef mode on": "Command",
       "/SmartDashboard/Reset Pose": "Command",
       "/SmartDashboard/SendableChooser[0]": "String Chooser",
+      "/SmartDashboard/Set Center": "Command",
       "/SmartDashboard/Set pose manually": "Command",
       "/SmartDashboard/Single Tag": "Command",
       "/SmartDashboard/Stow Elevator": "Command",
@@ -70,12 +81,20 @@
       "/SmartDashboard/d": "Command",
       "/SmartDashboard/drive to other pose": "Command",
       "/SmartDashboard/drive to reef": "Command",
+      "/SmartDashboard/dynamic forward steer": "Command",
+      "/SmartDashboard/dynamic forward translation": "Command",
+      "/SmartDashboard/dynamic reverse steer": "Command",
+      "/SmartDashboard/dynamic reverse translation": "Command",
       "/SmartDashboard/e": "Command",
       "/SmartDashboard/elevator up": "Command",
       "/SmartDashboard/f": "Command",
       "/SmartDashboard/g": "Command",
       "/SmartDashboard/h": "Command",
       "/SmartDashboard/open funnel": "Command",
+      "/SmartDashboard/quasistatic forward steer": "Command",
+      "/SmartDashboard/quasistatic forward translation": "Command",
+      "/SmartDashboard/quasistatic reverse steer": "Command",
+      "/SmartDashboard/quasistatic reverse translation": "Command",
       "/SmartDashboard/runme hehe": "Command",
       "/SmartDashboard/teleport": "Command"
     },
@@ -420,7 +439,9 @@
             1.0,
             255.0
           ],
-          "style": "Hidden"
+          "length": 0.9399999976158142,
+          "style": "Hidden",
+          "width": 0.9399999976158142
         },
         "apriltag": {
           "arrows": false,
@@ -435,8 +456,10 @@
             0.11764693260192871,
             255.0
           ],
+          "length": 0.9399999976158142,
           "selectable": false,
-          "style": "Hidden"
+          "style": "Hidden",
+          "width": 0.9399999976158142
         },
         "bottom": 1347,
         "builtin": "",
@@ -449,7 +472,6 @@
           ],
           "arrowSize": 100,
           "arrowWeight": 2.0,
-          "arrows": false,
           "color": [
             255.0,
             167.8480987548828,
@@ -480,7 +502,6 @@
           ]
         },
         "estimation": {
-          "arrows": false,
           "color": [
             0.9588443040847778,
             0.970588207244873,
@@ -490,6 +511,18 @@
         },
         "height": 8.051901817321777,
         "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "rejected": {
+          "arrows": false,
+          "color": [
+            0.8480392098426819,
+            0.3034650385379791,
+            0.3835495412349701,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "selectable": false,
+          "width": 0.9399999976158142
+        },
         "right": 2932,
         "target": {
           "arrows": false,
@@ -547,7 +580,8 @@
         "open": true
       },
       "open": true
-    }
+    },
+    "visible": true
   },
   "Plot": {
     "Plot <0>": {
@@ -556,6 +590,7 @@
           "axis": [
             {
               "label": "Axis",
+              "lockMin": true,
               "max": 5.0
             }
           ],
@@ -565,8 +600,28 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 318,
-          "name": "Plot"
+          "height": 0,
+          "name": "Plot",
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/ri"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/ru"
+            }
+          ]
         }
       ],
       "window": {

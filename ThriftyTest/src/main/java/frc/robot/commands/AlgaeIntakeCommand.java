@@ -52,7 +52,6 @@ public class AlgaeIntakeCommand extends Command {
                 if (rollers.algaeHeld()) isDone = true; 
             }
             case REEFLOWER, REEFUPPER -> {
-                // isDone = !CommandBounds.reefBounds.isActive();
                 if (elevator.atSetpoint()) {
                     if (rollers.algaeHeld()) {
                         pivot.setReefExtract();

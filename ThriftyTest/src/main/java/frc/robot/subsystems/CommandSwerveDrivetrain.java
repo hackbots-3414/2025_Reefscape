@@ -111,6 +111,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         RobotObserver.setVelocitySupplier(this::getVelocity);
         RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
         RobotObserver.setReefReadySupplier(this::getReefReady);
+        RobotObserver.setAlginedSupplier(this::isAligned);
     }
 
     public void initializeSetpointGenerator(RobotConfig config) {
@@ -325,7 +326,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .getTranslation()
             .minus(m_estimatedPose.getTranslation())
             .getNorm();
-        return distance < FFConstants.k_radius;
+        return distance < FFConstants.k_radius && !DriverStation.isAutonomous();
     }
 
     public void setAligned(boolean aligned) {
@@ -340,7 +341,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double distanceToReef = getBluePose().getTranslation()
             .minus(FieldConstants.reefCenter)
             .getNorm();
-        boolean inRange = distanceToReef <= FieldConstants.k_reefReady;
+        boolean inRange = (DriverStation.isAutonomous()) ? distanceToReef <= FieldConstants.kReefReadyAuton : distanceToReef <= FieldConstants.kReefReady;
         return inRange;
     }
 }

@@ -23,9 +23,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "GGH"
+            "name": "Align GH"
           }
         },
         {

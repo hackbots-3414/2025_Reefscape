@@ -20,7 +20,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 
 public class DriveToPointCommand extends Command {
-    @SuppressWarnings("unused")
     private final Logger m_logger = LoggerFactory.getLogger(DriveToPointCommand.class);
 
     private final double dt = 0.02;

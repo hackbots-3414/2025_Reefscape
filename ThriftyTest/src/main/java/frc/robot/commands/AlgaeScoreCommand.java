@@ -71,8 +71,8 @@ public class AlgaeScoreCommand extends Command {
     if (location == AlgaeLocationPresets.NET) {
       m_logger.trace("Stowing and releasing");
       pivot.setStow();
-      elevator.release();
     }
+    elevator.release();
     rollers.smartStop();
   }
 

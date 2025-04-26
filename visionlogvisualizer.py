@@ -146,6 +146,14 @@ def graph_error_by_mode():
         plt.scatter(timestamp, err, label=mode, alpha=0.5)
     graph_error()
 
+def graph_counts():
+    for log in source_separated:
+        source = log.source
+        size = len(log.logs)
+        plt.bar(source, size)
+
+    plt.show()
+
 def graph_positions():
     x = [entry.x for entry in logs.logs]
     y = [entry.y for entry in logs.logs]
@@ -154,6 +162,7 @@ def graph_positions():
 
     plt.show()
 
+graph_counts()
 graph_error_by_source()
 graph_error_by_mode()
 graph_positions()

@@ -1,7 +1,6 @@
 package frc.robot.vision;
 
-import static edu.wpi.first.units.Units.Seconds;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -25,6 +24,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.units.Units.Seconds;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
@@ -139,6 +140,10 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose3d alt = targetPosition3d
             .plus(alt3d.inverse())
             .plus(m_robotToCamera.inverse());
+        if (RobotBase.isSimulation()) {
+            RobotObserver.getField().getObject("alt").setPose(alt.toPose2d());
+            RobotObserver.getField().getObject("best").setPose(best.toPose2d());
+        }
         double bestHeading = best.getRotation().getZ();
         double altHeading = alt.getRotation().getZ();
         Pose2d pose = RobotObserver.getPose();
@@ -157,7 +162,6 @@ public class SingleInputPoseEstimator implements Runnable {
             estimate = (bestXYErr <= altXYErr) ? best : alt;
         }
 
-        // TEMPORARLY USING BEST
         process(result, estimate, EstimationAlgorithm.Heading).ifPresent(m_reporter);
 
     }
@@ -202,8 +206,12 @@ public class SingleInputPoseEstimator implements Runnable {
         }
         // check validity again
         if (!checkValidity(pose, ambiguity)) return Optional.empty();
+        List<Integer> tags = new ArrayList<>();
+        for (PhotonTrackedTarget target : result.getTargets()) {
+            tags.add(target.getFiducialId());
+        }
         return Optional.of(
-            new TimestampedPoseEstimate(flatPose, m_name, timestamp, stdDevs, algorithm)
+            new TimestampedPoseEstimate(flatPose, m_name, timestamp, stdDevs, algorithm, tags)
         );
     }
 

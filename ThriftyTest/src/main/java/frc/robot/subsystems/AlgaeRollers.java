@@ -29,7 +29,6 @@ public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
     public AlgaeRollers() {
         configIntakeMotor();
         RobotObserver.setAlgaePieceHeldSupplier(this::algaeHeld);
-
     }
 
     private void configIntakeMotor() {

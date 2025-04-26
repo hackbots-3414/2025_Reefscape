@@ -20,6 +20,7 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.ToFParamsConfigs;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -110,6 +111,7 @@ public class Constants {
         public static final int coralRight = 56;
         public static final int coralCANrange = 59;
         public static final int upperCANrange = 58;
+        public static final int innerCANrange = 54;
 
         public static final int frontIR = 2;
         public static final int rearIR = 3;
@@ -122,7 +124,7 @@ public class Constants {
         public static final int candle1 = 5; 
         public static final int candle2 = 6;
 
-        public static final int servo = 9;
+        public static final int servo = 7;
 
         public static final int climbEncoder = 9;
     }
@@ -140,16 +142,13 @@ public class Constants {
         public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
         public static final PIDConstants k_driveToPointRotationPID = new PIDConstants(4, 0.0, 0.0); // 0.17119
 
-        public static final double kMaxAccelerationPerpendicularToTarget = 5.0;
-        public static double kMaxAccelerationTowardsTarget = 5.0;
+        public static final double kMaxAccelerationPerpendicularToTarget = 3.5; // 5.0
+        public static double kMaxAccelerationTowardsTarget = 3.5; // 5.0
 
         public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController = new PPHolonomicDriveController(k_translationPID, k_rotationPID);
 
         public static final double k_maxTeleopLinearSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double k_maxTeleopAngularSpeed = RotationsPerSecond.of(1.5).in(RadiansPerSecond);
-
-        public static final double k_driveToPointSpeed = 4.0;
-        public static final double k_driveToPointAcceleration = 1.0;
 
         public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
         public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
@@ -174,11 +173,6 @@ public class Constants {
         public static final double rangeZero = 0.175;
         public static final double rangeMax = 0.3;
 
-        // These are the constraints solely used by the DriveToPoint commands
-        public static final Constraints k_driveToPointConstraints = new Constraints(
-            k_driveToPointSpeed,
-            k_driveToPointAcceleration
-        );
         // This one is as well, however it is only used in auton
         public static final Constraints k_rotationConstraints = new Constraints(
             k_maxAngularSpeed.in(RadiansPerSecond),
@@ -245,6 +239,8 @@ public class Constants {
             public static final int intake = Button.kL1.value; // LB
 
             public static final int zeroElevator = 15; // old safety mode button (little bar below PS button)
+
+            public static final int secondaryL1 = 14;
         }
     
         public static class ButtonBoardKeyboard {
@@ -284,14 +280,15 @@ public class Constants {
 
     public static class VisionConstants {
         public static final boolean enableVision = true;
-        public static final boolean k_enableLogging = false;
+        public static final boolean k_enableLogging = true;
 
         public static final double k_rotationCoefficient = Math.PI * 20;
-        public static final double k_translationCoefficient = 0.1;
+        public static final double k_translationCoefficient = 0.10; // previously 0.10
 
-        public static AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+        public static final AprilTagFieldLayout k_layout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
         public static final String k_estimationName = "estimation";
+        public static final String kRejectedName = "rejected";
 
         public static final String k_logPath = "/home/lvuser/logs/vision";
         public static final String k_simLogPath = "logs/vision";
@@ -306,7 +303,7 @@ public class Constants {
 
         // The camera names
         public static Map<String, Transform3d> fakecameras = Map.ofEntries(
-            Map.entry("test", new Transform3d())
+            Map.entry("test", new Transform3d(0, 0, 1.5, new Rotation3d()))
         );
         public static Map<String, Transform3d> cameras = Map.ofEntries(
             Map.entry("cam1", new Transform3d( // left tight
@@ -361,6 +358,8 @@ public class Constants {
         public static final int k_resWidth = 320;
         public static final int k_resHeight = 240;
         public static final Rotation2d k_fov = Rotation2d.fromDegrees(82.0);
+        public static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
+
 
         // Simulated error:
         public static final Time k_avgLatency = Milliseconds.of(18);
@@ -382,11 +381,17 @@ public class Constants {
         public static final Distance k_fieldWidth = Meters.of(8.05);
         public static final Distance k_fieldLength = Meters.of(17.55);
         public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
-        public static final double k_reefReady = 2.1;
-        public static final Pose2d k_processor = new Pose2d(5.987542, 0.89281, Rotation2d.kCW_90deg);
+        public static final double kReefReadyAuton = 2.6;
+        public static final double kReefReady = 2.1;
+        public static final Pose2d k_processor = new Pose2d(5.974, 1.16, Rotation2d.kCW_90deg);
 
         public static final Pose2d kRightIntake = new Pose2d(1.247, 0.950, Rotation2d.fromDegrees(55));
         public static final Pose2d kLeftIntake = new Pose2d(1.211, 7.016, Rotation2d.fromDegrees(-55));
+
+        public static final Pose2d kGH = new Pose2d(5.791, 4.046, Rotation2d.k180deg);
+        public static final Pose2d kIJ = new Pose2d(5.155, 5.194, Rotation2d.fromDegrees(-120));
+
+        public static final Pose2d kBarge1 = new Pose2d(7.459, 4.717, Rotation2d.fromDegrees(21.0));
     }
 
     public static final class StateSpaceConstants {
@@ -402,7 +407,7 @@ public class Constants {
         public static final double stage2Distance = 1;
     }
 
-    public static final class CanRangeConstants {
+    public static final class CANrangeConstants {
 
         public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration()
         .withFovParams(new FovParamsConfigs()
@@ -473,8 +478,9 @@ public class Constants {
         public static final double eject = stow + 2 * inch;
         public static final double processor = 0;
         // public static final double L1 = stow + 3.5 * inch;
-        public static final double L2 = 4.016 + 2 * inch; // 35.5
-        public static final double L1 = L2 - 2.5 * inch;
+        public static final double L2 = 4.016 + 3 * inch; // 35.5
+        public static final double L1 = 2.63;
+        public static final double secondaryL1 = L1 + 8 * inch;
         public static final double L3 = 7.257 - 4 * inch; // 50.5
         public static final double L4 = 9.757 + 0.3 * inch;
         public static final double net = 9.31 + 4 * inch; // 67 - short, // 72 - long
@@ -638,7 +644,7 @@ public class Constants {
 
                 .withSlot0(new Slot0Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(15)
+                        .withKP(25)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
@@ -647,7 +653,7 @@ public class Constants {
                         .withKG(0.625))
                 .withSlot1(new Slot1Configs()
                         .withGravityType(GravityTypeValue.Arm_Cosine)
-                        .withKP(20)
+                        .withKP(30)
                         .withKI(0)
                         .withKD(0)
                         .withKS(0)
@@ -678,8 +684,8 @@ public class Constants {
         public static final double spitOutVoltage = -6;
         public static final double fastEjectVoltage = -10;
 
-        public static final double l1LeftEjectVoltage = 8;
-        public static final double l1RightEjectVoltage = 6;
+        public static final double l1LeftEjectVoltage = 2;
+        public static final double l1RightEjectVoltage = 4;
 
         public static final boolean rightMotorInvert = true;
 
@@ -688,6 +694,8 @@ public class Constants {
         public static final double IRThreshold = 0.51;
 
         public static final boolean enableCANRange = true;
+
+        public static final InvertedValue kInvertRight = InvertedValue.Clockwise_Positive;
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
                 .withMotorOutput(new MotorOutputConfigs()
@@ -703,7 +711,7 @@ public class Constants {
                         .withS1CloseState(S1CloseStateValue.CloseWhenHigh)
                         .withS2CloseState(S2CloseStateValue.CloseWhenHigh));
 
-        public static final CANrangeConfiguration rangeConfig = new CANrangeConfiguration()
+        public static final CANrangeConfiguration frontRangeConfig = new CANrangeConfiguration()
                 .withFovParams(new FovParamsConfigs()
                         .withFOVRangeX(6.5)
                         .withFOVRangeY(6.5))
@@ -712,7 +720,8 @@ public class Constants {
                         .withProximityThreshold(0.1))
                 .withToFParams(new ToFParamsConfigs()
                         .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-        
+
+
         public static final CANrangeConfiguration upperRangeConfig = new CANrangeConfiguration()
                 .withFovParams(new FovParamsConfigs()
                         .withFOVRangeX(6.5)
@@ -720,6 +729,17 @@ public class Constants {
                 .withProximityParams(new ProximityParamsConfigs()
                         .withMinSignalStrengthForValidMeasurement(2500)
                         .withProximityThreshold(0.65))
+                .withToFParams(new ToFParamsConfigs()
+                        .withUpdateMode(UpdateModeValue.ShortRange100Hz));
+
+        public static final CANrangeConfiguration innerRangeConfig = new CANrangeConfiguration()
+                .withFovParams(new FovParamsConfigs()
+                        .withFOVRangeX(27)
+                        .withFOVRangeY(27))
+                .withProximityParams(new ProximityParamsConfigs()
+                        .withMinSignalStrengthForValidMeasurement(1500)
+                        .withProximityHysteresis(0)
+                        .withProximityThreshold(0.06))
                 .withToFParams(new ToFParamsConfigs()
                         .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
@@ -738,6 +758,7 @@ public class Constants {
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.25;
         public static final double climbPosition = -0.110;
+        public static final double kShakePosition = -0.02;
 
         public static final double encoderOffset = -0.01318359;
         public static final SensorDirectionValue invertEncoder = SensorDirectionValue.CounterClockwise_Positive;
@@ -779,22 +800,22 @@ public class Constants {
 
         public static final double climbReadyTolerance = -0.001;
 
-        public static final double kClimbTime = 40.0;
+        public static final double kClimbTime = 30.0;
     }
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -3.0; // 1.5
+        public static final double ejectVoltage = -3.0; // 3.0  
         public static final double processorEjectVoltage = -3.2;
 
         public static final double torqueCurrentThreshold = 75;
 
         public static final double supplyCurrentLimit = 25.0;
 
-        public static final double holdVoltage = 2.5;
+        public static final double holdVoltage = 2.7;
         public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
         public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
-        public static final double algaeEjectTime = 0.6;
+        public static final double algaeEjectTime = 0.4; // was 0.6 but i want faster when we're done
         public static final double reefPickupSafetyDistance = 1.75; 
 
         public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()

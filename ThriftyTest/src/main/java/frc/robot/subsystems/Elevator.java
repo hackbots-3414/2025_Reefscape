@@ -167,6 +167,10 @@ public class Elevator extends SubsystemBase {
         setPosition(ElevatorConstants.L1);
     }
 
+    public void setSecondaryL1() {
+        setPosition(ElevatorConstants.secondaryL1);
+    }
+
     public void setL2() {
         setPosition(ElevatorConstants.L2);
     }
@@ -214,7 +218,9 @@ public class Elevator extends SubsystemBase {
 
     public boolean atSetpoint() {
         if (Robot.isSimulation()) return true;
-        return Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+        boolean at = Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+        m_logger.debug("Setpoint: {}", at);
+        return at;
     }
 
     public double getReference() {
@@ -306,8 +312,9 @@ public class Elevator extends SubsystemBase {
     }
 
     public boolean elevatorUp() {
-        return getPosition() > ElevatorConstants.unsafeRange;
+        return getPosition() > ElevatorConstants.unsafeRange || m_reference > ElevatorConstants.unsafeRange;
     }
+    public boolean safe() {return !elevatorUp();}
 
     public void release() {
         m_taken = false;

@@ -162,4 +162,14 @@ public class RobotObserver {
     public static boolean getReefReady() {
         return getInstance().m_reefReadySupplier.getAsBoolean() && getCoralPieceHeld();
     }
+
+    private BooleanSupplier m_alignedSupplier;
+
+    public static void setAlginedSupplier(BooleanSupplier alignedSupplier) {
+        getInstance().m_alignedSupplier = alignedSupplier;
+    }
+
+    public static boolean getAligned() {
+        return getInstance().m_alignedSupplier.getAsBoolean();
+    }
 }

@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.187602459016393,
-        "y": 3.9950307377049183
+        "x": 7.527,
+        "y": 4.8245
       },
       "isLocked": false,
       "linkedName": "AlgaeGH"
     },
     {
       "anchor": {
-        "x": 6.017827868852459,
-        "y": 1.32
+        "x": 5.976749999999999,
+        "y": 1.92875
       },
       "prevControl": {
-        "x": 6.017827868852459,
-        "y": 1.5699999999999998
+        "x": 5.976749999999999,
+        "y": 2.1787500000000017
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.75,
     "rotation": -90.0
   },
   "reversed": false,
