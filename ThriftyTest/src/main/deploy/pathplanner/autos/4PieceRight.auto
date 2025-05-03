@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartE"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Align E"
@@ -37,12 +31,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "FIntake"
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "RIntake Align"
@@ -52,12 +40,6 @@
                       "type": "named",
                       "data": {
                         "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeD"
                       }
                     },
                     {
@@ -93,12 +75,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "DIntake"
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "RIntake Align"
@@ -108,12 +84,6 @@
                       "type": "named",
                       "data": {
                         "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeC"
                       }
                     },
                     {
@@ -149,12 +119,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "CIntake"
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "RIntake Align"
@@ -164,12 +128,6 @@
                       "type": "named",
                       "data": {
                         "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeB"
                       }
                     },
                     {
@@ -193,7 +151,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

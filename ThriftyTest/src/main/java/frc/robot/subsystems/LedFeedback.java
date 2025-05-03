@@ -246,13 +246,13 @@ public class LedFeedback extends SubsystemBase {
 
     private boolean badController() {
         boolean driverConnected = DriverStation.isJoystickConnected(ButtonBindingConstants.driverPort);
-        boolean operatorConnected = DriverStation.isJoystickConnected(ButtonBindingConstants.buttonBoardPort);
+        boolean operatorConnected = DriverStation.isJoystickConnected(ButtonBindingConstants.operatorPort);
 
         if (!driverConnected || !operatorConnected)
             return true;
 
         String driverName = DriverStation.getJoystickName(ButtonBindingConstants.driverPort).toLowerCase();
-        String operatorName = DriverStation.getJoystickName(ButtonBindingConstants.buttonBoardPort).toLowerCase();
+        String operatorName = DriverStation.getJoystickName(ButtonBindingConstants.operatorPort).toLowerCase();
 
         boolean driverOk = driverName.contains(ButtonBindingConstants.dragonReinsName) || driverName.contains(ButtonBindingConstants.driverBackupName);
 

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -37,7 +38,7 @@ public class CoralRollers extends PassiveSubsystem {
     configMotors();
     configDashboard();
     configCANrange();
-    RobotObserver.setPieceHeldSupplier(holdingPiece());
+    RobotObserver.setPieceHeldSupplier(holding());
   }
 
   private void configMotors() {
@@ -104,7 +105,7 @@ public class CoralRollers extends PassiveSubsystem {
     return m_innerRange.getIsDetected().getValue();
   }
 
-  public Trigger holdingPiece() {
+  public Trigger holding() {
     return new Trigger(() -> {
       if (Robot.isReal()) {
         boolean holding = getFrontCANrange() && !getUpperCANrange();
@@ -122,11 +123,7 @@ public class CoralRollers extends PassiveSubsystem {
     setVoltage(0);
   }
 
-  public Trigger presentPiece() {
-    return new Trigger(() -> getInnerCANrange() || getFrontCANrange());
-  }
-
-  public Trigger intakeReady() {
+  public Trigger present() {
     return new Trigger(() -> getUpperCANrange() || getInnerCANrange() || getFrontCANrange());
   }
 
@@ -135,7 +132,7 @@ public class CoralRollers extends PassiveSubsystem {
     SmartDashboard.putBoolean("Inner CANrange", getInnerCANrange());
     SmartDashboard.putBoolean("Coral CANrange", getFrontCANrange());
     SmartDashboard.putBoolean("OCS", getUpperCANrange());
-    SmartDashboard.putBoolean("HAS CORAL", holdingPiece().getAsBoolean());
+    SmartDashboard.putBoolean("HAS CORAL", holding().getAsBoolean());
 
     if (m_voltageChanged) {
       m_coralLeft.setVoltage(m_voltage);
@@ -152,44 +149,24 @@ public class CoralRollers extends PassiveSubsystem {
   public Command intake() {
     return Commands.sequence(
         runOnce(this::setIntake),
-        Commands.waitUntil(holdingPiece()))
+        Commands.waitUntil(holding()))
 
         .finallyDo(this::stop);
   }
 
-  /**
-   * Scores a piece at L1 power
-   */
-  public Command l1Score() {
-    return run(this::setL1Score)
-        .onlyWhile(holdingPiece())
-        .finallyDo(this::stop);
+  public Command score(CoralLevel level) {
+    return Commands.sequence(
+        runOnce(() -> {
+          switch (level) {
+            case L1, SecondaryL1 -> setL1Score();
+            case L2 -> setL2Score();
+            case L3 -> setL3Score();
+            case L4 -> setL4Score();
+          }
+        }),
+        Commands.waitUntil(holding().negate()))
+
+        .onlyIf(holding());
   }
 
-  /**
-   * Scores a piece at L2 power
-   */
-  public Command l2Score() {
-    return run(this::setL2Score)
-        .onlyWhile(holdingPiece())
-        .finallyDo(this::stop);
-  }
-
-  /**
-   * Scores a piece at L3 power
-   */
-  public Command l3Score() {
-    return run(this::setL3Score)
-        .onlyWhile(holdingPiece())
-        .finallyDo(this::stop);
-  }
-
-  /**
-   * Scores a piece at L4 power
-   */
-  public Command l4Score() {
-    return run(this::setL4Score)
-        .onlyWhile(holdingPiece())
-        .finallyDo(this::stop);
-  }
 }

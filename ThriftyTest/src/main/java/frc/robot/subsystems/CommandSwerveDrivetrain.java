@@ -16,6 +16,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
+import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
+import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
@@ -25,7 +27,6 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -39,12 +40,15 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Constants.DriveConstants.HeadingPID;
+import frc.robot.driveassist.Autopilot;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -65,8 +69,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private boolean m_aligned;
 
-  private SwerveRequest.FieldCentric m_teleopRequest = new SwerveRequest.FieldCentric()
+  private FieldCentric m_teleopRequest = new FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
+      .withDriveRequestType(DriveRequestType.Velocity);
+
+  private FieldCentricFacingAngle m_veloRequest = new FieldCentricFacingAngle()
+      .withHeadingPID(HeadingPID.kP, HeadingPID.kI, HeadingPID.kD)
+      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -127,9 +136,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     RobotObserver.setVisionValidSupplier(this::getVisionValid);
     RobotObserver.setPoseSupplier(this::getPose);
     RobotObserver.setVelocitySupplier(this::getVelocity);
-    RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
-    RobotObserver.setReefReadySupplier(this::getReefReady);
-    RobotObserver.setAlginedSupplier(this::isAligned);
+    RobotObserver.setNoElevatorZoneSupplier(noElevatorZone());
+    RobotObserver.setReefReadySupplier(reefReady());
+    RobotObserver.setAlginedSupplier(aligned());
   }
 
   public void initializeSetpointGenerator(RobotConfig config) {
@@ -167,7 +176,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    * returns the current pose, with red side poses flipped
    */
   public Pose2d getBluePose() {
-    return FieldUtils.flipPose(m_estimatedPose);
+    return FieldUtils.getGlobalPose(m_estimatedPose);
   }
 
   public void zeroPose() {
@@ -207,6 +216,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   @Override
   public void periodic() {
     m_estimatedPose = this.getState().Pose;
+    SmartDashboard.putNumber("x", m_estimatedPose.getTranslation().getX());
+    SmartDashboard.putNumber("y", m_estimatedPose.getTranslation().getY());
 
     SmartDashboard.putBoolean("Drivetrain Aligned", m_aligned);
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
@@ -346,30 +357,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return m_sysIdRoutineRotation.dynamic(direction);
   }
 
-  private boolean noElevatorZone() {
-    double distance = getNearestAntitarget()
-        .getTranslation()
-        .minus(m_estimatedPose.getTranslation())
-        .getNorm();
-    return distance < FFConstants.k_radius && !DriverStation.isAutonomous();
+  private Trigger noElevatorZone() {
+    return new Trigger(() -> {
+      double distance = getNearestAntitarget()
+          .getTranslation()
+          .minus(m_estimatedPose.getTranslation())
+          .getNorm();
+      return distance < FFConstants.k_radius && !DriverStation.isAutonomous();
+    });
   }
 
   public void setAligned(boolean aligned) {
     m_aligned = aligned;
   }
 
-  public boolean isAligned() {
-    return m_aligned;
+  public Trigger aligned() {
+    return new Trigger(() -> m_aligned);
   }
 
-  public boolean getReefReady() {
-    double distanceToReef = getBluePose().getTranslation()
-        .minus(FieldConstants.reefCenter)
-        .getNorm();
-    boolean inRange =
-        (DriverStation.isAutonomous()) ? distanceToReef <= FieldConstants.kReefReadyAuton
-            : distanceToReef <= FieldConstants.kReefReady;
-    return inRange;
+  public Trigger reefReady() {
+    return new Trigger(() -> {
+      double distanceToReef = getBluePose().getTranslation()
+          .minus(FieldConstants.reefCenter)
+          .getNorm();
+      boolean inRange =
+          (DriverStation.isAutonomous()) ? distanceToReef <= FieldConstants.kReefReadyAuton
+              : distanceToReef <= FieldConstants.kReefReady;
+      return inRange;
+    });
   }
 
   /**
@@ -387,10 +402,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   /**
    * Drives to a certain point on the field
    */
-  public Command driveTo(Pose2d goal) {
+  public Command align(Autopilot autopilot, Autopilot.Target target) {
     return run(() -> {
-      Transform2d velocities = getVelocityComponents();
-      Transform2d reference = 
-    });
+      Translation2d velocities = getVelocityComponents();
+      Translation2d output = autopilot.calculate(m_estimatedPose, velocities, target);
+      setControl(m_veloRequest
+          .withVelocityX(output.getX())
+          .withVelocityY(output.getY())
+          .withTargetDirection(target.getReference().getRotation()));
+    }).until(() -> {
+      return autopilot.atSetpoint(m_estimatedPose, target.getReference());
+    }).finallyDo(this::stop);
   }
 }

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
@@ -75,7 +76,7 @@ public class Pivot extends PassiveSubsystem {
 
   MotionMagicVoltage control = new MotionMagicVoltage(0);
 
-  public void setPosition(double goal) {
+  private void setPosition(double goal) {
     if (RobotObserver.getAlgaePieceHeld()) {
       m_pivot.setControl(control.withPosition(goal).withSlot(1));
     } else {
@@ -84,36 +85,31 @@ public class Pivot extends PassiveSubsystem {
     m_reference = goal;
   }
 
-  public void setSpeed(double speed) {
-    m_speedChanged = (speed != m_speed);
-    m_speed = speed;
-  }
-
-  public void setStow() {
+  private void setStow() {
     setPosition(PivotConstants.stow);
   }
 
-  public void setProcessor() {
+  private void setProcessor() {
     setPosition(PivotConstants.processor);
   }
 
-  public void setNet() {
+  private void setNet() {
     setPosition(PivotConstants.net);
   }
 
-  public void setGroundPickup() {
+  private void setGroundPickup() {
     setPosition(PivotConstants.groundPickup);
   }
 
-  public void setReefIntake() {
+  private void setReefIntake() {
     setPosition(PivotConstants.reefPickup);
   }
 
-  public void setReefExtract() {
+  private void setReefExtract() {
     setPosition(PivotConstants.reefExtract);
   }
 
-  public void stop() {
+  private void stop() {
     setPosition(m_position);
   }
 
@@ -125,8 +121,8 @@ public class Pivot extends PassiveSubsystem {
     return m_reference;
   }
 
-  public boolean ready() {
-    return Math.abs(getReference() - getPosition()) < PivotConstants.tolerance;
+  public Trigger ready() {
+    return new Trigger(() -> Math.abs(getReference() - getPosition()) < PivotConstants.tolerance);
   }
 
   private double getPositionUncached() {
@@ -148,7 +144,7 @@ public class Pivot extends PassiveSubsystem {
       m_speedChanged = false;
     }
 
-    SmartDashboard.putBoolean("PIVOT AT POSITION", ready());
+    SmartDashboard.putBoolean("PIVOT AT POSITION", ready().getAsBoolean());
   }
 
   @Override
@@ -173,16 +169,34 @@ public class Pivot extends PassiveSubsystem {
   public Command stow() {
     return Commands.sequence(
         runOnce(this::setStow),
-        Commands.waitUntil(this::ready));
+        Commands.waitUntil(ready()));
   }
 
   /**
-   * Sets the pivot to the angle for ground intake
+   * Sets the pivot to the angle for ground intake (including high ground)
    */
   public Command ground() {
     return Commands.sequence(
         runOnce(this::setGroundPickup),
-        Commands.waitUntil(this::ready));
+        Commands.waitUntil(ready()));
+  }
+
+  /**
+   * Sets the pivot to the angle for the processor
+   */
+  public Command processor() {
+    return Commands.sequence(
+        runOnce(this::setProcessor),
+        Commands.waitUntil(ready()));
+  }
+
+  /**
+   * Sets the pivot to the angle for the net
+   */
+  public Command net() {
+    return Commands.sequence(
+        runOnce(this::setNet),
+        Commands.waitUntil(ready()));
   }
 
   /**
@@ -191,7 +205,7 @@ public class Pivot extends PassiveSubsystem {
   public Command reefIntake() {
     return Commands.sequence(
         runOnce(this::setReefIntake),
-        Commands.waitUntil(this::ready));
+        Commands.waitUntil(ready()));
   }
 
   /**
@@ -200,7 +214,7 @@ public class Pivot extends PassiveSubsystem {
   public Command reefExtract() {
     return Commands.sequence(
         runOnce(this::setReefExtract),
-        Commands.waitUntil(this::ready));
+        Commands.waitUntil(ready()));
   }
 
 }

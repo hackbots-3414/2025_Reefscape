@@ -1,6 +1,7 @@
 package frc.robot.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -35,16 +36,17 @@ public class Superstructure {
   }
 
   public Command enter(EnterableState state) {
-    return state.build(m_subsystems);
-  }
+    return state.build(m_subsystems)
+      .withName(state.toString()); // avoid poorly named commands
+   }
 
   public void setDrive(Command driveCommand) {
     m_subsystems.drivetrain().setDefaultCommand(driveCommand);
   }
 
   public static record Subsystems(
-      AlgaeRollers algaeRollers,
-      CoralRollers coralRollers,
+      AlgaeRollers algae,
+      CoralRollers coral,
       Pivot pivot,
       Elevator elevator,
       Climber climber,
@@ -52,4 +54,7 @@ public class Superstructure {
       LedFeedback leds) {
       }
 
+  public Trigger aligned() {
+    return m_subsystems.drivetrain().aligned();
+  }
 }

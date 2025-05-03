@@ -6,11 +6,16 @@
           "open": true
         }
       },
+<<<<<<< HEAD
       "Talon FX (v6)[55]": {
+=======
+      "CANrange (v6)[58]": {
+>>>>>>> origin/align-v3
         "header": {
           "open": true
         }
       },
+<<<<<<< HEAD
       "Talon FX (v6)[56]": {
         "header": {
           "open": true
@@ -18,6 +23,12 @@
       },
       "window": {
         "visible": false
+=======
+      "CANrange (v6)[59]": {
+        "header": {
+          "open": true
+        }
+>>>>>>> origin/align-v3
       }
     },
     "Timing": {
@@ -31,10 +42,27 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/AUTOALIGN SLOWDOWN (LAST RESTORT)!!!!!!!!!!!!!!!!!!!!": "Command",
       "/SmartDashboard/Alerts": "Alerts",
+      "/SmartDashboard/Align A": "Command",
+      "/SmartDashboard/Align B": "Command",
+      "/SmartDashboard/Align C": "Command",
+      "/SmartDashboard/Align D": "Command",
+      "/SmartDashboard/Align E": "Command",
+      "/SmartDashboard/Align F": "Command",
+      "/SmartDashboard/Align G": "Command",
+      "/SmartDashboard/Align H": "Command",
+      "/SmartDashboard/Align I": "Command",
+      "/SmartDashboard/Align J": "Command",
+      "/SmartDashboard/Align K": "Command",
+      "/SmartDashboard/Align L": "Command",
+      "/SmartDashboard/Align LEFTHP": "Command",
+      "/SmartDashboard/Align NET": "Command",
+      "/SmartDashboard/Align PROCESSOR": "Command",
+      "/SmartDashboard/Align RIGHTHP": "Command",
       "/SmartDashboard/AlignLEFT ": "Command",
       "/SmartDashboard/AlignRight": "Command",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Drive To Center Command": "Command",
+      "/SmartDashboard/Drive to center": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Go To B": "Command",
@@ -90,13 +118,16 @@
       "/SmartDashboard/f": "Command",
       "/SmartDashboard/g": "Command",
       "/SmartDashboard/h": "Command",
+      "/SmartDashboard/lintake": "Command",
       "/SmartDashboard/open funnel": "Command",
       "/SmartDashboard/quasistatic forward steer": "Command",
       "/SmartDashboard/quasistatic forward translation": "Command",
       "/SmartDashboard/quasistatic reverse steer": "Command",
       "/SmartDashboard/quasistatic reverse translation": "Command",
       "/SmartDashboard/runme hehe": "Command",
-      "/SmartDashboard/teleport": "Command"
+      "/SmartDashboard/teleport": "Command",
+      "/SmartDashboard/test": "Command",
+      "/SmartDashboard/test hi": "Command"
     },
     "windows": {
       "/SmartDashboard/April Tag Debug Field": {
@@ -190,6 +221,26 @@
         }
       },
       "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 0": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 2": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Module 3": {
         "window": {
           "visible": true
         }
@@ -422,12 +473,13 @@
           "arrowSize": 25,
           "arrowWeight": 2.0,
           "color": [
-            0.7045847773551941,
-            0.7914843559265137,
-            0.7941176295280457,
+            0.3744233250617981,
+            0.7675007581710815,
+            0.779411792755127,
             255.0
           ],
           "length": 0.9399999976158142,
+          "selectable": false,
           "style": "Box/Image",
           "width": 0.9399999976158142
         },
@@ -440,6 +492,7 @@
             255.0
           ],
           "length": 0.9399999976158142,
+          "selectable": false,
           "style": "Hidden",
           "width": 0.9399999976158142
         },
@@ -472,6 +525,7 @@
           ],
           "arrowSize": 100,
           "arrowWeight": 2.0,
+          "arrows": false,
           "color": [
             255.0,
             167.8480987548828,
@@ -502,15 +556,60 @@
           ]
         },
         "estimation": {
+          "arrows": false,
           "color": [
             0.9588443040847778,
             0.970588207244873,
             0.042820051312446594,
             255.0
-          ]
+          ],
+          "selectable": false,
+          "style": "Box/Image"
+        },
+        "f": {
+          "arrows": false,
+          "selectable": false,
+          "style": "Line"
         },
         "height": 8.051901817321777,
+<<<<<<< HEAD
         "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+=======
+        "ideal": {
+          "arrows": false,
+          "color": [
+            0.5740254521369934,
+            0.3892252743244171,
+            0.8725489974021912,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "past": {
+          "arrows": false,
+          "color": [
+            0.906862735748291,
+            0.7604258060455322,
+            0.2845059335231781,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
+        "path": {
+          "arrows": false,
+          "color": [
+            0.4281767010688782,
+            0.6010612845420837,
+            0.8480392098426819,
+            255.0
+          ],
+          "style": "Line",
+          "weight": 8.0
+        },
+>>>>>>> origin/align-v3
         "rejected": {
           "arrows": false,
           "color": [
@@ -521,11 +620,34 @@
           ],
           "length": 0.9399999976158142,
           "selectable": false,
+          "style": "Box/Image",
           "width": 0.9399999976158142
         },
         "right": 2932,
-        "target": {
+        "robot path": {
           "arrows": false,
+          "color": [
+            0.8627451062202454,
+            0.29852771759033203,
+            0.17762400209903717,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
+        "sim path": {
+          "arrows": false,
+          "color": [
+            0.22241443395614624,
+            0.8725489974021912,
+            0.6048464179039001,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
+        },
+        "target": {
+          "arrowSize": 42,
           "color": [
             0.8649789094924927,
             0.31752389669418335,
@@ -536,6 +658,17 @@
           "selectable": false,
           "style": "Box/Image",
           "width": 0.9399999976158142
+        },
+        "transit": {
+          "arrows": false,
+          "color": [
+            0.7613812685012817,
+            0.35229238867759705,
+            0.8872548937797546,
+            255.0
+          ],
+          "selectable": false,
+          "style": "Line"
         },
         "visibleTargetPoses": {
           "arrowColor": [
@@ -552,9 +685,15 @@
           ],
           "length": 0.4000000059604645,
           "selectable": false,
+          "style": "Box/Image",
           "width": 0.4000000059604645
         },
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/test": {
         "window": {
           "visible": true
         }
@@ -567,7 +706,9 @@
         "ChassisSpeeds##v_/DriveState/Speeds": {
           "open": true
         },
-        "open": true
+        "SwerveModuleState[]##v_/DriveState/ModuleTargets": {
+          "open": true
+        }
       },
       "SmartDashboard": {
         "open": true
@@ -575,12 +716,6 @@
     }
   },
   "NetworkTables Info": {
-    "Server": {
-      "Subscribers": {
-        "open": true
-      },
-      "open": true
-    },
     "visible": true
   },
   "Plot": {
@@ -590,8 +725,8 @@
           "axis": [
             {
               "label": "Axis",
-              "lockMin": true,
-              "max": 5.0
+              "max": 5.0,
+              "min": -5.0
             }
           ],
           "backgroundColor": [
@@ -620,6 +755,15 @@
                 1.0
               ],
               "id": "NT:/SmartDashboard/ru"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/du"
             }
           ]
         }
@@ -627,6 +771,56 @@
       "window": {
         "visible": false
       }
+<<<<<<< HEAD
+=======
+    },
+    "Plot <1>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "max": 0.1,
+              "min": -0.1
+            }
+          ],
+          "backgroundColor": [
+            0.05999999865889549,
+            0.05999999865889549,
+            0.05999999865889549,
+            0.9399999976158142
+          ],
+          "height": 317,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/u goal"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/i goal"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <2>": {
+      "window": {
+        "visible": false
+      }
+>>>>>>> origin/align-v3
     }
   }
 }

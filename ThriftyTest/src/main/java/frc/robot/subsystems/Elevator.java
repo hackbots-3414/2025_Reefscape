@@ -30,10 +30,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.SimConstants;
+import frc.robot.Constants.ElevatorConstants.ElevatorState;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 
@@ -68,7 +70,7 @@ public class Elevator extends PassiveSubsystem {
     configMotor();
     configCANrange();
     configSim();
-    SmartDashboard.putData("Lazy Zero Elevator", runOnce(this::zeroElevator).ignoringDisable(true));
+    SmartDashboard.putData("Lazy Zero Elevator", runOnce(this::calibrateZero).ignoringDisable(true));
   }
 
   private void configCANrange() {
@@ -127,64 +129,14 @@ public class Elevator extends PassiveSubsystem {
     m_reference = goal;
   }
 
-  private void setGround() {
-    setPosition(ElevatorConstants.groundIntake);
-  }
-
-  private void setHighGround() {
-    setPosition(ElevatorConstants.highGroundIntake);
-  }
-
-  private void setStow() {
-    setPosition(ElevatorConstants.stow);
-  }
-
-  private void setEject() {
-    setPosition(ElevatorConstants.eject);
-  }
-
-  private void setProcessor() {
-    setPosition(ElevatorConstants.processor);
-  }
-
-  private void setL1() {
-    setPosition(ElevatorConstants.L1);
-  }
-
-  private void setSecondaryL1() {
-    setPosition(ElevatorConstants.secondaryL1);
-  }
-
-  private void setL2() {
-    setPosition(ElevatorConstants.L2);
-  }
-
-  private void setL3() {
-    setPosition(ElevatorConstants.L3);
-  }
-
-  private void setL4() {
-    setPosition(ElevatorConstants.L4);
-  }
-
-  private void setLowReef() {
-    setPosition(ElevatorConstants.reefLower);
-  }
-
-  private void setHighReef() {
-    setPosition(ElevatorConstants.reefUpper);
-  }
-
-  private void setNet() {
-    setPosition(ElevatorConstants.net);
-  }
-
-  public boolean ready() {
-    if (Robot.isSimulation())
-      return true;
-    boolean at = Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
-    m_logger.debug("Setpoint: {}", at);
-    return at;
+  public Trigger ready() {
+    return new Trigger(() -> {
+      if (Robot.isSimulation())
+        return true;
+      boolean at = Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+      m_logger.debug("Setpoint: {}", at);
+      return at;
+    });
   }
 
   public double getReference() {
@@ -209,7 +161,7 @@ public class Elevator extends PassiveSubsystem {
         .withLimitReverseMotion(false).withIgnoreHardwareLimits(true));
   }
 
-  private void zeroElevator() {
+  private void calibrateZero() {
     m_elevatorRight.setPosition(0.0, 0.2);
   }
 
@@ -236,7 +188,7 @@ public class Elevator extends PassiveSubsystem {
       m_speedChanged = false;
     }
 
-    SmartDashboard.putBoolean("ELEVATOR AT POSITION", ready());
+    SmartDashboard.putBoolean("ELEVATOR AT POSITION", ready().getAsBoolean());
   }
 
   @Override
@@ -270,121 +222,27 @@ public class Elevator extends PassiveSubsystem {
 
   protected void passive() {}
 
-  /**
-   * Stows the elevator
-   */
-  public Command stow() {
+  public Command go(ElevatorState state) {
     return Commands.sequence(
-        runOnce(this::setStow),
-        Commands.waitUntil(this::ready));
+        runOnce(() -> setPosition(state.position())),
+        Commands.waitUntil(ready()));
   }
 
-  /**
-   * Goes to the height to eject a coral
-   */
-  public Command eject() {
-    return Commands.sequence(
-        runOnce(this::setEject),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to L1 height
-   */
-  public Command l1() {
-    return Commands.sequence(
-        runOnce(this::setL1),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to the secondary (higher) L1 height
-   */
-  public Command secondaryL1() {
-    return Commands.sequence(
-        runOnce(this::setSecondaryL1),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to L2 height
-   */
-  public Command l2() {
-    return Commands.sequence(
-        runOnce(this::setL2),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to L3 height
-   */
-  public Command l3() {
-    return Commands.sequence(
-        runOnce(this::setL3),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * goes to L4 height
-   */
-  public Command l4() {
-    return Commands.sequence(
-        runOnce(this::setL4),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to the ground height
-   */
-  public Command ground() {
-    return Commands.sequence(
-        runOnce(this::setGround),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to the high ground height
-   */
-  public Command highGround() {
-    return Commands.sequence(
-        runOnce(this::setHighGround),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to net height
-   */
-  public Command net() {
-    return Commands.sequence(
-        runOnce(this::setNet),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to processor height
-   */
-  public Command processor() {
-    return Commands.sequence(
-        runOnce(this::setProcessor),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to the position for intaking off the lower reef slot
-   */
-  public Command lowReef() {
-    return Commands.sequence(
-        runOnce(this::setLowReef),
-        Commands.waitUntil(this::ready));
-  }
-
-  /**
-   * Goes to the position for intaking off the higher reef slot
-   */
-  public Command highReef() {
-    return Commands.sequence(
-        runOnce(this::setHighReef),
-        Commands.waitUntil(this::ready));
+  public Command go(CoralLevel level) {
+    switch (level) {
+      case L1:
+        return go(ElevatorState.L1);
+      case SecondaryL1:
+        return go(ElevatorState.SecondaryL1);
+      case L2:
+        return go(ElevatorState.L2);
+      case L3:
+        return go(ElevatorState.L3);
+      case L4:
+        return go(ElevatorState.L4);
+      default:
+        return Commands.none();
+    }
   }
 
   /**
@@ -399,7 +257,7 @@ public class Elevator extends PassiveSubsystem {
         .finallyDo(this::enableLimits)
         .finallyDo(interrupted -> {
           if (!interrupted) {
-            zeroElevator();
+            calibrateZero();
           }
         });
   }

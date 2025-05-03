@@ -109,7 +109,10 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
         .unless(holdingAlgae());
   }
 
-  public Command netScore() {
+  /**
+   * Ejects an algae with the correct conditions for a net score
+   */
+  public Command net() {
     return Commands.sequence(
         runOnce(() -> setMotor(AlgaeRollerConstants.netEjectVoltage)),
         Commands.waitSeconds(AlgaeRollerConstants.algaeEjectTime))
@@ -118,10 +121,13 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
         .onlyIf(holdingAlgae());
   }
 
+  /**
+   * Ejects an algae with the correct conditions for a processor score
+   */
   public Command processorScore() {
     return Commands.sequence(
         runOnce(() -> setMotor(AlgaeRollerConstants.processorEjectVoltage)),
-        Commands.waitUntil(holdingAlgae()))
+        Commands.waitSeconds(AlgaeRollerConstants.processorScoreTime))
 
         .finallyDo(this::keep)
         .onlyIf(holdingAlgae());

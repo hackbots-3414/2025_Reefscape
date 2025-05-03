@@ -10,8 +10,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
 import frc.robot.RobotObserver;
 
-public class DriverAssist {
-    private final Logger m_logger = LoggerFactory.getLogger(DriverAssist.class);
+public class ForceField {
+    private final Logger m_logger = LoggerFactory.getLogger(ForceField.class);
 
     /**
      * Returns the calculated drive command to apply to the drivetrian

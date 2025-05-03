@@ -8,12 +8,10 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IDConstants;
@@ -51,12 +49,14 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
         .setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
   }
 
-  private void openFunnel() {
-    m_servo.set(ClimberConstants.k_openServoPosition);
-  }
-
-  private void closeFunnel() {
-    m_servo.set(ClimberConstants.k_closedServoPosition);
+  /*
+   * Opens the funnel, then resets the servo
+   */
+  public Command openFunnel() {
+    return Commands.sequence(
+        runOnce(() -> m_servo.set(ClimberConstants.k_openServoPosition)),
+        Commands.waitSeconds(ClimberConstants.kFunnelOpenTime),
+        runOnce(() -> m_servo.set(ClimberConstants.k_closedServoPosition)));
   }
 
   private void setMotor(double voltage) {
@@ -134,7 +134,7 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
   public Command lower() {
     return Commands.sequence(
         runOnce(this::setDown),
-        Commands.waitUntil(lowered())
+        Commands.waitUntil(lowered()))
 
         .finallyDo(this::stop);
   }
@@ -143,9 +143,9 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
    * Drives the climber down until the climb position is reached 
    */
   public Command climb() {
-    return Commands.sequencee(
+    return Commands.sequence(
         runOnce(this::setDown),
-        Commands.waitUntil(climbed())
+        Commands.waitUntil(climbed()))
 
         .finallyDo(this::stop);
   }

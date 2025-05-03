@@ -6,16 +6,19 @@ import frc.robot.Constants.ElevatorConstants.ElevatorState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class Stowed implements EnterableState {
+public class NetReady implements EnterableState {
   /**
-   * Stows all the stowables on the robot
+   * A state that sets the robot up to score in the net
    */
-  public Stowed() {}
+  public NetReady() {}
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(
-        subsystems.elevator().go(ElevatorState.Stow).asProxy(),
-        subsystems.pivot().stow());
+        subsystems.elevator().go(ElevatorState.Net),
+        subsystems.pivot().net())
+
+        .onlyIf(subsystems.algae().holdingAlgae())
+        .finallyDo(subsystems.elevator()::conditionalRelease)
+        .finallyDo(subsystems.pivot()::conditionalRelease);
   }
 }
-

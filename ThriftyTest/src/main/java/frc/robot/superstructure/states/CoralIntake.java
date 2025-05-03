@@ -6,16 +6,18 @@ import frc.robot.Constants.ElevatorConstants.ElevatorState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class Stowed implements EnterableState {
+public class CoralIntake implements EnterableState {
   /**
-   * Stows all the stowables on the robot
+   * A state to intake coral
    */
-  public Stowed() {}
+  public CoralIntake() {}
 
   public Command build(Subsystems subsystems) {
-    return Commands.parallel(
-        subsystems.elevator().go(ElevatorState.Stow).asProxy(),
-        subsystems.pivot().stow());
+    return Commands.sequence(
+        subsystems.elevator().go(ElevatorState.Stow),
+        subsystems.coral().intake())
+
+        .unless(subsystems.coral().holding())
+        .finallyDo(subsystems.elevator()::release);
   }
 }
-

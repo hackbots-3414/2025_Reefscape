@@ -5,9 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Align H"
+            "pathName": "EIntake"
           }
         },
         {
@@ -15,11 +15,17 @@
           "data": {
             "name": "RIntake Align"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "IntakeB"
+          }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

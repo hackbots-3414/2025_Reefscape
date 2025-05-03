@@ -78,7 +78,7 @@ public class Shape {
     if (!RobotObserver.getVisionValid()) { // vision off = don't run shape logic
       return true;
     }
-    boolean isInside = isPointInside(FieldUtils.flipPose(RobotObserver.getPose()).getTranslation());
+    boolean isInside = isPointInside(FieldUtils.getGlobalPose(RobotObserver.getPose()).getTranslation());
     return isInside;
   }
 
