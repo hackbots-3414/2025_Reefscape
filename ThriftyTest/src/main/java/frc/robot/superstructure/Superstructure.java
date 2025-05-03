@@ -1,0 +1,55 @@
+package frc.robot.superstructure;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.AlgaeRollers;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CoralRollers;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LedFeedback;
+import frc.robot.subsystems.Pivot;
+
+public class Superstructure {
+  private final Subsystems m_subsystems;
+
+  /**
+   * Constructs a new superstructure given the individual subsystems
+   */
+  public Superstructure(
+      AlgaeRollers algaeRollers,
+      CoralRollers coralRollers,
+      Pivot pivot,
+      Elevator elevator,
+      Climber climber,
+      CommandSwerveDrivetrain drivetrain,
+      LedFeedback leds) {
+
+    m_subsystems = new Subsystems(
+        algaeRollers,
+        coralRollers,
+        pivot,
+        elevator,
+        climber,
+        drivetrain,
+        leds);
+  }
+
+  public Command enter(EnterableState state) {
+    return state.build(m_subsystems);
+  }
+
+  public void setDrive(Command driveCommand) {
+    m_subsystems.drivetrain().setDefaultCommand(driveCommand);
+  }
+
+  public static record Subsystems(
+      AlgaeRollers algaeRollers,
+      CoralRollers coralRollers,
+      Pivot pivot,
+      Elevator elevator,
+      Climber climber,
+      CommandSwerveDrivetrain drivetrain,
+      LedFeedback leds) {
+      }
+
+}

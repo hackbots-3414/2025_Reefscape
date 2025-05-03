@@ -7,102 +7,123 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeRollerConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 
-public class AlgaeRollers extends SubsystemBase implements AutoCloseable {
-    @SuppressWarnings("unused")
-    private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
-    
-    private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algae);
+public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
+  @SuppressWarnings("unused")
+  private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
 
-    private double m_voltage;
-    private boolean m_voltageChanged;
+  private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algae);
 
-    private boolean m_hasAlgae;
+  private double m_voltage;
+  private boolean m_voltageChanged;
 
-    private MedianFilter m_filter = new MedianFilter(10);
+  private boolean m_hasAlgae;
 
-    public AlgaeRollers() {
-        configIntakeMotor();
-        RobotObserver.setAlgaePieceHeldSupplier(this::algaeHeld);
+  private MedianFilter m_filter = new MedianFilter(10);
+
+  public AlgaeRollers() {
+    super();
+    configIntakeMotor();
+    RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());
+  }
+
+  private void configIntakeMotor() {
+    m_algaeRoller.clearStickyFaults();
+    m_algaeRoller.getConfigurator().apply(AlgaeRollerConstants.motorConfig);
+  }
+
+  private void setMotor(double voltage) {
+    if (voltage != m_voltage) {
+      m_voltageChanged = true;
+    }
+    m_voltage = voltage;
+  }
+
+  public Trigger holdingAlgae() {
+    return new Trigger(() -> m_hasAlgae);
+  }
+
+  private double getTorqueCurrent() {
+    double measurement = m_algaeRoller.getTorqueCurrent().getValueAsDouble();
+    return m_filter.calculate(measurement);
+  }
+
+  private void stop() {
+    setMotor(0);
+  }
+
+  /**
+   * If <code>shouldHold</code> is true, then try to hold an algae. Otherwise, stop the motors.
+   */
+  private void keep(boolean shouldHold) {
+    if (shouldHold) {
+      setMotor(AlgaeRollerConstants.holdVoltage);
+    } else {
+      stop();
+    }
+  }
+
+  private void updateObjectState() {
+    if (Robot.isReal()) {
+      m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
+    } else {
+      m_hasAlgae = SmartDashboard.getBoolean("Algae Held", false);
     }
 
-    private void configIntakeMotor() {
-        m_algaeRoller.clearStickyFaults();
-        m_algaeRoller.getConfigurator().apply(AlgaeRollerConstants.motorConfig);
+    SmartDashboard.putBoolean("Algae Held", m_hasAlgae);
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Algae Temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
+    updateObjectState();
+    if (m_voltageChanged) {
+      m_algaeRoller.setVoltage(m_voltage);
+      m_voltageChanged = false;
     }
+  }
 
-    private void setMotor(double voltage) {
-        if (voltage != m_voltage) {
-            m_voltageChanged = true;
-        }
-        m_voltage = voltage;
-    }
+  @Override
+  public void close() throws Exception {
+    m_algaeRoller.close();
+  }
 
-    public boolean algaeHeld() {
-        return m_hasAlgae;
-    }
+  protected void passive() {}
 
-    public void intakeAlgae() {
-        if (algaeHeld()) {
-            setMotor(AlgaeRollerConstants.holdVoltage);
-        } else {
-            setMotor(AlgaeRollerConstants.intakeVoltage);
-        }
-    }
+  /**
+   * Intakes an algae, then holds it. If an algae is already held, the command does not run.
+   */
+  public Command intake() {
+    return Commands.sequence(
+        runOnce(() -> setMotor(AlgaeRollerConstants.intakeVoltage)),
+        Commands.waitUntil(holdingAlgae()))
 
-    public void smartStop() {
-        if (algaeHeld()) {
-            setMotor(AlgaeRollerConstants.holdVoltage);
-        } else {
-            stopMotor();
-        }
-    }
+        .finallyDo(this::keep)
+        .unless(holdingAlgae());
+  }
 
-    private double getTorqueCurrent() {
-        double measurement = m_algaeRoller.getTorqueCurrent().getValueAsDouble();
-        return m_filter.calculate(measurement);
-    }
+  public Command netScore() {
+    return Commands.sequence(
+        runOnce(() -> setMotor(AlgaeRollerConstants.netEjectVoltage)),
+        Commands.waitSeconds(AlgaeRollerConstants.algaeEjectTime))
 
-    public void ejectAlgae() {
-        setMotor(AlgaeRollerConstants.ejectVoltage);
-    }
+        .finallyDo(this::keep)
+        .onlyIf(holdingAlgae());
+  }
 
-    public void processorEjectAlgae() {
-        setMotor(AlgaeRollerConstants.processorEjectVoltage);
-    }
+  public Command processorScore() {
+    return Commands.sequence(
+        runOnce(() -> setMotor(AlgaeRollerConstants.processorEjectVoltage)),
+        Commands.waitUntil(holdingAlgae()))
 
-    public void stopMotor() {
-        setMotor(0);
-    }
-
-    private void updateObjectState() {
-        if (Robot.isReal()) {
-            m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
-        } else {
-            m_hasAlgae = SmartDashboard.getBoolean("Algae Held", false);
-        }
-
-        SmartDashboard.putBoolean("Algae Held", m_hasAlgae);
-    }
-
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("Algae Temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
-        updateObjectState();
-        if (m_voltageChanged) {
-            m_algaeRoller.setVoltage(m_voltage);
-            m_voltageChanged = false;
-        }
-    }
-
-    @Override
-    public void close() throws Exception {
-        m_algaeRoller.close();
-    }
-
+        .finallyDo(this::keep)
+        .onlyIf(holdingAlgae());
+  }
 }

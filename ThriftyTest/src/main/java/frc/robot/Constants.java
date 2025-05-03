@@ -20,7 +20,6 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.ToFParamsConfigs;
-import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -681,7 +680,7 @@ public class Constants {
 
         public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
 
-        public static final double spitOutVoltage = -6;
+        public static final double reverseEjectVoltage = -6;
         public static final double fastEjectVoltage = -10;
 
         public static final double l1LeftEjectVoltage = 2;
@@ -757,6 +756,7 @@ public class Constants {
 
         public static final double forwardSoftLimit = 0.0;
         public static final double reverseSoftLimit = -0.25;
+        public static final double stowPosition = -0.25;
         public static final double climbPosition = -0.110;
         public static final double kShakePosition = -0.02;
 
@@ -805,7 +805,7 @@ public class Constants {
 
     public static final class AlgaeRollerConstants {
         public static final double intakeVoltage = 12;
-        public static final double ejectVoltage = -3.0; // 3.0  
+        public static final double netEjectVoltage = -3.0; // 3.0  
         public static final double processorEjectVoltage = -3.2;
 
         public static final double torqueCurrentThreshold = 75;

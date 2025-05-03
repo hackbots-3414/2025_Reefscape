@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -14,7 +14,9 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
@@ -23,6 +25,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -50,298 +53,344 @@ import frc.robot.utils.FieldUtils;
 import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
- * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
- * Subsystem so it can easily be used in command-based projects.
+ * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
+ * be used in command-based projects.
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-    @SuppressWarnings("unused")
-    private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
+  @SuppressWarnings("unused")
+  private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
 
-    private Notifier m_simNotifier = null;
-    private double m_lastSimTime;
+  private Notifier m_simNotifier = null;
+  private double m_lastSimTime;
 
-    private boolean m_aligned;
+  private boolean m_aligned;
 
-    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
-    /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
-    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
-    /* Keep track if we've ever applied the operator perspective before or not */
-    private boolean m_hasAppliedOperatorPerspective = false;
+  private SwerveRequest.FieldCentric m_teleopRequest = new SwerveRequest.FieldCentric()
+      .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
+      .withDriveRequestType(DriveRequestType.Velocity);
 
-    private Pose2d m_estimatedPose = new Pose2d();
+  /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
+  private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
 
-    private double m_oldVisionTimestamp = -1;
+  /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
+  private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
-    private boolean m_validPose = false;
+  /* Keep track if we've ever applied the operator perspective before or not */
+  private boolean m_hasAppliedOperatorPerspective = false;
 
-    private SwerveSetpointGenerator setpointGenerator;
-    private SwerveSetpoint previousSetpoint;
-    private final ApplyRobotSpeeds autoRequest = new ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+  private Pose2d m_estimatedPose = new Pose2d();
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, modules);
-        setup();
+  private double m_oldVisionTimestamp = -1;
+
+  private boolean m_validPose = false;
+
+  private SwerveSetpointGenerator setpointGenerator;
+
+  private SwerveSetpoint previousSetpoint;
+
+  private final ApplyRobotSpeeds autoRequest =
+      new ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+
+  public CommandSwerveDrivetrain(
+      SwerveDrivetrainConstants drivetrainConstants,
+      SwerveModuleConstants<?, ?, ?>... modules) {
+    super(drivetrainConstants, modules);
+    setup();
+  }
+
+  public CommandSwerveDrivetrain(
+      SwerveDrivetrainConstants drivetrainConstants,
+      double odometryUpdateFrequency,
+      SwerveModuleConstants<?, ?, ?>... modules) {
+    super(drivetrainConstants, odometryUpdateFrequency, modules);
+    setup();
+  }
+
+  public CommandSwerveDrivetrain(
+      SwerveDrivetrainConstants drivetrainConstants,
+      double odometryUpdateFrequency,
+      Matrix<N3, N1> odometryStandardDeviation, Matrix<N3, N1> visionStandardDeviation,
+      SwerveModuleConstants<?, ?, ?>... modules) {
+    super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation,
+        visionStandardDeviation,
+        modules);
+    setup();
+  }
+
+  private void setup() {
+    AutonomousUtil.initializePathPlanner(this);
+    if (Robot.isSimulation()) {
+      startSimThread();
+    }
+    m_aligned = false;
+
+    RobotObserver.setVisionValidSupplier(this::getVisionValid);
+    RobotObserver.setPoseSupplier(this::getPose);
+    RobotObserver.setVelocitySupplier(this::getVelocity);
+    RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
+    RobotObserver.setReefReadySupplier(this::getReefReady);
+    RobotObserver.setAlginedSupplier(this::isAligned);
+  }
+
+  public void initializeSetpointGenerator(RobotConfig config) {
+    setpointGenerator = new SwerveSetpointGenerator(config,
+        Units.rotationsToRadians(DriveConstants.k_maxRotationalSpeed));
+
+    ChassisSpeeds currSpeeds = getRobotRelativeSpeeds();
+    SwerveModuleState[] currStates = getState().ModuleStates;
+    previousSetpoint =
+        new SwerveSetpoint(currSpeeds, currStates, DriveFeedforwards.zeros(config.numModules));
+  }
+
+  public Translation2d getVelocityComponents() {
+    double vx = getRobotRelativeSpeeds().vxMetersPerSecond;
+    double vy = getRobotRelativeSpeeds().vyMetersPerSecond;
+    Rotation2d theta = getPose().getRotation();
+    return new Translation2d(vx, vy).rotateBy(theta);
+
+  }
+
+  public double getVelocity() {
+    Translation2d velo = getVelocityComponents();
+    return velo.getNorm();
+  }
+
+  public Pose2d getPose() {
+    return m_estimatedPose;
+  }
+
+  public Pose2d getNearestAntitarget() {
+    return new Pose2d(FFConstants.k_bargeX, m_estimatedPose.getY(), new Rotation2d());
+  }
+
+  /**
+   * returns the current pose, with red side poses flipped
+   */
+  public Pose2d getBluePose() {
+    return FieldUtils.flipPose(m_estimatedPose);
+  }
+
+  public void zeroPose() {
+    setPose(new Pose2d());
+  }
+
+  public Command resetHeading() {
+    return runOnce(() -> setOperatorPerspectiveForward(getPose().getRotation()));
+  }
+
+  public void setPose(Pose2d pose) {
+    resetPose(pose);
+  }
+
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return getState().Speeds;
+  }
+
+  public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
+    previousSetpoint = setpointGenerator.generateSetpoint(
+        previousSetpoint, // The previous setpoint
+        speeds, // The desired target speeds
+        0.02 // The loop time of the robot code, in seconds
+    );
+
+    setControl(autoRequest.withSpeeds(previousSetpoint.robotRelativeSpeeds()));
+  }
+
+  public void stop() {
+    setControl(new SwerveRequest.SwerveDriveBrake());
+  }
+
+  public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
+    return run(() -> this.setControl(requestSupplier.get()));
+  }
+
+  @Override
+  public void periodic() {
+    m_estimatedPose = this.getState().Pose;
+
+    SmartDashboard.putBoolean("Drivetrain Aligned", m_aligned);
+    SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+
+    if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+      DriverStation.getAlliance().ifPresent(allianceColor -> {
+        setOperatorPerspectiveForward(
+            allianceColor == Alliance.Red
+                ? kRedAlliancePerspectiveRotation
+                : kBlueAlliancePerspectiveRotation);
+        m_hasAppliedOperatorPerspective = true;
+      });
     }
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
-        setup();
+    handleVisionToggle();
+  }
+
+  private void startSimThread() {
+    m_lastSimTime = Utils.getCurrentTimeSeconds();
+
+    m_simNotifier = new Notifier(() -> {
+      final double currentTime = Utils.getCurrentTimeSeconds();
+      double deltaTime = currentTime - m_lastSimTime;
+      m_lastSimTime = currentTime;
+
+      updateSimState(deltaTime, RobotController.getBatteryVoltage());
+    });
+    m_simNotifier.startPeriodic(SimConstants.k_simPeriodic);
+  }
+
+  private boolean getVisionValid() {
+    return m_validPose;
+  }
+
+  private void handleVisionToggle() {
+    if (m_oldVisionTimestamp >= 0) {
+      m_validPose = Utils.getCurrentTimeSeconds()
+          - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
     }
+    SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
+  }
 
-    public CommandSwerveDrivetrain(SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
-            Matrix<N3, N1> odometryStandardDeviation, Matrix<N3, N1> visionStandardDeviation,
-            SwerveModuleConstants<?, ?, ?>... modules) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
-                modules);
-        setup();
+  /* Swerve requests to apply during SysId characterization */
+  private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization =
+      new SwerveRequest.SysIdSwerveTranslation();
+  private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization =
+      new SwerveRequest.SysIdSwerveSteerGains();
+  private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
+      new SwerveRequest.SysIdSwerveRotation();
+
+  private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
+      new SysIdRoutine.Config(
+          null, // Use default ramp rate (1 V/s)
+          Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+          null, // Use default timeout (10 s)
+          // Log state with SignalLogger class
+          state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+      new SysIdRoutine.Mechanism(
+          output -> setControl(m_translationCharacterization.withVolts(output)),
+          null,
+          this));
+
+  private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
+      new SysIdRoutine.Config(
+          null, // Use default ramp rate (1 V/s)
+          Volts.of(7), // Use dynamic voltage of 7 V
+          null, // Use default timeout (10 s)
+          // Log state with SignalLogger class
+          state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
+      new SysIdRoutine.Mechanism(
+          volts -> setControl(m_steerCharacterization.withVolts(volts)),
+          null,
+          this));
+
+  private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
+      new SysIdRoutine.Config(
+          /* This is in radians per second², but SysId only supports "volts per second" */
+          Volts.of(Math.PI / 6).per(Second),
+          /* This is in radians per second, but SysId only supports "volts" */
+          Volts.of(Math.PI),
+          null, // Use default timeout (10 s)
+          // Log state with SignalLogger class
+          state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+      new SysIdRoutine.Mechanism(
+          output -> {
+            /* output is actually radians per second, but SysId only supports "volts" */
+            setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+            /* also log the requested output for SysId */
+            SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+          },
+          null,
+          this));
+
+  public void driveRobotRelative(ChassisSpeeds speeds) {
+    setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds));
+  }
+
+  public void addPoseEstimate(TimestampedPoseEstimate estimate) {
+    m_oldVisionTimestamp = estimate.timestamp();
+    // This should NOT run in simulation!
+    if (Robot.isSimulation())
+      return;
+    // Depending on our configs, we should use or not use the std devs
+    if (Constants.VisionConstants.k_useStdDevs) {
+      addVisionMeasurement(
+          estimate.pose(),
+          estimate.timestamp(),
+          estimate.stdDevs());
+    } else {
+      addVisionMeasurement(
+          estimate.pose(),
+          estimate.timestamp());
     }
+  }
 
-    private void setup() {
-        AutonomousUtil.initializePathPlanner(this);
-        if (Robot.isSimulation()) {
-            startSimThread();
-        }
-        m_aligned = false;
+  public Command sysIdQuasistaticTranslation(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineTranslation.quasistatic(direction);
+  }
 
-        RobotObserver.setVisionValidSupplier(this::getVisionValid);
-        RobotObserver.setPoseSupplier(this::getPose);
-        RobotObserver.setVelocitySupplier(this::getVelocity);
-        RobotObserver.setNoElevatorZoneSupplier(this::noElevatorZone);
-        RobotObserver.setReefReadySupplier(this::getReefReady);
-        RobotObserver.setAlginedSupplier(this::isAligned);
-    }
+  public Command sysIdDynamicTranslation(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineTranslation.dynamic(direction);
+  }
 
-    public void initializeSetpointGenerator(RobotConfig config) {
-        setpointGenerator = new SwerveSetpointGenerator(config, Units.rotationsToRadians(DriveConstants.k_maxRotationalSpeed));
+  public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineSteer.quasistatic(direction);
+  }
 
-        ChassisSpeeds currSpeeds = getRobotRelativeSpeeds();
-        SwerveModuleState[] currStates = getState().ModuleStates;
-        previousSetpoint = new SwerveSetpoint(currSpeeds, currStates, DriveFeedforwards.zeros(config.numModules));
-    }
-    
-    public Translation2d getVelocityComponents() {
-        double vx = getRobotRelativeSpeeds().vxMetersPerSecond;
-        double vy = getRobotRelativeSpeeds().vyMetersPerSecond;
-        Rotation2d theta = getPose().getRotation();
-        return new Translation2d(vx, vy).rotateBy(theta);
-        
-    }
+  public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineSteer.dynamic(direction);
+  }
 
-    public double getVelocity() {
-        Translation2d velo = getVelocityComponents();
-        return velo.getNorm();
-    }
+  public Command sysIdQuasistaticRotation(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineRotation.quasistatic(direction);
+  }
 
-    public Pose2d getPose() {
-        return m_estimatedPose;
-    }
+  public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineRotation.dynamic(direction);
+  }
 
-    public Pose2d getNearestAntitarget() {
-        return new Pose2d(FFConstants.k_bargeX, m_estimatedPose.getY(), new Rotation2d());
-    }
+  private boolean noElevatorZone() {
+    double distance = getNearestAntitarget()
+        .getTranslation()
+        .minus(m_estimatedPose.getTranslation())
+        .getNorm();
+    return distance < FFConstants.k_radius && !DriverStation.isAutonomous();
+  }
 
-    /**
-     * returns the current pose, with red side poses flipped
-     */
-    public Pose2d getBluePose() {
-        return FieldUtils.flipPose(m_estimatedPose);
-    }
+  public void setAligned(boolean aligned) {
+    m_aligned = aligned;
+  }
 
-    public void zeroPose() {
-        setPose(new Pose2d());
-    }
+  public boolean isAligned() {
+    return m_aligned;
+  }
 
-    public void resetHeading() {
-        setOperatorPerspectiveForward(getPose().getRotation());
-    }
+  public boolean getReefReady() {
+    double distanceToReef = getBluePose().getTranslation()
+        .minus(FieldConstants.reefCenter)
+        .getNorm();
+    boolean inRange =
+        (DriverStation.isAutonomous()) ? distanceToReef <= FieldConstants.kReefReadyAuton
+            : distanceToReef <= FieldConstants.kReefReady;
+    return inRange;
+  }
 
-    public void setPose(Pose2d pose) {
-        resetPose(pose);
-    }
+  /**
+   * Drives the robot from given x, y, and rotatational velocity suppliers.
+   */
+  public Command teleopDrive(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rot) {
+    return run(() -> {
+      setControl(m_teleopRequest
+          .withVelocityX(x.getAsDouble())
+          .withVelocityY(y.getAsDouble())
+          .withRotationalRate(rot.getAsDouble()));
+    });
+  }
 
-    public ChassisSpeeds getRobotRelativeSpeeds() {
-        return getState().Speeds;
-    }
-
-    public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
-        previousSetpoint = setpointGenerator.generateSetpoint(
-            previousSetpoint, // The previous setpoint
-            speeds, // The desired target speeds
-            0.02 // The loop time of the robot code, in seconds
-        );
-
-        setControl(autoRequest.withSpeeds(previousSetpoint.robotRelativeSpeeds()));
-    }
-    
-    public void stop() {
-        setControl(new SwerveRequest.SwerveDriveBrake());
-    }
-
-    public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        return run(() -> this.setControl(requestSupplier.get()));
-    }
-
-    @Override
-    public void periodic() {
-        m_estimatedPose = this.getState().Pose;
-
-        SmartDashboard.putBoolean("Drivetrain Aligned", m_aligned);
-        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-
-        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-            DriverStation.getAlliance().ifPresent(allianceColor -> {
-                setOperatorPerspectiveForward(
-                        allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation);
-                m_hasAppliedOperatorPerspective = true;
-            });
-        }
-
-        handleVisionToggle();
-    }
-
-    private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
-
-        m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
-
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        });
-        m_simNotifier.startPeriodic(SimConstants.k_simPeriodic);
-    }
-
-    private boolean getVisionValid() {
-        return m_validPose;
-    }
-
-    private void handleVisionToggle() {
-        if (m_oldVisionTimestamp >= 0) {
-            m_validPose = Utils.getCurrentTimeSeconds() - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
-        }
-        SmartDashboard.putBoolean("VIABLE POSE", m_validPose);
-    }
-
-    /* Swerve requests to apply during SysId characterization */
-    private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
-    private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
-    private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
-
-    private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    output -> setControl(m_translationCharacterization.withVolts(output)),
-                    null,
-                    this));
-
-    private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    null, // Use default ramp rate (1 V/s)
-                    Volts.of(7), // Use dynamic voltage of 7 V
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    volts -> setControl(m_steerCharacterization.withVolts(volts)),
-                    null,
-                    this));
-
-    private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                    /* This is in radians per second², but SysId only supports "volts per second" */
-                    Volts.of(Math.PI / 6).per(Second),
-                    /* This is in radians per second, but SysId only supports "volts" */
-                    Volts.of(Math.PI),
-                    null, // Use default timeout (10 s)
-                    // Log state with SignalLogger class
-                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
-            new SysIdRoutine.Mechanism(
-                    output -> {
-                        /* output is actually radians per second, but SysId only supports "volts" */
-                        setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
-                        /* also log the requested output for SysId */
-                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-                    },
-                    null,
-                    this));
-
-    public void driveRobotRelative(ChassisSpeeds speeds) {
-        setControl(new SwerveRequest.ApplyRobotSpeeds().withSpeeds(speeds));
-    }
-
-    public void addPoseEstimate(TimestampedPoseEstimate estimate) {
-        m_oldVisionTimestamp = estimate.timestamp();
-        // This should NOT run in simulation!
-        if (Robot.isSimulation()) return;
-        // Depending on our configs, we should use or not use the std devs
-        if (Constants.VisionConstants.k_useStdDevs) {
-            addVisionMeasurement(
-                    estimate.pose(),
-                    estimate.timestamp(),
-                    estimate.stdDevs());
-        } else {
-            addVisionMeasurement(
-                    estimate.pose(),
-                    estimate.timestamp());
-        }
-    }
-
-    public Command sysIdQuasistaticTranslation(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineTranslation.quasistatic(direction);
-    }
-
-    public Command sysIdDynamicTranslation(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineTranslation.dynamic(direction);
-    }
-
-    public Command sysIdQuasistaticSteer(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineSteer.quasistatic(direction);
-    }
-
-    public Command sysIdDynamicSteer(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineSteer.dynamic(direction);
-    }
-
-    public Command sysIdQuasistaticRotation(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineRotation.quasistatic(direction);
-    }
-
-    public Command sysIdDynamicRotation(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineRotation.dynamic(direction);
-    }
-
-    private boolean noElevatorZone() {
-        double distance = getNearestAntitarget()
-            .getTranslation()
-            .minus(m_estimatedPose.getTranslation())
-            .getNorm();
-        return distance < FFConstants.k_radius && !DriverStation.isAutonomous();
-    }
-
-    public void setAligned(boolean aligned) {
-        m_aligned = aligned;
-    }
-
-    public boolean isAligned() {
-        return m_aligned;
-    }
-
-    public boolean getReefReady() {
-        double distanceToReef = getBluePose().getTranslation()
-            .minus(FieldConstants.reefCenter)
-            .getNorm();
-        boolean inRange = (DriverStation.isAutonomous()) ? distanceToReef <= FieldConstants.kReefReadyAuton : distanceToReef <= FieldConstants.kReefReady;
-        return inRange;
-    }
+  /**
+   * Drives to a certain point on the field
+   */
+  public Command driveTo(Pose2d goal) {
+    return run(() -> {
+      Transform2d velocities = getVelocityComponents();
+      Transform2d reference = 
+    });
+  }
 }
