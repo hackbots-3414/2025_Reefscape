@@ -9,10 +9,12 @@ import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Climb;
 import frc.robot.superstructure.states.ClimbRaised;
 import frc.robot.superstructure.states.CompleteCoralIntake;
+import frc.robot.superstructure.states.CoralEject;
 import frc.robot.superstructure.states.CoralIntake;
 import frc.robot.superstructure.states.CoralScore;
 import frc.robot.superstructure.states.CoralScoreReady;
 import frc.robot.superstructure.states.ElevatorZero;
+import frc.robot.superstructure.states.FunnelOpened;
 import frc.robot.superstructure.states.GroundAlgaeIntake;
 import frc.robot.superstructure.states.HighGroundAlgaeIntake;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
@@ -23,6 +25,7 @@ import frc.robot.superstructure.states.NetReady;
 import frc.robot.superstructure.states.Processor;
 import frc.robot.superstructure.states.ProcessorReady;
 import frc.robot.superstructure.states.ReefAlign;
+import frc.robot.superstructure.states.Stowed;
 
 public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
@@ -77,6 +80,7 @@ public class OperatorBindings implements Binder {
     /* coral intake & score */
     m_coralIntake.whileTrue(superstructure.enter(new CoralIntake()));
     m_coralIntake.onFalse(superstructure.enter(new CompleteCoralIntake()));
+    m_ejectCoral.whileTrue(superstructure.enter(new CoralEject()));
     bindCoral(m_l1.and(m_secondaryL1.negate()), CoralLevel.L1, superstructure);
     bindCoral(m_l1.and(m_secondaryL1), CoralLevel.SecondaryL1, superstructure);
     bindCoral(m_l2, CoralLevel.L2, superstructure);
@@ -93,6 +97,8 @@ public class OperatorBindings implements Binder {
 
     /* misc */
     m_zeroElevator.whileTrue(superstructure.enter(new ElevatorZero()));
+    m_stow.whileTrue(superstructure.enter(new Stowed()));
+    m_funnel.whileTrue(superstructure.enter(new FunnelOpened()));
   }
 
   private void bindCoral(Trigger trigger, CoralLevel level, Superstructure superstructure) {

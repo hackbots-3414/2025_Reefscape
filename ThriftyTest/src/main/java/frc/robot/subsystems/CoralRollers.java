@@ -169,4 +169,16 @@ public class CoralRollers extends PassiveSubsystem {
         .onlyIf(holding());
   }
 
+  /**
+   * Ejects a coral piece
+   */
+  public Command eject() {
+    return Commands.sequence(
+        runOnce(() -> setVoltage(CoralConstants.ejectVoltage)),
+        Commands.waitUntil(present().negate()))
+
+      .onlyIf(present())
+      .finallyDo(this::stop);
+  }
+
 }

@@ -109,10 +109,6 @@ public class Pivot extends PassiveSubsystem {
     setPosition(PivotConstants.reefExtract);
   }
 
-  private void stop() {
-    setPosition(m_position);
-  }
-
   public double getPosition() {
     return m_position;
   }
