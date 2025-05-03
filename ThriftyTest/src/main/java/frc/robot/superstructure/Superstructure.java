@@ -37,8 +37,8 @@ public class Superstructure {
 
   public Command enter(EnterableState state) {
     return state.build(m_subsystems)
-      .withName(state.toString()); // avoid poorly named commands
-   }
+        .withName(state.toString()); // avoid poorly named commands
+  }
 
   public void setDrive(Command driveCommand) {
     m_subsystems.drivetrain().setDefaultCommand(driveCommand);
@@ -52,7 +52,7 @@ public class Superstructure {
       Climber climber,
       CommandSwerveDrivetrain drivetrain,
       LedFeedback leds) {
-      }
+  }
 
   public Trigger aligned() {
     return m_subsystems.drivetrain().aligned();
