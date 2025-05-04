@@ -62,7 +62,10 @@ public class Autopilot {
         double veloU = project(velocity, directionU);
         // double veloU = 0.0;
         Translation2d entry = entryDirection.times(-distance);
-        double entryDistance = project(entry, directionU);
+
+        double entryDistance = 0.0;
+        // double entryDistance = project(entry, directionU);
+        
         // drive towards goal state
         double adjustedI = approach(distance, veloI, m_profile.getConstraintsI()) + Math.max(project(endVelocity, directionI), 0);
         double adjustedU = approach(entryDistance, veloU, m_profile.getConstraintsU());
