@@ -35,6 +35,9 @@ public class Superstructure {
         leds);
   }
 
+  /**
+   * Sets a specified <code>EnterableState</code> as reference state
+   */
   public Command enter(EnterableState state) {
     return state.build(m_subsystems)
         .withName(state.toString()); // avoid poorly named commands
