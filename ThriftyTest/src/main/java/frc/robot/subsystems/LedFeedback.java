@@ -21,9 +21,7 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.CANrangeConstants;
 import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
@@ -33,8 +31,7 @@ public class LedFeedback extends PassiveSubsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(LedFeedback.class);
   private static double matchTime = 0;
-  // private Supplier<Boolean> isInRange;
-  // private boolean algaeOnBoard = false;
+
   private boolean coralOnBoard = false;
   private boolean aligned = false;
   private boolean climbed = false;
@@ -43,8 +40,6 @@ public class LedFeedback extends PassiveSubsystem {
   private boolean noElevatorZoneActive = false;
   private boolean inAuton = false;
   private boolean inTeleop = false;
-  private double rangeLeft = 0.0;
-  private double rangeRight = 0.0;
 
   private int selectedSlot = 0;
 
@@ -121,33 +116,7 @@ public class LedFeedback extends PassiveSubsystem {
 
           }
         }
-      } else if (coralOnBoard && alignedReef()) {
-        if (mode != LED_MODE.ALIGNED_REEF) {
-          mode = LED_MODE.ALIGNED_REEF;
-          setAll(LED_COLOR.ORANGE, LED_PATTERN.STROBE);
-
-        }
-        // Check if Aligned too far right or Left Branch on Reef
-        // } else if (coralOnBoard && (alignedRight() || alignedLeft())) {
-        // if (mode != LED_MODE.ALIGNED_BRANCH) {
-        // mode = LED_MODE.ALIGNED_BRANCH;
-        // setAll(LED_COLOR.GREEN, LED_PATTERN.FLASH);
-        // }
-      } else if (coralOnBoard && alignedRight()) {
-        if (mode != LED_MODE.ALIGNED_RIGHT) {
-          mode = LED_MODE.ALIGNED_RIGHT;
-          setRight(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
-
-        }
-      } else if (coralOnBoard && alignedLeft()) {
-        if (mode != LED_MODE.ALIGNED_LEFT) {
-          mode = LED_MODE.ALIGNED_LEFT;
-          setLeft(LED_COLOR.DEEP_PINK, LED_PATTERN.FLASH);
-
-        }
-      }
-      // Check if Coral is On Board and In range of reef
-      else if (coralOnBoard && aligned) {
+      } else if (coralOnBoard && aligned) {
         if (mode != LED_MODE.CORAL_READY) {
           mode = LED_MODE.CORAL_READY;
           setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);
