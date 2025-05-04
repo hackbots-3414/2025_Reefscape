@@ -1,6 +1,7 @@
 package frc.robot.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
@@ -43,6 +44,15 @@ public class Superstructure {
         .withName(state.toString()); // avoid poorly named commands
   }
 
+  /**
+   * Uses a <code>PassiveModifier</code> to change passive behavior
+   */
+  public Command modify(PassiveModifier modifier, Trigger trigger) {
+    return Commands.runOnce(() -> modifier.modify(m_subsystems, trigger))
+      .withName(modifier.toString())
+      .ignoringDisable(true);
+  }
+
   public void setDrive(Command driveCommand) {
     m_subsystems.drivetrain().setDefaultCommand(driveCommand);
   }
@@ -59,5 +69,9 @@ public class Superstructure {
 
   public Trigger aligned() {
     return m_subsystems.drivetrain().aligned();
+  }
+
+  public Trigger inReefZone() {
+    return m_subsystems.drivetrain().inReefZone();
   }
 }
