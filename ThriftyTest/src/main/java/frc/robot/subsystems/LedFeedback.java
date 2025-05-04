@@ -78,7 +78,6 @@ public class LedFeedback extends PassiveSubsystem {
     ledcontroller2.configAllSettings(config, 20);
 
     defaultColors();
-
   }
 
   public void passive() {
