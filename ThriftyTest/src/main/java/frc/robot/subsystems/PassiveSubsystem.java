@@ -63,7 +63,7 @@ public abstract class PassiveSubsystem extends SubsystemBase {
       if (!taken()) {
         passive();
       }
-    });
+    }, this);
   }
 
   /**

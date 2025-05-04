@@ -393,9 +393,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public Command teleopDrive(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rot) {
     return run(() -> {
       setControl(m_teleopRequest
-          .withVelocityX(x.getAsDouble())
-          .withVelocityY(y.getAsDouble())
-          .withRotationalRate(rot.getAsDouble()));
+          .withVelocityX(x.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed)
+          .withVelocityY(y.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed)
+          .withRotationalRate(rot.getAsDouble() * DriveConstants.k_maxTeleopAngularSpeed));
     });
   }
 

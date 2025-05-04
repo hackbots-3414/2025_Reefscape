@@ -31,11 +31,11 @@ public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
       new CommandPS5Controller(ButtonBindingConstants.operatorPort);
 
-  private final Trigger m_l1 = m_controller.button(Operator.L1);
-  private final Trigger m_secondaryL1 = m_controller.button(Operator.secondaryL1);
-  private final Trigger m_l2 = m_controller.button(Operator.L2);
-  private final Trigger m_l3 = m_controller.button(Operator.L3);
-  private final Trigger m_l4 = m_controller.button(Operator.L4);
+  private final Trigger m_l1 = m_controller.pov(Operator.L1);
+  private final Trigger m_secondaryL1 = m_controller.pov(Operator.secondaryL1);
+  private final Trigger m_l2 = m_controller.pov(Operator.L2);
+  private final Trigger m_l3 = m_controller.pov(Operator.L3);
+  private final Trigger m_l4 = m_controller.pov(Operator.L4);
 
   private final Trigger m_left = m_controller.button(Operator.leftReef);
   private final Trigger m_right = m_controller.button(Operator.rightReef);

@@ -71,7 +71,8 @@ public class Elevator extends PassiveSubsystem {
     configMotor();
     configCANrange();
     configSim();
-    SmartDashboard.putData("Lazy Zero Elevator", runOnce(this::calibrateZero).ignoringDisable(true));
+    SmartDashboard.putData("Lazy Zero Elevator",
+        runOnce(this::calibrateZero).ignoringDisable(true));
   }
 
   private void configCANrange() {
@@ -124,8 +125,10 @@ public class Elevator extends PassiveSubsystem {
     goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
     goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
     m_elevatorRight.setControl(control
-        .withPosition(goal).withVelocity(ElevatorConstants.maxSpeedUp)
-        .withAcceleration(ElevatorConstants.maxAccelerationUp).withJerk(ElevatorConstants.maxJerkUp)
+        .withPosition(goal)
+        .withVelocity(ElevatorConstants.maxSpeedUp)
+        .withAcceleration(ElevatorConstants.maxAccelerationUp)
+        .withJerk(ElevatorConstants.maxJerkUp)
         .withSlot(0));
     m_reference = goal;
   }
@@ -187,6 +190,9 @@ public class Elevator extends PassiveSubsystem {
   @Override
   public void periodic() {
     m_position = getPositionUncached();
+    SmartDashboard.putNumber("Elevator position", m_position);
+    SmartDashboard.putNumber("Elevator reference", m_reference);
+    SmartDashboard.putBoolean("prefire?", m_prefireReq.getAsBoolean());
 
     if (m_speedChanged) {
       m_elevatorRight.setControl(new DutyCycleOut(m_speed));
@@ -194,27 +200,6 @@ public class Elevator extends PassiveSubsystem {
     }
 
     SmartDashboard.putBoolean("ELEVATOR AT POSITION", ready().getAsBoolean());
-  }
-
-  @Override
-  public void simulationPeriodic() {
-    // Update the simulation with the motor voltage
-    double appliedVolts = m_elevatorRight.get() * RobotController.getBatteryVoltage() * 2;
-
-    m_elevatorSim.setInput(appliedVolts);
-    m_elevatorSim.update(SimConstants.k_simPeriodic);
-
-    m_position = getPositionUncached();
-
-    // Update the simulated encoder values
-    m_elevatorRight.getSimState().setRawRotorPosition(m_position);
-
-    m_elevatorArm.setLength(m_position + 0.1); // Offset to avoid overlapping with root
-
-    // Simulate battery voltage
-    double volts =
-        BatterySim.calculateDefaultBatteryLoadedVoltage(m_elevatorSim.getCurrentDrawAmps());
-    RoboRioSim.setVInVoltage(volts);
   }
 
   /**

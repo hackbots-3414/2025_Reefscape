@@ -146,7 +146,7 @@ public class Constants {
 
     private static final Autopilot.Constraints kTightAutopilotConstraintsU =
         new Autopilot.Constraints()
-            .withAcceleration(17.0)
+            .withAcceleration(8.0)
             .withDecceleration(0.7);
 
     private static final Autopilot.Profile kTightProfile = new Autopilot.Profile()
@@ -170,8 +170,8 @@ public class Constants {
     private static final Autopilot.Profile kLooseProfile = new Autopilot.Profile()
         .withConstraintsI(kLooseAutopilotConstraintsI)
         .withConstraintsU(kLooseAutopilotConstraintsU)
-        .withErrorXY(Centimeters.of(6))
-        .withErrorTheta(Degrees.of(5));
+        .withErrorXY(Centimeters.of(10))
+        .withErrorTheta(Degrees.of(10));
 
     public static final Autopilot kLooseAutopilot = new Autopilot(kLooseProfile);
 
@@ -496,19 +496,16 @@ public class Constants {
     public static final double coralMechanismMass = Units.lbsToKilograms(8.173); // includes coral
     public static final double algaeMechanismMass = Units.lbsToKilograms(8.359);
 
+    // Mass of the elevator carriage
     public static final double netMass =
-        stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass; // Mass of
-                                                                                          // the
-                                                                                          // elevator
-                                                                                          // carriage
-    public static final double drumRadius = Units.inchesToMeters(2.256 / 2); // Radius of the
-                                                                             // elevator drum
-    // approx. 0.02865
+        stage1Mass + stage2Mass + carriageMass + coralMechanismMass + algaeMechanismMass;
 
-    public static final double momentOfInertia = netMass * Math.pow(drumRadius, 2);
+    // Radius of the elevator drum
+    // approx. 0.02865
+    public static final double drumRadius = Units.inchesToMeters(2.256 / 2);
 
     public static final LinearSystem<N2, N1, N2> stateSpacePlant = LinearSystemId
-        .createElevatorSystem(KrakenX60FOCConstants.KrakenX60FOCMotor, netMass, drumRadius,
+        .createElevatorSystem(KrakenX60Constants.KrakenX60Motor, netMass, drumRadius,
             gearRatio);
 
     public static final double absoluteSensorRange = 0.5;
@@ -532,26 +529,18 @@ public class Constants {
     public static final double inch = Units.inchesToMeters(1) * metersToRotations;
 
     public enum ElevatorState {
-      Ground(0),
-      HighGround(12 * inch),
-      Stow(0.31),
-      Eject(ElevatorState.Stow.position() + 2 * inch),
-      Processor(0),
-      L1(2.63),
-      SecondaryL1(ElevatorState.L1.position() + 8 * inch),
-      L2(4.016 + 3 * inch),
-      L3(7.257 - 4 * inch),
-      L4(9.757 + 0.3 * inch),
-      Net(9.31 + 4 * inch),
-      LowerReef(2.0),
-      UpperReef(4.5);
+      Ground(0), HighGround(12 * inch), Stow(0.31), Eject(
+          ElevatorState.Stow.position() + 2 * inch), Processor(0), L1(2.63), SecondaryL1(
+              ElevatorState.L1.position() + 8 * inch), L2(4.016 + 3 * inch), L3(
+                  7.257 - 4 * inch), L4(
+                      9.757 + 0.3 * inch), Net(9.31 + 4 * inch), LowerReef(2.0), UpperReef(4.5);
 
       private final double m_position;
 
       private ElevatorState(double position) {
         m_position = position;
       }
-      
+
       public double position() {
         return m_position;
       }
@@ -889,7 +878,8 @@ public class Constants {
     public static final double k_updateObjectPeriodSeconds = 0.200; // 200 milliseconds
     public static final InvertedValue invertMotor = InvertedValue.Clockwise_Positive;
     public static final double algaeEjectTime = 0.4; // was 0.6 but i want faster when we're done
-    public static final double processorScoreTime = 2.0; // was 0.6 but i want faster when we're done
+    public static final double processorScoreTime = 2.0; // was 0.6 but i want faster when we're
+                                                         // done
     public static final double reefPickupSafetyDistance = 1.75;
 
     public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
@@ -1117,5 +1107,7 @@ public class Constants {
     public static final double k_decceleration = 6.0;
   }
 
-  public enum CoralLevel { L1, SecondaryL1, L2, L3, L4 }
+  public enum CoralLevel {
+    L1, SecondaryL1, L2, L3, L4
+  }
 }

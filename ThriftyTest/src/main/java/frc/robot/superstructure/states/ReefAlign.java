@@ -1,5 +1,6 @@
 package frc.robot.superstructure.states;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -34,8 +35,10 @@ public class ReefAlign implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.defer(() -> {
+      List<Pose2d> locations = new ArrayList<>();
+      m_locations.forEach(location -> locations.add(FieldUtils.getGlobalPose(location)));
       Autopilot.Target target = new Autopilot.Target()
-        .withReference(FieldUtils.getGlobalPose(subsystems.drivetrain().getPose().nearest(m_locations)));
+        .withReference(subsystems.drivetrain().getPose().nearest(locations));
       return subsystems.drivetrain().align(DriveConstants.kTightAutopilot, target);
     }, Set.of(
       subsystems.drivetrain()));

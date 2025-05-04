@@ -1,7 +1,6 @@
 package frc.robot.superstructure;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
@@ -10,6 +9,7 @@ import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
+import frc.robot.vision.VisionHandler;
 
 public class Superstructure {
   private final Subsystems m_subsystems;
@@ -47,14 +47,16 @@ public class Superstructure {
   /**
    * Uses a <code>PassiveModifier</code> to change passive behavior
    */
-  public Command modify(PassiveModifier modifier, Trigger trigger) {
-    return Commands.runOnce(() -> modifier.modify(m_subsystems, trigger))
-      .withName(modifier.toString())
-      .ignoringDisable(true);
+  public void modify(PassiveModifier modifier, Trigger trigger) {
+    modifier.modify(m_subsystems, trigger);
   }
 
   public void setDrive(Command driveCommand) {
     m_subsystems.drivetrain().setDefaultCommand(driveCommand);
+  }
+
+  public VisionHandler buildVision() {
+    return new VisionHandler(m_subsystems.drivetrain());
   }
 
   public static record Subsystems(
