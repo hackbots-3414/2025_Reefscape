@@ -137,7 +137,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     RobotObserver.setPoseSupplier(this::getPose);
     RobotObserver.setVelocitySupplier(this::getVelocity);
     RobotObserver.setNoElevatorZoneSupplier(noElevatorZone());
-    RobotObserver.setReefReadySupplier(reefReady());
+    RobotObserver.setReefReadySupplier(inReefZone());
     RobotObserver.setAlginedSupplier(aligned());
   }
 
@@ -375,7 +375,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return new Trigger(() -> m_aligned);
   }
 
-  public Trigger reefReady() {
+  public Trigger inReefZone() {
     return new Trigger(() -> {
       double distanceToReef = getBluePose().getTranslation()
           .minus(FieldConstants.reefCenter)

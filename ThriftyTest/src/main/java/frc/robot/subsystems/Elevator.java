@@ -52,7 +52,6 @@ public class Elevator extends PassiveSubsystem {
       new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
 
   private double m_position;
-
   private double m_reference;
 
   private ElevatorSim m_elevatorSim;
@@ -64,6 +63,8 @@ public class Elevator extends PassiveSubsystem {
 
   private double m_speed;
   private boolean m_speedChanged;
+
+  private Trigger m_prefireReq = new Trigger(() -> false);
 
   public Elevator() {
     super();
@@ -127,6 +128,10 @@ public class Elevator extends PassiveSubsystem {
         .withAcceleration(ElevatorConstants.maxAccelerationUp).withJerk(ElevatorConstants.maxJerkUp)
         .withSlot(0));
     m_reference = goal;
+  }
+
+  private void setPosition(ElevatorState state) {
+    setPosition(state.position());
   }
 
   public Trigger ready() {
@@ -220,7 +225,13 @@ public class Elevator extends PassiveSubsystem {
         || m_reference > ElevatorConstants.unsafeRange);
   }
 
-  protected void passive() {}
+  protected void passive() {
+    if (m_prefireReq.getAsBoolean()) {
+      setPosition(ElevatorState.L2);
+    } else {
+      setPosition(ElevatorState.Stow);
+    }
+  }
 
   public Command go(ElevatorState state) {
     return Commands.sequence(
@@ -260,5 +271,9 @@ public class Elevator extends PassiveSubsystem {
             calibrateZero();
           }
         });
+  }
+
+  public void setPrefireRequirement(Trigger trigger) {
+    m_prefireReq = trigger;
   }
 }
