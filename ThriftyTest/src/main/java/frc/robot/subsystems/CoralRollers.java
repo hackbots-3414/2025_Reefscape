@@ -30,8 +30,8 @@ public class CoralRollers extends PassiveSubsystem {
   private final CANrange m_upperRange = new CANrange(IDConstants.upperCANrange);
   private final CANrange m_innerRange = new CANrange(IDConstants.innerCANrange);
 
-  private double m_voltage;
-  private boolean m_voltageChanged;
+  private double m_voltageLeft;
+  private double m_voltageRight;
 
   public CoralRollers() {
     super();
@@ -65,8 +65,12 @@ public class CoralRollers extends PassiveSubsystem {
   }
 
   private void setVoltage(double voltage) {
-    m_coralLeft.setVoltage(voltage);
-    m_coralRight.setVoltage(voltage);
+    if (m_voltageLeft != voltage) {
+      m_coralLeft.setVoltage(voltage);
+    }
+    if (m_voltageRight != voltage) {
+      m_coralRight.setVoltage(voltage);
+    }
   }
 
   private void setIntake() {
@@ -105,20 +109,6 @@ public class CoralRollers extends PassiveSubsystem {
     return m_innerRange.getIsDetected().getValue();
   }
 
-  public Trigger holding() {
-    return new Trigger(() -> {
-      if (Robot.isReal()) {
-        boolean holding = getFrontCANrange() && !getUpperCANrange();
-        m_logger.trace("holding: {}", holding);
-        return holding;
-      } else {
-        boolean present = SmartDashboard.getBoolean("Coral present", false);
-        SmartDashboard.putBoolean("Coral present", present);
-        return present;
-      }
-    });
-  }
-
   private void stop() {
     setVoltage(0);
   }
@@ -127,21 +117,25 @@ public class CoralRollers extends PassiveSubsystem {
     return new Trigger(() -> getUpperCANrange() || getInnerCANrange() || getFrontCANrange());
   }
 
+  public Trigger holding() {
+    return new Trigger(() -> getFrontCANrange() && !getUpperCANrange());
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Inner CANrange", getInnerCANrange());
     SmartDashboard.putBoolean("Coral CANrange", getFrontCANrange());
     SmartDashboard.putBoolean("OCS", getUpperCANrange());
     SmartDashboard.putBoolean("HAS CORAL", holding().getAsBoolean());
-
-    if (m_voltageChanged) {
-      m_coralLeft.setVoltage(m_voltage);
-      m_coralRight.setVoltage(m_voltage);
-      m_voltageChanged = false;
-    }
   }
 
-  protected void passive() {}
+  protected void passive() {
+    if (present().getAsBoolean() && !holding().getAsBoolean()) {
+      setIntake();
+    } else {
+      stop();
+    }
+  }
 
   /**
    * Intakes a game piece. The command ends when the piece is fully in the robot.
