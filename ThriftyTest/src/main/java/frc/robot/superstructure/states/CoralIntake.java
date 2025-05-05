@@ -18,6 +18,8 @@ public class CoralIntake implements EnterableState {
         subsystems.coral().intake())
 
         .unless(subsystems.coral().holding())
-        .finallyDo(subsystems.elevator()::release);
+        .finallyDo(subsystems.elevator()::release)
+        .finallyDo(subsystems.coral()::release);
+
   }
 }

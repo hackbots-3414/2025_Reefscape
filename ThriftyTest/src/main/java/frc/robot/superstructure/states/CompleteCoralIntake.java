@@ -6,12 +6,16 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class CompleteCoralIntake implements EnterableState {
   /**
-   * A state to complete a coral intake if it can be done
+   * A state to complete a coral intake if it has been started
+   * <br><br>
+   * This is different from the passive behavior on the coral subsystem itself because it also
+   * requires the elevator, which makes it more of a "blocking" operation.
    */
   public CompleteCoralIntake() {}
 
   public Command build(Subsystems subsystems) {
     return new CoralIntake().build(subsystems)
-        .onlyIf(subsystems.coral().present());
+        .onlyIf(subsystems.coral().present())
+        .finallyDo(subsystems.coral()::release);
   }
 }

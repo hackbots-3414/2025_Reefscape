@@ -22,6 +22,7 @@ public class CoralScore implements EnterableState {
         subsystems.coral().score(m_level))
 
         .onlyIf(subsystems.coral().holding())
-        .finallyDo(subsystems.elevator()::release);
+        .finallyDo(subsystems.elevator()::release)
+        .finallyDo(subsystems.coral()::release);
   }
 }

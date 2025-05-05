@@ -61,7 +61,7 @@ public class Autopilot {
         double veloI = project(velocity, directionI);
         double veloU = project(velocity, directionU);
         // double veloU = 0.0;
-        Translation2d entry = entryDirection.times(-distance);
+        // Translation2d entry = entryDirection.times(-distance);
 
         double entryDistance = 0.0;
         // double entryDistance = project(entry, directionU);

@@ -18,6 +18,7 @@ public class CoralEject implements EnterableState {
         subsystems.coral().eject())
 
         .onlyIf(subsystems.coral().present())
-        .finallyDo(subsystems.elevator()::release);
+        .finallyDo(subsystems.elevator()::release)
+        .finallyDo(subsystems.coral()::release);
   }
 }

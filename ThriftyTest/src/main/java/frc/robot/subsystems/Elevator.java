@@ -17,15 +17,7 @@ import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -34,7 +26,6 @@ import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.RobotConstants;
-import frc.robot.Constants.SimConstants;
 import frc.robot.Constants.ElevatorConstants.ElevatorState;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -54,13 +45,6 @@ public class Elevator extends PassiveSubsystem {
   private double m_position;
   private double m_reference;
 
-  private ElevatorSim m_elevatorSim;
-  private final DCMotor m_elevatorGearbox = DCMotor.getKrakenX60Foc(2); // 2 motors (left and right)
-
-  private Mechanism2d m_mechVisual;
-  private MechanismRoot2d m_mechRoot;
-  private MechanismLigament2d m_elevatorArm;
-
   private double m_speed;
   private boolean m_speedChanged;
 
@@ -70,7 +54,6 @@ public class Elevator extends PassiveSubsystem {
     super();
     configMotor();
     configCANrange();
-    configSim();
     SmartDashboard.putData("Lazy Zero Elevator",
         runOnce(this::calibrateZero).ignoringDisable(true));
   }
@@ -89,28 +72,6 @@ public class Elevator extends PassiveSubsystem {
         ElevatorConstants.invertLeftMotorFollower);
     m_elevatorLeft.setControl(follower);
     m_elevatorRight.setPosition(0);
-  }
-
-  private void configSim() {
-    m_elevatorSim = new ElevatorSim(
-        ElevatorConstants.stateSpacePlant,
-        m_elevatorGearbox,
-        ElevatorConstants.reverseSoftLimit,
-        ElevatorConstants.forwardSoftLimit,
-        true,
-        ElevatorConstants.reverseSoftLimit);
-
-    m_mechVisual = new Mechanism2d(1, 12); // Width/height in meters
-    m_mechRoot = m_mechVisual.getRoot("ElevatorRoot", 0.5, 0.0); // Center at (0.5, 0)
-    m_elevatorArm = m_mechRoot.append(new MechanismLigament2d("ElevatorArm", 0.0, 90)); // Start at
-                                                                                        // 0.1m
-                                                                                        // height
-    SmartDashboard.putData("Elevator Visualization", m_mechVisual);
-    if (RobotBase.isSimulation()) {
-      // in simulation, we want to emulate the effect produced by
-      // using an encoder offset (i.e. we start at 0).
-      m_elevatorRight.setPosition(0.0);
-    }
   }
 
   private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
@@ -159,7 +120,7 @@ public class Elevator extends PassiveSubsystem {
     if (RobotBase.isReal()) {
       return m_elevatorRight.getPosition().getValueAsDouble();
     } else {
-      return m_elevatorSim.getPositionMeters();
+      return m_reference; // wow, that's an awesome elevator!
     }
   }
 

@@ -1,12 +1,14 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.binding.Binder;
 import frc.robot.binding.DriveBindings;
+import frc.robot.binding.NamedCommandBindings;
 import frc.robot.binding.OperatorBindings;
 import frc.robot.binding.RobotBindings;
 import frc.robot.generated.TunerConstants;
@@ -17,12 +19,11 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
 import frc.robot.superstructure.Superstructure;
-import frc.robot.vision.VisionHandler;
 
 public class RobotContainer {
   private final PowerDistribution m_pdp = new PowerDistribution(1,ModuleType.kRev);
 
-  private VisionHandler m_vision;
+  private SendableChooser<Command> m_autoChooser;
 
   private final Superstructure m_superstructure = new Superstructure(
       new AlgaeRollers(),
@@ -36,21 +37,25 @@ public class RobotContainer {
   private final Binder m_driver = new DriveBindings();
   private final Binder m_operator = new OperatorBindings();
   private final Binder m_robot = new RobotBindings();
+  private final Binder m_namedCommands = new NamedCommandBindings();
 
   public RobotContainer() {
     m_driver.bind(m_superstructure);
     m_operator.bind(m_superstructure);
     m_robot.bind(m_superstructure);
-    m_vision = m_superstructure.buildVision();
-    m_vision.startThread();
+    m_namedCommands.bind(m_superstructure);
+
+    m_superstructure.buildVision().startThread();
 
     if (Robot.isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
+
+    m_autoChooser = AutoBuilder.buildAutoChooser();
   }
 
   public Command getAutonomousCommand() {
-    return Commands.none();
+    return m_autoChooser.getSelected();
   }
 
   public void enablePDPSwitch() {
