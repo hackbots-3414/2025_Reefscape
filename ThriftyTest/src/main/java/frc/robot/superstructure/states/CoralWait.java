@@ -8,7 +8,7 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 public class CoralWait implements EnterableState {
   /**
    * A state that puts the robot into a "waiting" state until a coral can be acquired.
-   * The state is NOT a coral itake state, however.
+   * The state is NOT a coral itake state, however, and does not actually change any mechanisms
    */
   public CoralWait() {}
 

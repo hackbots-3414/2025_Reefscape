@@ -11,6 +11,9 @@ public class Align implements EnterableState {
 
   /**
    * A state that controls the drivetrain and drives to a certain, given point on the field.
+   * <br>
+   * <br>
+   * This takes the target to drive towards
    */
   public Align(Autopilot autopilot, Autopilot.Target target) {
     m_autopilot = autopilot;
