@@ -23,11 +23,6 @@
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
-      "/SmartDashboard/Enter test state": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Super Field": {
         "Pathfind Trajectory": {
           "arrows": false,
@@ -89,6 +84,18 @@
         },
         "height": 8.051901817321777,
         "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "reference": {
+          "arrows": false,
+          "color": [
+            0.3678393065929413,
+            0.843137264251709,
+            0.40977731347084045,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "selectable": false,
+          "width": 0.9399999976158142
+        },
         "rejected": {
           "arrows": false,
           "selectable": false,

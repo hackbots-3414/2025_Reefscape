@@ -1,5 +1,6 @@
 package frc.robot;
 
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,26 +68,11 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.Constants.ElevatorConstants.ElevatorState;
+import frc.robot.driveassist.APConstraints;
 import frc.robot.driveassist.Autopilot;
+import frc.robot.driveassist.APProfile;
 import frc.robot.generated.TunerConstants;
 import frc.robot.utils.Shape;
-
-/*
- * PLEASE READ:
- * 
- * To ensure consistency throughout the code, the same coordinate system is used here as is
- * specified in WPILib's documentation.
- * 
- * To read it all, check this out:
- * https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
- * 
- * TL;DR: We use NWU axes convention. This means that, when viewed from above, the North, West, and
- * then upwards will correspond to +X, +Y, and +Z respectively.
- * 
- * Example: +X ^ | |-front-| | | +Y <--- | | | | |-------|
- * 
- * And +Z is upwards, so it wouldn't show here.
- */
 
 public class Constants {
 
@@ -140,17 +126,14 @@ public class Constants {
       public static final double kD = 0.0;
     }
 
-    private static final Autopilot.Constraints kTightAutopilotConstraintsI =
-        new Autopilot.Constraints()
-            .withAcceleration(8.5)
+    private static final APConstraints kTightAutopilotConstraintsI =
+        new APConstraints()
+            .withAcceleration(5.5)
             .withDecceleration(1.3);
 
-    private static final Autopilot.Constraints kTightAutopilotConstraintsU =
-        new Autopilot.Constraints()
-            .withAcceleration(8.0)
-            .withDecceleration(0.7);
+    private static final APConstraints kTightAutopilotConstraintsU = kTightAutopilotConstraintsI;
 
-    private static final Autopilot.Profile kTightProfile = new Autopilot.Profile()
+    private static final APProfile kTightProfile = new APProfile()
         .withConstraintsI(kTightAutopilotConstraintsI)
         .withConstraintsU(kTightAutopilotConstraintsU)
         .withErrorXY(Centimeters.of(2))
@@ -158,17 +141,17 @@ public class Constants {
 
     public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
 
-    private static final Autopilot.Constraints kLooseAutopilotConstraintsI =
-        new Autopilot.Constraints()
+    private static final APConstraints kLooseAutopilotConstraintsI =
+        new APConstraints()
             .withAcceleration(8.5)
             .withDecceleration(4);
 
-    private static final Autopilot.Constraints kLooseAutopilotConstraintsU =
-        new Autopilot.Constraints()
+    private static final APConstraints kLooseAutopilotConstraintsU =
+        new APConstraints()
             .withAcceleration(8.5)
             .withDecceleration(3);
 
-    private static final Autopilot.Profile kLooseProfile = new Autopilot.Profile()
+    private static final APProfile kLooseProfile = new APProfile()
         .withConstraintsI(kLooseAutopilotConstraintsI)
         .withConstraintsU(kLooseAutopilotConstraintsU)
         .withErrorXY(Centimeters.of(10))
@@ -198,20 +181,13 @@ public class Constants {
         RotationsPerSecondPerSecond.of(1);
 
     public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond)
-        / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI); // lin speed / circumference = rot
-                                                                  // speed
+        / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI);
 
-    public static final double k_elevatorHeightLinearVelocityGain = -0.357; // for every 1 rotation
-                                                                            // elevator up, subtract
-                                                                            // X: 1 mps at max
-                                                                            // elevator
+    public static final double k_elevatorHeightLinearVelocityGain = -0.357;
+
     public static final double k_elevatorHeightLinearAccelerationGain =
         k_elevatorHeightLinearVelocityGain * 2;
-    public static final double k_elevatorHeightAngularVelocityGain = -0.0446; // for every 1
-                                                                              // rotation elevator
-                                                                              // up, subtract X:
-                                                                              // 0.25 rps at max
-                                                                              // elevator
+    public static final double k_elevatorHeightAngularVelocityGain = -0.0446;
     public static final double k_elevatorHeightAngularAccelerationGain =
         k_elevatorHeightAngularVelocityGain * 2;
 

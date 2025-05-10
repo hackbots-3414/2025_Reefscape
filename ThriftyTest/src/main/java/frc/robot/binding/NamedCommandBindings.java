@@ -5,7 +5,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ScoringLocations;
-import frc.robot.driveassist.Autopilot;
+import frc.robot.driveassist.APTarget;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.AlgaeStow;
 import frc.robot.superstructure.states.Align;
@@ -39,17 +39,17 @@ public class NamedCommandBindings implements Binder {
     for (ScoringLocations location : Constants.ScoringLocations.values()) {
       String name = "Align ".concat(location.toString());
       NamedCommands.registerCommand(name, superstructure.enter(
-          new Align(new Autopilot.Target(location.value))));
+          new Align(new APTarget(location.value))));
     }
     NamedCommands.registerCommand("Align LIntake", superstructure.enter(
-        new Align(new Autopilot.Target(FieldConstants.kLeftIntake)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kLeftIntake)).allianceRelative()));
     NamedCommands.registerCommand("Align RIntake", superstructure.enter(
-        new Align(new Autopilot.Target(FieldConstants.kRightIntake)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kRightIntake)).allianceRelative()));
     NamedCommands.registerCommand("Align IJ", superstructure.enter(
-        new Align(new Autopilot.Target(FieldConstants.kIJ)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kIJ)).allianceRelative()));
     NamedCommands.registerCommand("Align GH", superstructure.enter(
-        new Align(new Autopilot.Target(FieldConstants.kGH)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kGH)).allianceRelative()));
     NamedCommands.registerCommand("Align Barge", superstructure.enter(
-        new Align(new Autopilot.Target(FieldConstants.kBarge1)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kBarge1)).allianceRelative()));
   }
 }

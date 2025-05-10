@@ -11,25 +11,26 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsRight;
-import frc.robot.driveassist.Autopilot;
+import frc.robot.driveassist.APTarget;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.utils.FieldUtils;
 
 public class ReefAlign implements EnterableState {
   private List<Pose2d> m_locations;
+
   /**
    * Represents a state where the robot aligns to a reef face
    */
   public ReefAlign(ReefSide side) {
     if (side == ReefSide.Left) {
       m_locations = Arrays.stream(ScoringLocationsLeft.values())
-        .map(location -> location.value)
-        .collect(Collectors.toList());
+          .map(location -> location.value)
+          .collect(Collectors.toList());
     } else {
       m_locations = Arrays.stream(ScoringLocationsRight.values())
-        .map(location -> location.value)
-        .collect(Collectors.toList());
+          .map(location -> location.value)
+          .collect(Collectors.toList());
     }
   }
 
@@ -37,12 +38,15 @@ public class ReefAlign implements EnterableState {
     return Commands.defer(() -> {
       List<Pose2d> locations = new ArrayList<>();
       m_locations.forEach(location -> locations.add(FieldUtils.getGlobalPose(location)));
-      Autopilot.Target target = new Autopilot.Target()
-        .withReference(subsystems.drivetrain().getPose().nearest(locations));
+      Pose2d closest = subsystems.drivetrain().getPose().nearest(locations);
+      APTarget target = new APTarget(closest)
+        .withEntryAngle(closest.getRotation());
       return subsystems.drivetrain().align(DriveConstants.kTightAutopilot, target);
     }, Set.of(
-      subsystems.drivetrain()));
+        subsystems.drivetrain()));
   }
 
-  public enum ReefSide { Left, Right; }
+  public enum ReefSide {
+    Left, Right;
+  }
 }

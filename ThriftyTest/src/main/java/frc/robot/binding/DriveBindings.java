@@ -7,7 +7,7 @@ import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ButtonBindingConstants.Driver;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.driveassist.Autopilot;
+import frc.robot.driveassist.APTarget;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Align;
 import frc.robot.superstructure.states.HeadingReset;
@@ -34,6 +34,6 @@ public class DriveBindings implements Binder {
     m_resetHeading.onTrue(superstructure.enter(new HeadingReset()));
     m_processorAlign.whileTrue(superstructure.enter(new Align(
         DriveConstants.kTightAutopilot,
-        new Autopilot.Target().withReference(FieldConstants.k_processor))));
+        new APTarget().withReference(FieldConstants.k_processor))));
   }
 }

@@ -2,27 +2,36 @@ package frc.robot.driveassist;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.pathplanner.lib.util.FlippingUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
 
+/**
+ * Autopilot is a class that tries to drive a target to a goal in 2 dimensional space.
+ *
+ * Autopilot is a fast algorithm because it doesn not think ahead. Any and all math is already
+ * worked out such that a small amount of computation is necessary on the fly.
+ *
+ * This means that autopilot is un able to avoid obstacles, because it cannot think ahead.
+ *
+ * It also is not guarunteed to provide the fastest path - however, it is well tuned such that it
+ * gives very close results.
+ */
 public class Autopilot {
   @SuppressWarnings("unused")
   private static final Logger m_logger = LoggerFactory.getLogger(Autopilot.class);
-  private Profile m_profile;
+  private APProfile m_profile;
 
   private final double dt = 0.020;
 
-  public Autopilot(Profile profile) {
+  /**
+   * Constructs an Autopilot from a given profile. This is the profile that the autopilot will use
+   * for all actions.
+   */
+  public Autopilot(APProfile profile) {
     m_profile = profile;
   }
 
@@ -33,70 +42,78 @@ public class Autopilot {
    * @param velocity The robot's current (field relative) velocity
    * @param target The target the robot should drive towards
    */
-  public Translation2d calculate(
-      Pose2d current,
-      Translation2d velocity,
-      Target target) {
-    Pose2d reference = target.m_reference;
-    Rotation2d entryAngle = target.m_entryAngle;
-    // direction and distance to actual target
-    Translation2d offset = reference.getTranslation().minus(current.getTranslation());
-    double distance = offset.getNorm();
-    if (distance == 0)
+  public Translation2d calculate(Pose2d current, Translation2d velocity, APTarget target) {
+    // this method does not respect entry angle
+    Translation2d offset = toTargetCoorinateFrame(
+        target.m_reference.getTranslation().minus(current.getTranslation()), target);
+    if (offset.equals(Translation2d.kZero)) {
       return Translation2d.kZero;
-    // create new target
-    Translation2d entryDirection = new Translation2d(
-        entryAngle.getCos(),
-        entryAngle.getSin());
-    // end velocity
-    Translation2d endVelocity = entryDirection.times(target.m_velocity);
-    // calculate directions for i & j
-    Translation2d directionI = offset.div(distance);
-    Translation2d directionU = new Translation2d(
-        directionI.getY(),
-        -directionI.getX());
-    // current velocity (i & j)
-    double veloI = project(velocity, directionI);
-    double veloU = 0.0;
-    double entryDistance = 0;
-    if (target.getEntryAngle() != null) {
-      veloU = project(velocity, directionU);
-      Translation2d entry = entryDirection.times(-distance);
-      entryDistance = project(entry, directionU);
     }
-
-
-    // drive towards goal state
-    double adjustedI = approach(distance, veloI, m_profile.getConstraintsI())
-        + Math.max(project(endVelocity, directionI), 0);
-    double adjustedU = approach(entryDistance, veloU, m_profile.getConstraintsU());
-    // combine
-    Translation2d adjusted = directionI.times(adjustedI).plus(
-        directionU.times(adjustedU));
-    return adjusted;
+    double dist = offset.getNorm();
+    Translation2d towardsTarget = offset.div(dist);
+    Translation2d initial = toTargetCoorinateFrame(velocity, target);
+    Translation2d goal = towardsTarget.times(calculateMaxVelocity(dist, target.m_velocity));
+    Translation2d out = correct(initial, goal);
+    return toGlobalCoordinateFrame(out, target);
   }
 
-  private double project(Translation2d vector, Translation2d axis) {
-    double dot = vector.getX() * axis.getX() + vector.getY() * axis.getY();
-    return dot / Math.pow(axis.getNorm(), 2);
+  /**
+   * Turns any other coordinate frame into a coordinate frame with positive x meaning in the
+   * direction of the target's entry angle, if applicable (otherwise no change to
+   * angles).
+   */
+  private Translation2d toTargetCoorinateFrame(Translation2d coords, APTarget target) {
+    Rotation2d entryAngle = target.m_entryAngle.orElse(Rotation2d.kZero);
+    return coords.rotateBy(entryAngle.unaryMinus());
   }
- 
-  private double approach(double distance, double initial, Constraints c) {
-    double goal = Math.sqrt(2 * c.m_decceleration * Math.abs(distance)) * Math.signum(distance);
-    if (Math.abs(goal - initial) < dt * c.m_acceleration) {
-      // we're within range, just adjust to what we need.
-      return goal;
-   }
-    // check for a "out-of-bounds" position
-    if (goal < initial && goal > 0)
-      return goal;
-    if (goal > initial && goal < 0)
-      return goal;
-    if (goal > initial) {
-      return initial + dt * c.m_acceleration;
-    } else {
-      return initial - dt * c.m_acceleration;
+
+  /**
+   * Turns a translation from a target-relative coordinate frame to a global coordinate frame
+   */
+  private Translation2d toGlobalCoordinateFrame(Translation2d coords, APTarget target) {
+    Rotation2d entryAngle = target.m_entryAngle.orElse(Rotation2d.kZero);
+    return coords.rotateBy(entryAngle);
+  }
+
+  /**
+   * Determines the maximum velocity required to travel the given distance and end at rest.
+   *
+   * This uses constant acceleration, as determined by the value for I decceleration in the profile.
+   */
+  private double calculateMaxVelocity(double dist, double endVelo) {
+    return Math.sqrt(Math.pow(endVelo, 2) + 2 * m_profile.m_constraintsI.m_decceleration * dist);
+  }
+
+  /**
+   * Attempts to drive the initial translation to the goal translation using the parameters for
+   * acceleration given in the profile
+   */
+  private Translation2d correct(Translation2d initial, Translation2d goal) {
+    Rotation2d angleOffset = Rotation2d.kZero;
+    if (!goal.equals(Translation2d.kZero)) {
+      angleOffset = new Rotation2d(goal.getX(), goal.getY());
     }
+    Translation2d adjustedGoal = goal.rotateBy(angleOffset.unaryMinus());
+    Translation2d adjustedInitial = initial.rotateBy(angleOffset.unaryMinus());
+    double initialI = adjustedInitial.getX();
+    double initialU = adjustedInitial.getY();
+    double goalI = adjustedGoal.getX();
+    // we cap the adjusted I because we'd rather adjust now than overshoot.
+    double adjustedI = Math.min(goalI,
+        push(initialI, goalI, m_profile.m_constraintsI.m_acceleration));
+    double adjustedU = push(initialU, 0, m_profile.m_constraintsU.m_acceleration);
+    return new Translation2d(adjustedI, adjustedU).rotateBy(angleOffset);
+  }
+
+  private double push(double start, double end, double accel) {
+    double maxChange = accel * dt;
+    if (Math.abs(start - end) < maxChange) {
+      return end;
+    }
+    if (start > end) {
+      return start - maxChange;
+    }
+    return start + maxChange;
   }
 
   public boolean atSetpoint(Pose2d current, Pose2d goal) {
@@ -105,160 +122,5 @@ public class Autopilot {
     boolean okTheta = Math.abs(current.getRotation().minus(goal.getRotation())
         .getRadians()) <= m_profile.m_errorTheta.in(Radians);
     return okXY && okTheta;
-  }
-
-  /* Constraints to limit autopilot */
-  public static class Constraints {
-    private double m_acceleration;
-    private double m_decceleration;
-
-    public Constraints() {}
-
-    public Constraints(double acceleration, double decceleration) {
-      m_acceleration = acceleration;
-      m_decceleration = decceleration;
-    }
-
-    public Constraints withAcceleration(double acceleration) {
-      m_acceleration = acceleration;
-      return this;
-    }
-
-    public Constraints withDecceleration(double decceleration) {
-      m_decceleration = decceleration;
-      return this;
-    }
-  }
-
-  /* Profile (how to reach the goal) */
-  public static class Profile {
-    private Constraints m_constraintsI;
-    private Constraints m_constraintsU;
-    private Distance m_errorXY;
-    private Angle m_errorTheta;
-
-    public Profile() {
-      m_errorXY = Meters.of(0);
-      m_errorTheta = Rotations.of(0);
-    }
-
-    public Profile withErrorXY(Distance errorXY) {
-      m_errorXY = errorXY;
-      return this;
-    }
-
-    public Profile withErrorTheta(Angle errorTheta) {
-      m_errorTheta = errorTheta;
-      return this;
-    }
-
-    public Profile withConstraintsI(Constraints constraintsI) {
-      m_constraintsI = constraintsI;
-      return this;
-    }
-
-    public Profile withConstraintsU(Constraints constraintsU) {
-      m_constraintsU = constraintsU;
-      return this;
-    }
-
-    public Distance getErrorXY() {
-      return m_errorXY;
-    }
-
-    public Angle getErrorTheta() {
-      return m_errorTheta;
-    }
-
-    public Constraints getConstraintsI() {
-      return m_constraintsI;
-    }
-
-    public Constraints getConstraintsU() {
-      return m_constraintsU;
-    }
-  }
-
-  /* End States (the goal to reach) */
-  public static class Target {
-    private Pose2d m_reference;
-    private Rotation2d m_entryAngle;
-    private double m_velocity;
-
-    /**
-     * Creates a blank autopilot target with reference (0,0) and rotation of zero.
-     */
-    public Target() {
-      m_reference = Pose2d.kZero;
-      m_entryAngle = null;
-      m_velocity = 0;
-    }
-
-    /**
-     * Creates a new autopilot target with the given target pose, no entry angle, and no end
-     * velocity
-     */
-    public Target(Pose2d pose) {
-      m_reference = pose;
-      m_velocity = 0;
-      m_entryAngle = null;
-    }
-
-    /**
-     * Modifies this instance's reference pose and returns itself for easier method chaining.
-     * <i>NOTE:</i> This also sets, if unset, the entry angle to be the angle of the pose.
-     */
-    public Target withReference(Pose2d reference) {
-      m_reference = reference;
-      if (m_entryAngle == null)
-        m_entryAngle = reference.getRotation();
-      return this;
-    }
-
-    /**
-     * Modifies this instance's entry angle and returns itself for easier method chaining
-     */
-    public Target withEntryAngle(Rotation2d entryAngle) {
-      m_entryAngle = entryAngle;
-      return this;
-    }
-
-    /**
-     * Modifies this instance's end velocity and returns itself for easier method chaining
-     */
-    public Target withVelocity(double velocity) {
-      m_velocity = velocity;
-      return this;
-    }
-
-    /**
-     * Returns this target's reference pose
-     */
-    public Pose2d getReference() {
-      return m_reference;
-    }
-
-    /**
-     * Returns this target's desired entry angle
-     */
-    public Rotation2d getEntryAngle() {
-      return m_entryAngle;
-    }
-
-    /**
-     * Returns this target/s end velocity
-     */
-    public double getVelocity() {
-      return m_velocity;
-    }
-
-    /**
-     * Flips a target across the field, preserving relative entry angle and rotation.
-     */
-    public Target flip() {
-      m_reference = FlippingUtil.flipFieldPose(m_reference);
-      m_entryAngle = FlippingUtil.flipFieldRotation(m_entryAngle);
-      return this;
-    }
   }
 }

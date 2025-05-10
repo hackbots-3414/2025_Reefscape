@@ -50,6 +50,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Constants.DriveConstants.HeadingPID;
 import frc.robot.driveassist.Autopilot;
+import frc.robot.driveassist.APTarget;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
@@ -405,16 +406,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   /**
    * Drives to a certain point on the field
    */
-  public Command align(Autopilot autopilot, Autopilot.Target target) {
-    return run(() -> {
-      Translation2d velocities = getVelocityComponents();
-      Translation2d output = autopilot.calculate(m_estimatedPose, velocities, target);
-      setControl(m_veloRequest
-          .withVelocityX(output.getX())
-          .withVelocityY(output.getY())
-          .withTargetDirection(target.getReference().getRotation()));
-    }).until(() -> {
-      return autopilot.atSetpoint(m_estimatedPose, target.getReference());
-    }).finallyDo(this::stop);
+  public Command align(Autopilot autopilot, APTarget target) {
+    return Commands.sequence(
+        runOnce(() -> {
+          RobotObserver.getField().getObject("reference").setPose(target.getReference());
+        }),
+        run(() -> {
+          Translation2d velocities = getVelocityComponents();
+          Translation2d output = autopilot.calculate(m_estimatedPose, velocities, target);
+          setControl(m_veloRequest
+              .withVelocityX(output.getX())
+              .withVelocityY(output.getY())
+              .withTargetDirection(target.getReference().getRotation()));
+        }))
+        .until(() -> {
+          return autopilot.atSetpoint(m_estimatedPose, target.getReference());
+        })
+        .finallyDo(this::stop)
+        .finallyDo(() -> {
+          RobotObserver.getField().getObject("reference").setPoses();
+        });
   }
 }
