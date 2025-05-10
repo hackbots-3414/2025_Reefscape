@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.CommandBounds;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
 import frc.robot.RobotObserver;
@@ -36,7 +35,6 @@ public class LedFeedback extends PassiveSubsystem {
   private boolean aligned = false;
   private boolean climbed = false;
   private boolean algaeOnBoard = false;
-  private boolean algaeInRange = false;
   private boolean noElevatorZoneActive = false;
   private boolean inAuton = false;
   private boolean inTeleop = false;
@@ -84,7 +82,6 @@ public class LedFeedback extends PassiveSubsystem {
     coralOnBoard = RobotObserver.getCoralPieceHeld();
     algaeOnBoard = RobotObserver.getAlgaePieceHeld();
     aligned = RobotObserver.getAligned();
-    algaeInRange = CommandBounds.netBounds.isActive();
     noElevatorZoneActive = RobotObserver.getNoElevatorZone();
     climbed = RobotObserver.getClimbed();
 
@@ -137,7 +134,7 @@ public class LedFeedback extends PassiveSubsystem {
 
         }
         // Check if Algae is On Board and In range to Net
-      } else if (algaeOnBoard && algaeInRange) {
+      } else if (algaeOnBoard) {
         if (mode != LED_MODE.ALGAE_READY) {
           mode = LED_MODE.ALGAE_READY;
           setAll(LED_COLOR.BLUE, LED_PATTERN.SOLID);

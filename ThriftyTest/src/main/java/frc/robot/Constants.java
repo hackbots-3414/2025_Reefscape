@@ -1,7 +1,5 @@
 package frc.robot;
 
-
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,7 +70,6 @@ import frc.robot.driveassist.APConstraints;
 import frc.robot.driveassist.Autopilot;
 import frc.robot.driveassist.APProfile;
 import frc.robot.generated.TunerConstants;
-import frc.robot.utils.Shape;
 
 public class Constants {
 
@@ -966,99 +963,8 @@ public class Constants {
     }
   }
 
-  public enum ScoringLocationsMiddle {
-    AB(ScoringLocations.A.value.interpolate(ScoringLocations.B.value, 0.5)), CD(
-        ScoringLocations.C.value.interpolate(ScoringLocations.D.value, 0.5)), EF(
-            ScoringLocations.E.value.interpolate(ScoringLocations.F.value, 0.5)), GH(
-                ScoringLocations.G.value.interpolate(ScoringLocations.H.value, 0.5)), IJ(
-                    ScoringLocations.I.value.interpolate(ScoringLocations.J.value, 0.5)), KL(
-                        ScoringLocations.K.value.interpolate(ScoringLocations.L.value, 0.5));
-
-    public Pose2d value;
-
-    private ScoringLocationsMiddle(Pose2d value) {
-      this.value = value;
-    }
-  }
-
-  public enum ClimbLocations {
-    WALL(new Pose2d(8.5, 7.26, Rotation2d.fromDegrees(0))), MIDDLE(
-        new Pose2d(8.5, 6.1, Rotation2d.fromDegrees(0))), CENTER(
-            new Pose2d(8.5, 5.0, Rotation2d.fromDegrees(0)));
-
-    public Pose2d value;
-
-    private ClimbLocations(Pose2d value) {
-      this.value = value;
-    }
-  }
-
   public enum ReefClipLocations {
     LEFT, RIGHT;
-  }
-
-  public static final class CommandBounds {
-    // 1 robot of space around the entire reef
-    public static final List<Translation2d> reef = List.of(
-        new Translation2d(2.729, 3.013),
-        new Translation2d(4.498, 1.975),
-        new Translation2d(6.242, 3.013),
-        new Translation2d(6.242, 5.024),
-        new Translation2d(4.498, 6.010),
-        new Translation2d(2.729, 5.024));
-    public static final Shape reefBounds = Shape.fromUnsortedVertices(reef, "Reef");
-
-    // 1.5 robot of space away from the opposite alliance barge side intake
-    public static final List<Translation2d> leftIntake = List.of(
-        new Translation2d(0.0, 1.25),
-        new Translation2d(1.7, 0.0),
-        new Translation2d(3.2, 0.0),
-        new Translation2d(0.0, 2.35));
-    public static final Shape leftIntakeBounds =
-        Shape.fromUnsortedVertices(leftIntake, "Left Intake");
-
-    // 1.5 robot of space away from the same alliance barge side intake
-    public static final Shape rightIntakeBounds =
-        Shape.flipHotdog(leftIntakeBounds, "Right Intake");
-
-    // processor where we score
-    public static final List<Translation2d> oppositeAllianceProcessor = List.of(
-        new Translation2d(5.5, 0.0),
-        new Translation2d(6.5, 0.0),
-        new Translation2d(6.5, 1),
-        new Translation2d(5.5, 1));
-    public static final Shape processorBounds =
-        Shape.fromUnsortedVertices(oppositeAllianceProcessor, "Processor");
-
-    // net where we score
-    public static final List<Translation2d> net = List.of(
-        new Translation2d(7.2, 4.25),
-        new Translation2d(10.3, 4.25),
-        new Translation2d(10.3, 8),
-        new Translation2d(7.2, 8));
-    public static final Shape netBounds = Shape.fromUnsortedVertices(net, "Net");
-
-    public static final List<Translation2d> tooClose = List.of(
-        new Translation2d(8.6, 4.25),
-        new Translation2d(11.7, 4.25),
-        new Translation2d(11.7, 8),
-        new Translation2d(8.6, 8)
-
-    );
-
-    public static final Shape netTooCloseBounds = Shape.fromUnsortedVertices(tooClose, "NoNet");
-
-    public static Map<String, Shape> displayBounds = Map.ofEntries(
-        Map.entry("Blue Alliance Reef", reefBounds),
-        Map.entry("Blue Alliance Net", netBounds),
-        Map.entry("Blue Alliance Left Intake", leftIntakeBounds),
-        Map.entry("Blue Alliance Right Intake", rightIntakeBounds),
-        Map.entry("Blue Alliance Processor", processorBounds),
-        Map.entry("Red Alliance Reef", reefBounds.flip()),
-        Map.entry("Red Alliance Net", netBounds.flip()),
-        Map.entry("Red Alliance Left Intake", leftIntakeBounds.flip()),
-        Map.entry("Red Alliance Right Intake", rightIntakeBounds.flip()),
-        Map.entry("Red Alliance Processor", processorBounds.flip()));
   }
 
   public static class LedConstants {
