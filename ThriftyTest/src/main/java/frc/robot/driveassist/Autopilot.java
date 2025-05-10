@@ -43,24 +43,28 @@ public class Autopilot {
    * @param target The target the robot should drive towards
    */
   public Translation2d calculate(Pose2d current, Translation2d velocity, APTarget target) {
-    // this method does not respect entry angle
     Translation2d offset = toTargetCoorinateFrame(
         target.m_reference.getTranslation().minus(current.getTranslation()), target);
     if (offset.equals(Translation2d.kZero)) {
       return Translation2d.kZero;
     }
-    double dist = offset.getNorm();
-    Translation2d towardsTarget = offset.div(dist);
     Translation2d initial = toTargetCoorinateFrame(velocity, target);
-    Translation2d goal = towardsTarget.times(calculateMaxVelocity(dist, target.m_velocity));
+    if (target.m_entryAngle.isEmpty()) {
+      double disp = offset.getNorm();
+      Translation2d towardsTarget = offset.div(disp);
+      Translation2d goal = towardsTarget.times(calculateMaxVelocity(disp, target.m_velocity));
+      Translation2d out = correct(initial, goal);
+      return toGlobalCoordinateFrame(out, target);
+    }
+    Translation2d goal = calculateSwirlyVelocity(offset, target);
     Translation2d out = correct(initial, goal);
     return toGlobalCoordinateFrame(out, target);
+
   }
 
   /**
    * Turns any other coordinate frame into a coordinate frame with positive x meaning in the
-   * direction of the target's entry angle, if applicable (otherwise no change to
-   * angles).
+   * direction of the target's entry angle, if applicable (otherwise no change to angles).
    */
   private Translation2d toTargetCoorinateFrame(Translation2d coords, APTarget target) {
     Rotation2d entryAngle = target.m_entryAngle.orElse(Rotation2d.kZero);
@@ -105,6 +109,11 @@ public class Autopilot {
     return new Translation2d(adjustedI, adjustedU).rotateBy(angleOffset);
   }
 
+  /**
+   * Using the provided acceleration, "pushes" the start point towards the end point.
+   *
+   * This is used for ensuring that changes in velocity are withing the acceleration threshold
+   */
   private double push(double start, double end, double accel) {
     double maxChange = accel * dt;
     if (Math.abs(start - end) < maxChange) {
@@ -114,6 +123,51 @@ public class Autopilot {
       return start - maxChange;
     }
     return start + maxChange;
+  }
+
+  /**
+   * Uses the swirly method to calculate the correct velocities for the robot, respecting entry
+   * angles
+   *
+   * @param offset The offset from the robot to the target, in the target's coordinate frame
+   */
+  private Translation2d calculateSwirlyVelocity(Translation2d offset, APTarget target) {
+    double disp = offset.getNorm();
+    Rotation2d theta = new Rotation2d(offset.getX(), offset.getY());
+    // TODO: This could be a problem because rotation2d constructor doesn't like small numbers
+    double rads = theta.getRadians();
+    double dist = calculateSwirlyLength(rads, disp);
+    double vx = theta.getCos() - rads * theta.getSin();
+    double vy = rads * theta.getCos() + theta.getSin();
+    return new Translation2d(vx, vy)
+        .div(Math.hypot(vx, vy)) // normalize
+        .times(calculateMaxVelocity(dist, target.m_velocity)); // and scale to new length
+  }
+
+  /**
+   * Using a precomputed integral, returns the length of the path that the swirly method generates.
+   *
+   * More specificallu, this calcualtes the arc length of the polar curve r=theta from the given
+   * angle to zero, then scales it to match.
+   */
+  private double calculateSwirlyLength(double theta, double radius) {
+    // Dear other programmer(s):
+    // I will now apologize for what follows.
+    // Please just trust it works. I precomputed the integral and this is what it turns out to be.
+    // Blame Netwon, not me.
+    if (theta == 0) {
+      return radius;
+    }
+    theta = Math.abs(theta);
+    double hypot = Math.hypot(theta, 1);
+    double a = theta / hypot;
+    // u is for unscaled.
+    double u1 = 0.5 * hypot * theta;
+    double u2 = 0.25 * Math.log(1 - a);
+    double u3 = 0.25 * Math.log(1 + a);
+    double u = u1 - u2 + u3;
+    double scaled = radius / theta * u;
+    return scaled;
   }
 
   public boolean atSetpoint(Pose2d current, Pose2d goal) {

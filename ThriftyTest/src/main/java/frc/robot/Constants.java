@@ -126,12 +126,11 @@ public class Constants {
       public static final double kD = 0.0;
     }
 
-    private static final APConstraints kTightAutopilotConstraintsI =
-        new APConstraints()
-            .withAcceleration(5.5)
-            .withDecceleration(1.3);
+    private static final APConstraints kTightAutopilotConstraintsI = new APConstraints()
+        .withAcceleration(5.5)
+        .withDecceleration(1.3);
 
-    private static final APConstraints kTightAutopilotConstraintsU = kTightAutopilotConstraintsI;
+    private static final APConstraints kTightAutopilotConstraintsU = APConstraints.unlimited();
 
     private static final APProfile kTightProfile = new APProfile()
         .withConstraintsI(kTightAutopilotConstraintsI)

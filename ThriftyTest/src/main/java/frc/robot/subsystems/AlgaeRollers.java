@@ -74,15 +74,15 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
     if (Robot.isReal()) {
       m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
     } else {
-      m_hasAlgae = SmartDashboard.getBoolean("Algae Held", false);
+      m_hasAlgae = SmartDashboard.getBoolean("Algae/Held", false);
     }
 
-    SmartDashboard.putBoolean("Algae Held", m_hasAlgae);
+    SmartDashboard.putBoolean("Algae/Held", m_hasAlgae);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Algae Temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
+    SmartDashboard.putNumber("Algae/Temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
     updateObjectState();
     if (m_voltageChanged) {
       m_algaeRoller.setVoltage(m_voltage);

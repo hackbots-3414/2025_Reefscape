@@ -18,6 +18,7 @@ public abstract class PassiveSubsystem extends SubsystemBase {
   private boolean m_taken;
 
   protected PassiveSubsystem() {
+    m_taken = false;
     enablePassiveBehavior();
   }
 

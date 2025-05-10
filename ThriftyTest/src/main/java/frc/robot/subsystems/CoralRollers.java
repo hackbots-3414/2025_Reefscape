@@ -36,7 +36,6 @@ public class CoralRollers extends PassiveSubsystem {
   public CoralRollers() {
     super();
     configMotors();
-    configDashboard();
     configCANrange();
     RobotObserver.setPieceHeldSupplier(holding());
   }
@@ -48,14 +47,6 @@ public class CoralRollers extends PassiveSubsystem {
     m_coralLeft.getConfigurator().apply(CoralConstants.motorConfig);
     m_coralRight.getConfigurator().apply(CoralConstants.motorConfig.withMotorOutput(
         CoralConstants.motorConfig.MotorOutput.withInverted(CoralConstants.kInvertRight)));
-  }
-
-  private void configDashboard() {
-    if (Robot.isReal()) {
-      // NOTHING YET
-    } else {
-      SmartDashboard.putBoolean("Coral Override", false);
-    }
   }
 
   private void configCANrange() {
@@ -98,14 +89,23 @@ public class CoralRollers extends PassiveSubsystem {
   }
 
   private boolean getFrontCANrange() {
+    if (Robot.isSimulation()) {
+      return SmartDashboard.getBoolean("Coral/Front CANrange", false);
+    }
     return m_frontRange.getIsDetected().getValue();
   }
 
   private boolean getUpperCANrange() {
+    if (Robot.isSimulation()) {
+      return SmartDashboard.getBoolean("Coral/Upper CANrange", false);
+    }
     return m_upperRange.getIsDetected().getValue();
   }
 
   private boolean getInnerCANrange() {
+    if (Robot.isSimulation()) {
+      return SmartDashboard.getBoolean("Coral/Inner CANrange", false);
+    }
     return m_innerRange.getIsDetected().getValue();
   }
 
@@ -123,10 +123,11 @@ public class CoralRollers extends PassiveSubsystem {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Inner CANrange", getInnerCANrange());
-    SmartDashboard.putBoolean("Coral CANrange", getFrontCANrange());
-    SmartDashboard.putBoolean("OCS", getUpperCANrange());
-    SmartDashboard.putBoolean("HAS CORAL", holding().getAsBoolean());
+    SmartDashboard.putBoolean("Coral/Front CANrange", getFrontCANrange());
+    SmartDashboard.putBoolean("Coral/Upper CANrange", getUpperCANrange());
+    SmartDashboard.putBoolean("Coral/Inner CANrange", getInnerCANrange());
+    SmartDashboard.putBoolean("Coral/Holding", holding().getAsBoolean());
+    SmartDashboard.putBoolean("Coral/Present", present().getAsBoolean());
   }
 
   protected void passive() {

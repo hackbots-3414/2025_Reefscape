@@ -88,9 +88,9 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
       m_leftClimbMotor.setControl(m_request.withOutput(m_voltage));
       m_voltageChanged = false;
     }
-    SmartDashboard.putBoolean("Climb Ready", raised().getAsBoolean());
-    SmartDashboard.putBoolean("Climbed", climbed().getAsBoolean());
-    SmartDashboard.putNumber("climber pos", m_encoder.getPosition().getValueAsDouble());
+    SmartDashboard.putBoolean("Climb/Ready", raised().getAsBoolean());
+    SmartDashboard.putBoolean("Climb/Complete", climbed().getAsBoolean());
+    SmartDashboard.putNumber("Climb/Position", m_encoder.getPosition().getValueAsDouble());
   }
 
   public double getVelocity() {

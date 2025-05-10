@@ -71,7 +71,7 @@ public class Pivot extends PassiveSubsystem {
     m_armLigament = m_mechRoot
         .append(
             new MechanismLigament2d("Arm", PivotConstants.armLength, Math.toDegrees(m_position)));
-    SmartDashboard.putData("Pivot Arm Visualization", m_mechVisual);
+    SmartDashboard.putData("Pivot/Visualization", m_mechVisual);
   }
 
   MotionMagicVoltage control = new MotionMagicVoltage(0);
@@ -140,7 +140,7 @@ public class Pivot extends PassiveSubsystem {
       m_speedChanged = false;
     }
 
-    SmartDashboard.putBoolean("PIVOT AT POSITION", ready().getAsBoolean());
+    SmartDashboard.putBoolean("Pivot/Ready", ready().getAsBoolean());
   }
 
   @Override

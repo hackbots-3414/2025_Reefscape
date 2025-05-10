@@ -54,7 +54,7 @@ public class Elevator extends PassiveSubsystem {
     super();
     configMotor();
     configCANrange();
-    SmartDashboard.putData("Lazy Zero Elevator",
+    SmartDashboard.putData("Elevator/Lazy Zero",
         runOnce(this::calibrateZero).ignoringDisable(true));
   }
 
@@ -149,23 +149,23 @@ public class Elevator extends PassiveSubsystem {
 
   private void goDownNoStopping() {
     m_elevatorRight.setPosition(1); // TODO: Why is this line here?
-    m_logger.warn("unhandled todo!");
+    m_logger.warn("Strange code running & unhandled TODO! Please address");
     m_elevatorRight.set(ElevatorConstants.manualDownSpeed);
   }
 
   @Override
   public void periodic() {
     m_position = getPositionUncached();
-    SmartDashboard.putNumber("Elevator position", m_position);
-    SmartDashboard.putString("Elevator reference", m_reference.toString());
-    SmartDashboard.putBoolean("prefire?", m_prefireReq.getAsBoolean());
+    SmartDashboard.putNumber("Elevator/Position", m_position);
+    SmartDashboard.putString("Elevator/Reference", m_reference.toString());
+    SmartDashboard.putBoolean("Elevator/Prefire", m_prefireReq.getAsBoolean());
 
     if (m_speedChanged) {
       m_elevatorRight.setControl(new DutyCycleOut(m_speed));
       m_speedChanged = false;
     }
 
-    SmartDashboard.putBoolean("ELEVATOR AT POSITION", ready().getAsBoolean());
+    SmartDashboard.putBoolean("Elevator/Ready", ready().getAsBoolean());
   }
 
   /**
