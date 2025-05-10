@@ -66,6 +66,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
+import frc.robot.Constants.ElevatorConstants.ElevatorState;
 import frc.robot.driveassist.Autopilot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.utils.Shape;
@@ -1108,6 +1109,23 @@ public class Constants {
   }
 
   public enum CoralLevel {
-    L1, SecondaryL1, L2, L3, L4
+    L1, SecondaryL1, L2, L3, L4;
+
+    public ElevatorState toElevatorState() {
+      switch (this) {
+        case L1:
+          return ElevatorState.L1;
+        case L2:
+          return ElevatorState.L2;
+        case L3:
+          return ElevatorState.L3;
+        case L4:
+          return ElevatorState.L4;
+        case SecondaryL1:
+          return ElevatorState.SecondaryL1;
+        default:
+          return ElevatorState.Stow;
+      }
+    }
   }
 }

@@ -14,12 +14,13 @@ public class HighGroundAlgaeIntake implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(
-        subsystems.elevator().go(ElevatorState.UpperReef),
+        subsystems.elevator().go(ElevatorState.UpperReef).asProxy(),
         subsystems.pivot().ground(),
         subsystems.algae().intake())
 
-        .unless(subsystems.algae().holdingAlgae())
         .finallyDo(subsystems.elevator()::release)
-        .finallyDo(subsystems.pivot()::release);
+        .finallyDo(subsystems.pivot()::release)
+        .unless(subsystems.algae().holdingAlgae());
   }
 }
+

@@ -17,8 +17,8 @@ public class CoralEject implements EnterableState {
         subsystems.elevator().go(ElevatorState.Eject).asProxy(),
         subsystems.coral().eject())
 
-        .onlyIf(subsystems.coral().present())
         .finallyDo(subsystems.elevator()::release)
-        .finallyDo(subsystems.coral()::release);
+        .finallyDo(subsystems.coral()::release)
+        .onlyIf(subsystems.coral().present());
   }
 }

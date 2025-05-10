@@ -5,19 +5,18 @@ import frc.robot.Constants.CoralLevel;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class CoralScoreReady implements EnterableState {
+public class CompleteCoralScore implements EnterableState {
   private final CoralLevel m_level;
 
   /**
-   * A state that prepares the robot to score at the desired level
+   * A state that completes a coral intake cycle, if the robot is actively ready.
    */
-  public CoralScoreReady(CoralLevel level) {
+  public CompleteCoralScore(CoralLevel level) {
     m_level = level;
   }
 
   public Command build(Subsystems subsystems) {
-    return subsystems.elevator().go(m_level)
-      .onlyIf(subsystems.coral().holding())
-      .finallyDo(subsystems.elevator()::conditionalRelease);
+    return new CoralScore(m_level).build(subsystems)
+      .onlyIf(subsystems.elevator().ready(m_level));
   }
 }

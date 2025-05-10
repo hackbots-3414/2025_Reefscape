@@ -11,8 +11,8 @@ public class ElevatorZero implements EnterableState {
   public ElevatorZero() {}
 
   public Command build(Subsystems subsystems) {
-    return subsystems.elevator().autoZero()
-      .unless(subsystems.coral().present())
-      .finallyDo(subsystems.elevator()::release);
+    return subsystems.elevator().autoZero().asProxy()
+        .finallyDo(subsystems.elevator()::release)
+        .unless(subsystems.coral().present());
   }
 }

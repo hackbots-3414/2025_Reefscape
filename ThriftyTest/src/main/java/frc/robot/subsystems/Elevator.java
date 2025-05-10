@@ -43,7 +43,7 @@ public class Elevator extends PassiveSubsystem {
       new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
 
   private double m_position;
-  private double m_reference;
+  private ElevatorState m_reference = ElevatorState.Stow;
 
   private double m_speed;
   private boolean m_speedChanged;
@@ -76,10 +76,14 @@ public class Elevator extends PassiveSubsystem {
 
   private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
 
-  private void setPosition(double goal) {
+
+  private void setPosition(ElevatorState state) {
     take();
+    // calculate goal we should go to
+    double goal = state.position();
     if (RobotObserver.getNoElevatorZone()
         && (m_position > ElevatorConstants.unsafeRange || goal > ElevatorConstants.unsafeRange)) {
+      // either trying to reach (or already at) a no-go state given our current position
       return;
     }
     // floor values for the goal between our two extrema for their positions
@@ -91,36 +95,37 @@ public class Elevator extends PassiveSubsystem {
         .withAcceleration(ElevatorConstants.maxAccelerationUp)
         .withJerk(ElevatorConstants.maxJerkUp)
         .withSlot(0));
-    m_reference = goal;
-  }
-
-  private void setPosition(ElevatorState state) {
-    setPosition(state.position());
+    m_reference = state;
   }
 
   public Trigger ready() {
     return new Trigger(() -> {
       if (Robot.isSimulation())
         return true;
-      boolean at = Math.abs(m_reference - m_position) < ElevatorConstants.tolerance;
+      boolean at = Math.abs(m_reference.position() - m_position) < ElevatorConstants.tolerance;
       m_logger.debug("Setpoint: {}", at);
       return at;
     });
   }
 
-  public double getReference() {
-    return m_reference;
+  public Trigger ready(ElevatorState state) {
+    return new Trigger(() -> {
+      if (m_reference.equals(state)) {
+        return ready().getAsBoolean();
+      }
+      return false;
+    });
   }
 
-  public double getPosition() {
-    return m_position;
+  public Trigger ready(CoralLevel level) {
+    return ready(level.toElevatorState());
   }
 
   private double getPositionUncached() {
     if (RobotBase.isReal()) {
       return m_elevatorRight.getPosition().getValueAsDouble();
     } else {
-      return m_reference; // wow, that's an awesome elevator!
+      return m_reference.position(); // wow, that's an awesome elevator!
     }
   }
 
@@ -152,7 +157,7 @@ public class Elevator extends PassiveSubsystem {
   public void periodic() {
     m_position = getPositionUncached();
     SmartDashboard.putNumber("Elevator position", m_position);
-    SmartDashboard.putNumber("Elevator reference", m_reference);
+    SmartDashboard.putString("Elevator reference", m_reference.toString());
     SmartDashboard.putBoolean("prefire?", m_prefireReq.getAsBoolean());
 
     if (m_speedChanged) {
@@ -167,8 +172,8 @@ public class Elevator extends PassiveSubsystem {
    * Whether or not the elevator is above the "safe" range
    */
   public Trigger unsafe() {
-    return new Trigger(() -> getPosition() > ElevatorConstants.unsafeRange
-        || m_reference > ElevatorConstants.unsafeRange);
+    return new Trigger(() -> m_position > ElevatorConstants.unsafeRange
+        || m_reference.position() > ElevatorConstants.unsafeRange);
   }
 
   protected void passive() {
@@ -181,25 +186,12 @@ public class Elevator extends PassiveSubsystem {
 
   public Command go(ElevatorState state) {
     return Commands.sequence(
-        runOnce(() -> setPosition(state.position())),
+        runOnce(() -> setPosition(state)),
         Commands.waitUntil(ready()));
   }
 
   public Command go(CoralLevel level) {
-    switch (level) {
-      case L1:
-        return go(ElevatorState.L1);
-      case SecondaryL1:
-        return go(ElevatorState.SecondaryL1);
-      case L2:
-        return go(ElevatorState.L2);
-      case L3:
-        return go(ElevatorState.L3);
-      case L4:
-        return go(ElevatorState.L4);
-      default:
-        return Commands.none();
-    }
+    return go(level.toElevatorState());
   }
 
   /**

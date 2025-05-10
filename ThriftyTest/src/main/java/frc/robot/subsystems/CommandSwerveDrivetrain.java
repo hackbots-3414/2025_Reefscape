@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -184,7 +185,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public Command resetHeading() {
-    return runOnce(() -> setOperatorPerspectiveForward(getPose().getRotation()));
+    // this uses Commands.runOnce() as opposed to this.runOnce() because we don't really want to add
+    // requirements on this subsystem
+    return Commands.runOnce(() -> setOperatorPerspectiveForward(getPose().getRotation()));
   }
 
   public void setPose(Pose2d pose) {

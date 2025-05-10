@@ -57,11 +57,14 @@ public class Autopilot {
         -directionI.getX());
     // current velocity (i & j)
     double veloI = project(velocity, directionI);
-    double veloU = project(velocity, directionU);
-    // double veloU = 0.0;
-    Translation2d entry = entryDirection.times(-distance);
+    double veloU = 0.0;
+    double entryDistance = 0;
+    if (target.getEntryAngle() != null) {
+      veloU = project(velocity, directionU);
+      Translation2d entry = entryDirection.times(-distance);
+      entryDistance = project(entry, directionU);
+    }
 
-    double entryDistance = project(entry, directionU);
 
     // drive towards goal state
     double adjustedI = approach(distance, veloI, m_profile.getConstraintsI())
@@ -77,13 +80,13 @@ public class Autopilot {
     double dot = vector.getX() * axis.getX() + vector.getY() * axis.getY();
     return dot / Math.pow(axis.getNorm(), 2);
   }
-
+ 
   private double approach(double distance, double initial, Constraints c) {
     double goal = Math.sqrt(2 * c.m_decceleration * Math.abs(distance)) * Math.signum(distance);
     if (Math.abs(goal - initial) < dt * c.m_acceleration) {
       // we're within range, just adjust to what we need.
       return goal;
-    }
+   }
     // check for a "out-of-bounds" position
     if (goal < initial && goal > 0)
       return goal;

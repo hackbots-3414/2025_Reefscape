@@ -145,7 +145,8 @@ public class CoralRollers extends PassiveSubsystem {
         runOnce(this::setIntake),
         Commands.waitUntil(holding()))
 
-        .finallyDo(this::stop);
+        .finallyDo(this::stop)
+        .unless(holding());
   }
 
   public Command score(CoralLevel level) {
@@ -171,8 +172,8 @@ public class CoralRollers extends PassiveSubsystem {
         runOnce(() -> setVoltage(CoralConstants.ejectVoltage)),
         Commands.waitUntil(present().negate()))
 
-      .onlyIf(present())
-      .finallyDo(this::stop);
+        .finallyDo(this::stop)
+        .onlyIf(present());
   }
 
 }

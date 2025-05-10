@@ -6,19 +6,19 @@ import frc.robot.Constants.ElevatorConstants.ElevatorState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class ProcessorReady implements EnterableState {
+public class ProcessorPrep implements EnterableState {
   /**
    * A state that prepares the robot for a processor score
    */
-  public ProcessorReady() {}
+  public ProcessorPrep() {}
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(
         subsystems.elevator().go(ElevatorState.Processor).asProxy(),
         subsystems.pivot().processor())
 
-        .onlyIf(subsystems.algae().holdingAlgae())
         .finallyDo(subsystems.elevator()::conditionalRelease)
-        .finallyDo(subsystems.pivot()::conditionalRelease);
+        .finallyDo(subsystems.pivot()::conditionalRelease)
+        .onlyIf(subsystems.algae().holdingAlgae());
   }
 }

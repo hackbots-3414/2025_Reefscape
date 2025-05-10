@@ -15,12 +15,12 @@ public class Net implements EnterableState {
   public Command build(Subsystems subsystems) {
     return Commands.sequence(
         Commands.parallel(
-            subsystems.elevator().go(ElevatorState.Net),
+            subsystems.elevator().go(ElevatorState.Net).asProxy(),
             subsystems.pivot().net()),
         subsystems.algae().net())
 
-        .onlyIf(subsystems.algae().holdingAlgae())
         .finallyDo(subsystems.elevator()::release)
-        .finallyDo(subsystems.pivot()::release);
+        .finallyDo(subsystems.pivot()::release)
+        .onlyIf(subsystems.algae().holdingAlgae());
   }
 }

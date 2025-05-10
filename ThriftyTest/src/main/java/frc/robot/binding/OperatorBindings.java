@@ -9,12 +9,13 @@ import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Climb;
 import frc.robot.superstructure.states.ClimbRaised;
 import frc.robot.superstructure.states.CompleteCoralIntake;
+import frc.robot.superstructure.states.CompleteCoralScore;
 import frc.robot.superstructure.states.CoralEject;
 import frc.robot.superstructure.states.CoralIntake;
 import frc.robot.superstructure.states.CoralScore;
-import frc.robot.superstructure.states.CoralScoreReady;
+import frc.robot.superstructure.states.CoralScorePrep;
 import frc.robot.superstructure.states.ElevatorZero;
-import frc.robot.superstructure.states.FunnelOpened;
+import frc.robot.superstructure.states.OpenFunnel;
 import frc.robot.superstructure.states.GroundAlgaeIntake;
 import frc.robot.superstructure.states.HighGroundAlgaeIntake;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
@@ -23,7 +24,7 @@ import frc.robot.superstructure.states.LowerReefAlgaeIntake;
 import frc.robot.superstructure.states.Net;
 import frc.robot.superstructure.states.NetReady;
 import frc.robot.superstructure.states.Processor;
-import frc.robot.superstructure.states.ProcessorReady;
+import frc.robot.superstructure.states.ProcessorPrep;
 import frc.robot.superstructure.states.ReefAlign;
 import frc.robot.superstructure.states.Stowed;
 
@@ -72,7 +73,7 @@ public class OperatorBindings implements Binder {
     m_algae.and(m_algaeHighReef).whileTrue(superstructure.enter(new UpperReefAlgaeIntake()));
 
     /* algae score */
-    m_algae.and(m_processor).whileTrue(superstructure.enter(new ProcessorReady()));
+    m_algae.and(m_processor).whileTrue(superstructure.enter(new ProcessorPrep()));
     m_algae.and(m_processor).onFalse(superstructure.enter(new Processor()));
     m_algae.and(m_net).whileTrue(superstructure.enter(new NetReady()));
     m_algae.and(m_net).onFalse(superstructure.enter(new Net()));
@@ -98,13 +99,13 @@ public class OperatorBindings implements Binder {
     /* misc */
     m_zeroElevator.whileTrue(superstructure.enter(new ElevatorZero()));
     m_stow.whileTrue(superstructure.enter(new Stowed()));
-    m_funnel.whileTrue(superstructure.enter(new FunnelOpened()));
+    m_funnel.whileTrue(superstructure.enter(new OpenFunnel()));
   }
 
   private void bindCoral(Trigger trigger, CoralLevel level, Superstructure superstructure) {
-    trigger.whileTrue(superstructure.enter(new CoralScoreReady(level)));
+    trigger.whileTrue(superstructure.enter(new CoralScorePrep(level)));
     trigger.and(superstructure.aligned()).onTrue(superstructure.enter(new CoralScore(level)));
-    trigger.onFalse(superstructure.enter(new CoralScore(level)));
+    trigger.onFalse(superstructure.enter(new CompleteCoralScore(level)));
   }
 }
 

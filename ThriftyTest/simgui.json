@@ -15,6 +15,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
+      "/SmartDashboard/Enter test state": "Command",
       "/SmartDashboard/Lazy Zero Elevator": "Command",
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
@@ -22,6 +23,11 @@
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Enter test state": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
         "Pathfind Trajectory": {
           "arrows": false,

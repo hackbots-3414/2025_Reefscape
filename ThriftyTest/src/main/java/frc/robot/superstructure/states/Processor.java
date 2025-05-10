@@ -19,8 +19,8 @@ public class Processor implements EnterableState {
             subsystems.pivot().processor()),
         subsystems.algae().processorScore())
 
-        .onlyIf(subsystems.algae().holdingAlgae())
         .finallyDo(subsystems.elevator()::release)
-        .finallyDo(subsystems.pivot()::release);
+        .finallyDo(subsystems.pivot()::release)
+        .onlyIf(subsystems.algae().holdingAlgae());
   }
 }

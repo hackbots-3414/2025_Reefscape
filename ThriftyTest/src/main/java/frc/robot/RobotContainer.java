@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.binding.Binder;
+import frc.robot.binding.DashboardBindings;
 import frc.robot.binding.DriveBindings;
 import frc.robot.binding.NamedCommandBindings;
 import frc.robot.binding.OperatorBindings;
@@ -38,12 +39,14 @@ public class RobotContainer {
   private final Binder m_operator = new OperatorBindings();
   private final Binder m_robot = new RobotBindings();
   private final Binder m_namedCommands = new NamedCommandBindings();
+  private final Binder m_dashboard = new DashboardBindings();
 
   public RobotContainer() {
     m_driver.bind(m_superstructure);
     m_operator.bind(m_superstructure);
     m_robot.bind(m_superstructure);
     m_namedCommands.bind(m_superstructure);
+    m_dashboard.bind(m_superstructure);
 
     m_superstructure.buildVision().startThread();
 

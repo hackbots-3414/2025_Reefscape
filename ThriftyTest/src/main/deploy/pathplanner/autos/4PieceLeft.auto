@@ -33,13 +33,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "LIntake Align"
+                        "name": "Align LIntake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake Wait"
+                        "name": "Coral Wait"
                       }
                     },
                     {
@@ -77,13 +77,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "LIntake Align"
+                        "name": "Align LIntake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake Wait"
+                        "name": "Coral Wait"
                       }
                     },
                     {
@@ -121,13 +121,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "LIntake Align"
+                        "name": "Align LIntake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake Wait"
+                        "name": "Coral Wait"
                       }
                     },
                     {
