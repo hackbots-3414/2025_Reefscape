@@ -7,11 +7,11 @@ import frc.robot.subsystems.pivot.PivotState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class NetReady implements EnterableState {
+public class NetPrep implements EnterableState {
   /**
    * A state that sets the robot up to score in the net
    */
-  public NetReady() {}
+  public NetPrep() {}
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(

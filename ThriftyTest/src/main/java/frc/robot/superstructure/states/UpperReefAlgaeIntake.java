@@ -24,6 +24,7 @@ public class UpperReefAlgaeIntake implements EnterableState {
 
         .finallyDo(subsystems.pivot()::release)
         .finallyDo(subsystems.elevator()::release)
+        .finallyDo(subsystems.algae()::release)
         .unless(subsystems.algae().holdingAlgae());
   }
 }

@@ -38,7 +38,8 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
     m_algaeRoller.getConfigurator().apply(AlgaeConstants.kMotorConfig);
   }
 
-  private void setMotor(double voltage) {
+  private void setVoltage(double voltage) {
+    take();
     if (voltage != m_voltage) {
       m_voltageChanged = true;
     }
@@ -55,7 +56,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
   }
 
   private void stop() {
-    setMotor(0);
+    setVoltage(0);
   }
 
   /**
@@ -63,7 +64,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
    */
   private void keep(boolean shouldHold) {
     if (shouldHold) {
-      setMotor(AlgaeConstants.kHoldVoltage);
+      setVoltage(AlgaeConstants.kHoldVoltage);
     } else {
       stop();
     }
@@ -94,14 +95,16 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
     m_algaeRoller.close();
   }
 
-  protected void passive() {}
+  protected void passive() {
+    keep(holdingAlgae().getAsBoolean());
+  }
 
   /**
    * Intakes an algae, then holds it. If an algae is already held, the command does not run.
    */
   public Command intake() {
     return Commands.sequence(
-        runOnce(() -> setMotor(AlgaeConstants.kIntakeVoltage)),
+        runOnce(() -> setVoltage(AlgaeConstants.kIntakeVoltage)),
         Commands.waitUntil(holdingAlgae()))
 
         .finallyDo(this::keep)
@@ -113,7 +116,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
    */
   public Command net() {
     return Commands.sequence(
-        runOnce(() -> setMotor(AlgaeConstants.kNetEjectVoltage)),
+        runOnce(() -> setVoltage(AlgaeConstants.kNetEjectVoltage)),
         Commands.waitSeconds(AlgaeConstants.kNetScoreTime))
 
         .finallyDo(this::keep)
@@ -125,7 +128,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
    */
   public Command processorScore() {
     return Commands.sequence(
-        runOnce(() -> setMotor(AlgaeConstants.kProcessorEjectVoltage)),
+        runOnce(() -> setVoltage(AlgaeConstants.kProcessorEjectVoltage)),
         Commands.waitSeconds(AlgaeConstants.kProcessorScoreTime))
 
         .finallyDo(this::keep)

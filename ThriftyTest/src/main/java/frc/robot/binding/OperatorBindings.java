@@ -22,7 +22,7 @@ import frc.robot.superstructure.states.UpperReefAlgaeIntake;
 import frc.robot.superstructure.states.ReefAlign.ReefSide;
 import frc.robot.superstructure.states.LowerReefAlgaeIntake;
 import frc.robot.superstructure.states.Net;
-import frc.robot.superstructure.states.NetReady;
+import frc.robot.superstructure.states.NetPrep;
 import frc.robot.superstructure.states.Processor;
 import frc.robot.superstructure.states.ProcessorPrep;
 import frc.robot.superstructure.states.ReefAlign;
@@ -75,7 +75,7 @@ public class OperatorBindings implements Binder {
     /* algae score */
     m_algae.and(m_processor).whileTrue(superstructure.enter(new ProcessorPrep()));
     m_algae.and(m_processor).onFalse(superstructure.enter(new Processor()));
-    m_algae.and(m_net).whileTrue(superstructure.enter(new NetReady()));
+    m_algae.and(m_net).whileTrue(superstructure.enter(new NetPrep()));
     m_algae.and(m_net).onFalse(superstructure.enter(new Net()));
 
     /* coral intake & score */
