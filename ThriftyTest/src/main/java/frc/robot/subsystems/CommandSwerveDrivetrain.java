@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,10 +204,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public void stop() {
     setControl(new SwerveRequest.SwerveDriveBrake());
-  }
-
-  public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-    return run(() -> this.setControl(requestSupplier.get()));
   }
 
   @Override
