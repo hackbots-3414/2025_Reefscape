@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -29,6 +29,7 @@ import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.ElevatorConstants.ElevatorState;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
+import frc.robot.subsystems.PassiveSubsystem;
 
 public class Elevator extends PassiveSubsystem {
   // we want to have a logger, even if we're not using it... yet

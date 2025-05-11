@@ -15,7 +15,7 @@ import frc.robot.binding.RobotBindings;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.coral.CoralRollers;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.algae.AlgaeRollers;
