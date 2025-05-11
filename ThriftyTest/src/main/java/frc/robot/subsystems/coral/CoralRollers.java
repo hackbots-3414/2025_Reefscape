@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.coral;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,21 +14,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.CoralLevel;
-import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
+import frc.robot.subsystems.PassiveSubsystem;
 
 public class CoralRollers extends PassiveSubsystem {
   private final Logger m_logger = LoggerFactory.getLogger(CoralRollers.class);
 
-  private final TalonFX m_coralLeft = new TalonFX(IDConstants.coralLeft);
-  private final TalonFX m_coralRight = new TalonFX(IDConstants.coralRight);
+  private final TalonFX m_coralLeft = new TalonFX(CoralConstants.kLeftMotorID);
+  private final TalonFX m_coralRight = new TalonFX(CoralConstants.kRightMotorID);
 
-  private final CANrange m_frontRange = new CANrange(IDConstants.coralCANrange);
-  private final CANrange m_upperRange = new CANrange(IDConstants.upperCANrange);
-  private final CANrange m_innerRange = new CANrange(IDConstants.innerCANrange);
+  private final CANrange m_frontRange = new CANrange(CoralConstants.kFrontCANrangeID);
+  private final CANrange m_upperRange = new CANrange(CoralConstants.kUpperCANrangeID);
+  private final CANrange m_innerRange = new CANrange(CoralConstants.kInnerCANrangeID);
 
   private double m_voltageLeft;
   private double m_voltageRight;
@@ -44,15 +43,15 @@ public class CoralRollers extends PassiveSubsystem {
     m_coralLeft.clearStickyFaults();
     m_coralRight.clearStickyFaults();
 
-    m_coralLeft.getConfigurator().apply(CoralConstants.motorConfig);
-    m_coralRight.getConfigurator().apply(CoralConstants.motorConfig.withMotorOutput(
-        CoralConstants.motorConfig.MotorOutput.withInverted(CoralConstants.kInvertRight)));
+    m_coralLeft.getConfigurator().apply(CoralConstants.kMotorConfig);
+    m_coralRight.getConfigurator().apply(CoralConstants.kMotorConfig.withMotorOutput(
+        CoralConstants.kMotorConfig.MotorOutput.withInverted(CoralConstants.kInvertRight)));
   }
 
   private void configCANrange() {
-    m_frontRange.getConfigurator().apply(CoralConstants.frontRangeConfig);
-    m_upperRange.getConfigurator().apply(CoralConstants.upperRangeConfig);
-    m_innerRange.getConfigurator().apply(CoralConstants.innerRangeConfig);
+    m_frontRange.getConfigurator().apply(CoralConstants.kFrontRangeConfig);
+    m_upperRange.getConfigurator().apply(CoralConstants.kUpperRangeConfig);
+    m_innerRange.getConfigurator().apply(CoralConstants.kInnerRangeConfig);
   }
 
   private void setVoltage(double voltage) {
@@ -65,27 +64,27 @@ public class CoralRollers extends PassiveSubsystem {
   }
 
   private void setIntake() {
-    setVoltage(CoralConstants.intakeVoltage);
+    setVoltage(CoralConstants.kIntakeVoltage);
   }
 
   private void setL2Score() {
     m_logger.trace("Setting L2 eject");
-    setVoltage(CoralConstants.l2EjectVoltage);
+    setVoltage(CoralConstants.kL2EjectVoltage);
   }
 
   private void setL3Score() {
     m_logger.trace("Setting L3 eject");
-    setVoltage(CoralConstants.l3EjectVoltage);
+    setVoltage(CoralConstants.kL3EjectVoltage);
   }
 
   private void setL4Score() {
     m_logger.trace("Setting L4 eject");
-    setVoltage(CoralConstants.l4EjectVoltage);
+    setVoltage(CoralConstants.kL4EjectVoltage);
   }
 
   private void setL1Score() {
-    m_coralLeft.setVoltage(CoralConstants.l1LeftEjectVoltage);
-    m_coralRight.setVoltage(CoralConstants.l1RightEjectVoltage);
+    m_coralLeft.setVoltage(CoralConstants.kL1LeftEjectVoltage);
+    m_coralRight.setVoltage(CoralConstants.kL1RightEjectVoltage);
   }
 
   private boolean getFrontCANrange() {
@@ -170,7 +169,7 @@ public class CoralRollers extends PassiveSubsystem {
    */
   public Command eject() {
     return Commands.sequence(
-        runOnce(() -> setVoltage(CoralConstants.ejectVoltage)),
+        runOnce(() -> setVoltage(CoralConstants.kEjectVoltage)),
         Commands.waitUntil(present().negate()))
 
         .finallyDo(this::stop)

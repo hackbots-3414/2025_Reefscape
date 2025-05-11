@@ -1,10 +1,8 @@
 package frc.robot;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.DigitalInputsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.FovParamsConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -15,15 +13,11 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.ToFParamsConfigs;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.S1CloseStateValue;
-import com.ctre.phoenix6.signals.S2CloseStateValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.ctre.phoenix6.signals.UpdateModeValue;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
@@ -74,12 +68,6 @@ public class Constants {
     public static final int elevatorCANrange = 53;
 
     public static final int pivot = 57;
-
-    public static final int coralLeft = 55;
-    public static final int coralRight = 56;
-    public static final int coralCANrange = 59;
-    public static final int upperCANrange = 58;
-    public static final int innerCANrange = 54;
 
     public static final int frontIR = 2;
     public static final int rearIR = 3;
@@ -576,83 +564,6 @@ public class Constants {
             .withMotionMagicJerk(maxSpeed * accelerationMultiplier * 10));
 
     public static final double armLength = 0.443;
-  }
-
-  public static class CoralConstants {
-    public static final double intakeVoltage = 2.4;
-    public static final double retractVoltage = -3.5;
-    public static final double ejectVoltage = 5;
-
-    public static final double l1EjectVoltage = 2.5;
-    public static final double l2EjectVoltage = 4.0; // 5.1
-    public static final double l3EjectVoltage = 4.0; // 5.1
-    public static final double l4EjectVoltage = 5.5;
-
-    public static final double rangeDistanceGain = 13; // how many more volts, per unit of range
-
-    public static final double reverseEjectVoltage = -6;
-    public static final double fastEjectVoltage = -10;
-
-    public static final double l1LeftEjectVoltage = 2;
-    public static final double l1RightEjectVoltage = 4;
-
-    public static final boolean rightMotorInvert = true;
-
-    public static final double supplyCurrentLimit = 20.0;
-
-    public static final double IRThreshold = 0.51;
-
-    public static final boolean enableCANRange = true;
-
-    public static final InvertedValue kInvertRight = InvertedValue.Clockwise_Positive;
-
-    public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
-        .withMotorOutput(new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Coast)
-            .withInverted(InvertedValue.CounterClockwise_Positive))
-
-        .withCurrentLimits(new CurrentLimitsConfigs()
-            .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(supplyCurrentLimit));
-
-    public static final CANdiConfiguration candiConfig = new CANdiConfiguration()
-        .withDigitalInputs(new DigitalInputsConfigs()
-            .withS1CloseState(S1CloseStateValue.CloseWhenHigh)
-            .withS2CloseState(S2CloseStateValue.CloseWhenHigh));
-
-    public static final CANrangeConfiguration frontRangeConfig = new CANrangeConfiguration()
-        .withFovParams(new FovParamsConfigs()
-            .withFOVRangeX(6.5)
-            .withFOVRangeY(6.5))
-        .withProximityParams(new ProximityParamsConfigs()
-            .withMinSignalStrengthForValidMeasurement(15015)
-            .withProximityThreshold(0.1))
-        .withToFParams(new ToFParamsConfigs()
-            .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-
-
-    public static final CANrangeConfiguration upperRangeConfig = new CANrangeConfiguration()
-        .withFovParams(new FovParamsConfigs()
-            .withFOVRangeX(6.5)
-            .withFOVRangeY(15))
-        .withProximityParams(new ProximityParamsConfigs()
-            .withMinSignalStrengthForValidMeasurement(2500)
-            .withProximityThreshold(0.65))
-        .withToFParams(new ToFParamsConfigs()
-            .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-
-    public static final CANrangeConfiguration innerRangeConfig = new CANrangeConfiguration()
-        .withFovParams(new FovParamsConfigs()
-            .withFOVRangeX(27)
-            .withFOVRangeY(27))
-        .withProximityParams(new ProximityParamsConfigs()
-            .withMinSignalStrengthForValidMeasurement(1500)
-            .withProximityHysteresis(0)
-            .withProximityThreshold(0.06))
-        .withToFParams(new ToFParamsConfigs()
-            .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-
-    public static double intakeTimeout = 1;
   }
 
   public static final class TalonFXConstants {

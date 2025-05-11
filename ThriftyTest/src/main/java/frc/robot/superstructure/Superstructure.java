@@ -3,7 +3,7 @@ package frc.robot.superstructure;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.CoralRollers;
+import frc.robot.subsystems.coral.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.Pivot;
