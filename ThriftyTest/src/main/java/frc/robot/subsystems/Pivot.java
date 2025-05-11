@@ -77,6 +77,7 @@ public class Pivot extends PassiveSubsystem {
   MotionMagicVoltage control = new MotionMagicVoltage(0);
 
   private void setPosition(double goal) {
+    take();
     if (RobotObserver.getAlgaePieceHeld()) {
       m_pivot.setControl(control.withPosition(goal).withSlot(1));
     } else {

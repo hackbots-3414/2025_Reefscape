@@ -55,6 +55,7 @@ public class CoralRollers extends PassiveSubsystem {
   }
 
   private void setVoltage(double voltage) {
+    take();
     if (m_voltageLeft != voltage) {
       m_coralLeft.setVoltage(voltage);
     }
@@ -130,6 +131,7 @@ public class CoralRollers extends PassiveSubsystem {
   }
 
   protected void passive() {
+    m_logger.warn("Passive?");
     if (present().getAsBoolean() && !holding().getAsBoolean()) {
       setIntake();
     } else {

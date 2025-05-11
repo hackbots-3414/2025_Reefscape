@@ -25,6 +25,7 @@
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Test/Drive To Center": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
+      "/SmartDashboard/Test/Intake": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
