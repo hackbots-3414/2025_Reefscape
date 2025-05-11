@@ -1,6 +1,8 @@
 package frc.robot.superstructure.states;
 
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,6 +14,9 @@ import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class Align implements EnterableState {
+  @SuppressWarnings("unused")
+  private final Logger m_logger = LoggerFactory.getLogger(Align.class);
+
   private final Autopilot m_autopilot;
   private final APTarget m_target;
   private boolean m_flip;
@@ -47,6 +52,7 @@ public class Align implements EnterableState {
   private APTarget target() {
     if (m_flip) {
       if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
+        return m_target.flip();
       }
     }
     return m_target;

@@ -55,6 +55,7 @@ public class Elevator extends PassiveSubsystem {
     configCANrange();
     SmartDashboard.putData("Elevator/Lazy Zero",
         runOnce(this::calibrateZero).ignoringDisable(true));
+    SmartDashboard.putData("Elevator/Subsystem", this);
   }
 
   private void configCANrange() {
@@ -186,7 +187,8 @@ public class Elevator extends PassiveSubsystem {
   public Command go(ElevatorState state) {
     return Commands.sequence(
         runOnce(() -> setPosition(state)),
-        Commands.waitUntil(ready()));
+        Commands.waitUntil(ready()))
+        .withName(state.toString());
   }
 
   public Command go(CoralLevel level) {
@@ -207,7 +209,8 @@ public class Elevator extends PassiveSubsystem {
           if (!interrupted) {
             calibrateZero();
           }
-        });
+        })
+        .withName("Autozero");
   }
 
   public void setPrefireRequirement(Trigger trigger) {

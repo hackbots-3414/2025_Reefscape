@@ -40,6 +40,8 @@ public class AutonomousUtil {
           },
           drivetrain); // Reference to this subsystem to set requirements
 
+      drivetrain.initializeSetpointGenerator(config);
+
       PathPlannerLogging.setLogActivePathCallback(
           poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
     } catch (IOException | ParseException e) {

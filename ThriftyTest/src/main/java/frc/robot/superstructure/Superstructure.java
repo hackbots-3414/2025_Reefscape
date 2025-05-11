@@ -41,7 +41,7 @@ public class Superstructure {
    */
   public Command enter(EnterableState state) {
     return state.build(m_subsystems)
-        .withName(state.toString()); // avoid poorly named commands
+        .withName(state.getClass().getSimpleName()); // avoid poorly named commands
   }
 
   /**
@@ -77,5 +77,9 @@ public class Superstructure {
 
   public Trigger inReefZone() {
     return m_subsystems.drivetrain().inReefZone();
+  }
+
+  public Trigger holdingCoral() {
+    return m_subsystems.coral().holding();
   }
 }

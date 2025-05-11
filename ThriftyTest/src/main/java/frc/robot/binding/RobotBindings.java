@@ -8,6 +8,7 @@ public class RobotBindings implements Binder {
 
   public void bind(Superstructure superstructure) {
     /* elevator prefire */
-    superstructure.modify(new ElevatorPrep(), superstructure.inReefZone());
+    superstructure.modify(new ElevatorPrep(),
+        superstructure.inReefZone().and(superstructure.holdingCoral()));
   }
 }

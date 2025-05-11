@@ -1,7 +1,6 @@
 package frc.robot.driveassist;
 
 import java.util.Optional;
-
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -89,10 +88,12 @@ public class APTarget {
    * Flips a target across the field, preserving relative entry angle and rotation.
    */
   public APTarget flip() {
-    m_reference = FlippingUtil.flipFieldPose(m_reference);
+    Pose2d ref = FlippingUtil.flipFieldPose(m_reference);
+    APTarget target = new APTarget(ref);
     m_entryAngle.ifPresent(rotation -> {
-      m_entryAngle = Optional.of(FlippingUtil.flipFieldRotation(rotation));
+      Rotation2d entry = FlippingUtil.flipFieldRotation(rotation);
+      target.withEntryAngle(entry);
     });
-    return this;
+    return target;
   }
 }

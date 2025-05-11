@@ -14,9 +14,12 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Auton Chooser": "String Chooser",
+      "/SmartDashboard/Command Scheduler": "Scheduler",
       "/SmartDashboard/Drive To Center": "Command",
       "/SmartDashboard/Elevator Visualization": "Mechanism2d",
       "/SmartDashboard/Elevator/Lazy Zero": "Command",
+      "/SmartDashboard/Elevator/Subsystem": "Subsystem",
       "/SmartDashboard/Enter test state": "Command",
       "/SmartDashboard/Lazy Zero Elevator": "Command",
       "/SmartDashboard/PathPlanner": "Alerts",
@@ -29,6 +32,16 @@
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Auton Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
         "Pathfind Trajectory": {
           "arrows": false,
@@ -117,6 +130,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Test/Drive To Center": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -126,7 +144,10 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Drivetrain": {
+        "Coral": {
+          "open": true
+        },
+        "Elevator": {
           "open": true
         },
         "Swirly length": {

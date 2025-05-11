@@ -65,7 +65,7 @@ public abstract class PassiveSubsystem extends SubsystemBase {
         passive();
         release();
       }
-    }, this);
+    }, this).withName(getName() + "Passive");
   }
 
   /**

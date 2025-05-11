@@ -1,6 +1,7 @@
 package frc.robot.binding;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.FieldConstants;
@@ -39,16 +40,21 @@ public class NamedCommandBindings implements Binder {
     for (ScoringLocations location : Constants.ScoringLocations.values()) {
       String name = "Align ".concat(location.toString());
       NamedCommands.registerCommand(name, superstructure.enter(
-          new Align(new APTarget(location.value))));
+          new Align(new APTarget(location.value).withEntryAngle(location.value.getRotation()))
+              .allianceRelative()));
     }
     NamedCommands.registerCommand("Align LIntake", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kLeftIntake)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kLeftIntake).withEntryAngle(Rotation2d.kPi))
+            .allianceRelative()));
     NamedCommands.registerCommand("Align RIntake", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kRightIntake)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kRightIntake).withEntryAngle(Rotation2d.kPi))
+            .allianceRelative()));
     NamedCommands.registerCommand("Align IJ", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kIJ)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kIJ).withEntryAngle(FieldConstants.kIJ.getRotation()))
+            .allianceRelative()));
     NamedCommands.registerCommand("Align GH", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kGH)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kGH).withEntryAngle(FieldConstants.kGH.getRotation()))
+            .allianceRelative()));
     NamedCommands.registerCommand("Align Barge", superstructure.enter(
         new Align(new APTarget(FieldConstants.kBarge1)).allianceRelative()));
   }
