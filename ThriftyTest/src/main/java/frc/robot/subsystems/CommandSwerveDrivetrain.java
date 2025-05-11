@@ -43,7 +43,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
 import frc.robot.Constants.FieldConstants;
@@ -91,10 +90,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private Pose2d m_estimatedPose = new Pose2d();
 
-  private double m_oldVisionTimestamp = -1;
-
-  private boolean m_validPose = false;
-
   private SwerveSetpointGenerator setpointGenerator;
 
   private SwerveSetpoint previousSetpoint;
@@ -135,7 +130,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     m_aligned = false;
 
-    RobotObserver.setVisionValidSupplier(this::getVisionValid);
     RobotObserver.setPoseSupplier(this::getPose);
     RobotObserver.setVelocitySupplier(this::getVelocity);
     RobotObserver.setNoElevatorZoneSupplier(noElevatorZone());
@@ -234,8 +228,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_hasAppliedOperatorPerspective = true;
       });
     }
-
-    handleVisionToggle();
   }
 
   private void startSimThread() {
@@ -249,18 +241,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       updateSimState(deltaTime, RobotController.getBatteryVoltage());
     });
     m_simNotifier.startPeriodic(SimConstants.k_simPeriodic);
-  }
-
-  private boolean getVisionValid() {
-    return m_validPose;
-  }
-
-  private void handleVisionToggle() {
-    if (m_oldVisionTimestamp >= 0) {
-      m_validPose = Utils.getCurrentTimeSeconds()
-          - m_oldVisionTimestamp < Constants.VisionConstants.k_visionTimeout;
-    }
-    SmartDashboard.putBoolean("Vision/Acceptable Pose", m_validPose);
   }
 
   /* Swerve requests to apply during SysId characterization */
@@ -319,21 +299,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
-    m_oldVisionTimestamp = estimate.timestamp();
     // This should NOT run in simulation!
     if (Robot.isSimulation())
       return;
     // Depending on our configs, we should use or not use the std devs
-    if (Constants.VisionConstants.k_useStdDevs) {
-      addVisionMeasurement(
-          estimate.pose(),
-          estimate.timestamp(),
-          estimate.stdDevs());
-    } else {
-      addVisionMeasurement(
-          estimate.pose(),
-          estimate.timestamp());
-    }
+    addVisionMeasurement(
+        estimate.pose(),
+        estimate.timestamp(),
+        estimate.stdDevs());
   }
 
   public Command sysIdQuasistaticTranslation(SysIdRoutine.Direction direction) {

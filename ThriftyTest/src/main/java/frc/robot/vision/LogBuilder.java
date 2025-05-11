@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.RobotObserver;
 
 public class LogBuilder {

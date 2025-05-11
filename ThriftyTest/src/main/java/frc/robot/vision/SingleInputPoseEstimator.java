@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.RobotObserver;
 import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
