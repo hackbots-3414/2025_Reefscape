@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.algae;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,16 +10,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.AlgaeRollerConstants;
-import frc.robot.Constants.IDConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
+import frc.robot.subsystems.PassiveSubsystem;
 
 public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
 
-  private final TalonFX m_algaeRoller = new TalonFX(IDConstants.algae);
+  private final TalonFX m_algaeRoller = new TalonFX(AlgaeConstants.kMotorID);
 
   private double m_voltage;
   private boolean m_voltageChanged;
@@ -36,7 +35,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
 
   private void configIntakeMotor() {
     m_algaeRoller.clearStickyFaults();
-    m_algaeRoller.getConfigurator().apply(AlgaeRollerConstants.motorConfig);
+    m_algaeRoller.getConfigurator().apply(AlgaeConstants.kMotorConfig);
   }
 
   private void setMotor(double voltage) {
@@ -64,7 +63,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
    */
   private void keep(boolean shouldHold) {
     if (shouldHold) {
-      setMotor(AlgaeRollerConstants.holdVoltage);
+      setMotor(AlgaeConstants.kHoldVoltage);
     } else {
       stop();
     }
@@ -72,7 +71,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
 
   private void updateObjectState() {
     if (Robot.isReal()) {
-      m_hasAlgae = getTorqueCurrent() >= AlgaeRollerConstants.torqueCurrentThreshold;
+      m_hasAlgae = getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold;
     } else {
       m_hasAlgae = SmartDashboard.getBoolean("Algae/Held", false);
     }
@@ -102,7 +101,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
    */
   public Command intake() {
     return Commands.sequence(
-        runOnce(() -> setMotor(AlgaeRollerConstants.intakeVoltage)),
+        runOnce(() -> setMotor(AlgaeConstants.kIntakeVoltage)),
         Commands.waitUntil(holdingAlgae()))
 
         .finallyDo(this::keep)
@@ -114,8 +113,8 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
    */
   public Command net() {
     return Commands.sequence(
-        runOnce(() -> setMotor(AlgaeRollerConstants.netEjectVoltage)),
-        Commands.waitSeconds(AlgaeRollerConstants.algaeEjectTime))
+        runOnce(() -> setMotor(AlgaeConstants.kNetEjectVoltage)),
+        Commands.waitSeconds(AlgaeConstants.kNetScoreTime))
 
         .finallyDo(this::keep)
         .onlyIf(holdingAlgae());
@@ -126,8 +125,8 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
    */
   public Command processorScore() {
     return Commands.sequence(
-        runOnce(() -> setMotor(AlgaeRollerConstants.processorEjectVoltage)),
-        Commands.waitSeconds(AlgaeRollerConstants.processorScoreTime))
+        runOnce(() -> setMotor(AlgaeConstants.kProcessorEjectVoltage)),
+        Commands.waitSeconds(AlgaeConstants.kProcessorScoreTime))
 
         .finallyDo(this::keep)
         .onlyIf(holdingAlgae());
