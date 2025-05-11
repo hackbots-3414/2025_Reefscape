@@ -134,7 +134,6 @@ public class Autopilot {
   private Translation2d calculateSwirlyVelocity(Translation2d offset, APTarget target) {
     double disp = offset.getNorm();
     Rotation2d theta = new Rotation2d(offset.getX(), offset.getY());
-    // TODO: This could be a problem because rotation2d constructor doesn't like small numbers
     double rads = theta.getRadians();
     double dist = calculateSwirlyLength(rads, disp);
     double vx = theta.getCos() - rads * theta.getSin();

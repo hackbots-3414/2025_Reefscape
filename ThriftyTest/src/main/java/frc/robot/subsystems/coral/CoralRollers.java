@@ -131,7 +131,6 @@ public class CoralRollers extends PassiveSubsystem {
   }
 
   protected void passive() {
-    m_logger.warn("Passive?");
     if (present().getAsBoolean() && !holding().getAsBoolean()) {
       setIntake();
     } else {

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.pivot;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -20,14 +20,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.IDConstants;
-import frc.robot.Constants.PivotConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
+import frc.robot.subsystems.PassiveSubsystem;
 
 public class Pivot extends PassiveSubsystem {
-  private final TalonFX m_pivot = new TalonFX(IDConstants.pivot);
+  private final TalonFX m_pivot = new TalonFX(PivotConstants.kMotorID);
 
   private double m_position;
 
@@ -50,27 +49,27 @@ public class Pivot extends PassiveSubsystem {
   }
 
   private void configMotor() {
-    m_pivot.getConfigurator().apply(PivotConstants.motorConfig, 0.2);
-    m_pivot.setPosition(PivotConstants.rotorOffset);
+    m_pivot.getConfigurator().apply(PivotConstants.kMotorConfig, 0.2);
+    m_pivot.setPosition(PivotConstants.kRotorOffset);
   }
 
   private void configSim() {
     m_armSim = new SingleJointedArmSim(
-        PivotConstants.stateSpacePlant,
+        PivotConstants.kPlant,
         m_gearbox,
-        PivotConstants.gearRatio,
-        PivotConstants.armLength,
-        PivotConstants.radiansAtZero,
-        PivotConstants.radiansAtMax,
+        PivotConstants.kGearRatio,
+        PivotConstants.kArmLength,
+        PivotConstants.kRadiansAtZero,
+        PivotConstants.kRadiansAtMax,
         true, // Add noise for realism
-        PivotConstants.stow // Starting angle
+        PivotState.Stow.position() // Starting angle
     );
 
     m_mechVisual = new Mechanism2d(1.0, 1.0); // Width/height in meters
     m_mechRoot = m_mechVisual.getRoot("ArmRoot", 0.5, 0.0); // Center at (0.5, 0)
     m_armLigament = m_mechRoot
         .append(
-            new MechanismLigament2d("Arm", PivotConstants.armLength, Math.toDegrees(m_position)));
+            new MechanismLigament2d("Arm", PivotConstants.kArmLength, Math.toDegrees(m_position)));
     SmartDashboard.putData("Pivot/Visualization", m_mechVisual);
   }
 
@@ -86,28 +85,8 @@ public class Pivot extends PassiveSubsystem {
     m_reference = goal;
   }
 
-  private void setStow() {
-    setPosition(PivotConstants.stow);
-  }
-
-  private void setProcessor() {
-    setPosition(PivotConstants.processor);
-  }
-
-  private void setNet() {
-    setPosition(PivotConstants.net);
-  }
-
-  private void setGroundPickup() {
-    setPosition(PivotConstants.groundPickup);
-  }
-
-  private void setReefIntake() {
-    setPosition(PivotConstants.reefPickup);
-  }
-
-  private void setReefExtract() {
-    setPosition(PivotConstants.reefExtract);
+  private void setPosition(PivotState state) {
+    setPosition(state.position());
   }
 
   public double getPosition() {
@@ -119,7 +98,7 @@ public class Pivot extends PassiveSubsystem {
   }
 
   public Trigger ready() {
-    return new Trigger(() -> Math.abs(getReference() - getPosition()) < PivotConstants.tolerance);
+    return new Trigger(() -> Math.abs(getReference() - getPosition()) < PivotConstants.kTolerance);
   }
 
   private double getPositionUncached() {
@@ -157,60 +136,15 @@ public class Pivot extends PassiveSubsystem {
   }
 
   protected void passive() {
-    setStow();
+    setPosition(PivotState.Stow);
   }
 
   /**
-   * Stows the pivot
+   * Drives the pivot to the given PivotState This command ends when the state is reached.
    */
-  public Command stow() {
+  public Command go(PivotState state) {
     return Commands.sequence(
-        runOnce(this::setStow),
-        Commands.waitUntil(ready()));
-  }
-
-  /**
-   * Sets the pivot to the angle for ground intake (including high ground)
-   */
-  public Command ground() {
-    return Commands.sequence(
-        runOnce(this::setGroundPickup),
-        Commands.waitUntil(ready()));
-  }
-
-  /**
-   * Sets the pivot to the angle for the processor
-   */
-  public Command processor() {
-    return Commands.sequence(
-        runOnce(this::setProcessor),
-        Commands.waitUntil(ready()));
-  }
-
-  /**
-   * Sets the pivot to the angle for the net
-   */
-  public Command net() {
-    return Commands.sequence(
-        runOnce(this::setNet),
-        Commands.waitUntil(ready()));
-  }
-
-  /**
-   * Sets the pivot to the angle for intaking an algae from the reef
-   */
-  public Command reefIntake() {
-    return Commands.sequence(
-        runOnce(this::setReefIntake),
-        Commands.waitUntil(ready()));
-  }
-
-  /**
-   * Sets the pivot to the angle for pulling an algae out of the reef
-   */
-  public Command reefExtract() {
-    return Commands.sequence(
-        runOnce(this::setReefExtract),
+        runOnce(() -> setPosition(state)),
         Commands.waitUntil(ready()));
   }
 
