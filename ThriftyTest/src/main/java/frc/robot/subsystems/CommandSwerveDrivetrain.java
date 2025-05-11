@@ -216,6 +216,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_estimatedPose = this.getState().Pose;
     SmartDashboard.putNumber("Drivetrain/x", m_estimatedPose.getTranslation().getX());
     SmartDashboard.putNumber("Drivetrain/y", m_estimatedPose.getTranslation().getY());
+    SmartDashboard.putNumber("Drivetrain/velo", getVelocity());
 
     SmartDashboard.putBoolean("Drivetrain/Aligned", m_aligned);
 
