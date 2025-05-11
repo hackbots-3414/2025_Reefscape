@@ -30,9 +30,9 @@ public class VisionLogger implements AutoCloseable {
 
     private VisionLogger() {
         m_builder = new StringBuilder();
-        String filepath = VisionConstants.k_logPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
+        String filepath = VisionConstants.kLogPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
         if (Robot.isSimulation()) {
-            filepath = VisionConstants.k_simLogPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
+            filepath = VisionConstants.kSimLogPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
         }
         try {
             m_writer = new FileWriter(filepath);

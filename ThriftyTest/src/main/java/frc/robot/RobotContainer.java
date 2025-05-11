@@ -13,7 +13,7 @@ import frc.robot.binding.NamedCommandBindings;
 import frc.robot.binding.OperatorBindings;
 import frc.robot.binding.RobotBindings;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.CoralRollers;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LedFeedback;
@@ -22,7 +22,7 @@ import frc.robot.subsystems.algae.AlgaeRollers;
 import frc.robot.superstructure.Superstructure;
 
 public class RobotContainer {
-  private final PowerDistribution m_pdp = new PowerDistribution(1,ModuleType.kRev);
+  private final PowerDistribution m_pdp = new PowerDistribution(1, ModuleType.kRev);
 
   private SendableChooser<Command> m_autoChooser;
 

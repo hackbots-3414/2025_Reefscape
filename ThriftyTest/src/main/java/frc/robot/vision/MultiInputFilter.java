@@ -25,7 +25,7 @@ public class MultiInputFilter {
      * specified ID, using the known camera horizontal field of view.
      */
     private boolean verifyTarget(Pose2d source, int tag) {
-        Optional<Pose3d> tagPose = VisionConstants.k_layout.getTagPose(tag);
+        Optional<Pose3d> tagPose = VisionConstants.kTagLayout.getTagPose(tag);
         if (tagPose.isEmpty()) return false;
         Pose2d tagPose2d = tagPose.get().toPose2d();
         Transform2d sourceRelative = tagPose2d.minus(source);
@@ -63,11 +63,11 @@ public class MultiInputFilter {
         for (Entry<String, Set<Integer>> entry : m_tags.entrySet()) {
             String sourceName = entry.getKey();
             Set<Integer> tags = entry.getValue();
-            if (!VisionConstants.cameras.containsKey(sourceName)) {
+            if (!VisionConstants.kCameras.containsKey(sourceName)) {
                 m_logger.warn("Detected target not on field layout, ignoring");
                 continue;
             }
-            Transform3d offset = VisionConstants.cameras.get(sourceName);
+            Transform3d offset = VisionConstants.kCameras.get(sourceName);
             Transform2d offset2d = new Transform2d(
                 offset.getX(),
                 offset.getY(),

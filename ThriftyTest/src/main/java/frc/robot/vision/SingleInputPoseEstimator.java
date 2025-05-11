@@ -55,7 +55,7 @@ public class SingleInputPoseEstimator implements Runnable {
         m_reporter = updateCallback;
         m_robotToCamera = robotToCamera;
         m_estimator = new PhotonPoseEstimator(
-            VisionConstants.k_layout,
+            VisionConstants.kTagLayout,
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             robotToCamera
         );
@@ -74,23 +74,6 @@ public class SingleInputPoseEstimator implements Runnable {
         }
         // Pull the latest data from the camera.
         List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
-        if (results.size() > VisionConstants.k_expectedResults) {
-            /*
-            Rationale for this warning:
-            This run() method should be running on a loop. It should run fast.
-            Ideally, it runs WAY faster than the camera and always receives
-            either 0 or 1 new result.
-            We may want to know if we are being bombarded with too many results,
-            i.e. the camera is running faster than we are, which could suggest
-            that we are running slow.
-            Also, we assume that the time that we see the result minus the time
-            the result took to get sent to us is the time that it was sent.
-            But if we are running slowly, it's possible there would be some
-            time between when a result was sent and when we "see" it. This would
-            mess up the timestamping logic.
-            */
-            m_logger.trace("Possibly too many results: {} ({})", results.size(), m_camera.getName());
-        }
         m_estimator.addHeadingData(
             RobotController.getMeasureTime().in(Seconds),
             RobotObserver.getPose().getRotation()
@@ -123,7 +106,7 @@ public class SingleInputPoseEstimator implements Runnable {
         }
         PhotonTrackedTarget target = targets.get(0);
         int fidId = target.getFiducialId();
-        Optional<Pose3d> targetPosition = VisionConstants.k_layout
+        Optional<Pose3d> targetPosition = VisionConstants.kTagLayout
             .getTagPose(fidId);
         if (targetPosition.isEmpty()) {
             m_logger.error("Tag {} detected not in field layout", fidId);
@@ -155,7 +138,7 @@ public class SingleInputPoseEstimator implements Runnable {
         double altXYErr = altDiff.getTranslation().getNorm();
         Pose3d estimate;
 
-        if (Math.abs(bestRotErr - altRotErr) >= VisionConstants.k_headingThreshold) {
+        if (Math.abs(bestRotErr - altRotErr) >= VisionConstants.kHeadingThreshold) {
             estimate = (bestRotErr <= altRotErr) ? best : alt;
         } else {
             estimate = (bestXYErr <= altXYErr) ? best : alt;
@@ -168,7 +151,7 @@ public class SingleInputPoseEstimator implements Runnable {
     private boolean precheckValidity(PhotonPipelineResult result) {
         double latency = result.metadata.getLatencyMillis() / 1.0e+3;
         // too old -> don't count it
-        if (latency > VisionConstants.k_latencyThreshold) {
+        if (latency > VisionConstants.kLatencyThreshold) {
             // this is interesting, so let's report it
             m_logger.warn("({}) Refused old vision data, latency of {}", m_name, latency);
             return false;
@@ -190,7 +173,7 @@ public class SingleInputPoseEstimator implements Runnable {
         // if in reef mode, disregard data that doesn't use the reef.
         if (RobotObserver.getReefMode()) {
             int id = result.getBestTarget().getFiducialId();
-            if (!VisionConstants.k_reefIds.contains(id)) {
+            if (!VisionConstants.kReefIds.contains(id)) {
                 return Optional.empty();
             }
         }
@@ -209,7 +192,7 @@ public class SingleInputPoseEstimator implements Runnable {
         Pose3d pose,
         double ambiguity
     ) {
-        if (ambiguity >= VisionConstants.k_AmbiguityThreshold) return false;
+        if (ambiguity >= VisionConstants.kAmbiguityThreshold) return false;
         return !isOutsideField(pose);
     }
     
@@ -217,13 +200,13 @@ public class SingleInputPoseEstimator implements Runnable {
         double x = pose.getX();
         double y = pose.getY();
         double z = pose.getZ();
-        double xMax = VisionConstants.k_XYMargin.magnitude()
-            + FieldConstants.k_fieldLength.magnitude();
-        double yMax = VisionConstants.k_XYMargin.magnitude()
-            + FieldConstants.k_fieldWidth.magnitude();
-        double xyMin = -VisionConstants.k_XYMargin.magnitude();
-        double zMax = VisionConstants.k_ZMargin.magnitude();
-        double zMin = -VisionConstants.k_ZMargin.magnitude();
+        double xMax = VisionConstants.kXYMargin.magnitude()
+            + FieldConstants.kFieldLength.magnitude();
+        double yMax = VisionConstants.kXYMargin.magnitude()
+            + FieldConstants.kFieldWidth.magnitude();
+        double xyMin = -VisionConstants.kXYMargin.magnitude();
+        double zMax = VisionConstants.kZMargin.magnitude();
+        double zMin = -VisionConstants.kZMargin.magnitude();
         return x < xyMin
             || x > xMax
             || y < xyMin
@@ -239,9 +222,9 @@ public class SingleInputPoseEstimator implements Runnable {
     ) {
         double multiplier = calculateStdDevMultiplier(result, latency, pose);
         Matrix<N3, N1> stdDevs = VecBuilder.fill(
-            multiplier * VisionConstants.k_translationCoefficient,
-            multiplier * VisionConstants.k_translationCoefficient,
-            multiplier * VisionConstants.k_rotationCoefficient
+            multiplier * VisionConstants.kTranslationCoefficient,
+            multiplier * VisionConstants.kTranslationCoefficient,
+            multiplier * VisionConstants.kRotationCoefficient
         );
         return stdDevs;
     }
@@ -261,28 +244,28 @@ public class SingleInputPoseEstimator implements Runnable {
         averageTagDistance /= result.getTargets().size();
         // calculate tag distance factor
         double distanceFactor = Math.max(1,
-            VisionConstants.k_distanceMultiplier
-                * (averageTagDistance - VisionConstants.k_noisyDistance)
+            VisionConstants.kDistanceMultiplier
+                * (averageTagDistance - VisionConstants.kNoisyDistance)
         );
         // calculate an (average) ambiguity real quick:
         double ambiguity = getAmbiguity(result);
         // ambiguity factor
         double ambiguityFactor = Math.max(1,
-            VisionConstants.k_ambiguityMultiplier * ambiguity
-                + VisionConstants.k_ambiguityShifter
+            VisionConstants.kAmbiguityMultiplier * ambiguity
+                + VisionConstants.kAmbiguityShifter
         );
         // tag divisor
         double tags = result.getTargets().size();
-        double tagDivisor = 1 + (tags - 1) * VisionConstants.k_targetMultiplier;
+        double tagDivisor = 1 + (tags - 1) * VisionConstants.kTargetMultiplier;
         // distance from last pose
         double poseDifferenceError = Math.max(0,
             RobotObserver.getPose().minus(pose).getTranslation().getNorm()
-                - VisionConstants.k_differenceThreshold * RobotObserver.getVelocity()
+                - VisionConstants.kDifferenceThreshold * RobotObserver.getVelocity()
         );
         double diffMultiplier = Math.max(1,
-            poseDifferenceError * VisionConstants.k_differenceMultiplier
+            poseDifferenceError * VisionConstants.kDifferenceMultiplier
         );
-        double timeMultiplier = Math.max(1, latency * VisionConstants.k_latencyMultiplier);
+        double timeMultiplier = Math.max(1, latency * VisionConstants.kLatencyMultiplier);
         // final calculation
         double stdDevMultiplier = ambiguityFactor
             * distanceFactor

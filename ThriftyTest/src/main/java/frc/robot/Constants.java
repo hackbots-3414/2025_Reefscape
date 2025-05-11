@@ -84,11 +84,6 @@ public class Constants {
     public static final int frontIR = 2;
     public static final int rearIR = 3;
 
-    public static final int climbLeft = 1;
-    public static final int climbRight = 2;
-
-    public static final int algae = 60;
-
     public static final int candle1 = 5;
     public static final int candle2 = 6;
 
@@ -300,8 +295,8 @@ public class Constants {
   }
 
   public static class FieldConstants {
-    public static final Distance k_fieldWidth = Meters.of(8.05);
-    public static final Distance k_fieldLength = Meters.of(17.55);
+    public static final Distance kFieldWidth = Meters.of(8.05);
+    public static final Distance kFieldLength = Meters.of(17.55);
     public static final Translation2d reefCenter = new Translation2d(4.5, 4.0);
     public static final double kReefReadyAuton = 2.6;
     public static final double kReefReady = 2.1;
@@ -658,66 +653,6 @@ public class Constants {
             .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
     public static double intakeTimeout = 1;
-  }
-
-  public static final class ClimberConstants {
-    public static final boolean rightMotorInvert = true;
-    public static final double climberUpVolts = 12.0; // 12.0
-    public static final double climbDownVolts = -12.0;
-    public static final double climbRollVolts = -4;
-
-    public static final double climberCurrentLimit = 80.0;
-    public static final InvertedValue invertMotor = InvertedValue.CounterClockwise_Positive;
-
-    public static final double forwardSoftLimit = 0.0;
-    public static final double reverseSoftLimit = -0.25;
-    public static final double stowPosition = -0.25;
-    public static final double climbPosition = -0.110;
-    public static final double kShakePosition = -0.02;
-
-    public static final double encoderOffset = -0.01318359;
-    public static final SensorDirectionValue invertEncoder =
-        SensorDirectionValue.CounterClockwise_Positive;
-
-    public static final CANcoderConfiguration encoderConfig = new CANcoderConfiguration()
-        .withMagnetSensor(new MagnetSensorConfigs()
-            .withAbsoluteSensorDiscontinuityPoint(0.5)
-            .withSensorDirection(invertEncoder)
-            .withMagnetOffset(encoderOffset));
-
-    public static final TalonFXConfiguration motorConfig = new TalonFXConfiguration()
-        .withMotorOutput(new MotorOutputConfigs()
-            .withNeutralMode(NeutralModeValue.Brake)
-            .withInverted(invertMotor))
-
-        .withCurrentLimits(new CurrentLimitsConfigs()
-            .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentLimit(climberCurrentLimit))
-
-        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-            .withForwardSoftLimitThreshold(forwardSoftLimit)
-            .withForwardSoftLimitEnable(true)
-            .withReverseSoftLimitThreshold(reverseSoftLimit)
-            .withReverseSoftLimitEnable(true))
-
-        .withFeedback(new FeedbackConfigs()
-            .withFeedbackRemoteSensorID(IDConstants.climbEncoder)
-            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder));
-
-    public static final double climbReadyRangeValue = 0.08;
-    public static final double climbedRangeValue = 0.145;
-
-    public static final double climbMaxEncoderValue = 63.833;
-    public static final double climbReadyMaxEncoderValue = 90;
-
-    public static final double k_openServoPosition = 0.0;
-    public static final double k_closedServoPosition = 1.0;
-    public static final double k_servoTolerance = 0.01;
-
-    public static final double climbReadyTolerance = -0.001;
-
-    public static final double kClimbTime = 30.0;
-    public static final double kFunnelOpenTime = 1.5;
   }
 
   public static final class TalonFXConstants {

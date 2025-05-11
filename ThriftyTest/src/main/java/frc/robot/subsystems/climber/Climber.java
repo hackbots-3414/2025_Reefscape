@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.climber;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +13,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.IDConstants;
+import frc.robot.subsystems.PassiveSubsystem;
 
 public class Climber extends PassiveSubsystem implements AutoCloseable {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
-  private final TalonFX m_leftClimbMotor = new TalonFX(IDConstants.climbLeft);
-  private final TalonFX m_rightClimbMotor = new TalonFX(IDConstants.climbRight);
+  private final TalonFX m_leftClimbMotor = new TalonFX(ClimberConstants.kLeftMotorID);
+  private final TalonFX m_rightClimbMotor = new TalonFX(ClimberConstants.kRightMotorID);
   private final CANcoder m_encoder = new CANcoder(IDConstants.climbEncoder);
 
   private final Servo m_servo = new Servo(IDConstants.servo);
@@ -37,16 +37,16 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
   }
 
   private void configEncoder() {
-    m_encoder.getConfigurator().apply(ClimberConstants.encoderConfig);
+    m_encoder.getConfigurator().apply(ClimberConstants.kEncoderConfig);
   }
 
   private void configMotors() {
     m_leftClimbMotor.clearStickyFaults();
     m_rightClimbMotor.clearStickyFaults();
-    m_leftClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
-    m_rightClimbMotor.getConfigurator().apply(ClimberConstants.motorConfig);
+    m_leftClimbMotor.getConfigurator().apply(ClimberConstants.kMotorConfig);
+    m_rightClimbMotor.getConfigurator().apply(ClimberConstants.kMotorConfig);
     m_rightClimbMotor
-        .setControl(new Follower(IDConstants.climbLeft, ClimberConstants.rightMotorInvert));
+        .setControl(new Follower(ClimberConstants.kLeftMotorID, true));
   }
 
   /*
@@ -54,9 +54,9 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
    */
   public Command openFunnel() {
     return Commands.sequence(
-        runOnce(() -> m_servo.set(ClimberConstants.k_openServoPosition)),
+        runOnce(() -> m_servo.set(ClimberConstants.kOpenServoPosition)),
         Commands.waitSeconds(ClimberConstants.kFunnelOpenTime),
-        runOnce(() -> m_servo.set(ClimberConstants.k_closedServoPosition)));
+        runOnce(() -> m_servo.set(ClimberConstants.kClosedServoPosition)));
   }
 
   private void setMotor(double voltage) {
@@ -65,11 +65,11 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
   }
 
   private void setUp() {
-    setMotor(ClimberConstants.climberUpVolts);
+    setMotor(ClimberConstants.kUpVolts);
   }
 
   private void setDown() {
-    setMotor(ClimberConstants.climbDownVolts);
+    setMotor(ClimberConstants.kDownVolts);
   }
 
   private void stop() {
@@ -98,15 +98,15 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
   }
 
   public Trigger climbed() {
-    return new Trigger(() -> getPosition() <= ClimberConstants.climbPosition);
+    return new Trigger(() -> getPosition() <= ClimberConstants.kClimbPosition);
   }
 
   public Trigger raised() {
-    return new Trigger(() -> getPosition() > ClimberConstants.climbReadyTolerance);
+    return new Trigger(() -> getPosition() > ClimberConstants.kClimbReadyTolerance);
   }
 
   public Trigger lowered() {
-    return new Trigger(() -> getPosition() <= ClimberConstants.stowPosition);
+    return new Trigger(() -> getPosition() <= ClimberConstants.kStowPosition);
   }
 
   @Override

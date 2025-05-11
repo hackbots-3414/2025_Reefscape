@@ -7,24 +7,24 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public final class AlgaeConstants {
-  public static final int kMotorID = 60;
+  protected static final int kMotorID = 60;
 
-  public static final double kIntakeVoltage = 12;
-  public static final double kNetEjectVoltage = -3.0; // 3.0
-  public static final double kProcessorEjectVoltage = -3.2;
-  public static final double kHoldVoltage = 2.7;
+  protected static final double kIntakeVoltage = 12;
+  protected static final double kNetEjectVoltage = -3.0; // 3.0
+  protected static final double kProcessorEjectVoltage = -3.2;
+  protected static final double kHoldVoltage = 2.7;
 
-  public static final double kTorqueCurrentThreshold = 75;
-  public static final double kSupplyCurrentLimit = 25.0;
+  protected static final double kTorqueCurrentThreshold = 75;
+  protected static final double kSupplyCurrentLimit = 25.0;
 
-  public static final double kUpdateObjectPeriodSeconds = 0.200;
+  protected static final double kUpdateObjectPeriodSeconds = 0.200;
 
-  public static final double kProcessorScoreTime = 2.0;
-  public static final double kNetScoreTime = 0.4;
+  protected static final double kProcessorScoreTime = 2.0;
+  protected static final double kNetScoreTime = 0.4;
 
-  public static final InvertedValue kInvertMotor = InvertedValue.Clockwise_Positive;
+  protected static final InvertedValue kInvertMotor = InvertedValue.Clockwise_Positive;
 
-  public static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
+  protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
           .withNeutralMode(NeutralModeValue.Brake)
           .withInverted(kInvertMotor))
