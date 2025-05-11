@@ -330,21 +330,6 @@ public class Constants {
     public static final double stage2Distance = 1;
   }
 
-  public static final class CANrangeConstants {
-
-    public static final CANrangeConfiguration k_canRangeConfig = new CANrangeConfiguration()
-        .withFovParams(new FovParamsConfigs()
-            .withFOVRangeX(7)
-            .withFOVRangeY(7))
-        .withToFParams(new ToFParamsConfigs()
-            .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-    // .withProximityParams(null)
-    public static final double farAlignedDistanceMeters = 0.18;
-    public static final double tolerance = 0.2; // 20% tolerance
-    public static final double closeAlignedDistanceMeters = 0.12;
-    public static final int k_filterWindow = 5; // 5 measurements
-  }
-
   public static final class ElevatorConstants {
     public static final boolean enable = true;
 
