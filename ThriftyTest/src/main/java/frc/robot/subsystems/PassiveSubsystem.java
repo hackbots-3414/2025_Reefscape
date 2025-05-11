@@ -63,6 +63,7 @@ public abstract class PassiveSubsystem extends SubsystemBase {
     return Commands.run(() -> {
       if (!taken()) {
         passive();
+        release();
       }
     }, this);
   }
