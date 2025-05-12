@@ -1,7 +1,9 @@
 package frc.robot.superstructure;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.RobotObserver;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.algae.AlgaeRollers;
@@ -34,6 +36,8 @@ public class Superstructure {
         climber,
         drivetrain,
         leds);
+
+    RobotObserver.setFFEnabledSupplier(elevator.unsafe().and(() -> !DriverStation.isAutonomous()));
   }
 
   /**

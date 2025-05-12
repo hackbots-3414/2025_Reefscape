@@ -161,4 +161,5 @@ public class RobotObserver {
     public static boolean getAligned() {
         return getInstance().m_alignedSupplier.getAsBoolean();
     }
+
 }
