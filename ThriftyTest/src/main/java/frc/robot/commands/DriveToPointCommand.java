@@ -11,6 +11,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static edu.wpi.first.units.Units.Radians;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
@@ -75,7 +77,6 @@ public class DriveToPointCommand extends Command {
     }
 
     private Translation2d adjust(Pose2d current, Pose2d goal) {
-
         Translation2d robotToTarget = goal.getTranslation().minus(current.getTranslation());
         
         double distance = robotToTarget.getNorm();
@@ -85,8 +86,10 @@ public class DriveToPointCommand extends Command {
         }
 
         double theoreticalMaxVelocity = Math.sqrt(2 * distance * DriveConstants.kMaxAccelerationTowardsTarget);
+        // SmartDashboard.putNumber("Theoretical Max Velocity", theoreticalMaxVelocity);
 
         Translation2d currentVelocity = m_drivetrain.getVelocityComponents();
+        // SmartDashboard.putNumber("Current Velocity", currentVelocity.getNorm());
 
         Translation2d direction = robotToTarget.div(distance);
 
@@ -114,6 +117,7 @@ public class DriveToPointCommand extends Command {
         }
 
         double currentVelocityTowardsTarget = Math.pow(currentVelocity.getNorm(), 2) / dot;
+        // SmartDashboard.putNumber("Current V towards target", currentVelocityTowardsTarget);
         Translation2d currentVeloI = direction.times(currentVelocityTowardsTarget);
 
         Translation2d currentVeloU = currentVelocity.minus(currentVeloI);
@@ -128,6 +132,8 @@ public class DriveToPointCommand extends Command {
             Translation2d directionU = currentVeloU.div(currentVelocityPerpendicularToTarget);
             veloU = currentVeloU.minus(directionU.times(adjustmentU));
         }
+
+        // SmartDashboard.putNumber("Adjusted Velocity", veloI.getNorm());
         
         Translation2d r = veloI.plus(veloU);
         m_logger.trace("Adjust() returns {}" , r);

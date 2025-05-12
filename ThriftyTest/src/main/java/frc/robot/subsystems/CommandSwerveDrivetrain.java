@@ -188,8 +188,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void periodic() {
         m_estimatedPose = this.getState().Pose;
 
-        SmartDashboard.putBoolean("Drivetrain Aligned", m_aligned);
+        SmartDashboard.putBoolean("Drivetrain/Aligned", m_aligned);
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+        SmartDashboard.putNumber("Drivetrain/Velocity", getVelocity());
 
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
