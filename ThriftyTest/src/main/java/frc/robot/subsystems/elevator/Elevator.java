@@ -136,7 +136,7 @@ public class Elevator extends PassiveSubsystem {
   }
 
   private void calibrateZero() {
-    m_elevatorRight.setPosition(0.0, 0.2);
+    m_elevatorRight.setPosition(0.02);
   }
 
   private void enableLimits() {

@@ -11,11 +11,12 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import frc.robot.Constants.IDConstants;
 
 public final class ClimberConstants {
   protected static final int kLeftMotorID = 1;
   protected static final int kRightMotorID = 2;
+  protected static final int kServoID = 7;
+  protected static final int kEncoderID = 9;
 
   protected static final double kStowPosition = -0.25;
   protected static final double kClimbPosition = -0.110;
@@ -60,7 +61,7 @@ public final class ClimberConstants {
           .withReverseSoftLimitThreshold(kReverseSoftLimit).withReverseSoftLimitEnable(true))
 
       .withFeedback(new FeedbackConfigs()
-          .withFeedbackRemoteSensorID(IDConstants.climbEncoder)
+          .withFeedbackRemoteSensorID(ClimberConstants.kEncoderID)
           .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder));
 }
 

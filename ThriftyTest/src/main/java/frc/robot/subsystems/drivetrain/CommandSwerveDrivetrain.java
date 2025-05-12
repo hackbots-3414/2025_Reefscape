@@ -1,36 +1,34 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+import java.io.IOException;
 import java.util.function.DoubleSupplier;
-
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -42,17 +40,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
-import frc.robot.Constants.DriveConstants.HeadingPID;
-import frc.robot.driveassist.Autopilot;
-import frc.robot.driveassist.APTarget;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
+import frc.robot.driveassist.APTarget;
+import frc.robot.driveassist.Autopilot;
+import frc.robot.driveassist.ForceField;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-import frc.robot.utils.AutonomousUtil;
 import frc.robot.utils.FieldUtils;
 import frc.robot.vision.TimestampedPoseEstimate;
 
@@ -69,12 +65,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private boolean m_aligned;
 
+  private ForceField m_forceField;
+
   private FieldCentric m_teleopRequest = new FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
       .withDriveRequestType(DriveRequestType.Velocity);
 
   private FieldCentricFacingAngle m_veloRequest = new FieldCentricFacingAngle()
-      .withHeadingPID(HeadingPID.kP, HeadingPID.kI, HeadingPID.kD)
+      .withHeadingPID(DriveConstants.HeadingPID.kP, 0, 0)
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
 
@@ -90,7 +88,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private Pose2d m_estimatedPose = new Pose2d();
 
   private SwerveSetpointGenerator setpointGenerator;
-
   private SwerveSetpoint previousSetpoint;
 
   private final ApplyRobotSpeeds autoRequest =
@@ -103,27 +100,39 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     setup();
   }
 
-  public CommandSwerveDrivetrain(
-      SwerveDrivetrainConstants drivetrainConstants,
-      double odometryUpdateFrequency,
-      SwerveModuleConstants<?, ?, ?>... modules) {
-    super(drivetrainConstants, odometryUpdateFrequency, modules);
-    setup();
-  }
+  public void initializePathPlanner() {
+    RobotConfig config;
+    try {
+      config = RobotConfig.fromGUISettings();
+      AutoBuilder.configure(
+          this::getPose, // Robot pose supplier
+          this::resetPose, // Method to reset odometry (will be called if your auto has a
+                           // starting pose)
+          this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+          (speeds, feedforwards) -> driveWithChassisSpeeds(speeds),
+          DriveConstants.k_pathplannerHolonomicDriveController,
+          config, // The robot configuration
+          () -> {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+          },
+          this); // Reference to this subsystem to set requirements
 
-  public CommandSwerveDrivetrain(
-      SwerveDrivetrainConstants drivetrainConstants,
-      double odometryUpdateFrequency,
-      Matrix<N3, N1> odometryStandardDeviation, Matrix<N3, N1> visionStandardDeviation,
-      SwerveModuleConstants<?, ?, ?>... modules) {
-    super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation,
-        visionStandardDeviation,
-        modules);
-    setup();
+      initializeSetpointGenerator(config);
+
+      PathPlannerLogging.setLogActivePathCallback(
+          poses -> RobotObserver.getField().getObject("Pathfind Trajectory").setPoses(poses));
+    } catch (IOException | ParseException e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
   }
 
   private void setup() {
-    AutonomousUtil.initializePathPlanner(this);
+    initializePathPlanner();
     if (Robot.isSimulation()) {
       startSimThread();
     }
@@ -131,22 +140,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     RobotObserver.setPoseSupplier(this::getPose);
     RobotObserver.setVelocitySupplier(this::getVelocity);
-    RobotObserver.setNoElevatorZoneSupplier(noElevatorZone());
+    RobotObserver.setNoElevatorZoneSupplier(dangerZone());
     RobotObserver.setReefReadySupplier(inReefZone());
     RobotObserver.setAlginedSupplier(aligned());
+
+    m_forceField = new ForceField(DriveConstants.k_maxTeleopLinearSpeed);
   }
 
   public void initializeSetpointGenerator(RobotConfig config) {
     setpointGenerator = new SwerveSetpointGenerator(config,
         Units.rotationsToRadians(DriveConstants.k_maxRotationalSpeed));
 
+    // TODO: is this causing problems when the previous setpoint doesn't match the robot speeds?
     ChassisSpeeds currSpeeds = getRobotRelativeSpeeds();
     SwerveModuleState[] currStates = getState().ModuleStates;
     previousSetpoint =
         new SwerveSetpoint(currSpeeds, currStates, DriveFeedforwards.zeros(config.numModules));
   }
 
-  public Translation2d getVelocityComponents() {
+  private Translation2d getVelocityComponents() {
     double vx = getRobotRelativeSpeeds().vxMetersPerSecond;
     double vy = getRobotRelativeSpeeds().vyMetersPerSecond;
     Rotation2d theta = getPose().getRotation();
@@ -154,7 +166,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   }
 
-  public double getVelocity() {
+  private double getVelocity() {
     Translation2d velo = getVelocityComponents();
     return velo.getNorm();
   }
@@ -163,7 +175,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return m_estimatedPose;
   }
 
-  public Pose2d getNearestAntitarget() {
+  private Pose2d getNearestAntitarget() {
     return new Pose2d(FFConstants.k_bargeX, m_estimatedPose.getY(), new Rotation2d());
   }
 
@@ -184,15 +196,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return Commands.runOnce(() -> setOperatorPerspectiveForward(getPose().getRotation()));
   }
 
-  public void setPose(Pose2d pose) {
+  private void setPose(Pose2d pose) {
     resetPose(pose);
   }
 
-  public ChassisSpeeds getRobotRelativeSpeeds() {
+  private ChassisSpeeds getRobotRelativeSpeeds() {
     return getState().Speeds;
   }
 
-  public void driveWithChassisSpeeds(ChassisSpeeds speeds) {
+  private void driveWithChassisSpeeds(ChassisSpeeds speeds) {
     previousSetpoint = setpointGenerator.generateSetpoint(
         previousSetpoint, // The previous setpoint
         speeds, // The desired target speeds
@@ -202,7 +214,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     setControl(autoRequest.withSpeeds(previousSetpoint.robotRelativeSpeeds()));
   }
 
-  public void stop() {
+  private void stop() {
     setControl(new SwerveRequest.SwerveDriveBrake());
   }
 
@@ -329,7 +341,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return m_sysIdRoutineRotation.dynamic(direction);
   }
 
-  private Trigger noElevatorZone() {
+  private Trigger dangerZone() {
     return new Trigger(() -> {
       double distance = getNearestAntitarget()
           .getTranslation()
@@ -364,10 +376,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public Command teleopDrive(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rot) {
     return run(() -> {
+      double vx = x.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed;
+      double vy = y.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed;
+      double omega = rot.getAsDouble() * DriveConstants.k_maxTeleopAngularSpeed;
+
+      Translation2d adjusted = m_forceField.calculate(
+          new Translation2d(vx, vy),
+          m_estimatedPose,
+          getNearestAntitarget());
+
       setControl(m_teleopRequest
-          .withVelocityX(x.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed)
-          .withVelocityY(y.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed)
-          .withRotationalRate(rot.getAsDouble() * DriveConstants.k_maxTeleopAngularSpeed));
+          .withVelocityX(adjusted.getX())
+          .withVelocityY(adjusted.getY())
+          .withRotationalRate(omega));
     });
   }
 

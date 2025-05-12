@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.driveassist.Autopilot;
 import frc.robot.driveassist.APTarget;
+import frc.robot.driveassist.Autopilot;
+import frc.robot.subsystems.drivetrain.DriveConstants;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 

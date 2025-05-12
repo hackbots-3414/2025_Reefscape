@@ -1,58 +1,28 @@
 package frc.robot;
 
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearAcceleration;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
-import frc.robot.driveassist.APConstraints;
-import frc.robot.driveassist.Autopilot;
-import frc.robot.driveassist.APProfile;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.elevator.ElevatorState;
 
 public class Constants {
 
   public static class IDConstants {
-    public static final int leftRange = 8;
-    public static final int rightRange = 7;
-
     public static final int elevatorLeft = 51;
     public static final int elevatorRight = 52;
     public static final int elevatorCANrange = 53;
 
-    public static final int frontIR = 2;
-    public static final int rearIR = 3;
-
     public static final int candle1 = 5;
     public static final int candle2 = 6;
-
-    public static final int servo = 7;
-
-    public static final int climbEncoder = 9;
   }
 
   public static class SimConstants {
@@ -61,92 +31,6 @@ public class Constants {
 
   public static class RobotConstants {
     public static final Time globalCanTimeout = Milliseconds.of(20); // 20 milliseconds
-  }
-
-  public static class DriveConstants {
-    public static final PIDConstants k_translationPID = new PIDConstants(2, 0.0, 0.0); // 0.18836
-    public static final PIDConstants k_rotationPID = new PIDConstants(1.5, 0.0, 0.0); // 0.17119
-
-    public static class HeadingPID {
-      public static final double kP = 4.0;
-      public static final double kI = 0.0;
-      public static final double kD = 0.0;
-    }
-
-    private static final APConstraints kTightAutopilotConstraintsI = new APConstraints()
-        .withAcceleration(5.5)
-        .withDecceleration(1.3);
-
-    private static final APConstraints kTightAutopilotConstraintsU = APConstraints.unlimited();
-
-    private static final APProfile kTightProfile = new APProfile()
-        .withConstraintsI(kTightAutopilotConstraintsI)
-        .withConstraintsU(kTightAutopilotConstraintsU)
-        .withErrorXY(Centimeters.of(2))
-        .withErrorTheta(Degrees.of(2));
-
-    public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
-
-    private static final APConstraints kLooseAutopilotConstraintsI =
-        new APConstraints()
-            .withAcceleration(8.5)
-            .withDecceleration(4);
-
-    private static final APConstraints kLooseAutopilotConstraintsU =
-        new APConstraints()
-            .withAcceleration(8.5)
-            .withDecceleration(3);
-
-    private static final APProfile kLooseProfile = new APProfile()
-        .withConstraintsI(kLooseAutopilotConstraintsI)
-        .withConstraintsU(kLooseAutopilotConstraintsU)
-        .withErrorXY(Centimeters.of(10))
-        .withErrorTheta(Degrees.of(10));
-
-    public static final Autopilot kLooseAutopilot = new Autopilot(kLooseProfile);
-
-    public static final PPHolonomicDriveController k_pathplannerHolonomicDriveController =
-        new PPHolonomicDriveController(k_translationPID, k_rotationPID);
-
-    public static final double k_maxTeleopLinearSpeed =
-        TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    public static final double k_maxTeleopAngularSpeed =
-        RotationsPerSecond.of(1.5).in(RadiansPerSecond);
-
-    public static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
-    public static final LinearAcceleration k_maxLinearAcceleration = MetersPerSecondPerSecond.of(3);
-    public static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(2);
-    public static final AngularAcceleration k_maxAngularAcceleration =
-        RotationsPerSecondPerSecond.of(2);
-
-    public static final LinearVelocity k_maxAlignLinearSpeed = MetersPerSecond.of(1.0);
-    public static final LinearAcceleration k_maxAlignLinearAcceleration =
-        MetersPerSecondPerSecond.of(1);
-    public static final AngularVelocity k_maxAlignAngularSpeed = RotationsPerSecond.of(1);
-    public static final AngularAcceleration k_maxAlignAngularAcceleration =
-        RotationsPerSecondPerSecond.of(1);
-
-    public static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond)
-        / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI);
-
-    public static final double k_elevatorHeightLinearVelocityGain = -0.357;
-
-    public static final double k_elevatorHeightLinearAccelerationGain =
-        k_elevatorHeightLinearVelocityGain * 2;
-    public static final double k_elevatorHeightAngularVelocityGain = -0.0446;
-    public static final double k_elevatorHeightAngularAccelerationGain =
-        k_elevatorHeightAngularVelocityGain * 2;
-
-    public static final double k_closedLoopOverrideToleranceTranslation = 0.05;
-    public static final double k_closedLoopOverrideToleranceRotation = 0.05;
-
-    public static final double rangeZero = 0.175;
-    public static final double rangeMax = 0.3;
-
-    // This one is as well, however it is only used in auton
-    public static final Constraints k_rotationConstraints = new Constraints(
-        k_maxAngularSpeed.in(RadiansPerSecond),
-        k_maxAngularAcceleration.in(RadiansPerSecondPerSecond));
   }
 
   public static class ButtonBindingConstants {

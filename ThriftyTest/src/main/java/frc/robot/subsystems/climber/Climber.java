@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.IDConstants;
 import frc.robot.subsystems.PassiveSubsystem;
 
 public class Climber extends PassiveSubsystem implements AutoCloseable {
@@ -21,9 +20,9 @@ public class Climber extends PassiveSubsystem implements AutoCloseable {
   private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
   private final TalonFX m_leftClimbMotor = new TalonFX(ClimberConstants.kLeftMotorID);
   private final TalonFX m_rightClimbMotor = new TalonFX(ClimberConstants.kRightMotorID);
-  private final CANcoder m_encoder = new CANcoder(IDConstants.climbEncoder);
+  private final CANcoder m_encoder = new CANcoder(ClimberConstants.kEncoderID);
 
-  private final Servo m_servo = new Servo(IDConstants.servo);
+  private final Servo m_servo = new Servo(ClimberConstants.kServoID);
 
   private double m_voltage;
   private boolean m_voltageChanged;
