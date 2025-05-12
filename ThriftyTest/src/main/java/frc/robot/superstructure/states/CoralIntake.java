@@ -14,13 +14,11 @@ public class CoralIntake implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.sequence(
-        subsystems.elevator().autoZero().asProxy(),
         subsystems.elevator().go(ElevatorState.Stow).asProxy(),
         subsystems.coral().intake())
 
         .finallyDo(subsystems.elevator()::release)
         .finallyDo(subsystems.coral()::release)
         .unless(subsystems.coral().holding());
-
   }
 }
