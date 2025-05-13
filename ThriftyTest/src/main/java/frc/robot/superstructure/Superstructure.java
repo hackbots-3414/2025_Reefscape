@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.algae.AlgaeRollers;
+import frc.robot.subsystems.algae.Algae;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.coral.CoralRollers;
+import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.vision.VisionHandler;
@@ -20,8 +20,8 @@ public class Superstructure {
    * Constructs a new superstructure given the individual subsystems
    */
   public Superstructure(
-      AlgaeRollers algaeRollers,
-      CoralRollers coralRollers,
+      Algae algaeRollers,
+      Coral coralRollers,
       Pivot pivot,
       Elevator elevator,
       Climber climber,
@@ -66,8 +66,8 @@ public class Superstructure {
   }
 
   public static record Subsystems(
-      AlgaeRollers algae,
-      CoralRollers coral,
+      Algae algae,
+      Coral coral,
       Pivot pivot,
       Elevator elevator,
       Climber climber,

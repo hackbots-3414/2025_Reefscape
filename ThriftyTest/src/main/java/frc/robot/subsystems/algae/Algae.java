@@ -14,9 +14,9 @@ import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
 
-public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
+public class Algae extends PassiveSubsystem implements AutoCloseable {
   @SuppressWarnings("unused")
-  private final Logger m_logger = LoggerFactory.getLogger(AlgaeRollers.class);
+  private final Logger m_logger = LoggerFactory.getLogger(Algae.class);
 
   private final TalonFX m_algaeRoller = new TalonFX(AlgaeConstants.kMotorID);
 
@@ -27,7 +27,7 @@ public class AlgaeRollers extends PassiveSubsystem implements AutoCloseable {
 
   private MedianFilter m_filter = new MedianFilter(10);
 
-  public AlgaeRollers() {
+  public Algae() {
     super();
     configIntakeMotor();
     RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());

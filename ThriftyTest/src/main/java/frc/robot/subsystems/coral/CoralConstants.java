@@ -42,7 +42,7 @@ public class CoralConstants {
           .withSupplyCurrentLimitEnable(true)
           .withSupplyCurrentLimit(kSupplyCurrentLimit));
 
-  protected static final CANrangeConfiguration kFrontRangeConfig = new CANrangeConfiguration()
+  protected static final CANrangeConfiguration kFrontCANrangeConfig = new CANrangeConfiguration()
       .withFovParams(new FovParamsConfigs()
           .withFOVRangeX(6.5)
           .withFOVRangeY(6.5))
@@ -53,7 +53,7 @@ public class CoralConstants {
           .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
 
-  protected static final CANrangeConfiguration kUpperRangeConfig = new CANrangeConfiguration()
+  protected static final CANrangeConfiguration kUpperCANrangeConfig = new CANrangeConfiguration()
       .withFovParams(new FovParamsConfigs()
           .withFOVRangeX(6.5)
           .withFOVRangeY(15))
@@ -63,7 +63,7 @@ public class CoralConstants {
       .withToFParams(new ToFParamsConfigs()
           .withUpdateMode(UpdateModeValue.ShortRange100Hz));
 
-  protected static final CANrangeConfiguration kInnerRangeConfig = new CANrangeConfiguration()
+  protected static final CANrangeConfiguration kInnerCANrangeConfig = new CANrangeConfiguration()
       .withFovParams(new FovParamsConfigs()
           .withFOVRangeX(27)
           .withFOVRangeY(27))

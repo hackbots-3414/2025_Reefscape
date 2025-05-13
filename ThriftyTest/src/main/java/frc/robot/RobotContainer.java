@@ -15,11 +15,11 @@ import frc.robot.binding.OperatorBindings;
 import frc.robot.binding.RobotBindings;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.coral.CoralRollers;
+import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.pivot.Pivot;
-import frc.robot.subsystems.algae.AlgaeRollers;
+import frc.robot.subsystems.algae.Algae;
 import frc.robot.superstructure.Superstructure;
 
 public class RobotContainer {
@@ -28,8 +28,8 @@ public class RobotContainer {
   private SendableChooser<Command> m_autoChooser;
 
   private final Superstructure m_superstructure = new Superstructure(
-      new AlgaeRollers(),
-      new CoralRollers(),
+      new Algae(),
+      new Coral(),
       new Pivot(),
       new Elevator(),
       new Climber(),
