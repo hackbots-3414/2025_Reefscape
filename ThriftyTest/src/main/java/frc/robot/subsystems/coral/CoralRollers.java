@@ -54,16 +54,25 @@ public class CoralRollers extends PassiveSubsystem {
     m_innerRange.getConfigurator().apply(CoralConstants.kInnerRangeConfig);
   }
 
-  private void setVoltage(double voltage) {
+  private void setRightVoltage(double voltage) {
+    take();
+    if (m_voltageRight != voltage) {
+      m_coralRight.setVoltage(voltage);
+      m_voltageRight = voltage;
+    }
+  }
+
+  private void setLeftVoltage(double voltage) {
     take();
     if (m_voltageLeft != voltage) {
       m_coralLeft.setVoltage(voltage);
       m_voltageLeft = voltage;
     }
-    if (m_voltageRight != voltage) {
-      m_voltageRight = voltage;
-      m_coralRight.setVoltage(voltage);
-    }
+  }
+
+  private void setVoltage(double voltage) {
+    setLeftVoltage(voltage);
+    setRightVoltage(voltage);
   }
 
   private void setIntake() {
@@ -86,8 +95,8 @@ public class CoralRollers extends PassiveSubsystem {
   }
 
   private void setL1Score() {
-    m_coralLeft.setVoltage(CoralConstants.kL1LeftEjectVoltage);
-    m_coralRight.setVoltage(CoralConstants.kL1RightEjectVoltage);
+    setLeftVoltage(CoralConstants.kL1LeftEjectVoltage);
+    setRightVoltage(CoralConstants.kL1RightEjectVoltage);
   }
 
   private boolean getFrontCANrange() {
