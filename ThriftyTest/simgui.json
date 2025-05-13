@@ -27,6 +27,7 @@
       "/SmartDashboard/Pivot/Visualization": "Mechanism2d",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Test/Drive To Center": "Command",
+      "/SmartDashboard/Test/ElevatorZero": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
       "/SmartDashboard/Test/Intake": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
@@ -131,7 +132,7 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Test/Drive To Center": {
+      "/SmartDashboard/Test/ElevatorZero": {
         "window": {
           "visible": true
         }

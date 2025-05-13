@@ -144,6 +144,9 @@ public class Elevator extends PassiveSubsystem {
   }
 
   private boolean atZero() {
+    if (Robot.isSimulation()) {
+      return m_position == 0;
+    }
     return m_debouncer.calculate(m_CANrange.getIsDetected().getValue());
   }
 
@@ -199,10 +202,11 @@ public class Elevator extends PassiveSubsystem {
    * Automatically zeroes the elevator.
    */
   public Command autoZero() {
-    return Commands.sequence(
-        runOnce(this::prepZero),
-        runOnce(this::goDownNoStopping),
-        Commands.waitUntil(this::atZero))
+    return Commands.waitUntil(this::atZero).deadlineFor(
+        Commands.sequence(
+            go(ElevatorState.Zero),
+            runOnce(this::prepZero),
+            runOnce(this::goDownNoStopping)))
 
         .finallyDo(this::enableLimits)
         .finallyDo(interrupted -> {

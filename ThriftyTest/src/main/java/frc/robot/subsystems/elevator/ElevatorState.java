@@ -1,7 +1,9 @@
 package frc.robot.subsystems.elevator;
 
 public enum ElevatorState {
-  /** Elevator at ground */
+  /** Elevator at lowest position */
+  Zero(0),
+  /** Elevator at ground algae intake height*/
   Ground(0),
   /** Height for ground algae intake */
   HighGround(12 * ElevatorConstants.inch),
