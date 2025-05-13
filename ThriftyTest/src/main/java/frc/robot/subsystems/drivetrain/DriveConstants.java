@@ -62,19 +62,19 @@ public class DriveConstants {
   protected static final PPHolonomicDriveController k_pathplannerHolonomicDriveController =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
 
-  protected static final double k_maxTeleopLinearSpeed =
+  protected static final double kMaxTeleopLinearSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-  protected static final double k_maxTeleopAngularSpeed =
+  protected static final double kMaxTeleopAngularSpeed =
       RotationsPerSecond.of(1.5).in(RadiansPerSecond);
 
-  protected static final LinearVelocity k_maxLinearSpeed = MetersPerSecond.of(4);
-  protected static final LinearAcceleration k_maxLinearAcceleration =
+  protected static final LinearVelocity kMaxLinearSpeed = MetersPerSecond.of(4);
+  protected static final LinearAcceleration kMaxLinearAcceleration =
       MetersPerSecondPerSecond.of(3);
-  protected static final AngularVelocity k_maxAngularSpeed = RotationsPerSecond.of(2);
-  protected static final AngularAcceleration k_maxAngularAcceleration =
+  protected static final AngularVelocity kMaxAngularSpeed = RotationsPerSecond.of(2);
+  protected static final AngularAcceleration kMaxAngularAcceleration =
       RotationsPerSecondPerSecond.of(2);
 
-  protected static final double k_maxRotationalSpeed = k_maxLinearSpeed.in(MetersPerSecond)
+  protected static final double kMaxRotationalSpeed = kMaxLinearSpeed.in(MetersPerSecond)
       / (TunerConstants.kWheelRadius.in(Meters) * 2 * Math.PI);
 
   protected static final double k_closedLoopOverrideToleranceTranslation = 0.05;

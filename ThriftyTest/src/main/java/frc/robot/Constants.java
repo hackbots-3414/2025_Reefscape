@@ -1,6 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -8,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
@@ -17,10 +15,6 @@ import frc.robot.subsystems.elevator.ElevatorState;
 public class Constants {
 
   public static class IDConstants {
-    public static final int elevatorLeft = 51;
-    public static final int elevatorRight = 52;
-    public static final int elevatorCANrange = 53;
-
     public static final int candle1 = 5;
     public static final int candle2 = 6;
   }
@@ -161,15 +155,6 @@ public class Constants {
   public static final class StateSpaceConstants {
     public static final double k_dt = 0.01; // fast state space, please!
     public static final double k_maxVoltage = 12.0;
-  }
-
-  public static final class AutonConstants {
-    public static final double translationTolerance = 0.03; // 0.04
-    public static Angle rotationTolerance = Degrees.of(2);
-
-    public static final double driveToPointMaxDistance = 1.5; // beyond X meters, command will insta
-                                                              // end
-    public static final double stage2Distance = 1;
   }
 
   public static final class TalonFXConstants {

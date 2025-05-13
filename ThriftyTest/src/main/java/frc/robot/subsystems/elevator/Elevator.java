@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoralLevel;
-import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
@@ -33,10 +32,10 @@ public class Elevator extends PassiveSubsystem {
   // we want to have a logger, even if we're not using it... yet
   private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
 
-  private final TalonFX m_elevatorLeft = new TalonFX(IDConstants.elevatorLeft, "*");
-  private final TalonFX m_elevatorRight = new TalonFX(IDConstants.elevatorRight, "*");
+  private final TalonFX m_elevatorLeft = new TalonFX(ElevatorConstants.kLeftMotorID, "*");
+  private final TalonFX m_elevatorRight = new TalonFX(ElevatorConstants.kRightMotorID, "*");
 
-  private final CANrange m_CANrange = new CANrange(IDConstants.elevatorCANrange);
+  private final CANrange m_CANrange = new CANrange(ElevatorConstants.kCANrangeID);
 
   private final Debouncer m_debouncer =
       new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
@@ -65,11 +64,11 @@ public class Elevator extends PassiveSubsystem {
   }
 
   private void configMotor() {
-    m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
-    m_elevatorLeft.getConfigurator().apply(ElevatorConstants.motorConfig, 0.2);
+    m_elevatorRight.getConfigurator().apply(ElevatorConstants.kMotorConfig, 0.2);
+    m_elevatorLeft.getConfigurator().apply(ElevatorConstants.kMotorConfig, 0.2);
     Follower follower = new Follower(
-        IDConstants.elevatorRight,
-        ElevatorConstants.invertLeftMotorFollower);
+        ElevatorConstants.kRightMotorID,
+        ElevatorConstants.kInvertLeft);
     m_elevatorLeft.setControl(follower);
     m_elevatorRight.setPosition(0);
   }
@@ -82,18 +81,18 @@ public class Elevator extends PassiveSubsystem {
     // calculate goal we should go to
     double goal = state.position();
     if (RobotObserver.getNoElevatorZone()
-        && (m_position > ElevatorConstants.unsafeRange || goal > ElevatorConstants.unsafeRange)) {
+        && (m_position > ElevatorConstants.kUnsafeRange || goal > ElevatorConstants.kUnsafeRange)) {
       // either trying to reach (or already at) a no-go state given our current position
       return;
     }
     // floor values for the goal between our two extrema for their positions
-    goal = Math.min(goal, ElevatorConstants.forwardSoftLimit);
-    goal = Math.max(goal, ElevatorConstants.reverseSoftLimit);
+    goal = Math.min(goal, ElevatorConstants.kForwardSoftLimit);
+    goal = Math.max(goal, ElevatorConstants.kReverseSoftLimit);
     m_elevatorRight.setControl(control
         .withPosition(goal)
-        .withVelocity(ElevatorConstants.maxSpeedUp)
-        .withAcceleration(ElevatorConstants.maxAccelerationUp)
-        .withJerk(ElevatorConstants.maxJerkUp)
+        .withVelocity(ElevatorConstants.kMaxSpeedUp)
+        .withAcceleration(ElevatorConstants.kMaxAccelerationUp)
+        .withJerk(ElevatorConstants.kMaxJerkUp)
         .withSlot(0));
     m_reference = state;
   }
@@ -102,7 +101,7 @@ public class Elevator extends PassiveSubsystem {
     return new Trigger(() -> {
       if (Robot.isSimulation())
         return true;
-      boolean at = Math.abs(m_reference.position() - m_position) < ElevatorConstants.tolerance;
+      boolean at = Math.abs(m_reference.position() - m_position) < ElevatorConstants.kTolerance;
       m_logger.debug("Setpoint: {}", at);
       return at;
     });
@@ -131,7 +130,8 @@ public class Elevator extends PassiveSubsystem {
 
   private void prepZero() {
     m_elevatorRight.getConfigurator().apply(new SoftwareLimitSwitchConfigs());
-    m_elevatorRight.setControl(new DutyCycleOut(ElevatorConstants.manualDownSpeed)
+    // TODO: can this go?
+    m_elevatorRight.setControl(new DutyCycleOut(ElevatorConstants.kZeroVoltage)
         .withLimitReverseMotion(false).withIgnoreHardwareLimits(true));
   }
 
@@ -140,7 +140,7 @@ public class Elevator extends PassiveSubsystem {
   }
 
   private void enableLimits() {
-    m_elevatorRight.getConfigurator().apply(ElevatorConstants.motorConfig.SoftwareLimitSwitch);
+    m_elevatorRight.getConfigurator().apply(ElevatorConstants.kMotorConfig.SoftwareLimitSwitch);
   }
 
   private boolean atZero() {
@@ -153,7 +153,7 @@ public class Elevator extends PassiveSubsystem {
   private void goDownNoStopping() {
     m_elevatorRight.setPosition(1); // TODO: Why is this line here?
     m_logger.warn("Strange code running & unhandled TODO! Please address");
-    m_elevatorRight.set(ElevatorConstants.manualDownSpeed);
+    m_elevatorRight.set(ElevatorConstants.kZeroVoltage);
   }
 
   @Override
@@ -175,8 +175,8 @@ public class Elevator extends PassiveSubsystem {
    * Whether or not the elevator is above the "safe" range
    */
   public Trigger unsafe() {
-    return new Trigger(() -> m_position > ElevatorConstants.unsafeRange
-        || m_reference.position() > ElevatorConstants.unsafeRange);
+    return new Trigger(() -> m_position > ElevatorConstants.kUnsafeRange
+        || m_reference.position() > ElevatorConstants.kUnsafeRange);
   }
 
   protected void passive() {

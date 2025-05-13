@@ -10,24 +10,20 @@ public final class AlgaeConstants {
   protected static final int kMotorID = 60;
 
   protected static final double kIntakeVoltage = 12;
-  protected static final double kNetEjectVoltage = -3.0; // 3.0
+  protected static final double kNetEjectVoltage = -3.0;
   protected static final double kProcessorEjectVoltage = -3.2;
   protected static final double kHoldVoltage = 2.7;
 
   protected static final double kTorqueCurrentThreshold = 75;
   protected static final double kSupplyCurrentLimit = 25.0;
 
-  protected static final double kUpdateObjectPeriodSeconds = 0.200;
-
   protected static final double kProcessorScoreTime = 2.0;
   protected static final double kNetScoreTime = 0.4;
-
-  protected static final InvertedValue kInvertMotor = InvertedValue.Clockwise_Positive;
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
           .withNeutralMode(NeutralModeValue.Brake)
-          .withInverted(kInvertMotor))
+          .withInverted(InvertedValue.Clockwise_Positive))
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)

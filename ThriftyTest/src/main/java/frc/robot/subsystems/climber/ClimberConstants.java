@@ -22,13 +22,10 @@ public final class ClimberConstants {
   protected static final double kClimbPosition = -0.110;
   protected static final double kClimbReadyTolerance = -0.001;
 
-  protected static final double kClimbTime = 30.0;
   protected static final double kFunnelOpenTime = 1.5;
 
   protected static final double kUpVolts = 12.0;
   protected static final double kDownVolts = -12.0;
-
-  private static final InvertedValue kMotorInvert = InvertedValue.CounterClockwise_Positive;
 
   private static final double kSupplyCurrentLimit = 80.0;
 
@@ -51,7 +48,7 @@ public final class ClimberConstants {
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
           .withNeutralMode(NeutralModeValue.Brake)
-          .withInverted(kMotorInvert))
+          .withInverted(InvertedValue.CounterClockwise_Positive))
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimit(kSupplyCurrentLimit).withSupplyCurrentLimitEnable(true))

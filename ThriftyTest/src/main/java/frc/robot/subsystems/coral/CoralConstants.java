@@ -12,34 +12,24 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.UpdateModeValue;
 
 public class CoralConstants {
-  public static final int kLeftMotorID = 55;
-  public static final int kRightMotorID = 56;
-  public static final int kFrontCANrangeID = 59;
-  public static final int kUpperCANrangeID = 58;
-  public static final int kInnerCANrangeID = 54;
+  protected static final int kLeftMotorID = 55;
+  protected static final int kRightMotorID = 56;
+  protected static final int kFrontCANrangeID = 59;
+  protected static final int kUpperCANrangeID = 58;
+  protected static final int kInnerCANrangeID = 54;
 
   protected static final double kIntakeVoltage = 2.4;
-  protected static final double retractVoltage = -3.5;
-  protected static final double kEjectVoltage = -5;
+  protected static final double kEjectVoltage = -6;
 
-  protected static final double l1EjectVoltage = 2.5;
+  protected static final double kL1EjectVoltage = 2.5;
   protected static final double kL2EjectVoltage = 4.0; // 5.1
   protected static final double kL3EjectVoltage = 4.0; // 5.1
   protected static final double kL4EjectVoltage = 5.5;
 
-  protected static final double reverseEjectVoltage = -6;
-  protected static final double fastEjectVoltage = -10;
-
   protected static final double kL1LeftEjectVoltage = 2;
   protected static final double kL1RightEjectVoltage = 4;
 
-  protected static final boolean rightMotorInvert = true;
-
-  protected static final double supplyCurrentLimit = 20.0;
-
-  protected static final double IRThreshold = 0.51;
-
-  protected static final boolean enableCANRange = true;
+  protected static final double kSupplyCurrentLimit = 20.0;
 
   protected static final InvertedValue kInvertRight = InvertedValue.Clockwise_Positive;
 
@@ -50,7 +40,7 @@ public class CoralConstants {
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
-          .withSupplyCurrentLimit(supplyCurrentLimit));
+          .withSupplyCurrentLimit(kSupplyCurrentLimit));
 
   protected static final CANrangeConfiguration kFrontRangeConfig = new CANrangeConfiguration()
       .withFovParams(new FovParamsConfigs()
@@ -83,6 +73,4 @@ public class CoralConstants {
           .withProximityThreshold(0.06))
       .withToFParams(new ToFParamsConfigs()
           .withUpdateMode(UpdateModeValue.ShortRange100Hz));
-
-  protected static double intakeTimeout = 1;
 }

@@ -59,8 +59,8 @@ public class Pivot extends PassiveSubsystem {
         m_gearbox,
         PivotConstants.kGearRatio,
         PivotConstants.kArmLength,
-        PivotConstants.kRadiansAtZero,
-        PivotConstants.kRadiansAtMax,
+        PivotConstants.kReverseSoftLimit,
+        PivotConstants.kForwardSoftLimit,
         true, // Add noise for realism
         PivotState.Stow.position() // Starting angle
     );

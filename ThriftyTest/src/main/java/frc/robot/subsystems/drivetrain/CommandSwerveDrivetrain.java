@@ -144,14 +144,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     RobotObserver.setReefReadySupplier(inReefZone());
     RobotObserver.setAlginedSupplier(aligned());
 
-    m_forceField = new ForceField(DriveConstants.k_maxTeleopLinearSpeed);
+    m_forceField = new ForceField(DriveConstants.kMaxTeleopLinearSpeed);
   }
 
   public void initializeSetpointGenerator(RobotConfig config) {
     setpointGenerator = new SwerveSetpointGenerator(config,
-        Units.rotationsToRadians(DriveConstants.k_maxRotationalSpeed));
+        Units.rotationsToRadians(DriveConstants.kMaxRotationalSpeed));
 
     // TODO: is this causing problems when the previous setpoint doesn't match the robot speeds?
+    // We saw issues where it would try to drive the wrong way. This could easily be the cause if
+    // I'm understanding this system correctly
     ChassisSpeeds currSpeeds = getRobotRelativeSpeeds();
     SwerveModuleState[] currStates = getState().ModuleStates;
     previousSetpoint =
@@ -376,9 +378,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    */
   public Command teleopDrive(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rot) {
     return run(() -> {
-      double vx = x.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed;
-      double vy = y.getAsDouble() * DriveConstants.k_maxTeleopLinearSpeed;
-      double omega = rot.getAsDouble() * DriveConstants.k_maxTeleopAngularSpeed;
+      double vx = x.getAsDouble() * DriveConstants.kMaxTeleopLinearSpeed;
+      double vy = y.getAsDouble() * DriveConstants.kMaxTeleopLinearSpeed;
+      double omega = rot.getAsDouble() * DriveConstants.kMaxTeleopAngularSpeed;
 
       Translation2d adjusted = m_forceField.calculate(
           new Translation2d(vx, vy),
