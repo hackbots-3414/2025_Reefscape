@@ -20,7 +20,7 @@ public class CoralConstants {
 
   protected static final double kIntakeVoltage = 2.4;
   protected static final double retractVoltage = -3.5;
-  protected static final double kEjectVoltage = 5;
+  protected static final double kEjectVoltage = -5;
 
   protected static final double l1EjectVoltage = 2.5;
   protected static final double kL2EjectVoltage = 4.0; // 5.1

@@ -58,8 +58,10 @@ public class CoralRollers extends PassiveSubsystem {
     take();
     if (m_voltageLeft != voltage) {
       m_coralLeft.setVoltage(voltage);
+      m_voltageLeft = voltage;
     }
     if (m_voltageRight != voltage) {
+      m_voltageRight = voltage;
       m_coralRight.setVoltage(voltage);
     }
   }

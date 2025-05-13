@@ -36,7 +36,7 @@ public class DriveConstants {
   private static final APProfile kTightProfile = new APProfile()
       .withConstraintsI(kTightAutopilotConstraintsI)
       .withConstraintsU(kTightAutopilotConstraintsU)
-      .withErrorXY(Centimeters.of(2))
+      .withErrorXY(Centimeters.of(1))
       .withErrorTheta(Degrees.of(2));
 
   public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
