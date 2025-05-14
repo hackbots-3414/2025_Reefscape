@@ -6,7 +6,7 @@ public enum PivotState {
   /** The angle for scoring in the processor */
   Processor(0.085),
   /** The angle for intaking algae off the reef */
-  ReefIntake(0.281),
+  ReefIntake(0.2),
   /** The angle for removing algae off the reef after intake */
   ReefExtract(0.281),
   /** The angle to score at the net */

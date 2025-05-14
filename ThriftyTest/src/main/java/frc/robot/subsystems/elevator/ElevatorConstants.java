@@ -46,7 +46,7 @@ public final class ElevatorConstants {
   protected static final double kForwardSoftLimit = 11.15;
   protected static final double kReverseSoftLimit = 0;
 
-  protected static final double kZeroVoltage = -0.3;
+  protected static final double kZeroVoltage = -2.0;
 
   protected static final double kUnsafeRange = ElevatorState.L2.position() + 2 * kInch;
 

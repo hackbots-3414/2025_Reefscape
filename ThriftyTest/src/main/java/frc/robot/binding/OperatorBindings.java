@@ -46,13 +46,13 @@ public class OperatorBindings implements Binder {
 
   private final Trigger m_algae = m_controller.button(Operator.algaeModeButton);
 
-  private final Trigger m_algaeGround = m_controller.button(Operator.ground);
-  private final Trigger m_algaeHighGround = m_controller.button(Operator.highGround);
+  private final Trigger m_algaeGround = m_controller.pov(Operator.ground);
+  private final Trigger m_algaeHighGround = m_controller.pov(Operator.highGround);
   private final Trigger m_algaeLowReef = m_controller.button(Operator.lowAlgae);
   private final Trigger m_algaeHighReef = m_controller.button(Operator.highAlgae);
 
-  private final Trigger m_processor = m_controller.button(Operator.processor);
-  private final Trigger m_net = m_controller.button(Operator.net);
+  private final Trigger m_processor = m_controller.pov(Operator.processor);
+  private final Trigger m_net = m_controller.pov(Operator.net);
 
   private final Trigger m_climberUp = m_controller.button(Operator.climbUp);
   private final Trigger m_climb = m_controller.button(Operator.climb);

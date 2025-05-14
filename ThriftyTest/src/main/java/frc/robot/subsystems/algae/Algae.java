@@ -86,7 +86,7 @@ public class Algae extends PassiveSubsystem {
         runOnce(() -> setVoltage(AlgaeConstants.kIntakeVoltage)),
         Commands.waitUntil(holdingAlgae()))
 
-        .finallyDo(this::keep)
+        .finallyDo(() -> keep(holdingAlgae().getAsBoolean()))
         .unless(holdingAlgae());
   }
 

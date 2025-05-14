@@ -83,7 +83,7 @@ public class ElevatorIOHardware implements ElevatorIO {
   }
 
   public void disableLimits() {
-    SoftwareLimitSwitchConfigs noLimits = new SoftwareLimitSwitchConfigs();
+    SoftwareLimitSwitchConfigs noLimits = new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(false).withReverseSoftLimitEnable(false);
     m_rightMotor.getConfigurator().apply(noLimits);
     m_leftMotor.getConfigurator().apply(noLimits);
   }
