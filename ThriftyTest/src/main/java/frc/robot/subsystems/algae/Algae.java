@@ -3,8 +3,6 @@ package frc.robot.subsystems.algae;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,15 +11,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
+import frc.robot.subsystems.algae.AlgaeIO.AlgaeIOInputs;
 
-public class Algae extends PassiveSubsystem implements AutoCloseable {
+public class Algae extends PassiveSubsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Algae.class);
 
-  private final TalonFX m_algaeRoller = new TalonFX(AlgaeConstants.kMotorID);
-
-  private double m_voltage;
-  private boolean m_voltageChanged;
+  private final AlgaeIO m_io;
+  private AlgaeIOInputs m_inputs;
 
   private boolean m_hasAlgae;
 
@@ -29,21 +26,18 @@ public class Algae extends PassiveSubsystem implements AutoCloseable {
 
   public Algae() {
     super();
-    configIntakeMotor();
+    if (Robot.isReal()) {
+      m_io = new AlgaeIOHardware();
+    } else {
+      m_io = new AlgaeIOSim();
+    }
+    m_inputs = new AlgaeIOInputs();
     RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());
-  }
-
-  private void configIntakeMotor() {
-    m_algaeRoller.clearStickyFaults();
-    m_algaeRoller.getConfigurator().apply(AlgaeConstants.kMotorConfig);
   }
 
   private void setVoltage(double voltage) {
     take();
-    if (voltage != m_voltage) {
-      m_voltageChanged = true;
-    }
-    m_voltage = voltage;
+    m_io.setVoltage(voltage);
   }
 
   public Trigger holdingAlgae() {
@@ -51,8 +45,7 @@ public class Algae extends PassiveSubsystem implements AutoCloseable {
   }
 
   private double getTorqueCurrent() {
-    double measurement = m_algaeRoller.getTorqueCurrent().getValueAsDouble();
-    return m_filter.calculate(measurement);
+    return m_filter.calculate(m_inputs.torque);
   }
 
   private void stop() {
@@ -70,29 +63,15 @@ public class Algae extends PassiveSubsystem implements AutoCloseable {
     }
   }
 
-  private void updateObjectState() {
-    if (Robot.isReal()) {
-      m_hasAlgae = getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold;
-    } else {
-      m_hasAlgae = SmartDashboard.getBoolean("Algae/Held", false);
-    }
-
-    SmartDashboard.putBoolean("Algae/Held", m_hasAlgae);
-  }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Algae/Temp", m_algaeRoller.getDeviceTemp().getValueAsDouble());
-    updateObjectState();
-    if (m_voltageChanged) {
-      m_algaeRoller.setVoltage(m_voltage);
-      m_voltageChanged = false;
-    }
-  }
-
-  @Override
-  public void close() throws Exception {
-    m_algaeRoller.close();
+    m_io.updateInputs(m_inputs);
+    m_hasAlgae = getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold;
+    SmartDashboard.putBoolean("Algae/Held", m_hasAlgae);
+    SmartDashboard.putNumber("Algae/Torque", m_inputs.torque);
+    SmartDashboard.putNumber("Algae/Voltage", m_inputs.voltage);
+    SmartDashboard.putNumber("Algae/Temperature", m_inputs.temperature);
   }
 
   protected void passive() {

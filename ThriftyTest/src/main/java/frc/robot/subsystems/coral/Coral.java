@@ -33,23 +33,28 @@ public class Coral extends PassiveSubsystem {
     RobotObserver.setPieceHeldSupplier(holding());
   }
 
+  private void setVoltage(double voltage) {
+    take();
+    m_io.setVoltage(voltage);
+  }
+
   private void setIntake() {
-    m_io.setVoltage(CoralConstants.kIntakeVoltage);
+    setVoltage(CoralConstants.kIntakeVoltage);
   }
 
   private void setL2Score() {
     m_logger.trace("Setting L2 eject");
-    m_io.setVoltage(CoralConstants.kL2EjectVoltage);
+    setVoltage(CoralConstants.kL2EjectVoltage);
   }
 
   private void setL3Score() {
     m_logger.trace("Setting L3 eject");
-    m_io.setVoltage(CoralConstants.kL3EjectVoltage);
+    setVoltage(CoralConstants.kL3EjectVoltage);
   }
 
   private void setL4Score() {
     m_logger.trace("Setting L4 eject");
-    m_io.setVoltage(CoralConstants.kL4EjectVoltage);
+    setVoltage(CoralConstants.kL4EjectVoltage);
   }
 
   private void setL1Score() {
@@ -58,7 +63,7 @@ public class Coral extends PassiveSubsystem {
   }
 
   private void stop() {
-    m_io.setVoltage(0);
+    setVoltage(0);
   }
 
   public Trigger present() {
@@ -120,7 +125,7 @@ public class Coral extends PassiveSubsystem {
    */
   public Command eject() {
     return Commands.sequence(
-        runOnce(() -> m_io.setVoltage(CoralConstants.kEjectVoltage)),
+        runOnce(() -> setVoltage(CoralConstants.kEjectVoltage)),
         Commands.waitUntil(present().negate()))
 
         .finallyDo(this::stop)

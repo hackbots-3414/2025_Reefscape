@@ -23,6 +23,7 @@
       "/SmartDashboard/Enter test state": "Command",
       "/SmartDashboard/Lazy Zero Elevator": "Command",
       "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/PhotonAlerts": "Alerts",
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
       "/SmartDashboard/Pivot/Visualization": "Mechanism2d",
       "/SmartDashboard/Super Field": "Field2d",
@@ -145,7 +146,7 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Coral": {
+        "Algae": {
           "open": true
         },
         "Swirly length": {
