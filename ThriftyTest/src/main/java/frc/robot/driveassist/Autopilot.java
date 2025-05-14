@@ -85,7 +85,7 @@ public class Autopilot {
    * This uses constant acceleration, as determined by the value for I decceleration in the profile.
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
-    return Math.sqrt(Math.pow(endVelo, 2) + 2 * m_profile.m_constraintsI.m_decceleration * dist);
+    return Math.sqrt(Math.pow(endVelo, 2) + 2 * m_profile.m_pathConstraints.m_decceleration * dist);
   }
 
   /**
@@ -104,8 +104,8 @@ public class Autopilot {
     double goalI = adjustedGoal.getX();
     // we cap the adjusted I because we'd rather adjust now than overshoot.
     double adjustedI = Math.min(goalI,
-        push(initialI, goalI, m_profile.m_constraintsI.m_acceleration));
-    double adjustedU = push(initialU, 0, m_profile.m_constraintsU.m_acceleration);
+        push(initialI, goalI, m_profile.m_pathConstraints.m_acceleration));
+    double adjustedU = push(initialU, 0, m_profile.m_correctionConstraints.m_acceleration);
     return new Translation2d(adjustedI, adjustedU).rotateBy(angleOffset);
   }
 

@@ -27,33 +27,30 @@ public class DriveConstants {
     protected static final double kP = 4.0;
   }
 
-  private static final APConstraints kTightAutopilotConstraintsI = new APConstraints()
+  private static final APConstraints kTightAutopilotPathConstraints = new APConstraints()
       .withAcceleration(5.5)
       .withDecceleration(1.3);
 
-  private static final APConstraints kTightAutopilotConstraintsU = APConstraints.unlimited();
+  private static final APConstraints kTightAutopilotCorrectionConstraints = APConstraints.unlimited();
 
   private static final APProfile kTightProfile = new APProfile()
-      .withConstraintsI(kTightAutopilotConstraintsI)
-      .withConstraintsU(kTightAutopilotConstraintsU)
+      .withPathConstraints(kTightAutopilotPathConstraints)
+      .withCorrectionConstraints(kTightAutopilotCorrectionConstraints)
       .withErrorXY(Centimeters.of(1))
       .withErrorTheta(Degrees.of(2));
 
   public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
 
-  private static final APConstraints kLooseAutopilotConstraintsI =
+  private static final APConstraints kLooseAutopilotPathConstraints =
       new APConstraints()
           .withAcceleration(8.5)
           .withDecceleration(4);
 
-  private static final APConstraints kLooseAutopilotConstraintsU =
-      new APConstraints()
-          .withAcceleration(8.5)
-          .withDecceleration(3);
+  private static final APConstraints kLooseAutopilotCorrectionConstraints = APConstraints.unlimited();
 
   private static final APProfile kLooseProfile = new APProfile()
-      .withConstraintsI(kLooseAutopilotConstraintsI)
-      .withConstraintsU(kLooseAutopilotConstraintsU)
+      .withPathConstraints(kLooseAutopilotPathConstraints)
+      .withCorrectionConstraints(kLooseAutopilotCorrectionConstraints)
       .withErrorXY(Centimeters.of(10))
       .withErrorTheta(Degrees.of(10));
 
