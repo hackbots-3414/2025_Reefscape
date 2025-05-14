@@ -48,6 +48,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -65,6 +66,9 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
+import frc.robot.driveassist.APConstraints;
+import frc.robot.driveassist.APProfile;
+import frc.robot.driveassist.Autopilot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.utils.Shape;
 
@@ -1047,5 +1051,20 @@ public class Constants {
         public static final double k_bargeX = 8.774176;
         public static final double k_radius = 1.27;
         public static final double k_decceleration = 6.0;
+    }
+
+    public static class AutopilotConstants {
+        private static final APConstraints kTightPathConstraints = new APConstraints()
+            .withAcceleration(5.5)
+            .withDecceleration(1.3);
+        private static final APConstraints kTightCorrectionConstraints = APConstraints.unlimited();
+
+        private static final APProfile kTightProfile = new APProfile()
+            .withConstraintsI(kTightPathConstraints)
+            .withConstraintsU(kTightCorrectionConstraints)
+            .withErrorXY(Inches.of(1.0))
+            .withErrorTheta(Degrees.of(1));
+    
+        public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
     }
 }

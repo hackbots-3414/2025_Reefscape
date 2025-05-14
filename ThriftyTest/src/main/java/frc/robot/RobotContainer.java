@@ -57,6 +57,7 @@ import frc.robot.commands.OpenFunnel;
 import frc.robot.commands.PitClimbSetupCommand;
 import frc.robot.commands.StowCommand;
 import frc.robot.commands.TeleopCommand;
+import frc.robot.driveassist.APTarget;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeRollers;
 import frc.robot.subsystems.Climber;
@@ -269,7 +270,7 @@ public class RobotContainer {
     }
 
     private void bindAutoProcessCommand(Trigger trigger) {
-        trigger.whileTrue(new DriveToPointCommand(FieldConstants.k_processor, m_drivetrain, true));
+        trigger.whileTrue(new DriveToPointCommand(new APTarget(FieldConstants.k_processor), m_drivetrain, true));
     }
 
     private Command zero() {

@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
-import frc.robot.driveassist.DriverAssist;
+import frc.robot.driveassist.ForceField;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class TeleopCommand extends Command {
@@ -25,7 +25,7 @@ public class TeleopCommand extends Command {
     private final double maxTranslationalVelocity = DriveConstants.k_maxTeleopLinearSpeed;
     private final double maxRotationalVelocity = DriveConstants.k_maxTeleopAngularSpeed;
 
-    private final DriverAssist m_assist = new DriverAssist();
+    private final ForceField m_assist = new ForceField(maxTranslationalVelocity);
 
     private final SwerveRequest.FieldCentric driveClosedLoop = new SwerveRequest.FieldCentric()
         .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)

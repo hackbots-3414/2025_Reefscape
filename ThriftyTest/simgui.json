@@ -52,6 +52,8 @@
       "/SmartDashboard/Module 2": "Mechanism2d",
       "/SmartDashboard/Module 3": "Mechanism2d",
       "/SmartDashboard/Multi Tag": "Command",
+      "/SmartDashboard/Net": "Command",
+      "/SmartDashboard/Net Wait": "Command",
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
       "/SmartDashboard/Place to Score #0": "String Chooser",
@@ -510,7 +512,7 @@
           ]
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "/home/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
         "rejected": {
           "arrows": false,
           "color": [
