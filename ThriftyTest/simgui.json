@@ -31,6 +31,7 @@
       "/SmartDashboard/Test/ElevatorZero": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
       "/SmartDashboard/Test/Intake": "Command",
+      "/SmartDashboard/Test/LowReefAlgaeIntake": "Command",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
@@ -133,7 +134,7 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Test/ElevatorZero": {
+      "/SmartDashboard/Test/LowReefAlgaeIntake": {
         "window": {
           "visible": true
         }
@@ -147,6 +148,12 @@
     "transitory": {
       "SmartDashboard": {
         "Algae": {
+          "open": true
+        },
+        "Elevator": {
+          "open": true
+        },
+        "Pivot": {
           "open": true
         },
         "Swirly length": {
@@ -190,7 +197,15 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "name": "Velocity Plot"
+      }
+    },
+    "Plot <1>": {
+      "window": {
+        "visible": false
+      }
     }
   }
 }

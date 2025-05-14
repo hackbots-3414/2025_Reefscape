@@ -10,6 +10,8 @@ public class AlgaeIOHardware implements AlgaeIO {
 
   public AlgaeIOHardware() {
     m_motor = new TalonFX(AlgaeConstants.kMotorID);
+    m_motor.clearStickyFaults();
+    m_motor.getConfigurator().apply(AlgaeConstants.kMotorConfig);
   }
 
   public void updateInputs(AlgaeIOInputs inputs) {

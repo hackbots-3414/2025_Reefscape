@@ -15,6 +15,11 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Time;
 
@@ -47,9 +52,9 @@ public final class ElevatorConstants {
 
   protected static final double kTolerance = 0.06;
 
-  protected static final double kMaxSpeedUp = 32;
-  protected static final double kMaxAccelerationUp = 48;
-  protected static final double kMaxJerkUp = 480;
+  protected static final double kMaxSpeed = 32;
+  protected static final double kMaxAcceleration = 48;
+  protected static final double kMaxJerk = 480;
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()
@@ -81,9 +86,9 @@ public final class ElevatorConstants {
           .withKG(0.42))
 
       .withMotionMagic(new MotionMagicConfigs()
-          .withMotionMagicCruiseVelocity(kMaxSpeedUp)
-          .withMotionMagicAcceleration(kMaxAccelerationUp)
-          .withMotionMagicJerk(kMaxJerkUp));
+          .withMotionMagicCruiseVelocity(kMaxSpeed)
+          .withMotionMagicAcceleration(kMaxAcceleration)
+          .withMotionMagicJerk(kMaxJerk));
 
   protected static final CANrangeConfiguration kCANrangeConfig = new CANrangeConfiguration()
       .withFovParams(new FovParamsConfigs()
@@ -95,5 +100,8 @@ public final class ElevatorConstants {
           .withProximityHysteresis(0));
 
   protected static final Time kRangeDebounceTime = Seconds.of(0.06);
+
+  protected static final LinearSystem<N2, N1, N2> kPlant =
+      LinearSystemId.createElevatorSystem(DCMotor.getKrakenX60(1), 1, 1, 1);
 }
 

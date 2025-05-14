@@ -21,6 +21,7 @@ public class AlgaeIOSim implements AlgaeIO {
     inputs.voltage = m_voltage;
     inputs.current = m_motorSim.getCurrentDrawAmps();
     inputs.torque = SmartDashboard.getNumber("Algae/Torque", 0.0);
+    inputs.velocityRPS = m_motorSim.getAngularVelocityRPM() / 60.0;
   }
 
   public void setVoltage(double voltage) {

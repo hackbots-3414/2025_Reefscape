@@ -11,6 +11,11 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 
 public final class ClimberConstants {
   protected static final int kLeftMotorID = 1;
@@ -60,5 +65,9 @@ public final class ClimberConstants {
       .withFeedback(new FeedbackConfigs()
           .withFeedbackRemoteSensorID(ClimberConstants.kEncoderID)
           .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder));
-}
+
+  // Linear system plant for simulation (NOT ACCURATE YET)
+  protected static final LinearSystem<N2, N1, N2> kPlant =
+      LinearSystemId.createSingleJointedArmSystem(DCMotor.getKrakenX60(1), 50, 40);
+};
 

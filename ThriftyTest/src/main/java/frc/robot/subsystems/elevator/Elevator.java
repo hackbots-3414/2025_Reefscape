@@ -9,102 +9,63 @@ import static edu.wpi.first.units.Units.Seconds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.CANrange;
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoralLevel;
-import frc.robot.Constants.RobotConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
+import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 
 public class Elevator extends PassiveSubsystem {
   // we want to have a logger, even if we're not using it... yet
+  @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Elevator.class);
 
-  private final TalonFX m_elevatorLeft = new TalonFX(ElevatorConstants.kLeftMotorID, "*");
-  private final TalonFX m_elevatorRight = new TalonFX(ElevatorConstants.kRightMotorID, "*");
-
-  private final CANrange m_CANrange = new CANrange(ElevatorConstants.kCANrangeID);
+  private final ElevatorIO m_io;
+  private ElevatorIOInputs m_inputs;
 
   private final Debouncer m_debouncer =
       new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
 
-  private double m_position;
   private ElevatorState m_reference = ElevatorState.Stow;
-
-  private double m_speed;
-  private boolean m_speedChanged;
 
   private Trigger m_prefireReq = new Trigger(() -> false);
 
   public Elevator() {
     super();
-    configMotor();
-    configCANrange();
+    if (Robot.isReal()) {
+      m_io = new ElevatorIOHardware();
+    } else {
+      m_io = new ElevatorIOSim();
+    }
+    m_inputs = new ElevatorIOInputs();
     SmartDashboard.putData("Elevator/Lazy Zero",
-        runOnce(this::calibrateZero).ignoringDisable(true));
-    SmartDashboard.putData("Elevator/Subsystem", this);
+        runOnce(m_io::calibrateZero).ignoringDisable(true));
   }
-
-  private void configCANrange() {
-    m_CANrange.getConfigurator().apply(
-        ElevatorConstants.kCANrangeConfig,
-        RobotConstants.globalCanTimeout.in(Seconds));
-  }
-
-  private void configMotor() {
-    m_elevatorRight.getConfigurator().apply(ElevatorConstants.kMotorConfig, 0.2);
-    m_elevatorLeft.getConfigurator().apply(ElevatorConstants.kMotorConfig, 0.2);
-    Follower follower = new Follower(
-        ElevatorConstants.kRightMotorID,
-        ElevatorConstants.kInvertLeft);
-    m_elevatorLeft.setControl(follower);
-    m_elevatorRight.setPosition(0);
-  }
-
-  private final DynamicMotionMagicVoltage control = new DynamicMotionMagicVoltage(0, 0, 0, 0);
-
 
   private void setPosition(ElevatorState state) {
     take();
     // calculate goal we should go to
     double goal = state.position();
     if (RobotObserver.getNoElevatorZone()
-        && (m_position > ElevatorConstants.kUnsafeRange || goal > ElevatorConstants.kUnsafeRange)) {
+        && (m_inputs.position > ElevatorConstants.kUnsafeRange || goal > ElevatorConstants.kUnsafeRange)) {
       // either trying to reach (or already at) a no-go state given our current position
       return;
     }
     // floor values for the goal between our two extrema for their positions
     goal = Math.min(goal, ElevatorConstants.kForwardSoftLimit);
     goal = Math.max(goal, ElevatorConstants.kReverseSoftLimit);
-    m_elevatorRight.setControl(control
-        .withPosition(goal)
-        .withVelocity(ElevatorConstants.kMaxSpeedUp)
-        .withAcceleration(ElevatorConstants.kMaxAccelerationUp)
-        .withJerk(ElevatorConstants.kMaxJerkUp)
-        .withSlot(0));
+    m_io.setPosition(goal);
     m_reference = state;
   }
 
   public Trigger ready() {
-    return new Trigger(() -> {
-      if (Robot.isSimulation())
-        return true;
-      boolean at = Math.abs(m_reference.position() - m_position) < ElevatorConstants.kTolerance;
-      m_logger.debug("Setpoint: {}", at);
-      return at;
-    });
+    return new Trigger(
+        () -> Math.abs(m_reference.position() - m_inputs.position) < ElevatorConstants.kTolerance);
   }
 
   public Trigger ready(ElevatorState state) {
@@ -120,54 +81,16 @@ public class Elevator extends PassiveSubsystem {
     return ready(level.toElevatorState());
   }
 
-  private double getPositionUncached() {
-    if (RobotBase.isReal()) {
-      return m_elevatorRight.getPosition().getValueAsDouble();
-    } else {
-      return m_reference.position(); // wow, that's an awesome elevator!
-    }
-  }
-
-  private void prepZero() {
-    m_elevatorRight.getConfigurator().apply(new SoftwareLimitSwitchConfigs());
-    // TODO: can this go?
-    m_elevatorRight.setControl(new DutyCycleOut(ElevatorConstants.kZeroVoltage)
-        .withLimitReverseMotion(false).withIgnoreHardwareLimits(true));
-  }
-
-  private void calibrateZero() {
-    m_elevatorRight.setPosition(0.02);
-  }
-
-  private void enableLimits() {
-    m_elevatorRight.getConfigurator().apply(ElevatorConstants.kMotorConfig.SoftwareLimitSwitch);
-  }
-
   private boolean atZero() {
-    if (Robot.isSimulation()) {
-      return m_position == 0;
-    }
-    return m_debouncer.calculate(m_CANrange.getIsDetected().getValue());
-  }
-
-  private void goDownNoStopping() {
-    m_elevatorRight.setPosition(1); // TODO: Why is this line here?
-    m_logger.warn("Strange code running & unhandled TODO! Please address");
-    m_elevatorRight.set(ElevatorConstants.kZeroVoltage);
+    return m_debouncer.calculate(m_inputs.zeroCANrangeDetected);
   }
 
   @Override
   public void periodic() {
-    m_position = getPositionUncached();
-    SmartDashboard.putNumber("Elevator/Position", m_position);
+    m_io.updateInputs(m_inputs);
+    SmartDashboard.putNumber("Elevator/Position", m_inputs.position);
     SmartDashboard.putString("Elevator/Reference", m_reference.toString());
     SmartDashboard.putBoolean("Elevator/Prefire", m_prefireReq.getAsBoolean());
-
-    if (m_speedChanged) {
-      m_elevatorRight.setControl(new DutyCycleOut(m_speed));
-      m_speedChanged = false;
-    }
-
     SmartDashboard.putBoolean("Elevator/Ready", ready().getAsBoolean());
   }
 
@@ -175,7 +98,7 @@ public class Elevator extends PassiveSubsystem {
    * Whether or not the elevator is above the "safe" range
    */
   public Trigger unsafe() {
-    return new Trigger(() -> m_position > ElevatorConstants.kUnsafeRange
+    return new Trigger(() -> m_inputs.position > ElevatorConstants.kUnsafeRange
         || m_reference.position() > ElevatorConstants.kUnsafeRange);
   }
 
@@ -205,13 +128,13 @@ public class Elevator extends PassiveSubsystem {
     return Commands.waitUntil(this::atZero).deadlineFor(
         Commands.sequence(
             go(ElevatorState.Zero),
-            runOnce(this::prepZero),
-            runOnce(this::goDownNoStopping)))
+            runOnce(m_io::disableLimits),
+            runOnce(() -> m_io.setVoltage(ElevatorConstants.kZeroVoltage))))
 
-        .finallyDo(this::enableLimits)
+        .finallyDo(m_io::enableLimits)
         .finallyDo(interrupted -> {
           if (!interrupted) {
-            calibrateZero();
+            m_io.calibrateZero();
           }
         })
         .withName("Autozero");

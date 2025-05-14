@@ -12,7 +12,7 @@ public class CoralIOHardware implements CoralIO {
   private final CANrange m_upperCANrange;
   private final CANrange m_innerCANrange;
 
-  private double m_leftVoltage; 
+  private double m_leftVoltage;
   private double m_rightVoltage;
 
   public CoralIOHardware() {
@@ -24,7 +24,8 @@ public class CoralIOHardware implements CoralIO {
     m_innerCANrange = new CANrange(CoralConstants.kInnerCANrangeID);
 
     m_leftMotor.getConfigurator().apply(CoralConstants.kMotorConfig);
-    m_rightMotor.getConfigurator().apply(CoralConstants.kMotorConfig);
+    m_rightMotor.getConfigurator().apply(CoralConstants.kMotorConfig.withMotorOutput(
+        CoralConstants.kMotorConfig.MotorOutput.withInverted(CoralConstants.kInvertRight)));
 
     m_frontCANrange.getConfigurator().apply(CoralConstants.kFrontCANrangeConfig);
     m_upperCANrange.getConfigurator().apply(CoralConstants.kUpperCANrangeConfig);
