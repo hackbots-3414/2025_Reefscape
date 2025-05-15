@@ -41,20 +41,20 @@ public class DriveConstants {
 
   public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
 
-  private static final APConstraints kLooseAutopilotPathConstraints =
+  private static final APConstraints kFastAutopilotPathConstraints =
       new APConstraints()
-          .withAcceleration(8.5)
-          .withJerk(4);
+          .withAcceleration(20)
+          .withJerk(8);
 
-  private static final APConstraints kLooseAutopilotCorrectionConstraints = APConstraints.unlimited();
+  private static final APConstraints kFastAutopilotCorrectionConstraints = APConstraints.unlimited();
 
-  private static final APProfile kLooseProfile = new APProfile()
-      .withPathConstraints(kLooseAutopilotPathConstraints)
-      .withCorrectionConstraints(kLooseAutopilotCorrectionConstraints)
-      .withErrorXY(Centimeters.of(10))
-      .withErrorTheta(Degrees.of(10));
+  private static final APProfile kFastProfile = new APProfile()
+      .withPathConstraints(kFastAutopilotPathConstraints)
+      .withCorrectionConstraints(kFastAutopilotCorrectionConstraints)
+      .withErrorXY(Centimeters.of(5))
+      .withErrorTheta(Degrees.of(5));
 
-  protected static final Autopilot kLooseAutopilot = new Autopilot(kLooseProfile);
+  public static final Autopilot kFastAutopilot = new Autopilot(kFastProfile);
 
   protected static final PPHolonomicDriveController k_pathplannerHolonomicDriveController =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);

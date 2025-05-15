@@ -44,11 +44,17 @@ public class NamedCommandBindings implements Binder {
               .allianceRelative()));
     }
     NamedCommands.registerCommand("Align LIntake", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kLeftIntake).withEntryAngle(Rotation2d.kPi))
-            .allianceRelative()));
+        new Align(new APTarget(FieldConstants.kLeftIntake)
+            .withEntryAngle(Rotation2d.kPi)
+            .withRotationRadius(2.0))
+                .allianceRelative()
+                .fast()));
     NamedCommands.registerCommand("Align RIntake", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kRightIntake).withEntryAngle(Rotation2d.kPi))
-            .allianceRelative()));
+        new Align(new APTarget(FieldConstants.kRightIntake)
+            .withEntryAngle(Rotation2d.kPi)
+            .withRotationRadius(2.0))
+                .allianceRelative()
+                .fast()));
     NamedCommands.registerCommand("Align IJ", superstructure.enter(
         new Align(new APTarget(FieldConstants.kIJ).withEntryAngle(FieldConstants.kIJ.getRotation()))
             .allianceRelative()));

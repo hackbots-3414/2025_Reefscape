@@ -16,6 +16,7 @@ public class APTarget {
   protected Pose2d m_reference;
   protected Optional<Rotation2d> m_entryAngle;
   protected double m_velocity;
+  protected Optional<Double> m_rotationRadius;
 
   /**
    * Creates a blank autopilot target with reference (0,0) and rotation of zero.
@@ -24,6 +25,7 @@ public class APTarget {
     m_reference = Pose2d.kZero;
     m_entryAngle = Optional.empty();
     m_velocity = 0;
+    m_rotationRadius = Optional.empty();
   }
 
   /**
@@ -33,6 +35,7 @@ public class APTarget {
     m_reference = pose;
     m_velocity = 0;
     m_entryAngle = Optional.empty();
+    m_rotationRadius = Optional.empty();
   }
 
   /**
@@ -64,6 +67,18 @@ public class APTarget {
   }
 
   /**
+   * Modifies this instance's rotation radius and returns itself for easier method chaining
+   *
+   * Rotation radius is the distance from the target pose that rotation goals are respected. By
+   * default, rotation goals are always respected, but if autopilot shouldn't reorient the robot
+   * until X distance from setpoint, this can be used to make that change.
+   */
+  public APTarget withRotationRadius(double radius) {
+    m_rotationRadius = Optional.of(radius);
+    return this;
+  }
+
+  /**
    * Returns this target's reference pose
    */
   public Pose2d getReference() {
@@ -78,10 +93,17 @@ public class APTarget {
   }
 
   /**
-   * Returns this target/s end velocity
+   * Returns this target's end velocity
    */
   public double getVelocity() {
     return m_velocity;
+  }
+
+  /**
+   * Returns this target's rotation radius
+   */
+  public Optional<Double> getRotationRadius() {
+    return m_rotationRadius;
   }
 
   /**
@@ -94,6 +116,7 @@ public class APTarget {
       Rotation2d entry = FlippingUtil.flipFieldRotation(rotation);
       target.withEntryAngle(entry);
     });
+    target.m_rotationRadius = m_rotationRadius;
     return target;
   }
 }

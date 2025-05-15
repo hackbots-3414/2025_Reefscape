@@ -2,11 +2,11 @@ package frc.robot.driveassist;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /**
@@ -42,24 +42,27 @@ public class Autopilot {
    * @param velocity The robot's current (field relative) velocity
    * @param target The target the robot should drive towards
    */
-  public Translation2d calculate(Pose2d current, Translation2d velocity, APTarget target) {
+  public Transform2d calculate(Pose2d current, Translation2d velocity, APTarget target) {
     Translation2d offset = toTargetCoorinateFrame(
         target.m_reference.getTranslation().minus(current.getTranslation()), target);
     if (offset.equals(Translation2d.kZero)) {
-      return Translation2d.kZero;
+      return new Transform2d(Translation2d.kZero, target.m_reference.getRotation());
     }
     Translation2d initial = toTargetCoorinateFrame(velocity, target);
-    if (target.m_entryAngle.isEmpty() || offset.getNorm() < 0.1) {
-      double disp = offset.getNorm();
+    double disp = offset.getNorm();
+    if (target.m_entryAngle.isEmpty() || disp < 0.1) {
       Translation2d towardsTarget = offset.div(disp);
       Translation2d goal = towardsTarget.times(calculateMaxVelocity(disp, target.m_velocity));
       Translation2d out = correct(initial, goal);
-      return toGlobalCoordinateFrame(out, target);
+      Translation2d velo = toGlobalCoordinateFrame(out, target);
+      Rotation2d rot = getRotationTarget(current.getRotation(), target, disp);
+      return new Transform2d(velo, rot);
     }
     Translation2d goal = calculateSwirlyVelocity(offset, target);
     Translation2d out = correct(initial, goal);
-    return toGlobalCoordinateFrame(out, target);
-
+    Translation2d velo = toGlobalCoordinateFrame(out, target);
+    Rotation2d rot = getRotationTarget(current.getRotation(), target, disp);
+    return new Transform2d(velo, rot);
   }
 
   /**
@@ -84,7 +87,8 @@ public class Autopilot {
    *
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
-    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.m_pathConstraints.m_jerk, 1.0 / 3.0) + endVelo;
+    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.m_pathConstraints.m_jerk, 1.0 / 3.0)
+        + endVelo;
   }
 
   /**
@@ -168,8 +172,20 @@ public class Autopilot {
     return scaled;
   }
 
+  private Rotation2d getRotationTarget(Rotation2d current, APTarget target, double dist) {
+    if (target.m_rotationRadius.isEmpty()) {
+      return target.m_reference.getRotation();
+    }
+    double radius = target.m_rotationRadius.get();
+    if (radius > dist) {
+      return target.m_reference.getRotation();
+    } else {
+      return current;
+    }
+  }
+
   public boolean atSetpoint(Pose2d current, APTarget target) {
-    Pose2d goal = target.getReference();
+    Pose2d goal = target.m_reference;
     boolean okXY = Math.hypot(current.getX() - goal.getX(),
         current.getY() - goal.getY()) <= m_profile.m_errorXY.in(Meters);
     boolean okTheta = Math.abs(current.getRotation().minus(goal.getRotation())

@@ -17,7 +17,7 @@ public class Align implements EnterableState {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Align.class);
 
-  private final Autopilot m_autopilot;
+  private Autopilot m_autopilot;
   private final APTarget m_target;
   private boolean m_flip;
 
@@ -46,6 +46,11 @@ public class Align implements EnterableState {
 
   public Align allianceRelative() {
     m_flip = true;
+    return this;
+  }
+  
+  public Align fast() {
+    m_autopilot = DriveConstants.kFastAutopilot;
     return this;
   }
 

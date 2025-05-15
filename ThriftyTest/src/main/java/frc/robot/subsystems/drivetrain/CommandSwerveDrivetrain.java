@@ -26,6 +26,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -409,11 +410,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }),
         run(() -> {
           Translation2d velocities = getVelocityComponents();
-          Translation2d output = autopilot.calculate(m_estimatedPose, velocities, target);
+          Transform2d output = autopilot.calculate(m_estimatedPose, velocities, target);
           setControl(m_veloRequest
               .withVelocityX(output.getX())
               .withVelocityY(output.getY())
-              .withTargetDirection(target.getReference().getRotation()));
+              .withTargetDirection(output.getRotation()));
         }))
         .until(() -> {
           return autopilot.atSetpoint(m_estimatedPose, target);
