@@ -25,21 +25,18 @@ public class VisionHandler implements AutoCloseable {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
 
-  private Consumer<TimestampedPoseEstimate> m_consumer;
-  private Supplier<Pose2d> m_poseSupplier;
+  private final Consumer<TimestampedPoseEstimate> m_consumer;
+  private final Supplier<Pose2d> m_poseSupplier;
 
   private final Notifier m_notifier;
-  private List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
-  private List<TimestampedPoseEstimate> m_estimates = new ArrayList<>();
+  private final List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
 
-  private VisionSystemSim m_visionSim = new VisionSystemSim("main");
-  private SimCameraProperties m_simProps = new SimCameraProperties();
+  private final VisionSystemSim m_visionSim = new VisionSystemSim("main");
+  private final SimCameraProperties m_simProps = new SimCameraProperties();
 
   private final Field2d m_field;
 
-  private LogBuilder m_logBuilder = new LogBuilder();
-
-  private final MultiInputFilter m_filter = new MultiInputFilter();
+  private final VisionLogBuilder m_logBuilder;
 
   public VisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
     m_consumer = callback;
@@ -48,8 +45,13 @@ public class VisionHandler implements AutoCloseable {
     setupProps();
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
-    m_field = m_visionSim.getDebugField();
+    if (Robot.isSimulation()) {
+      m_field = m_visionSim.getDebugField();
+    } else {
+      m_field = new Field2d();
+    }
     RobotObserver.setField(m_field);
+    m_logBuilder = new VisionLogBuilder();
   }
 
   /**
@@ -61,9 +63,9 @@ public class VisionHandler implements AutoCloseable {
         VisionConstants.kResWidth,
         VisionConstants.kResHeight,
         VisionConstants.kFOV);
-    m_simProps.setAvgLatencyMs( VisionConstants.kAvgLatency.in(Milliseconds));
-    m_simProps.setLatencyStdDevMs( VisionConstants.kLatencyStdDev.in(Milliseconds));
-    m_simProps.setCalibError( VisionConstants.kAvgErr, VisionConstants.kErrStdDevs);
+    m_simProps.setAvgLatencyMs(VisionConstants.kAvgLatency.in(Milliseconds));
+    m_simProps.setLatencyStdDevMs(VisionConstants.kLatencyStdDev.in(Milliseconds));
+    m_simProps.setCalibError(VisionConstants.kAvgErr, VisionConstants.kErrStdDevs);
   }
 
   private void setupCameras() {
@@ -91,30 +93,18 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void updateEstimators() {
-    m_estimates.clear();
-    // clear previous output from the estimators.
-    m_field.getObject(VisionConstants.kEstimationName).setPoses();
-    m_field.getObject("best").setPoses();
-    m_field.getObject("alt").setPoses();
-    // setup filter
-    m_filter.clear();
+    for (SingleInputPoseEstimator estimator : m_estimators) {
+      estimator.refresh();
+    }
+
     for (SingleInputPoseEstimator estimator : m_estimators) {
       estimator.run();
     }
-    List<Pose2d> poses = new ArrayList<>();
-    List<Pose2d> rejected = new ArrayList<>();
-    for (TimestampedPoseEstimate estimate : m_estimates) {
-      if (m_filter.verify(estimate.pose())) {
-        m_consumer.accept(estimate);
-        poses.add(estimate.pose());
-      } else {
-        rejected.add(estimate.pose());
-      }
+
+    if (Robot.isSimulation()) {
+      Pose2d currPose = m_poseSupplier.get();
+      m_visionSim.update(currPose);
     }
-    m_field.getObject(VisionConstants.kRejectedName).setPoses(rejected);
-    m_field.getObject(VisionConstants.kEstimationName).setPoses(poses);
-    Pose2d currPose = m_poseSupplier.get();
-    m_visionSim.update(currPose);
     // finish logging
     m_logBuilder.log();
   }
@@ -124,9 +114,7 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {
-    m_filter.addEstimate(estimate);
-    m_estimates.add(estimate);
-
+    m_consumer.accept(estimate);
     // pose logging
     m_logBuilder.addEstimate(estimate);
   }

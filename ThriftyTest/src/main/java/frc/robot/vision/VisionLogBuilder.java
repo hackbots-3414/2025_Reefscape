@@ -6,11 +6,11 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.RobotObserver;
 
-public class LogBuilder {
+public class VisionLogBuilder {
   private List<TimestampedPoseEstimate> m_estimates;
   private List<VisionLog> m_logs;
 
-  public LogBuilder() {
+  public VisionLogBuilder() {
     m_estimates = new ArrayList<>(20);
     m_logs = new ArrayList<>(20);
   }
