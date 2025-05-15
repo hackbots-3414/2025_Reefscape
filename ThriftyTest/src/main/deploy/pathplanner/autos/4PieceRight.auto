@@ -31,15 +31,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "race",
                       "data": {
-                        "name": "Align RIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Coral Wait"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Align RIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {

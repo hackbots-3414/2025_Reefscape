@@ -24,12 +24,12 @@ public class DriveConstants {
   protected static final PIDConstants kRotationPID = new PIDConstants(1.5, 0.0, 0.0);
 
   public static class HeadingPID {
-    protected static final double kP = 4.0;
+    protected static final double kP = 8.0;
   }
 
   private static final APConstraints kTightAutopilotPathConstraints = new APConstraints()
-      .withAcceleration(5.5)
-      .withDecceleration(1.3);
+      .withAcceleration(TunerConstants.)
+      .withDecceleration(3.5);
 
   private static final APConstraints kTightAutopilotCorrectionConstraints = APConstraints.unlimited();
 
@@ -37,7 +37,7 @@ public class DriveConstants {
       .withPathConstraints(kTightAutopilotPathConstraints)
       .withCorrectionConstraints(kTightAutopilotCorrectionConstraints)
       .withErrorXY(Centimeters.of(1))
-      .withErrorTheta(Degrees.of(2));
+      .withErrorTheta(Degrees.of(1));
 
   public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
 

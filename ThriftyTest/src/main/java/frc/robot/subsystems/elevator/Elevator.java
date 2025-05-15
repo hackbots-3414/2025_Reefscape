@@ -129,7 +129,6 @@ public class Elevator extends PassiveSubsystem {
         Commands.sequence(
             go(ElevatorState.Zero),
             runOnce(m_io::disableLimits),
-            runOnce(() -> m_io.setPosition(1)),
             runOnce(() -> m_io.setVoltage(ElevatorConstants.kZeroVoltage))))
 
         .finallyDo(m_io::enableLimits)

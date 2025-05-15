@@ -43,10 +43,12 @@ public final class ElevatorConstants {
 
   protected static final double kInch = Units.inchesToMeters(1) * kMetersToRotations;
 
+  protected static final double kReefOffset = 3 * kInch;
+
   protected static final double kForwardSoftLimit = 11.15;
   protected static final double kReverseSoftLimit = 0;
 
-  protected static final double kZeroVoltage = -2.0;
+  protected static final double kZeroVoltage = -4.0;
 
   protected static final double kUnsafeRange = ElevatorState.L2.position() + 2 * kInch;
 

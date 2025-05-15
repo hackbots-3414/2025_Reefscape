@@ -49,7 +49,7 @@ public class Autopilot {
       return Translation2d.kZero;
     }
     Translation2d initial = toTargetCoorinateFrame(velocity, target);
-    if (target.m_entryAngle.isEmpty()) {
+    if (target.m_entryAngle.isEmpty() || offset.getNorm() < 0.1) {
       double disp = offset.getNorm();
       Translation2d towardsTarget = offset.div(disp);
       Translation2d goal = towardsTarget.times(calculateMaxVelocity(disp, target.m_velocity));
@@ -169,7 +169,8 @@ public class Autopilot {
     return scaled;
   }
 
-  public boolean atSetpoint(Pose2d current, Pose2d goal) {
+  public boolean atSetpoint(Pose2d current, APTarget target) {
+    Pose2d goal = target.getReference();
     boolean okXY = Math.hypot(current.getX() - goal.getX(),
         current.getY() - goal.getY()) <= m_profile.m_errorXY.in(Meters);
     boolean okTheta = Math.abs(current.getRotation().minus(goal.getRotation())

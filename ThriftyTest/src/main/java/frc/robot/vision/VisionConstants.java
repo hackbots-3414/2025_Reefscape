@@ -17,7 +17,7 @@ import edu.wpi.first.units.measure.Time;
 public class VisionConstants {
   protected static final boolean kEnableLogging = true;
 
-  protected static final double kRotationCoefficient = Math.PI * 20;
+  protected static final double kRotationCoefficient = Math.PI * 0.5;
   protected static final double kTranslationCoefficient = 0.10;
 
   protected static final AprilTagFieldLayout kTagLayout =
@@ -45,7 +45,7 @@ public class VisionConstants {
   private static Map<String, Transform3d> kRealCameras = Map.ofEntries(
       Map.entry("cam1", new Transform3d( // left tight
           new Translation3d(0.256, 0.289, kCameraHeight),
-          new Rotation3d(0, kTightPitch, -kTightYaw))),
+          new Rotation3d(0, kTightPitch, -kTightYaw + Units.degreesToRadians(0.9)))),
       Map.entry("cam2", new Transform3d( // left wide
           new Translation3d(0.337, 0.331, kCameraHeight),
           new Rotation3d(0, kWidePitch, -kWideYaw))),

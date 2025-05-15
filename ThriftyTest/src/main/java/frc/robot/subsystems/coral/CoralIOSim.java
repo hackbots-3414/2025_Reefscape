@@ -34,8 +34,6 @@ public class CoralIOSim implements CoralIO {
     inputs.frontDetected = SmartDashboard.getBoolean("Coral/Front CANrange", false);
     inputs.upperDetected = SmartDashboard.getBoolean("Coral/Upper CANrange", false);
     inputs.innerDetected = SmartDashboard.getBoolean("Coral/Inner CANrange", false);
-    inputs.leftVelocity = m_leftMotorSim.getAngularVelocityRPM() / 60.0;
-    inputs.rightVelocity = m_rightMotorSim.getAngularVelocityRPM() / 60.0;
   }
 
   public void setLeftVoltage(double voltage) {

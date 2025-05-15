@@ -64,12 +64,6 @@ public class CoralIOHardware implements CoralIO {
     inputs.frontDetected = m_frontCANrange.getIsDetected().getValue();
     inputs.upperDetected = m_upperCANrange.getIsDetected().getValue();
     inputs.innerDetected = m_innerCANrange.getIsDetected().getValue();
-    inputs.frontDistance = m_frontCANrange.getDistance().getValueAsDouble();
-    inputs.upperDistance = m_upperCANrange.getDistance().getValueAsDouble();
-    inputs.innerDistance = m_innerCANrange.getDistance().getValueAsDouble();
-    inputs.frontStrength = m_frontCANrange.getSignalStrength().getValueAsDouble();
-    inputs.upperStrength = m_upperCANrange.getSignalStrength().getValueAsDouble();
-    inputs.innerStrength = m_innerCANrange.getSignalStrength().getValueAsDouble();
   }
 
   public void setLeftVoltage(double voltage) {

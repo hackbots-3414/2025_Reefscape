@@ -15,17 +15,9 @@ public interface CoralIO {
     public double rightCurrent = 0.0;
     public double leftTemperature = 0.0;
     public double rightTemperature = 0.0;
-    public double leftVelocity = 0.0;
-    public double rightVelocity = 0.0;
     public boolean frontDetected = false;
     public boolean upperDetected = false;
     public boolean innerDetected = false;
-    public double frontDistance = 0.0;
-    public double upperDistance = 0.0;
-    public double innerDistance = 0.0;
-    public double frontStrength = 0.0;
-    public double upperStrength = 0.0;
-    public double innerStrength = 0.0;
   }
 
   void setLeftVoltage(double voltage);

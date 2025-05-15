@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -225,7 +226,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_estimatedPose = this.getState().Pose;
     SmartDashboard.putNumber("Drivetrain/x", m_estimatedPose.getTranslation().getX());
     SmartDashboard.putNumber("Drivetrain/y", m_estimatedPose.getTranslation().getY());
-    SmartDashboard.putNumber("Drivetrain/velo", getVelocity());
+    double velo = getVelocity();
+    SmartDashboard.putNumber("Drivetrain/velo", velo);
 
     SmartDashboard.putBoolean("Drivetrain/Aligned", m_aligned);
 
@@ -382,6 +384,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       double vy = y.getAsDouble() * DriveConstants.kMaxTeleopLinearSpeed;
       double omega = rot.getAsDouble() * DriveConstants.kMaxTeleopAngularSpeed;
 
+      if (Math.hypot(vx, vy) > 1e-3 || Math.abs(omega) > 1e-2) {
+        setAligned(false);
+      }
+
       Translation2d adjusted = m_forceField.calculate(
           new Translation2d(vx, vy),
           m_estimatedPose,
@@ -411,9 +417,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               .withTargetDirection(target.getReference().getRotation()));
         }))
         .until(() -> {
-          return autopilot.atSetpoint(m_estimatedPose, target.getReference());
+          return autopilot.atSetpoint(m_estimatedPose, target);
         })
         .finallyDo(this::stop)
+        .finallyDo(interrupted -> setAligned(!interrupted))
         .finallyDo(() -> {
           RobotObserver.getField().getObject("reference").setPoses();
         });
