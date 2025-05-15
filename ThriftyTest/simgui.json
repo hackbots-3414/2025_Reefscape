@@ -14,6 +14,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auton Chooser": "String Chooser",
       "/SmartDashboard/Command Scheduler": "Scheduler",
       "/SmartDashboard/Drive To Center": "Command",
@@ -27,6 +28,7 @@
       "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
       "/SmartDashboard/Pivot/Visualization": "Mechanism2d",
       "/SmartDashboard/Super Field": "Field2d",
+      "/SmartDashboard/Superstructure": "Alerts",
       "/SmartDashboard/Test/Drive To Center": "Command",
       "/SmartDashboard/Test/ElevatorZero": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
@@ -130,11 +132,6 @@
           "style": "Hidden"
         },
         "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Test/LowReefAlgaeIntake": {
         "window": {
           "visible": true
         }

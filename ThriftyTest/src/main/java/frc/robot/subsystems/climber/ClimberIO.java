@@ -14,6 +14,7 @@ public interface ClimberIO {
     public double rightTemp = 0.0;
     public double leftVelocityRPS = 0.0;
     public double rightVelocityRPS = 0.0;
+    public boolean encoderConnected = true;
     public double position = 0.0;
   }
 

@@ -1,8 +1,14 @@
 package frc.robot.subsystems.coral;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 
 public class CoralIOHardware implements CoralIO {
   private final TalonFX m_leftMotor;
@@ -14,6 +20,25 @@ public class CoralIOHardware implements CoralIO {
 
   private double m_leftVoltage;
   private double m_rightVoltage;
+
+  private final StatusSignal<Voltage> m_leftVoltageSignal;
+  private final StatusSignal<Voltage> m_rightVoltageSignal;
+  private final StatusSignal<Current> m_leftCurrentSignal;
+  private final StatusSignal<Current> m_rightCurrentSignal;
+  private final StatusSignal<Temperature> m_leftTempSignal;
+  private final StatusSignal<Temperature> m_rightTempSignal;
+  private final StatusSignal<AngularVelocity> m_leftVelocitySignal;
+  private final StatusSignal<AngularVelocity> m_rightVelocitySignal;
+
+  private final StatusSignal<Distance> m_frontDistanceSignal;
+  private final StatusSignal<Distance> m_upperDistanceSignal;
+  private final StatusSignal<Distance> m_innerDistanceSignal;
+  private final StatusSignal<Boolean> m_frontDetectedSignal;
+  private final StatusSignal<Boolean> m_upperDetectedSignal;
+  private final StatusSignal<Boolean> m_innerDetectedSignal;
+  private final StatusSignal<Double> m_frontStrengthSignal;
+  private final StatusSignal<Double> m_upperStrengthSignal;
+  private final StatusSignal<Double> m_innerStrengthSignal;
 
   public CoralIOHardware() {
     m_leftMotor = new TalonFX(CoralConstants.kLeftMotorID);
@@ -30,40 +55,65 @@ public class CoralIOHardware implements CoralIO {
     m_frontCANrange.getConfigurator().apply(CoralConstants.kFrontCANrangeConfig);
     m_upperCANrange.getConfigurator().apply(CoralConstants.kUpperCANrangeConfig);
     m_innerCANrange.getConfigurator().apply(CoralConstants.kInnerCANrangeConfig);
+
+    m_leftVoltageSignal = m_leftMotor.getMotorVoltage();
+    m_rightVoltageSignal = m_rightMotor.getMotorVoltage();
+    m_leftCurrentSignal = m_leftMotor.getSupplyCurrent();
+    m_rightCurrentSignal = m_rightMotor.getSupplyCurrent();
+    m_leftTempSignal = m_leftMotor.getDeviceTemp();
+    m_rightTempSignal = m_rightMotor.getDeviceTemp();
+    m_leftVelocitySignal = m_leftMotor.getVelocity();
+    m_rightVelocitySignal = m_rightMotor.getVelocity();
+
+    m_frontDistanceSignal = m_frontCANrange.getDistance();
+    m_upperDistanceSignal = m_upperCANrange.getDistance();
+    m_innerDistanceSignal = m_innerCANrange.getDistance();
+    m_frontStrengthSignal = m_frontCANrange.getSignalStrength();
+    m_upperStrengthSignal = m_upperCANrange.getSignalStrength();
+    m_innerStrengthSignal = m_innerCANrange.getSignalStrength();
+    m_frontDetectedSignal = m_frontCANrange.getIsDetected();
+    m_upperDetectedSignal = m_upperCANrange.getIsDetected();
+    m_innerDetectedSignal = m_innerCANrange.getIsDetected();
   }
 
   public void updateInputs(CoralIOInputs inputs) {
     inputs.rightMotorConnected = BaseStatusSignal.refreshAll(
-        m_rightMotor.getMotorVoltage(),
-        m_rightMotor.getSupplyCurrent(),
-        m_rightMotor.getDeviceTemp(),
-        m_rightMotor.getVelocity()).isOK();
+        m_rightVoltageSignal,
+        m_rightCurrentSignal,
+        m_rightTempSignal,
+        m_rightVelocitySignal).isOK();
     inputs.leftMotorConnected = BaseStatusSignal.refreshAll(
-        m_leftMotor.getMotorVoltage(),
-        m_leftMotor.getSupplyCurrent(),
-        m_leftMotor.getDeviceTemp(),
-        m_leftMotor.getVelocity()).isOK();
-    inputs.rightVoltage = m_rightMotor.getMotorVoltage().getValueAsDouble();
-    inputs.leftVoltage = m_leftMotor.getMotorVoltage().getValueAsDouble();
-    inputs.rightCurrent = m_rightMotor.getSupplyCurrent().getValueAsDouble();
-    inputs.leftCurrent = m_leftMotor.getSupplyCurrent().getValueAsDouble();
-    inputs.rightTemperature = m_rightMotor.getDeviceTemp().getValueAsDouble();
-    inputs.leftTemperature = m_leftMotor.getDeviceTemp().getValueAsDouble();
+        m_leftVoltageSignal,
+        m_leftCurrentSignal,
+        m_leftTempSignal,
+        m_leftVelocitySignal).isOK();
+    inputs.rightVoltage = m_rightVoltageSignal.getValueAsDouble();
+    inputs.leftVoltage = m_leftVoltageSignal.getValueAsDouble();
+    inputs.rightCurrent = m_rightCurrentSignal.getValueAsDouble();
+    inputs.leftCurrent = m_leftCurrentSignal.getValueAsDouble();
+    inputs.rightTemperature = m_rightTempSignal.getValueAsDouble();
+    inputs.leftTemperature = m_leftTempSignal.getValueAsDouble();
     inputs.frontCANrangeConnected = BaseStatusSignal.refreshAll(
-        m_frontCANrange.getIsDetected(),
-        m_frontCANrange.getDistance(),
-        m_frontCANrange.getSignalStrength()).isOK();
+        m_frontDetectedSignal,
+        m_frontDistanceSignal,
+        m_frontStrengthSignal).isOK();
     inputs.upperCANrangeConnected = BaseStatusSignal.refreshAll(
-        m_upperCANrange.getIsDetected(),
-        m_upperCANrange.getDistance(),
-        m_upperCANrange.getSignalStrength()).isOK();
+        m_upperDetectedSignal,
+        m_upperDistanceSignal,
+        m_upperStrengthSignal).isOK();
     inputs.innerCANrangeConnected = BaseStatusSignal.refreshAll(
-        m_innerCANrange.getIsDetected(),
-        m_innerCANrange.getDistance(),
-        m_upperCANrange.getSignalStrength()).isOK();
-    inputs.frontDetected = m_frontCANrange.getIsDetected().getValue();
-    inputs.upperDetected = m_upperCANrange.getIsDetected().getValue();
-    inputs.innerDetected = m_innerCANrange.getIsDetected().getValue();
+        m_innerDetectedSignal,
+        m_innerDistanceSignal,
+        m_innerStrengthSignal).isOK();
+    inputs.frontDetected = m_frontDetectedSignal.getValue();
+    inputs.upperDetected = m_upperDetectedSignal.getValue();
+    inputs.innerDetected = m_innerDetectedSignal.getValue();
+    inputs.frontDistance = m_frontDistanceSignal.getValueAsDouble();
+    inputs.upperDistance = m_upperDistanceSignal.getValueAsDouble();
+    inputs.innerDistance = m_innerDistanceSignal.getValueAsDouble();
+    inputs.frontStrength = m_frontStrengthSignal.getValueAsDouble();
+    inputs.upperStreingth = m_upperStrengthSignal.getValueAsDouble();
+    inputs.innerStrength = m_innerStrengthSignal.getValueAsDouble();
   }
 
   public void setLeftVoltage(double voltage) {

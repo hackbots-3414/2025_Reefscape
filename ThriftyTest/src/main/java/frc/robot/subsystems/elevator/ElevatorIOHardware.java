@@ -1,11 +1,18 @@
 package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
 
 public class ElevatorIOHardware implements ElevatorIO {
   private final TalonFX m_leftMotor;
@@ -14,6 +21,21 @@ public class ElevatorIOHardware implements ElevatorIO {
   private final CANrange m_CANrange;
 
   private final DynamicMotionMagicVoltage m_control;
+
+  private final StatusSignal<Voltage> m_leftVoltageSignal;
+  private final StatusSignal<Voltage> m_rightVoltageSignal;
+  private final StatusSignal<Current> m_leftCurrentSignal;
+  private final StatusSignal<Current> m_rightCurrentSignal;
+  private final StatusSignal<Temperature> m_leftTempSignal;
+  private final StatusSignal<Temperature> m_rightTempSignal;
+  private final StatusSignal<AngularVelocity> m_leftVelocitySignal;
+  private final StatusSignal<AngularVelocity> m_rightVelocitySignal;
+  private final StatusSignal<Angle> m_leftPositionSignal;
+  private final StatusSignal<Angle> m_rightPositionSignal;
+
+  private final StatusSignal<Distance> m_CANrangeDistanceSignal;
+  private final StatusSignal<Boolean> m_CANrangeDetectedSignal;
+  private final StatusSignal<Double> m_CANrangeStrengthSignal;
 
   public ElevatorIOHardware() {
     m_rightMotor = new TalonFX(ElevatorConstants.kRightMotorID, "*");
@@ -33,40 +55,55 @@ public class ElevatorIOHardware implements ElevatorIO {
         ElevatorConstants.kMaxSpeed,
         ElevatorConstants.kMaxAcceleration,
         ElevatorConstants.kMaxJerk);
+
+    m_leftVoltageSignal = m_leftMotor.getMotorVoltage();
+    m_rightVoltageSignal = m_rightMotor.getMotorVoltage();
+    m_leftCurrentSignal = m_leftMotor.getSupplyCurrent();
+    m_rightCurrentSignal = m_rightMotor.getSupplyCurrent();
+    m_leftTempSignal = m_leftMotor.getDeviceTemp();
+    m_rightTempSignal = m_rightMotor.getDeviceTemp();
+    m_leftVelocitySignal = m_leftMotor.getVelocity();
+    m_rightVelocitySignal = m_rightMotor.getVelocity();
+    m_leftPositionSignal = m_leftMotor.getPosition();
+    m_rightPositionSignal = m_rightMotor.getPosition();
+
+    m_CANrangeDetectedSignal = m_CANrange.getIsDetected();
+    m_CANrangeDistanceSignal = m_CANrange.getDistance();
+    m_CANrangeStrengthSignal = m_CANrange.getSignalStrength();
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.leftMotorConnected = BaseStatusSignal.refreshAll(
-        m_leftMotor.getMotorVoltage(),
-        m_leftMotor.getSupplyCurrent(),
-        m_leftMotor.getDeviceTemp(),
-        m_leftMotor.getVelocity(),
-        m_leftMotor.getPosition()).isOK();
+        m_leftVoltageSignal,
+        m_leftCurrentSignal,
+        m_leftTempSignal,
+        m_leftVelocitySignal,
+        m_leftPositionSignal).isOK();
     inputs.rightMotorConnected = BaseStatusSignal.refreshAll(
-        m_rightMotor.getMotorVoltage(),
-        m_rightMotor.getSupplyCurrent(),
-        m_rightMotor.getDeviceTemp(),
-        m_rightMotor.getVelocity(),
-        m_rightMotor.getPosition()).isOK();
-    inputs.leftVoltage = m_leftMotor.getMotorVoltage().getValueAsDouble();
-    inputs.rightVoltage = m_rightMotor.getMotorVoltage().getValueAsDouble();
-    inputs.leftCurrent = m_leftMotor.getSupplyCurrent().getValueAsDouble();
-    inputs.rightCurrent = m_rightMotor.getSupplyCurrent().getValueAsDouble();
-    inputs.leftTemp = m_leftMotor.getDeviceTemp().getValueAsDouble();
-    inputs.rightTemp = m_rightMotor.getDeviceTemp().getValueAsDouble();
-    inputs.leftVelocityRPS = m_leftMotor.getVelocity().getValueAsDouble();
-    inputs.rightVelocityRPS = m_rightMotor.getVelocity().getValueAsDouble();
-    inputs.leftPosition = m_leftMotor.getPosition().getValueAsDouble();
-    inputs.rightPosition = m_rightMotor.getPosition().getValueAsDouble();
+        m_rightVoltageSignal,
+        m_rightCurrentSignal,
+        m_rightTempSignal,
+        m_rightVelocitySignal,
+        m_rightPositionSignal).isOK();
+    inputs.leftVoltage = m_leftVoltageSignal.getValueAsDouble();
+    inputs.rightVoltage = m_rightVoltageSignal.getValueAsDouble();
+    inputs.leftCurrent = m_leftCurrentSignal.getValueAsDouble();
+    inputs.rightCurrent = m_rightCurrentSignal.getValueAsDouble();
+    inputs.leftTemp = m_leftTempSignal.getValueAsDouble();
+    inputs.rightTemp = m_rightTempSignal.getValueAsDouble();
+    inputs.leftVelocityRPS = m_leftVelocitySignal.getValueAsDouble();
+    inputs.rightVelocityRPS = m_rightVelocitySignal.getValueAsDouble();
+    inputs.leftPosition = m_leftPositionSignal.getValueAsDouble();
+    inputs.rightPosition = m_rightPositionSignal.getValueAsDouble();
     inputs.position = inputs.rightPosition;
 
     inputs.zeroCANrangeConnected = BaseStatusSignal.refreshAll(
-        m_CANrange.getIsDetected(),
-        m_CANrange.getDistance(),
-        m_CANrange.getSignalStrength()).isOK();
-    inputs.zeroCANrangeDetected = m_CANrange.getIsDetected().getValue();
-    inputs.zeroCANrangeDistance = m_CANrange.getDistance().getValueAsDouble();
-    inputs.zeroCANrangeStrength = m_CANrange.getSignalStrength().getValueAsDouble();
+        m_CANrangeDetectedSignal,
+        m_CANrangeDistanceSignal,
+        m_CANrangeStrengthSignal).isOK();
+    inputs.zeroCANrangeDetected = m_CANrangeDetectedSignal.getValue();
+    inputs.zeroCANrangeDistance = m_CANrangeDistanceSignal.getValueAsDouble();
+    inputs.zeroCANrangeStrength = m_CANrangeStrengthSignal.getValueAsDouble();
   }
 
   public void setPosition(double position) {
@@ -83,7 +120,9 @@ public class ElevatorIOHardware implements ElevatorIO {
   }
 
   public void disableLimits() {
-    SoftwareLimitSwitchConfigs noLimits = new SoftwareLimitSwitchConfigs().withForwardSoftLimitEnable(false).withReverseSoftLimitEnable(false);
+    SoftwareLimitSwitchConfigs noLimits = new SoftwareLimitSwitchConfigs()
+        .withForwardSoftLimitEnable(false)
+        .withReverseSoftLimitEnable(false);
     m_rightMotor.getConfigurator().apply(noLimits);
     m_leftMotor.getConfigurator().apply(noLimits);
   }

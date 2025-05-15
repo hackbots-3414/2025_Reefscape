@@ -18,6 +18,12 @@ public interface CoralIO {
     public boolean frontDetected = false;
     public boolean upperDetected = false;
     public boolean innerDetected = false;
+    public double frontDistance = 0.0;
+    public double upperDistance = 0.0;
+    public double innerDistance = 0.0;
+    public double frontStrength = 0.0;
+    public double upperStreingth = 0.0;
+    public double innerStrength = 0.0; // INNER STRENGTH!!!
   }
 
   void setLeftVoltage(double voltage);
