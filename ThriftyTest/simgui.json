@@ -147,10 +147,7 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Algae": {
-          "open": true
-        },
-        "Elevator": {
+        "Coral": {
           "open": true
         },
         "Pivot": {
@@ -175,7 +172,8 @@
         {
           "axis": [
             {
-              "max": 10.0
+              "max": 10.0,
+              "min": -0.1
             }
           ],
           "backgroundColor": [

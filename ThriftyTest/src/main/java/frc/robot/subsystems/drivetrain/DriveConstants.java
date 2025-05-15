@@ -28,8 +28,8 @@ public class DriveConstants {
   }
 
   private static final APConstraints kTightAutopilotPathConstraints = new APConstraints()
-      .withAcceleration(TunerConstants.)
-      .withDecceleration(3.5);
+      .withAcceleration(15.0)
+      .withJerk(1.5);
 
   private static final APConstraints kTightAutopilotCorrectionConstraints = APConstraints.unlimited();
 
@@ -44,7 +44,7 @@ public class DriveConstants {
   private static final APConstraints kLooseAutopilotPathConstraints =
       new APConstraints()
           .withAcceleration(8.5)
-          .withDecceleration(4);
+          .withJerk(4);
 
   private static final APConstraints kLooseAutopilotCorrectionConstraints = APConstraints.unlimited();
 

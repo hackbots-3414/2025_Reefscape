@@ -31,7 +31,7 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "race",
+                      "type": "deadline",
                       "data": {
                         "commands": [
                           {
@@ -82,15 +82,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "deadline",
                       "data": {
-                        "name": "Align RIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Coral Wait"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Align RIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -126,15 +133,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "deadline",
                       "data": {
-                        "name": "Align RIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Coral Wait"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Align RIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {

@@ -6,22 +6,26 @@ package frc.robot.driveassist;
  */
 public class APConstraints {
   protected double m_acceleration;
-  protected double m_decceleration;
+  protected double m_jerk;
 
+  /** Creates a blank APConstraints */
   public APConstraints() {}
 
-  public APConstraints(double acceleration, double decceleration) {
+  /**
+   * Creates a new APCosntraints with given acceleration and deceleration */
+  public APConstraints(double acceleration, double deceleration) {
     m_acceleration = acceleration;
-    m_decceleration = decceleration;
+    m_jerk = deceleration;
   }
 
+  /** Unlimited constraints */
   public static APConstraints unlimited() {
     return new APConstraints(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
   }
 
   /**
-   * Modifies this constraint's max acceleration value. This affects the maximum acceleration
-   * that the autopilot action will use to correct initial velocities.
+   * Modifies this constraint's max acceleration value and returns itself. This affects the maximum
+   * acceleration that the autopilot action will use to correct initial velocities.
    */
   public APConstraints withAcceleration(double acceleration) {
     m_acceleration = acceleration;
@@ -29,12 +33,13 @@ public class APConstraints {
   }
 
   /**
-   * Modifies this constraint's decceleration value.
-   * 
-   * This is only necessary if the constraint is used for I control
+   * Modifies this constraint's max jerk value and returns itself. Higher values mean a faster
+   * deceleration.
+   *
+   * This is only used at the end of an autopilot action, not the beginning.
    */
-  public APConstraints withDecceleration(double decceleration) {
-    m_decceleration = decceleration;
+  public APConstraints withJerk(double decceleration) {
+    m_jerk = decceleration;
     return this;
   }
 }

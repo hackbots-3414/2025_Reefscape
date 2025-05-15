@@ -82,10 +82,9 @@ public class Autopilot {
   /**
    * Determines the maximum velocity required to travel the given distance and end at rest.
    *
-   * This uses constant acceleration, as determined by the value for I decceleration in the profile.
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
-    return Math.sqrt(Math.pow(endVelo, 2) + 2 * m_profile.m_pathConstraints.m_decceleration * dist);
+    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.m_pathConstraints.m_jerk, 1.0 / 3.0) + endVelo;
   }
 
   /**
