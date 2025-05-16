@@ -60,9 +60,7 @@ public class Superstructure {
   }
 
   public VisionHandler buildVision() {
-    return new VisionHandler(
-        m_subsystems.drivetrain()::getPose,
-        m_subsystems.drivetrain()::addPoseEstimate);
+    return new VisionHandler(m_subsystems.drivetrain()::addPoseEstimate);
   }
 
   public static record Subsystems(

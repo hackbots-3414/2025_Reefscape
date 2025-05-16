@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-
+import java.util.stream.Collectors;
 import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -28,76 +27,83 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotObserver;
+import frc.robot.vision.CameraIO.CameraIOInputs;
 import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class SingleInputPoseEstimator implements Runnable {
   private final Logger m_logger = LoggerFactory.getLogger(SingleInputPoseEstimator.class);
 
-  private final PhotonCamera m_camera;
+  private final CameraIO m_io;
+  private final CameraIOInputs m_inputs;
+
   private final Consumer<TimestampedPoseEstimate> m_reporter;
 
-  // Estimators
   private final PhotonPoseEstimator m_estimator;
 
-  private final String m_name;
-
-  private final Transform3d m_robotToCamera;
+  private final MultiInputFilter m_filter;
 
   public SingleInputPoseEstimator(
-      PhotonCamera camera,
-      Transform3d robotToCamera,
+      MultiInputFilter fitler,
+      CameraIO io,
       Consumer<TimestampedPoseEstimate> updateCallback) {
-    m_camera = camera;
-    m_name = camera.getName();
+    m_io = io;
+    m_inputs = new CameraIOInputs();
     m_reporter = updateCallback;
-    m_robotToCamera = robotToCamera;
+    m_filter = fitler;
     m_estimator = new PhotonPoseEstimator(
         VisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        robotToCamera);
-    m_estimator.setMultiTagFallbackStrategy(
-        PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+        m_io.getRobotToCamera());
+    m_estimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+  }
+
+  public void refresh() {
+    m_io.updateInputs(m_inputs);
+    for (PhotonPipelineResult result : m_inputs.unreadResults) {
+      List<Integer> tags = result.getTargets().stream()
+          .map(target -> target.getFiducialId())
+          .collect(Collectors.toList());
+      m_filter.addInput(m_io.getName(), tags);
+    }
   }
 
   @Override
   public void run() {
-    if (!m_camera.isConnected()) {
-      SmartDashboard.putBoolean("Vision/" + m_name + " Connected", false);
-      m_logger.error("Unable to read data from {}", m_name);
-    } else {
-      SmartDashboard.putBoolean("Vision/" + m_name + " Connected", true);
+    SmartDashboard.putBoolean("Vision/" + m_io.getName() + " connected", m_inputs.connected);
+    if (!m_inputs.connected) {
+      m_logger.error("Unable to read data from {}", m_io.getName());
+      return;
     }
     // Pull the latest data from the camera.
-    List<PhotonPipelineResult> results = m_camera.getAllUnreadResults();
+    List<PhotonPipelineResult> results = m_inputs.unreadResults;
     m_estimator.addHeadingData(
         RobotController.getMeasureTime().in(Seconds),
         RobotObserver.getPose().getRotation());
     /* take many */
     for (PhotonPipelineResult result : results) {
-      // headingHandleResult(result);
-      // handleResult(result);
       combinedHandleResult(result);
     }
   }
 
   private void combinedHandleResult(PhotonPipelineResult result) {
     // some prechecks before we do anything
-    if (!precheckValidity(result))
+    if (!precheckValidity(result)) {
       return;
+    }
     // we can now assume that we have targets
     List<PhotonTrackedTarget> targets = result.getTargets();
-    // use solvePnP every time
+    // use solvePnP every time if we can
     EstimationAlgorithm algorithm = (targets.size() > 1) ? EstimationAlgorithm.PnP
         : EstimationAlgorithm.Trig;
 
     Optional<EstimatedRobotPose> est = m_estimator.update(result);
     if (est.isPresent()) {
-      Optional<TimestampedPoseEstimate> processed =
-          process(result, est.get().estimatedPose, algorithm);
-      if (processed.isPresent()) {
-        m_reporter.accept(processed.get());
-        return;
-      }
+      Pose3d estimatedPose = est.get().estimatedPose;
+      // if (m_filter.verify(estimatedPose.toPose2d())) {
+        process(result, estimatedPose, algorithm).ifPresent(m_reporter);
+      // } else {
+        // RobotObserver.getField().getObject("rej").setPose(estimatedPose.toPose2d());
+      // }
     }
     PhotonTrackedTarget target = targets.get(0);
     int fidId = target.getFiducialId();
@@ -113,10 +119,21 @@ public class SingleInputPoseEstimator implements Runnable {
     Transform3d alt3d = target.getAlternateCameraToTarget();
     Pose3d best = targetPosition3d
         .plus(best3d.inverse())
-        .plus(m_robotToCamera.inverse());
+        .plus(m_io.getRobotToCamera().inverse());
     Pose3d alt = targetPosition3d
         .plus(alt3d.inverse())
-        .plus(m_robotToCamera.inverse());
+        .plus(m_io.getRobotToCamera().inverse());
+    // boolean bestOk = m_filter.verify(best.toPose2d());
+    // boolean altOk = m_filter.verify(alt.toPose2d());
+    // if (bestOk && !altOk) {
+    //   process(result, best, EstimationAlgorithm.MultiInput);
+    //   return;
+    // }
+    // if (altOk && !bestOk) {
+    //   process(result, alt, EstimationAlgorithm.MultiInput);
+    //   return;
+    // }
+    // final decision maker
     double bestHeading = best.getRotation().getZ();
     double altHeading = alt.getRotation().getZ();
     Pose2d pose = RobotObserver.getPose();
@@ -136,18 +153,14 @@ public class SingleInputPoseEstimator implements Runnable {
     }
 
     process(result, estimate, EstimationAlgorithm.Heading).ifPresent(m_reporter);
-
   }
 
   private boolean precheckValidity(PhotonPipelineResult result) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
-    // too old -> don't count it
     if (latency > VisionConstants.kLatencyThreshold) {
-      // this is interesting, so let's report it
-      m_logger.warn("({}) Refused old vision data, latency of {}", m_name, latency);
+      m_logger.warn("({}) Refused old vision data, latency of {}", m_io.getName(), latency);
       return false;
     }
-    // no targets -> no pose
     return result.hasTargets();
   }
 
@@ -175,7 +188,7 @@ public class SingleInputPoseEstimator implements Runnable {
       tags.add(target.getFiducialId());
     }
     return Optional.of(
-        new TimestampedPoseEstimate(flatPose, m_name, timestamp, stdDevs, algorithm, tags));
+        new TimestampedPoseEstimate(flatPose, m_io.getName(), timestamp, stdDevs, algorithm, tags));
   }
 
   private boolean checkValidity(

@@ -89,8 +89,8 @@ public class VisionConstants {
   protected static final double kHeadingThreshold = Units.degreesToRadians(3);
 
   // Stats about the camera for simulation
-  protected static final int kResWidth = 320 * 2;
-  protected static final int kResHeight = 240 * 2;
+  protected static final int kResWidth = 320;
+  protected static final int kResHeight = 240;
   protected static final Rotation2d kFOV = Rotation2d.fromDegrees(82.0);
   protected static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
 
