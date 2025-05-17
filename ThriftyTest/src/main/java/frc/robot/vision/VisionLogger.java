@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import frc.robot.Robot;
-import frc.robot.vision.LogBuilder.VisionLog;
+import frc.robot.vision.VisionLogBuilder.VisionLog;
 
 public class VisionLogger implements AutoCloseable {
     private static VisionLogger instance;

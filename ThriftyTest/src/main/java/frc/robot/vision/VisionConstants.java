@@ -6,19 +6,26 @@ import java.util.Map;
 import java.util.Set;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 
 public class VisionConstants {
   protected static final boolean kEnableLogging = true;
+  protected static final boolean kEnableNetworkLogging = false;
+  
+    protected static final double kRotationCoefficient = Math.PI * 0.5;
+    protected static final double kTranslationCoefficient = 0.10;
 
-  protected static final double kRotationCoefficient = Math.PI * 0.5;
-  protected static final double kTranslationCoefficient = 0.10;
+  protected static final Vector<N3> kBaseStdDevs =
+    VecBuilder.fill(kTranslationCoefficient, kTranslationCoefficient, kRotationCoefficient);
 
   protected static final AprilTagFieldLayout kTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
@@ -82,8 +89,8 @@ public class VisionConstants {
   protected static final double kHeadingThreshold = Units.degreesToRadians(3);
 
   // Stats about the camera for simulation
-  protected static final int kResWidth = 320 * 2;
-  protected static final int kResHeight = 240 * 2;
+  protected static final int kResWidth = 320;
+  protected static final int kResHeight = 240;
   protected static final Rotation2d kFOV = Rotation2d.fromDegrees(82.0);
   protected static final Rotation2d kHorizontalFov = Rotation2d.fromDegrees(70.0);
 

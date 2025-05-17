@@ -1,36 +1,54 @@
 {
   "NetworkTables": {
-    "Persistent Values": {
-      "open": false
-    },
     "Retained Values": {
       "open": false
     },
-    "Transitory Values": {
-      "open": false
+    "transitory": {
+      "SmartDashboard": {
+        "Coral": {
+          "open": true
+        },
+        "Elevator": {
+          "open": true
+        },
+        "Vision": {
+          "open": true
+        },
+        "open": true
+      }
     },
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Alerts": "Alerts",
-      "/SmartDashboard/Auto Chooser": "String Chooser",
-      "/SmartDashboard/Elevator Visualization": "Mechanism2d",
-      "/SmartDashboard/Go To B": "Command",
-      "/SmartDashboard/LIFT CLIMB": "Command",
-      "/SmartDashboard/LOWER CLIMB": "Command",
-      "/SmartDashboard/Pivot Arm Visualization": "Mechanism2d",
-      "/SmartDashboard/Reef mode off": "Command",
-      "/SmartDashboard/Reef mode on": "Command",
+      "/SmartDashboard/Auton Chooser": "String Chooser",
+      "/SmartDashboard/Command Scheduler": "Scheduler",
+      "/SmartDashboard/Elevator/Lazy Zero": "Command",
+      "/SmartDashboard/Elevator/Subsystem": "Subsystem",
+      "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/PhotonAlerts": "Alerts",
+      "/SmartDashboard/Pivot/Visualization": "Mechanism2d",
       "/SmartDashboard/Super Field": "Field2d",
-      "/SmartDashboard/camera testing spot": "Command",
-      "/SmartDashboard/camera testing spot 2": "Command",
-      "/SmartDashboard/open funnel": "Command"
+      "/SmartDashboard/Test/Drive To Center": "Command",
+      "/SmartDashboard/Test/Enter test state": "Command",
+      "/SmartDashboard/Test?": "Alerts",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
+      "/FMSInfo": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Auton Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Elevator/Lazy Zero": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
-        "Red Alliance Right Intake": {
-          "arrows": false,
-          "style": "Hidden"
-        },
         "Robot": {
           "arrowColor": [
             1.0,
@@ -39,9 +57,9 @@
             255.0
           ],
           "color": [
-            0.45930102467536926,
-            0.6751054525375366,
-            0.3760080933570862,
+            0.6306552290916443,
+            0.27503088116645813,
+            0.7388888597488403,
             255.0
           ],
           "length": 0.9399999976158142,
@@ -49,25 +67,48 @@
         },
         "apriltag": {
           "arrows": false,
+          "selectable": false,
           "style": "Hidden"
         },
         "bottom": 1347,
         "builtin": "",
-        "estimation": {
+        "cameras": {
           "arrows": false,
-          "color": [
-            0.3948085606098175,
-            0.4464501738548279,
-            0.649789035320282,
-            255.0
-          ],
-          "length": 0.9399999976158142,
-          "selectable": false,
-          "width": 0.9399999976158142
+          "style": "Hidden"
         },
         "height": 8.051901817321777,
-        "image": "C:\\Users\\hackbots\\code\\2025_Reefscape\\ThriftyTest\\2025-field-cropped.png",
+        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "reference": {
+          "arrowColor": [
+            0.7722222208976746,
+            0.666685163974762,
+            0.24453704059123993,
+            255.0
+          ],
+          "arrowSize": 24,
+          "color": [
+            0.800000011920929,
+            0.6802963018417358,
+            0.35111114382743835,
+            255.0
+          ],
+          "length": 1.0,
+          "selectable": false,
+          "width": 1.0
+        },
         "right": 2932,
+        "visibleTargetPoses": {
+          "arrows": false,
+          "color": [
+            0.35231274366378784,
+            0.7555555701255798,
+            0.2056790143251419,
+            255.0
+          ],
+          "length": 0.5,
+          "selectable": false,
+          "width": 0.5
+        },
         "width": 17.54825210571289,
         "window": {
           "visible": true
@@ -76,13 +117,72 @@
     }
   },
   "NetworkTables Info": {
-    "Server": {
-      "open": true
-    },
     "visible": true
   },
   "NetworkTables Settings": {
+    "dsClient": false,
     "mode": "Client (NT4)",
-    "serverTeam": "3414"
+    "serverTeam": "localhost"
+  },
+  "Plots": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "max": 6.0,
+              "min": -1.0
+            },
+            {
+              "max": 12.0
+            }
+          ],
+          "backgroundColor": [
+            0.12481480836868286,
+            0.11629628390073776,
+            0.13333332538604736,
+            0.9399999976158142
+          ],
+          "height": 304,
+          "name": "Stats",
+          "series": [
+            {
+              "color": [
+                0.5887756943702698,
+                0.30293208360671997,
+                0.8388888835906982,
+                1.0
+              ],
+              "digital": "Analog",
+              "id": "NT:/SmartDashboard/Drivetrain/velo",
+              "weight": 3.0
+            },
+            {
+              "color": [
+                0.17543210089206696,
+                0.27222222089767456,
+                0.20769546926021576,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Vision/Loop time (ms)"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Elevator/Position",
+              "yAxis": 1
+            }
+          ],
+          "yaxis2": true
+        }
+      ],
+      "window": {
+        "name": "Stats"
+      }
+    }
   }
 }

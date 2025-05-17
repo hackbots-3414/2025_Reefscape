@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.RobotObserver;
 
-public class LogBuilder {
+public class VisionLogBuilder {
   private List<TimestampedPoseEstimate> m_estimates;
   private List<VisionLog> m_logs;
 
-  public LogBuilder() {
+  public VisionLogBuilder() {
     m_estimates = new ArrayList<>(20);
     m_logs = new ArrayList<>(20);
   }
@@ -19,10 +18,9 @@ public class LogBuilder {
     m_estimates.add(estimate);
   }
 
-  private void buildLogs() {
+  private void buildLogs(Pose2d robot) {
     m_logs.clear();
     for (TimestampedPoseEstimate est : m_estimates) {
-      Pose2d robot = RobotObserver.getPose();
       double distance = est.pose().minus(robot).getTranslation().getNorm();
       m_logs.add(new VisionLog(est, distance, robot));
     }
@@ -31,8 +29,8 @@ public class LogBuilder {
   }
 
 
-  public void log() {
-    buildLogs();
+  public void log(Pose2d robotPose) {
+    buildLogs(robotPose);
     if (VisionConstants.kEnableLogging) {
       VisionLogger.record(m_logs);
     }

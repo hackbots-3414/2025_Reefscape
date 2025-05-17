@@ -19,17 +19,6 @@ public class RobotObserver {
         return m_instance;
     }
 
-    /* Pose2d to watch the pose of the robot and associated methods */
-    private Supplier<Pose2d> m_poseSupplier;
-
-    public static void setPoseSupplier(Supplier<Pose2d> poseSupplier) {
-        getInstance().m_poseSupplier = poseSupplier;
-    }
-
-    public static Pose2d getPose() {
-        return getInstance().m_poseSupplier.get();
-    }
-
     /* the velocity of the robot */
     private DoubleSupplier m_veloSupplier;
 
@@ -52,36 +41,6 @@ public class RobotObserver {
 
     public static Field2d getField() {
         return getInstance().m_field;
-    }
-
-    private Supplier<Double> m_elevatorHeightSupplier;
-
-    public static void setElevatorHeightSupplier(Supplier<Double> visionValidSupplier) {
-        getInstance().m_elevatorHeightSupplier = visionValidSupplier;
-    }
-
-    public static double getElevatorHeightSupplier() {
-        return getInstance().m_elevatorHeightSupplier.get();
-    }
-
-    private boolean m_reefMode = false;
-
-    public static void setReefMode(boolean enabled) {
-        getInstance().m_reefMode = enabled;
-    }
-
-    public static boolean getReefMode() {
-        return getInstance().m_reefMode;
-    }
-
-    private ReefClipLocations m_reefClipLocation = ReefClipLocations.LEFT;
-
-    public static void setReefClipLocation(ReefClipLocations reefClipLocation) {
-        getInstance().m_reefClipLocation = reefClipLocation;
-    }
-
-    public static ReefClipLocations getReefClipLocation() {
-        return getInstance().m_reefClipLocation;
     }
 
     private BooleanSupplier m_coralPieceHeldSupplier;

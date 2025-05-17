@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,9 +21,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
     m_robotContainer.enablePDPSwitch();
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
   }

@@ -44,7 +44,7 @@ public class Elevator extends PassiveSubsystem {
     }
     m_inputs = new ElevatorIOInputs();
     SmartDashboard.putData("Elevator/Lazy Zero",
-        runOnce(m_io::calibrateZero).ignoringDisable(true));
+        runOnce(m_io::calibrateZero).ignoringDisable(true).withName("Lazy Zero"));
   }
 
   private void setPosition(ElevatorState state) {

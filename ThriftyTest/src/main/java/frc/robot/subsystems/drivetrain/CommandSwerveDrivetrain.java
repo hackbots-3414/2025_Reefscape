@@ -139,7 +139,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     m_aligned = false;
 
-    RobotObserver.setPoseSupplier(this::getPose);
     RobotObserver.setVelocitySupplier(this::getVelocity);
     RobotObserver.setNoElevatorZoneSupplier(dangerZone());
     RobotObserver.setReefReadySupplier(inReefZone());
