@@ -43,18 +43,26 @@ public class NamedCommandBindings implements Binder {
           new Align(new APTarget(location.value).withEntryAngle(location.value.getRotation()))
               .allianceRelative()));
     }
+    APTarget lIntake = new APTarget(FieldConstants.kLeftIntake)
+        .withRotationRadius(2.0);
+    APTarget rIntake = new APTarget(FieldConstants.kRightIntake)
+        .withRotationRadius(2.0);
     NamedCommands.registerCommand("Align LIntake", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kLeftIntake)
-            .withEntryAngle(Rotation2d.kPi)
-            .withRotationRadius(2.0))
-                .allianceRelative()
-                .fast()));
+        new Align(lIntake.withEntryAngle(Rotation2d.kPi))
+            .allianceRelative()
+            .fast()));
     NamedCommands.registerCommand("Align RIntake", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kRightIntake)
-            .withEntryAngle(Rotation2d.kPi)
-            .withRotationRadius(2.0))
-                .allianceRelative()
-                .fast()));
+        new Align(rIntake.withEntryAngle(Rotation2d.kPi))
+            .allianceRelative()
+            .fast()));
+    NamedCommands.registerCommand("Beeline LIntake", superstructure.enter(
+        new Align(lIntake)
+            .allianceRelative()
+            .fast()));
+    NamedCommands.registerCommand("Beeline RIntake", superstructure.enter(
+        new Align(rIntake)
+            .allianceRelative()
+            .fast()));
     NamedCommands.registerCommand("Align IJ", superstructure.enter(
         new Align(new APTarget(FieldConstants.kIJ).withEntryAngle(FieldConstants.kIJ.getRotation()))
             .allianceRelative()));

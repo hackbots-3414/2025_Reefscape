@@ -43,7 +43,7 @@ public class ForceField {
     }
     Translation2d t = x.times(
         Math.sqrt(2 * FFConstants.k_decceleration / x.getNorm()));
-    boolean active = t.getNorm() < m_maxSpeed && RobotObserver.getFFEnabled();
+    boolean active = t.getNorm() < m_maxSpeed;
     if (!active) {
       RobotObserver.getField().getObject("FF").setPoses();
       return velocity;

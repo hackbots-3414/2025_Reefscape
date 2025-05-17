@@ -43,27 +43,27 @@ public class APTarget {
    * <i>NOTE:</i> This also sets, if unset, the entry angle to be the angle of the pose.
    */
   public APTarget withReference(Pose2d reference) {
-    m_reference = reference;
-    if (m_entryAngle == null) {
-      m_entryAngle = Optional.of(reference.getRotation());
-    }
-    return this;
+    APTarget target = this.clone();
+    target.m_entryAngle = Optional.of(reference.getRotation());
+    return target;
   }
 
   /**
    * Modifies this instance's entry angle and returns itself for easier method chaining
    */
   public APTarget withEntryAngle(Rotation2d entryAngle) {
-    m_entryAngle = Optional.of(entryAngle);
-    return this;
+    APTarget target = this.clone();
+    target.m_entryAngle = Optional.of(entryAngle);
+    return target;
   }
 
   /**
    * Modifies this instance's end velocity and returns itself for easier method chaining
    */
   public APTarget withVelocity(double velocity) {
-    m_velocity = velocity;
-    return this;
+    APTarget target = this.clone();
+    target.m_velocity = velocity;
+    return target;
   }
 
   /**
@@ -74,8 +74,9 @@ public class APTarget {
    * until X distance from setpoint, this can be used to make that change.
    */
   public APTarget withRotationRadius(double radius) {
-    m_rotationRadius = Optional.of(radius);
-    return this;
+    APTarget copy = this.clone();
+    copy.m_rotationRadius = Optional.of(radius);
+    return copy;
   }
 
   /**
@@ -114,8 +115,20 @@ public class APTarget {
     APTarget target = new APTarget(ref);
     m_entryAngle.ifPresent(rotation -> {
       Rotation2d entry = FlippingUtil.flipFieldRotation(rotation);
-      target.withEntryAngle(entry);
+      target.m_entryAngle = Optional.of(entry);
     });
+    target.m_rotationRadius = m_rotationRadius;
+    return target;
+  }
+
+  /**
+   * Creates a copy of this APTarget
+   */
+  public APTarget clone() {
+    APTarget target = new APTarget();
+    target.m_reference = m_reference;
+    target.m_velocity = m_velocity;
+    target.m_entryAngle = m_entryAngle;
     target.m_rotationRadius = m_rotationRadius;
     return target;
   }

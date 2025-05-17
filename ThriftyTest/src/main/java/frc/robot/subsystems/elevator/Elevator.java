@@ -92,6 +92,7 @@ public class Elevator extends PassiveSubsystem {
     SmartDashboard.putString("Elevator/Reference", m_reference.toString());
     SmartDashboard.putBoolean("Elevator/Prefire", m_prefireReq.getAsBoolean());
     SmartDashboard.putBoolean("Elevator/Ready", ready().getAsBoolean());
+    SmartDashboard.putBoolean("Elevator/Unsafe", unsafe().getAsBoolean());
   }
 
   /**

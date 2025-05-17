@@ -387,15 +387,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         setAligned(false);
       }
 
-      Translation2d adjusted = m_forceField.calculate(
-          new Translation2d(vx, vy),
-          m_estimatedPose,
-          getNearestAntitarget());
+      if (RobotObserver.getFFEnabled()) {
+        Translation2d adjusted = m_forceField.calculate(
+            new Translation2d(vx, vy),
+            m_estimatedPose,
+            getNearestAntitarget());
 
-      setControl(m_teleopRequest
-          .withVelocityX(adjusted.getX())
-          .withVelocityY(adjusted.getY())
-          .withRotationalRate(omega));
+        setControl(m_teleopRequest
+            .withVelocityX(adjusted.getX())
+            .withVelocityY(adjusted.getY())
+            .withRotationalRate(omega));
+      } else {
+        // no adjustments
+        setControl(m_teleopRequest
+            .withVelocityX(vx)
+            .withVelocityY(vy)
+            .withRotationalRate(omega));
+      }
     });
   }
 

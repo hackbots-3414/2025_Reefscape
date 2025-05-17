@@ -24,7 +24,9 @@
       "/SmartDashboard/Test vision": "Command",
       "/SmartDashboard/Test/Drive To Center": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
+      "/SmartDashboard/Test/L4": "Command",
       "/SmartDashboard/Test/LowReefAlgaeIntake": "Command",
+      "/SmartDashboard/Test/Upper algae reef": "Command",
       "/SmartDashboard/Test?": "Alerts",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
@@ -42,8 +44,10 @@
       "/SmartDashboard/Super Field": {
         "FF": {
           "arrows": false,
+          "length": 1.5,
           "selectable": false,
-          "style": "Hidden"
+          "style": "Box/Image",
+          "width": 2.0
         },
         "Pathfind Trajectory": {
           "arrows": false,
@@ -124,6 +128,11 @@
           "width": 0.5
         },
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Test/L4": {
         "window": {
           "visible": true
         }
