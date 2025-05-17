@@ -30,7 +30,7 @@ public class Coral extends PassiveSubsystem {
     } else {
       m_io = new CoralIOSim();
     }
-    RobotObserver.setPieceHeldSupplier(holding());
+    RobotObserver.setCoralHeldSupplier(holding());
   }
 
   private void setVoltage(double voltage) {

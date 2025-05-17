@@ -46,7 +46,7 @@ public class RobotObserver {
     private BooleanSupplier m_coralPieceHeldSupplier;
     private BooleanSupplier m_algaeHeldSupplier;
 
-    public static void setPieceHeldSupplier(BooleanSupplier pieceHeldSupplier) {
+    public static void setCoralHeldSupplier(BooleanSupplier pieceHeldSupplier) {
         getInstance().m_coralPieceHeldSupplier = pieceHeldSupplier;
     }
     
