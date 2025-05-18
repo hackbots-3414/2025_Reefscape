@@ -12,10 +12,13 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.utils.LoopTimer;
 
 public class VisionHandler implements AutoCloseable {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
+
+  private final LoopTimer m_loopTimer;
 
   private final Supplier<Pose2d> m_poseSupplier;
   private final Consumer<TimestampedPoseEstimate> m_consumer;
@@ -38,6 +41,7 @@ public class VisionHandler implements AutoCloseable {
         new VisionNetworkLogger(Robot.isSimulation() || VisionConstants.kEnableNetworkLogging);
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
+    m_loopTimer = new LoopTimer("Vision");
   }
 
   private void setupCameras() {
@@ -60,8 +64,8 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void updateEstimators() {
+    m_loopTimer.reset();
     m_filter.clear();
-    long start = System.currentTimeMillis();
     for (SingleInputPoseEstimator estimator : m_estimators) {
       estimator.refresh(m_poseSupplier.get());
     }
@@ -72,9 +76,7 @@ public class VisionHandler implements AutoCloseable {
     // finish logging
     m_logBuilder.log(m_poseSupplier.get());
     m_networkLogger.updateUnread();
-
-    long elapsed = System.currentTimeMillis() - start;
-    SmartDashboard.putNumber("Vision/Loop time (ms)", elapsed);
+    m_loopTimer.log();
   }
 
   public void startThread() {

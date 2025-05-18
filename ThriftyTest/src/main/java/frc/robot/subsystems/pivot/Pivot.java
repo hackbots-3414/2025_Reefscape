@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.pivot;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -12,8 +14,14 @@ import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
 import frc.robot.subsystems.pivot.PivotIO.PivotIOInputs;
+import frc.robot.utils.LoopTimer;
 
 public class Pivot extends PassiveSubsystem {
+  @SuppressWarnings("unused")
+  private final Logger m_logger = LoggerFactory.getLogger(Pivot.class);
+
+  private final LoopTimer m_timer;
+
   private final PivotIO m_io;
   private PivotIOInputs m_inputs;
 
@@ -28,6 +36,7 @@ public class Pivot extends PassiveSubsystem {
     }
     m_inputs = new PivotIOInputs();
     m_reference = PivotState.Stow;
+    m_timer = new LoopTimer("Pivot");
   }
 
 
@@ -43,9 +52,11 @@ public class Pivot extends PassiveSubsystem {
 
   @Override
   public void periodic() {
+    m_timer.reset();
     m_io.updateInputs(m_inputs);
     SmartDashboard.putBoolean("Pivot/Ready", ready().getAsBoolean());
     SmartDashboard.putString("Pivot/Reference", m_reference.toString());
+    m_timer.log();
   }
 
   protected void passive() {

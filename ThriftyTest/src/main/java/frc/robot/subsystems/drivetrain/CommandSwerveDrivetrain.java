@@ -51,6 +51,7 @@ import frc.robot.driveassist.Autopilot;
 import frc.robot.driveassist.ForceField;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
+import frc.robot.utils.LoopTimer;
 import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
@@ -60,6 +61,8 @@ import frc.robot.vision.TimestampedPoseEstimate;
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
+
+  private LoopTimer m_timer;
 
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
@@ -145,6 +148,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     RobotObserver.setAlginedSupplier(aligned());
 
     m_forceField = new ForceField(DriveConstants.kMaxTeleopLinearSpeed);
+    m_timer = new LoopTimer("Drivetrain");
   }
 
   public void initializeSetpointGenerator(RobotConfig config) {
@@ -222,6 +226,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   @Override
   public void periodic() {
+    m_timer.reset();
     m_estimatedPose = this.getState().Pose;
     SmartDashboard.putNumber("Drivetrain/x", m_estimatedPose.getTranslation().getX());
     SmartDashboard.putNumber("Drivetrain/y", m_estimatedPose.getTranslation().getY());
@@ -239,6 +244,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_hasAppliedOperatorPerspective = true;
       });
     }
+    m_timer.log();
   }
 
   private void startSimThread() {

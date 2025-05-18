@@ -186,9 +186,6 @@
         "Coral": {
           "open": true
         },
-        "Elevator": {
-          "open": true
-        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
@@ -261,7 +258,8 @@
               "digitalBitHeight": 33,
               "id": "NT:/SmartDashboard/Vision/Loop time (ms)",
               "marker": "None",
-              "name": "Vision loop time"
+              "name": "Vision loop time",
+              "yAxis": 1
             },
             {
               "color": [

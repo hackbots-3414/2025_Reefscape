@@ -12,10 +12,13 @@ import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
 import frc.robot.subsystems.algae.AlgaeIO.AlgaeIOInputs;
+import frc.robot.utils.LoopTimer;
 
 public class Algae extends PassiveSubsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Algae.class);
+
+  private final LoopTimer m_timer;
 
   private final AlgaeIO m_io;
   private AlgaeIOInputs m_inputs;
@@ -33,6 +36,7 @@ public class Algae extends PassiveSubsystem {
     }
     m_inputs = new AlgaeIOInputs();
     RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());
+    m_timer = new LoopTimer("Algae");
   }
 
   private void setVoltage(double voltage) {
@@ -66,12 +70,14 @@ public class Algae extends PassiveSubsystem {
 
   @Override
   public void periodic() {
+    m_timer.reset();
     m_io.updateInputs(m_inputs);
     m_hasAlgae = getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold;
     SmartDashboard.putBoolean("Algae/Held", m_hasAlgae);
     SmartDashboard.putNumber("Algae/Torque", m_inputs.torque);
     SmartDashboard.putNumber("Algae/Voltage", m_inputs.voltage);
     SmartDashboard.putNumber("Algae/Temperature", m_inputs.temperature);
+    m_timer.log();
   }
 
   protected void passive() {

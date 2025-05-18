@@ -10,10 +10,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Robot;
 import frc.robot.subsystems.PassiveSubsystem;
 import frc.robot.subsystems.climber.ClimberIO.ClimberIOInputs;
+import frc.robot.utils.LoopTimer;
 
 public class Climber extends PassiveSubsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Climber.class);
+
+  private final LoopTimer m_timer;
 
   private final ClimberIO m_io;
   private ClimberIOInputs m_inputs;
@@ -26,6 +29,7 @@ public class Climber extends PassiveSubsystem {
       m_io = new ClimberIOSim();
     }
     m_inputs = new ClimberIOInputs();
+    m_timer = new LoopTimer("Climber");
   }
 
   /*
@@ -57,11 +61,13 @@ public class Climber extends PassiveSubsystem {
 
   @Override
   public void periodic() {
+    m_timer.reset();
     m_io.updateInputs(m_inputs);
     SmartDashboard.putBoolean("Climb/Ready", raised().getAsBoolean());
     SmartDashboard.putBoolean("Climb/Complete", climbed().getAsBoolean());
     SmartDashboard.putNumber("Climb/Position", m_inputs.position);
     SmartDashboard.putNumber("Climb/Voltage", m_inputs.leftVoltage);
+    m_timer.log();
   }
 
   public Trigger climbed() {

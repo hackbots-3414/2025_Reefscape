@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.utils.LoopTimer;
 import frc.robot.utils.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
@@ -16,21 +18,28 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  private final LoopTimer m_loopTimer;
+
   public Robot() {
     m_robotContainer = new RobotContainer();
+    m_loopTimer = new LoopTimer("Robot");
   }
 
   @Override
   public void robotInit() {
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     m_robotContainer.enablePDPSwitch();
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
   }
 
   @Override
   public void robotPeriodic() {
+    m_loopTimer.reset();
     CommandScheduler.getInstance().run();
     StatusSignalUtil.refreshAll();
-    SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+    SmartDashboard.putNumber("Robot/Match Time", DriverStation.getMatchTime());
+    m_loopTimer.log();
   }
 
   @Override

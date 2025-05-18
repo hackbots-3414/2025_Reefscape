@@ -23,7 +23,11 @@ public class StatusSignalUtil {
   }
 
   public static void refreshAll() {
-    BaseStatusSignal.refreshAll(m_rioSignals);
-    BaseStatusSignal.refreshAll(m_canivoreSignals);
+    if (m_rioSignals.length > 0) {
+      BaseStatusSignal.refreshAll(m_rioSignals);
+    }
+    if (m_canivoreSignals.length > 0) {
+      BaseStatusSignal.refreshAll(m_canivoreSignals);
+    }
   }
 }
