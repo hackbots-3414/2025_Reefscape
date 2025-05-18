@@ -13,12 +13,6 @@ import edu.wpi.first.wpilibj.PS5Controller.Button;
 import frc.robot.subsystems.elevator.ElevatorState;
 
 public class Constants {
-
-  public static class IDConstants {
-    public static final int candle1 = 5;
-    public static final int candle2 = 6;
-  }
-
   public static class SimConstants {
     public static final double k_simPeriodic = 0.005;
   }
@@ -259,22 +253,6 @@ public class Constants {
 
   public enum ReefClipLocations {
     LEFT, RIGHT;
-  }
-
-  public static class LedConstants {
-    public static final int numLED = 133;
-    public static final double flashSpeed = 0.75;
-    public static final double strobeSpeed = 0.1;
-    public static final double endgameWarning = 30;
-    public static final double endgameAlert = 15;
-    public static final int funnelOffset = 8; // 8
-    public static final int elevatorOffset = 95; // 94
-    public static final int funnelNumLED = 81; // 85
-    public static final int elevatorNumLED = 40; // 40
-    public static final int funnelOffset2 = 8; // 8
-    public static final int elevatorOffset2 = 93; // 94
-    public static final int funnelNumLED2 = elevatorOffset2 - funnelOffset2; // 85
-    public static final int elevatorNumLED2 = 40; // 40
   }
 
   public static class FFConstants {

@@ -183,7 +183,7 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Coral": {
+        "LEDs": {
           "open": true
         },
         "Super Field": {

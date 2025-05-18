@@ -4,12 +4,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotObserver;
-import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.algae.Algae;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.vision.VisionHandler;
 
@@ -26,7 +26,7 @@ public class Superstructure {
       Elevator elevator,
       Climber climber,
       CommandSwerveDrivetrain drivetrain,
-      LedFeedback leds) {
+      LEDs leds) {
 
     m_subsystems = new Subsystems(
         algaeRollers,
@@ -72,7 +72,7 @@ public class Superstructure {
       Elevator elevator,
       Climber climber,
       CommandSwerveDrivetrain drivetrain,
-      LedFeedback leds) {
+      LEDs leds) {
   }
 
   public Trigger aligned() {
