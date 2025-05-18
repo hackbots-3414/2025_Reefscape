@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.utils.StatusSignalUtil;
 
 public class AlgaeIOHardware implements AlgaeIO {
   private final TalonFX m_motor;
@@ -29,6 +30,13 @@ public class AlgaeIOHardware implements AlgaeIO {
     m_torqueSignal = m_motor.getTorqueCurrent();
     m_tempSignal = m_motor.getDeviceTemp();
     m_velocitySignal = m_motor.getVelocity();
+
+    StatusSignalUtil.registerRioSignals(
+        m_voltageSignal,
+        m_currentSignal,
+        m_torqueSignal,
+        m_tempSignal,
+        m_velocitySignal);
   }
 
   public void updateInputs(AlgaeIOInputs inputs) {

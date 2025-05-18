@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.utils.StatusSignalUtil;
 
 public class CoralIOHardware implements CoralIO {
   private final TalonFX m_leftMotor;
@@ -74,6 +75,25 @@ public class CoralIOHardware implements CoralIO {
     m_frontDetectedSignal = m_frontCANrange.getIsDetected();
     m_upperDetectedSignal = m_upperCANrange.getIsDetected();
     m_innerDetectedSignal = m_innerCANrange.getIsDetected();
+
+    StatusSignalUtil.registerRioSignals(
+        m_leftVoltageSignal,
+        m_rightVoltageSignal,
+        m_leftCurrentSignal,
+        m_rightCurrentSignal,
+        m_leftTempSignal,
+        m_rightTempSignal,
+        m_leftVelocitySignal,
+        m_rightVelocitySignal,
+        m_frontDetectedSignal,
+        m_upperDetectedSignal,
+        m_innerDetectedSignal,
+        m_frontDistanceSignal,
+        m_upperDistanceSignal,
+        m_innerDistanceSignal,
+        m_frontStrengthSignal,
+        m_upperStrengthSignal,
+        m_innerStrengthSignal);
   }
 
   public void updateInputs(CoralIOInputs inputs) {

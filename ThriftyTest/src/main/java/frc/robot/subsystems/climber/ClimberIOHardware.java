@@ -11,6 +11,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Servo;
+import frc.robot.utils.StatusSignalUtil;
 
 public class ClimberIOHardware implements ClimberIO {
   private final TalonFX m_leftMotor;
@@ -57,6 +58,16 @@ public class ClimberIOHardware implements ClimberIO {
     m_rightVelocitySignal = m_rightMotor.getVelocity();
 
     m_positionSignal = m_CANcoder.getPosition();
+
+    StatusSignalUtil.registerRioSignals(
+        m_leftVoltageSignal,
+        m_rightVoltageSignal,
+        m_leftCurrentSignal,
+        m_rightCurrentSignal,
+        m_leftTempSignal,
+        m_rightTempSignal,
+        m_leftVelocitySignal,
+        m_rightVelocitySignal);
   }
 
   public void updateInputs(ClimberIOInputs inputs) {

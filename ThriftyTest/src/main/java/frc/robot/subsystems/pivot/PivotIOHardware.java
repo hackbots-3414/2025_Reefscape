@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.utils.StatusSignalUtil;
 
 public class PivotIOHardware implements PivotIO {
   private final TalonFX m_motor;
@@ -33,6 +34,13 @@ public class PivotIOHardware implements PivotIO {
     m_positionSignal = m_motor.getPosition();
 
     m_control = new MotionMagicVoltage(0.0);
+
+    StatusSignalUtil.registerRioSignals(
+        m_voltageSignal,
+        m_currentSignal,
+        m_tempSignal,
+        m_velocitySignal,
+        m_positionSignal);
   }
 
   public void updateInputs(PivotIOInputs inputs) {

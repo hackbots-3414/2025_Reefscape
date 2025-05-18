@@ -72,7 +72,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     m_CANrangeDistanceSignal = m_CANrange.getDistance();
     m_CANrangeStrengthSignal = m_CANrange.getSignalStrength();
 
-    StatusSignalUtil.registerCANivoreSignals(
+    StatusSignalUtil.registerRioSignals(
         m_leftVoltageSignal,
         m_rightVoltageSignal,
         m_leftCurrentSignal,
