@@ -183,6 +183,9 @@
     },
     "transitory": {
       "SmartDashboard": {
+        "Coral": {
+          "open": true
+        },
         "LEDs": {
           "open": true
         },

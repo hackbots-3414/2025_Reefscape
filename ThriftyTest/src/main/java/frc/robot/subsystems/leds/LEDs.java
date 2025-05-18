@@ -3,6 +3,7 @@ package frc.robot.subsystems.leds;
 import java.util.function.BiFunction;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.hardware.CANdle;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.leds.ledStates.BadController;
@@ -10,6 +11,8 @@ import frc.robot.subsystems.leds.ledStates.Climbed;
 import frc.robot.subsystems.leds.ledStates.CoralHeld;
 import frc.robot.subsystems.leds.ledStates.CoralPresent;
 import frc.robot.subsystems.leds.ledStates.Enabled;
+import frc.robot.subsystems.leds.ledStates.EndgameAlert;
+import frc.robot.subsystems.leds.ledStates.EndgameWarn;
 import frc.robot.utils.LoopTimer;
 
 public class LEDs extends SubsystemBase {
@@ -23,6 +26,8 @@ public class LEDs extends SubsystemBase {
   private final LEDState m_coralHeld;
   private final LEDState m_badController;
   private final LEDState m_climbed;
+  private final LEDState m_endgameAlert;
+  private final LEDState m_endgameWarn;
 
   private final LEDInputs m_inputs;
 
@@ -38,6 +43,8 @@ public class LEDs extends SubsystemBase {
     m_coralHeld = new CoralHeld(this);
     m_badController = new BadController(this);
     m_climbed = new Climbed(this);
+    m_endgameAlert = new EndgameAlert(this);
+    m_endgameWarn = new EndgameWarn(this);
 
     m_loopTimer = new LoopTimer("LEDs");
   }
@@ -74,12 +81,30 @@ public class LEDs extends SubsystemBase {
     return control.apply(LEDConstants.kRightElevatorStart, LEDConstants.kRightElevatorEnd);
   }
 
+  private boolean endgameWarning() {
+    return DriverStation.isTeleopEnabled()
+        && DriverStation.getMatchTime() <= LEDConstants.endgameWarning
+        && DriverStation.getMatchTime() != -1;
+  }
+
+  private boolean endgameAlert() {
+    return DriverStation.isTeleopEnabled()
+        && DriverStation.getMatchTime() <= LEDConstants.endgameAlert
+        && DriverStation.getMatchTime() != -1;
+  }
+
   private LEDState getActiveState() {
     if (!m_inputs.controllersOk().getAsBoolean()) {
       return m_badController;
     }
     if (m_inputs.climbed().getAsBoolean()) {
       return m_climbed;
+    }
+    if (endgameAlert()) {
+      return m_endgameAlert;
+    }
+    if (endgameWarning()) {
+      return m_endgameWarn;
     }
     if (m_inputs.coralHeld().getAsBoolean()) {
       return m_coralHeld;
