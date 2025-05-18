@@ -35,7 +35,7 @@ public class Algae extends PassiveSubsystem {
       m_io = new AlgaeIOSim();
     }
     m_inputs = new AlgaeIOInputs();
-    RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());
+    RobotObserver.setAlgaePieceHeldSupplier(this.holding());
     m_timer = new LoopTimer("Algae");
   }
 
@@ -44,7 +44,7 @@ public class Algae extends PassiveSubsystem {
     m_io.setVoltage(voltage);
   }
 
-  public Trigger holdingAlgae() {
+  public Trigger holding() {
     return new Trigger(() -> m_hasAlgae);
   }
 
@@ -81,7 +81,7 @@ public class Algae extends PassiveSubsystem {
   }
 
   protected void passive() {
-    keep(holdingAlgae().getAsBoolean());
+    keep(holding().getAsBoolean());
   }
 
   /**
@@ -90,10 +90,10 @@ public class Algae extends PassiveSubsystem {
   public Command intake() {
     return Commands.sequence(
         runOnce(() -> setVoltage(AlgaeConstants.kIntakeVoltage)),
-        Commands.waitUntil(holdingAlgae()))
+        Commands.waitUntil(holding()))
 
-        .finallyDo(() -> keep(holdingAlgae().getAsBoolean()))
-        .unless(holdingAlgae());
+        .finallyDo(() -> keep(holding().getAsBoolean()))
+        .unless(holding());
   }
 
   /**
@@ -105,7 +105,7 @@ public class Algae extends PassiveSubsystem {
         Commands.waitSeconds(AlgaeConstants.kNetScoreTime))
 
         .finallyDo(this::keep)
-        .onlyIf(holdingAlgae());
+        .onlyIf(holding());
   }
 
   /**
@@ -117,6 +117,6 @@ public class Algae extends PassiveSubsystem {
         Commands.waitSeconds(AlgaeConstants.kProcessorScoreTime))
 
         .finallyDo(this::keep)
-        .onlyIf(holdingAlgae());
+        .onlyIf(holding());
   }
 }

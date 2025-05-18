@@ -38,7 +38,8 @@ public class Superstructure {
           coral.holding(),
           coral.present(),
           allControllersOk(),
-          climber.climbed()));
+          climber.climbed(),
+          algae.holding()));
     m_subsystems = new Subsystems(
         algae,
         coral,

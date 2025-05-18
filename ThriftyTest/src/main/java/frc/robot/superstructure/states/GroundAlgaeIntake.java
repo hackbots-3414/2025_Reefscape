@@ -22,6 +22,6 @@ public class GroundAlgaeIntake implements EnterableState {
         .finallyDo(subsystems.elevator()::release)
         .finallyDo(subsystems.pivot()::release)
         .finallyDo(subsystems.algae()::release)
-        .unless(subsystems.algae().holdingAlgae());
+        .unless(subsystems.algae().holding());
   }
 }

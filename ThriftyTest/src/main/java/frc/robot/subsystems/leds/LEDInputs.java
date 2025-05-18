@@ -6,5 +6,6 @@ public record LEDInputs(
     Trigger coralHeld,
     Trigger coralPresent,
     Trigger controllersOk,
-    Trigger climbed) {
+    Trigger climbed,
+    Trigger algaeHeld) {
 }

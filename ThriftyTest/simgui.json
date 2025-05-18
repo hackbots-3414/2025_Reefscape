@@ -183,7 +183,7 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Coral": {
+        "Algae": {
           "open": true
         },
         "LEDs": {
@@ -204,6 +204,9 @@
     }
   },
   "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
     "visible": true
   },
   "Plot": {

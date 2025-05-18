@@ -20,6 +20,6 @@ public class ProcessorPrep implements EnterableState {
 
         .finallyDo(subsystems.elevator()::conditionalRelease)
         .finallyDo(subsystems.pivot()::conditionalRelease)
-        .onlyIf(subsystems.algae().holdingAlgae());
+        .onlyIf(subsystems.algae().holding());
   }
 }

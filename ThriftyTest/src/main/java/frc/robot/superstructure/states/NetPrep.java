@@ -20,6 +20,6 @@ public class NetPrep implements EnterableState {
 
         .finallyDo(subsystems.elevator()::conditionalRelease)
         .finallyDo(subsystems.pivot()::conditionalRelease)
-        .onlyIf(subsystems.algae().holdingAlgae());
+        .onlyIf(subsystems.algae().holding());
   }
 }

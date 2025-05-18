@@ -19,7 +19,7 @@ public class AlgaeStow implements EnterableState {
         subsystems.elevator().go(ElevatorState.Stow).asProxy(),
         subsystems.pivot().go(PivotState.Ground))
 
-        .onlyIf(subsystems.algae().holdingAlgae());
+        .onlyIf(subsystems.algae().holding());
     // Neither subsystem is released because this is a "persistent" state.
   }
 }

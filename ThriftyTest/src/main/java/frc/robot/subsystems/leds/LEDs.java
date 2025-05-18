@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.CANdle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.ledStates.AlgaeHeld;
 import frc.robot.subsystems.leds.ledStates.BadController;
 import frc.robot.subsystems.leds.ledStates.Climbed;
 import frc.robot.subsystems.leds.ledStates.CoralHeld;
@@ -28,6 +29,7 @@ public class LEDs extends SubsystemBase {
   private final LEDState m_climbed;
   private final LEDState m_endgameAlert;
   private final LEDState m_endgameWarn;
+  private final LEDState m_algaeHeld;
 
   private final LEDInputs m_inputs;
 
@@ -45,6 +47,7 @@ public class LEDs extends SubsystemBase {
     m_climbed = new Climbed(this);
     m_endgameAlert = new EndgameAlert(this);
     m_endgameWarn = new EndgameWarn(this);
+    m_algaeHeld = new AlgaeHeld(this);
 
     m_loopTimer = new LoopTimer("LEDs");
   }
@@ -111,6 +114,9 @@ public class LEDs extends SubsystemBase {
     }
     if (m_inputs.coralPresent().getAsBoolean()) {
       return m_coralPresent;
+    }
+    if (m_inputs.algaeHeld().getAsBoolean()) {
+      return m_algaeHeld;
     }
     return m_enabled;
   }

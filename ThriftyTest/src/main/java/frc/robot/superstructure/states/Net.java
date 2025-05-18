@@ -23,6 +23,6 @@ public class Net implements EnterableState {
         .finallyDo(subsystems.elevator()::release)
         .finallyDo(subsystems.pivot()::release)
         .finallyDo(subsystems.algae()::release)
-        .onlyIf(subsystems.algae().holdingAlgae());
+        .onlyIf(subsystems.algae().holding());
   }
 }
