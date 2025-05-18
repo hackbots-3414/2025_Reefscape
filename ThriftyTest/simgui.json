@@ -183,7 +183,7 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "LEDs": {
+        "Coral": {
           "open": true
         },
         "Super Field": {
@@ -245,21 +245,49 @@
               "marker": "None",
               "name": "Velocity",
               "weight": 2.999999523162842
+            }
+          ]
+        }
+      ],
+      "window": {
+        "name": "Drivetrain"
+      }
+    },
+    "Plot <1>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "lockMin": true,
+              "max": 20.0
+            }
+          ],
+          "backgroundColor": [
+            0.14911262691020966,
+            0.13259322941303253,
+            0.15196079015731812,
+            0.9399999976158142
+          ],
+          "height": 305,
+          "name": "Loop Times",
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Algae/Loop time (ms)"
             },
             {
               "color": [
-                0.20608589053153992,
-                0.2450980544090271,
-                0.18983083963394165,
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
                 1.0
               ],
-              "digital": "Auto",
-              "digitalBitGap": 34,
-              "digitalBitHeight": 33,
-              "id": "NT:/SmartDashboard/Vision/Loop time (ms)",
-              "marker": "None",
-              "name": "Vision loop time",
-              "yAxis": 1
+              "id": "NT:/SmartDashboard/Coral/Loop time (ms)"
             },
             {
               "color": [
@@ -268,17 +296,49 @@
                 0.4078431725502014,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Elevator/Position",
-              "name": "Elevator",
-              "yAxis": 1
+              "id": "NT:/SmartDashboard/Drivetrain/Loop time (ms)"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Elevator/Loop time (ms)"
+            },
+            {
+              "color": [
+                0.5058823823928833,
+                0.44705885648727417,
+                0.7019608020782471,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Robot/Loop time (ms)"
+            },
+            {
+              "color": [
+                0.5764706134796143,
+                0.4705882668495178,
+                0.3764706254005432,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Vision/Loop time (ms)"
+            },
+            {
+              "color": [
+                0.8549020290374756,
+                0.545098066329956,
+                0.7647059559822083,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/Pivot/Loop time (ms)"
             }
-          ],
-          "yaxis2": true,
-          "yaxis3": true
+          ]
         }
       ],
       "window": {
-        "name": "Stats"
+        "name": "Loop Times"
       }
     }
   }

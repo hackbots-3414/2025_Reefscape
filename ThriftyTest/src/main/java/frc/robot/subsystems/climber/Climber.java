@@ -29,7 +29,7 @@ public class Climber extends PassiveSubsystem {
       m_io = new ClimberIOSim();
     }
     m_inputs = new ClimberIOInputs();
-    m_timer = new LoopTimer("Climber");
+    m_timer = new LoopTimer("Climb");
   }
 
   /*

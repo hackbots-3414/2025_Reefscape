@@ -9,10 +9,13 @@ import frc.robot.subsystems.leds.ledStates.BadController;
 import frc.robot.subsystems.leds.ledStates.CoralHeld;
 import frc.robot.subsystems.leds.ledStates.CoralPresent;
 import frc.robot.subsystems.leds.ledStates.Enabled;
+import frc.robot.utils.LoopTimer;
 
 public class LEDs extends SubsystemBase {
   private final CANdle m_leftCANdle;
   private final CANdle m_rightCANdle;
+
+  private final LoopTimer m_loopTimer;
 
   private final LEDState m_enabled;
   private final LEDState m_coralPresent;
@@ -32,13 +35,16 @@ public class LEDs extends SubsystemBase {
     m_coralPresent = new CoralPresent(this);
     m_coralHeld = new CoralHeld(this);
     m_badController = new BadController(this);
+    m_loopTimer = new LoopTimer("LEDs");
   }
 
   @Override
   public void periodic() {
+    m_loopTimer.reset();
     LEDState state = getActiveState();
     applyState(state);
     SmartDashboard.putString("LEDs/State", state.getClass().getSimpleName());
+    m_loopTimer.log();
   }
 
   private void applyState(LEDState state) {
