@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.CANdle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.leds.ledStates.BadController;
+import frc.robot.subsystems.leds.ledStates.Climbed;
 import frc.robot.subsystems.leds.ledStates.CoralHeld;
 import frc.robot.subsystems.leds.ledStates.CoralPresent;
 import frc.robot.subsystems.leds.ledStates.Enabled;
@@ -21,6 +22,7 @@ public class LEDs extends SubsystemBase {
   private final LEDState m_coralPresent;
   private final LEDState m_coralHeld;
   private final LEDState m_badController;
+  private final LEDState m_climbed;
 
   private final LEDInputs m_inputs;
 
@@ -35,6 +37,8 @@ public class LEDs extends SubsystemBase {
     m_coralPresent = new CoralPresent(this);
     m_coralHeld = new CoralHeld(this);
     m_badController = new BadController(this);
+    m_climbed = new Climbed(this);
+
     m_loopTimer = new LoopTimer("LEDs");
   }
 
@@ -73,6 +77,9 @@ public class LEDs extends SubsystemBase {
   private LEDState getActiveState() {
     if (!m_inputs.controllersOk().getAsBoolean()) {
       return m_badController;
+    }
+    if (m_inputs.climbed().getAsBoolean()) {
+      return m_climbed;
     }
     if (m_inputs.coralHeld().getAsBoolean()) {
       return m_coralHeld;

@@ -37,7 +37,8 @@ public class Superstructure {
     LEDs leds = new LEDs(new LEDInputs(
           coral.holding(),
           coral.present(),
-          allControllersOk()));
+          allControllersOk(),
+          climber.climbed()));
     m_subsystems = new Subsystems(
         algae,
         coral,
