@@ -105,5 +105,6 @@ public final class ElevatorConstants {
 
   protected static final LinearSystem<N2, N1, N2> kPlant =
       LinearSystemId.createElevatorSystem(DCMotor.getKrakenX60(1), 1, 1, 1);
+  public static final double kCalibrationTime = 3.5; // seconds
 }
 

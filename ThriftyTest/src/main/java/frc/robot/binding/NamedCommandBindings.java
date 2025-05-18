@@ -13,6 +13,7 @@ import frc.robot.superstructure.states.Align;
 import frc.robot.superstructure.states.CoralIntake;
 import frc.robot.superstructure.states.CoralScore;
 import frc.robot.superstructure.states.CoralWait;
+import frc.robot.superstructure.states.ElevatorZero;
 import frc.robot.superstructure.states.LowerReefAlgaeIntake;
 import frc.robot.superstructure.states.Net;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
@@ -29,6 +30,7 @@ public class NamedCommandBindings implements Binder {
     NamedCommands.registerCommand("L3", superstructure.enter(new CoralScore(CoralLevel.L3)));
     NamedCommands.registerCommand("Coral Wait", superstructure.enter(new CoralWait()));
     NamedCommands.registerCommand("Intake", superstructure.enter(new CoralIntake()));
+    NamedCommands.registerCommand("Recalibrate", superstructure.enter(new ElevatorZero()));
 
     /* algae */
     NamedCommands.registerCommand("Lower Algae", superstructure.enter(new LowerReefAlgaeIntake()));

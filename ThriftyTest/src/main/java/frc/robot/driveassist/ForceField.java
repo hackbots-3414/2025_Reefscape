@@ -25,10 +25,7 @@ public class ForceField {
    * @param antitarget The closest force field antitarget
    * @return the field relative adjusted velocity
    */
-  public Translation2d calculate(
-      Translation2d velocity,
-      Pose2d current,
-      Pose2d antitarget) {
+  public Translation2d calculate(Translation2d velocity, Pose2d current, Pose2d antitarget) {
     Translation2d x = antitarget.getTranslation().minus(current.getTranslation());
     double xNorm = x.getNorm();
     if (xNorm == 0) {

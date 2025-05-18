@@ -31,7 +31,7 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   protected static final String kEstimationName = "estimation";
-  protected static final String kRejectedName = "rejected";
+  protected static final String kRejectName = "rejected";
 
   protected static final String kLogPath = "/home/lvuser/logs/vision";
   protected static final String kSimLogPath = "logs/vision";

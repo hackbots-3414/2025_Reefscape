@@ -86,7 +86,26 @@
             0.40441176295280457,
             255.0
           ],
+          "selectable": false,
           "style": "Hidden"
+        },
+        "estimation": {
+          "arrowColor": [
+            0.3990052044391632,
+            0.6029411554336548,
+            0.5009731650352478,
+            255.0
+          ],
+          "arrowSize": 14,
+          "color": [
+            0.45415228605270386,
+            0.686274528503418,
+            0.5702133178710938,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "selectable": false,
+          "width": 0.9399999976158142
         },
         "height": 8.051901817321777,
         "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
@@ -113,6 +132,25 @@
           "length": 2.0,
           "selectable": false,
           "width": 2.0
+        },
+        "rejected": {
+          "arrowColor": [
+            0.44117647409439087,
+            0.30276817083358765,
+            0.3841848075389862,
+            255.0
+          ],
+          "arrows": false,
+          "color": [
+            0.4803921580314636,
+            0.2401960790157318,
+            0.33203572034835815,
+            255.0
+          ],
+          "length": 0.9399999976158142,
+          "selectable": false,
+          "style": "Hidden",
+          "width": 0.9399999976158142
         },
         "right": 2932,
         "visibleTargetPoses": {
@@ -148,6 +186,9 @@
         "Coral": {
           "open": true
         },
+        "Elevator": {
+          "open": true
+        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
@@ -171,11 +212,20 @@
         {
           "axis": [
             {
+              "lockMax": true,
+              "lockMin": true,
               "max": 6.0,
               "min": -1.0
             },
             {
+              "lockMax": true,
+              "lockMin": true,
               "max": 12.0
+            },
+            {
+              "lockMax": true,
+              "lockMin": true,
+              "max": 1.2
             }
           ],
           "backgroundColor": [
@@ -225,7 +275,8 @@
               "yAxis": 1
             }
           ],
-          "yaxis2": true
+          "yaxis2": true,
+          "yaxis3": true
         }
       ],
       "window": {

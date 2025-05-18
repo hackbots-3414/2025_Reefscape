@@ -25,15 +25,19 @@ public class VisionHandler implements AutoCloseable {
 
   private final VisionLogBuilder m_logBuilder;
 
+  private final VisionNetworkLogger m_networkLogger;
+
   private final MultiInputFilter m_filter;
 
   public VisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
     m_poseSupplier = poseSupplier;
     m_consumer = callback;
     m_filter = new MultiInputFilter();
+    m_logBuilder = new VisionLogBuilder();
+    m_networkLogger =
+        new VisionNetworkLogger(Robot.isSimulation() || VisionConstants.kEnableNetworkLogging);
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
-    m_logBuilder = new VisionLogBuilder();
   }
 
   private void setupCameras() {
@@ -48,6 +52,7 @@ public class VisionHandler implements AutoCloseable {
       }
       SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
           m_filter,
+          m_networkLogger,
           io,
           this::addEstimate);
       m_estimators.add(estimator);
@@ -64,11 +69,12 @@ public class VisionHandler implements AutoCloseable {
     for (SingleInputPoseEstimator estimator : m_estimators) {
       estimator.run();
     }
-    long elapsed = System.currentTimeMillis() - start;
-    SmartDashboard.putNumber("Vision/Loop time (ms)", elapsed);
-
     // finish logging
     m_logBuilder.log(m_poseSupplier.get());
+    m_networkLogger.updateUnread();
+
+    long elapsed = System.currentTimeMillis() - start;
+    SmartDashboard.putNumber("Vision/Loop time (ms)", elapsed);
   }
 
   public void startThread() {
@@ -77,7 +83,7 @@ public class VisionHandler implements AutoCloseable {
 
   private void addEstimate(TimestampedPoseEstimate estimate) {
     m_consumer.accept(estimate);
-    // pose logging
+    m_networkLogger.registerValidEstimate(estimate.pose());
     m_logBuilder.addEstimate(estimate);
   }
 

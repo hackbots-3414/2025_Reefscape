@@ -2,7 +2,6 @@ package frc.robot.vision;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -54,8 +53,7 @@ public class MultiInputFilter {
     return true;
   }
 
-  public void addInput(String source, List<Integer> tagList) {
-    Set<Integer> tags = new HashSet<>(tagList);
+  public void addInput(String source, Set<Integer> tags) {
     if (!m_tags.containsKey(source)) {
       m_tags.put(source, new HashSet<>());
     }

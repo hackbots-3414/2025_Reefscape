@@ -1,8 +1,8 @@
 package frc.robot.vision;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.photonvision.EstimatedRobotPose;
@@ -42,13 +42,17 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private final MultiInputFilter m_filter;
 
+  private final VisionNetworkLogger m_networkLogger;
+
   private Pose2d m_lastPose;
 
   public SingleInputPoseEstimator(
       MultiInputFilter fitler,
+      VisionNetworkLogger networkLogger,
       CameraIO io,
       Consumer<TimestampedPoseEstimate> updateCallback) {
     m_io = io;
+    m_networkLogger = networkLogger;
     m_inputs = new CameraIOInputs();
     m_reporter = updateCallback;
     m_filter = fitler;
@@ -63,9 +67,9 @@ public class SingleInputPoseEstimator implements Runnable {
     m_lastPose = robotPose;
     m_io.updateInputs(m_inputs);
     for (PhotonPipelineResult result : m_inputs.unreadResults) {
-      List<Integer> tags = result.getTargets().stream()
+      Set<Integer> tags = result.getTargets().stream()
           .map(target -> target.getFiducialId())
-          .collect(Collectors.toList());
+          .collect(Collectors.toSet());
       m_filter.addInput(m_io.getName(), tags);
     }
   }
@@ -91,6 +95,8 @@ public class SingleInputPoseEstimator implements Runnable {
   private void combinedHandleResult(PhotonPipelineResult result) {
     // some prechecks before we do anything
     if (!precheckValidity(result)) {
+      // We don't use the network logger to precheck these ones because this checks for the dumb
+      // stuff like "do we see anything" or "is this from a minute ago?"
       return;
     }
     // we can now assume that we have targets
@@ -102,11 +108,12 @@ public class SingleInputPoseEstimator implements Runnable {
     Optional<EstimatedRobotPose> est = m_estimator.update(result);
     if (est.isPresent()) {
       Pose3d estimatedPose = est.get().estimatedPose;
-      // if (m_filter.verify(estimatedPose.toPose2d())) {
+      Pose2d estimatedPose2d = estimatedPose.toPose2d();
+      if (m_filter.verify(estimatedPose2d)) {
         process(result, estimatedPose, algorithm).ifPresent(m_reporter);
-      // } else {
-        // RobotObserver.getField().getObject("rej").setPose(estimatedPose.toPose2d());
-      // }
+      } else {
+        m_networkLogger.registerRejectedEstimate(estimatedPose2d);
+      }
     }
     PhotonTrackedTarget target = targets.get(0);
     int fidId = target.getFiducialId();
@@ -126,16 +133,26 @@ public class SingleInputPoseEstimator implements Runnable {
     Pose3d alt = targetPosition3d
         .plus(alt3d.inverse())
         .plus(m_io.getRobotToCamera().inverse());
-    // boolean bestOk = m_filter.verify(best.toPose2d());
-    // boolean altOk = m_filter.verify(alt.toPose2d());
-    // if (bestOk && !altOk) {
-    //   process(result, best, EstimationAlgorithm.MultiInput);
-    //   return;
-    // }
-    // if (altOk && !bestOk) {
-    //   process(result, alt, EstimationAlgorithm.MultiInput);
-    //   return;
-    // }
+    boolean bestOk = m_filter.verify(best.toPose2d());
+    boolean altOk = m_filter.verify(alt.toPose2d());
+    if (!bestOk) {
+      m_networkLogger.registerRejectedEstimate(best.toPose2d());
+    }
+    if (!altOk) {
+      m_networkLogger.registerRejectedEstimate(alt.toPose2d());
+    }
+    if (bestOk && !altOk) {
+      process(result, best, EstimationAlgorithm.MultiInput);
+      return;
+    }
+    if (altOk && !bestOk) {
+      process(result, alt, EstimationAlgorithm.MultiInput);
+      return;
+    }
+    if (!bestOk && !altOk) {
+      // neither is good
+      return;
+    }
     // final decision maker
     double bestHeading = best.getRotation().getZ();
     double altHeading = alt.getRotation().getZ();
@@ -176,22 +193,21 @@ public class SingleInputPoseEstimator implements Runnable {
     double ambiguity = getAmbiguity(result);
     Pose2d flatPose = pose.toPose2d();
     Matrix<N3, N1> stdDevs = calculateStdDevs(result, flatPose);
+
     // check validity
-    if (!checkValidity(pose, ambiguity))
+    if (!checkValidity(pose, ambiguity)) {
       return Optional.empty();
-    List<Integer> tags = new ArrayList<>();
-    for (PhotonTrackedTarget target : result.getTargets()) {
-      tags.add(target.getFiducialId());
     }
     return Optional.of(
-        new TimestampedPoseEstimate(flatPose, m_io.getName(), timestamp, stdDevs, algorithm, tags));
+        new TimestampedPoseEstimate(flatPose, m_io.getName(), timestamp, stdDevs, algorithm));
   }
 
   private boolean checkValidity(
       Pose3d pose,
       double ambiguity) {
-    if (ambiguity >= VisionConstants.kAmbiguityThreshold)
+    if (ambiguity >= VisionConstants.kAmbiguityThreshold) {
       return false;
+    }
     return !isOutsideField(pose);
   }
 

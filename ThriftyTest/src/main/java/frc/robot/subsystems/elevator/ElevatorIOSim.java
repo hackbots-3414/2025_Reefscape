@@ -5,6 +5,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
   public void updateInputs(ElevatorIOInputs inputs) {
     inputs.position = m_position;
+    inputs.zeroCANrangeDetected = m_position == 0;
   }
 
   public void setPosition(double position) {

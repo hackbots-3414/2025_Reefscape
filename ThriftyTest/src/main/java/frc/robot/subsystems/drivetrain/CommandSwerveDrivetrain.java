@@ -311,9 +311,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
     // This should NOT run in simulation!
-    if (Robot.isSimulation())
+    if (Robot.isSimulation()) {
       return;
-    // Depending on our configs, we should use or not use the std devs
+    }
     addVisionMeasurement(
         estimate.pose(),
         estimate.timestamp(),
