@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.utils.StatusSignalUtil;
 
 public class ElevatorIOHardware implements ElevatorIO {
   private final TalonFX m_leftMotor;
@@ -70,21 +71,36 @@ public class ElevatorIOHardware implements ElevatorIO {
     m_CANrangeDetectedSignal = m_CANrange.getIsDetected();
     m_CANrangeDistanceSignal = m_CANrange.getDistance();
     m_CANrangeStrengthSignal = m_CANrange.getSignalStrength();
+
+    StatusSignalUtil.registerCANivoreSignals(
+        m_leftVoltageSignal,
+        m_rightVoltageSignal,
+        m_leftCurrentSignal,
+        m_rightCurrentSignal,
+        m_leftTempSignal,
+        m_rightTempSignal,
+        m_leftVelocitySignal,
+        m_rightVelocitySignal,
+        m_leftPositionSignal,
+        m_rightPositionSignal,
+        m_CANrangeDetectedSignal,
+        m_CANrangeDistanceSignal,
+        m_CANrangeStrengthSignal);
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {
-    inputs.leftMotorConnected = BaseStatusSignal.refreshAll(
+    inputs.leftMotorConnected = BaseStatusSignal.isAllGood(
         m_leftVoltageSignal,
         m_leftCurrentSignal,
         m_leftTempSignal,
         m_leftVelocitySignal,
-        m_leftPositionSignal).isOK();
-    inputs.rightMotorConnected = BaseStatusSignal.refreshAll(
+        m_leftPositionSignal);
+    inputs.rightMotorConnected = BaseStatusSignal.isAllGood(
         m_rightVoltageSignal,
         m_rightCurrentSignal,
         m_rightTempSignal,
         m_rightVelocitySignal,
-        m_rightPositionSignal).isOK();
+        m_rightPositionSignal);
     inputs.leftVoltage = m_leftVoltageSignal.getValueAsDouble();
     inputs.rightVoltage = m_rightVoltageSignal.getValueAsDouble();
     inputs.leftCurrent = m_leftCurrentSignal.getValueAsDouble();
@@ -97,10 +113,10 @@ public class ElevatorIOHardware implements ElevatorIO {
     inputs.rightPosition = m_rightPositionSignal.getValueAsDouble();
     inputs.position = inputs.rightPosition;
 
-    inputs.zeroCANrangeConnected = BaseStatusSignal.refreshAll(
+    inputs.zeroCANrangeConnected = BaseStatusSignal.isAllGood(
         m_CANrangeDetectedSignal,
         m_CANrangeDistanceSignal,
-        m_CANrangeStrengthSignal).isOK();
+        m_CANrangeStrengthSignal);
     inputs.zeroCANrangeDetected = m_CANrangeDetectedSignal.getValue();
     inputs.zeroCANrangeDistance = m_CANrangeDistanceSignal.getValueAsDouble();
     inputs.zeroCANrangeStrength = m_CANrangeStrengthSignal.getValueAsDouble();

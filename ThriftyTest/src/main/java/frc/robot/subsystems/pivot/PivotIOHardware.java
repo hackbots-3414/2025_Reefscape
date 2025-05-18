@@ -25,7 +25,7 @@ public class PivotIOHardware implements PivotIO {
     m_motor = new TalonFX(PivotConstants.kMotorID);
     m_motor.getConfigurator().apply(PivotConstants.kMotorConfig);
     m_motor.setPosition(PivotConstants.kRotorOffset);
-    
+
     m_voltageSignal = m_motor.getMotorVoltage();
     m_currentSignal = m_motor.getSupplyCurrent();
     m_tempSignal = m_motor.getDeviceTemp();
@@ -36,12 +36,12 @@ public class PivotIOHardware implements PivotIO {
   }
 
   public void updateInputs(PivotIOInputs inputs) {
-    inputs.motorConnected = BaseStatusSignal.refreshAll(
+    inputs.motorConnected = BaseStatusSignal.isAllGood(
         m_voltageSignal,
         m_currentSignal,
         m_tempSignal,
         m_velocitySignal,
-        m_positionSignal).isOK();
+        m_positionSignal);
     inputs.voltage = m_voltageSignal.getValueAsDouble();
     inputs.current = m_currentSignal.getValueAsDouble();
     inputs.temperatue = m_tempSignal.getValueAsDouble();

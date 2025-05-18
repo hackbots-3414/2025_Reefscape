@@ -32,12 +32,12 @@ public class AlgaeIOHardware implements AlgaeIO {
   }
 
   public void updateInputs(AlgaeIOInputs inputs) {
-    inputs.motorConnected = BaseStatusSignal.refreshAll(
+    inputs.motorConnected = BaseStatusSignal.isAllGood(
         m_voltageSignal,
         m_currentSignal,
         m_torqueSignal,
         m_tempSignal,
-        m_velocitySignal).isOK();
+        m_velocitySignal);
     inputs.voltage = m_voltageSignal.getValueAsDouble();
     inputs.current = m_currentSignal.getValueAsDouble();
     inputs.torque = m_torqueSignal.getValueAsDouble();

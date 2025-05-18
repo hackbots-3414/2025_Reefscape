@@ -60,16 +60,16 @@ public class ClimberIOHardware implements ClimberIO {
   }
 
   public void updateInputs(ClimberIOInputs inputs) {
-    inputs.leftConnected = BaseStatusSignal.refreshAll(
+    inputs.leftConnected = BaseStatusSignal.isAllGood(
         m_leftVoltageSignal,
         m_leftCurrentSignal,
         m_leftTempSignal,
-        m_leftVelocitySignal).isOK();
-    inputs.rightConnected = BaseStatusSignal.refreshAll(
+        m_leftVelocitySignal);
+    inputs.rightConnected = BaseStatusSignal.isAllGood(
         m_rightVoltageSignal,
         m_rightCurrentSignal,
         m_rightTempSignal,
-        m_rightVelocitySignal).isOK();
+        m_rightVelocitySignal);
     inputs.leftVoltage = m_leftVoltageSignal.getValueAsDouble();
     inputs.rightVoltage = m_rightVoltageSignal.getValueAsDouble();
     inputs.leftCurrent = m_leftCurrentSignal.getValueAsDouble();
@@ -78,8 +78,7 @@ public class ClimberIOHardware implements ClimberIO {
     inputs.rightTemp = m_rightTempSignal.getValueAsDouble();
     inputs.leftVelocityRPS = m_leftVelocitySignal.getValueAsDouble();
     inputs.rightVelocityRPS = m_rightVelocitySignal.getValueAsDouble();
-    inputs.encoderConnected = BaseStatusSignal.refreshAll(
-        m_positionSignal).isOK();
+    inputs.encoderConnected = BaseStatusSignal.isAllGood(m_positionSignal);
     inputs.position = m_positionSignal.getValueAsDouble();
   }
 

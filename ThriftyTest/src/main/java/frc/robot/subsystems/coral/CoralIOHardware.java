@@ -77,34 +77,34 @@ public class CoralIOHardware implements CoralIO {
   }
 
   public void updateInputs(CoralIOInputs inputs) {
-    inputs.rightMotorConnected = BaseStatusSignal.refreshAll(
+    inputs.rightMotorConnected = BaseStatusSignal.isAllGood(
         m_rightVoltageSignal,
         m_rightCurrentSignal,
         m_rightTempSignal,
-        m_rightVelocitySignal).isOK();
-    inputs.leftMotorConnected = BaseStatusSignal.refreshAll(
+        m_rightVelocitySignal);
+    inputs.leftMotorConnected = BaseStatusSignal.isAllGood(
         m_leftVoltageSignal,
         m_leftCurrentSignal,
         m_leftTempSignal,
-        m_leftVelocitySignal).isOK();
+        m_leftVelocitySignal);
     inputs.rightVoltage = m_rightVoltageSignal.getValueAsDouble();
     inputs.leftVoltage = m_leftVoltageSignal.getValueAsDouble();
     inputs.rightCurrent = m_rightCurrentSignal.getValueAsDouble();
     inputs.leftCurrent = m_leftCurrentSignal.getValueAsDouble();
     inputs.rightTemperature = m_rightTempSignal.getValueAsDouble();
     inputs.leftTemperature = m_leftTempSignal.getValueAsDouble();
-    inputs.frontCANrangeConnected = BaseStatusSignal.refreshAll(
+    inputs.frontCANrangeConnected = BaseStatusSignal.isAllGood(
         m_frontDetectedSignal,
         m_frontDistanceSignal,
-        m_frontStrengthSignal).isOK();
-    inputs.upperCANrangeConnected = BaseStatusSignal.refreshAll(
+        m_frontStrengthSignal);
+    inputs.upperCANrangeConnected = BaseStatusSignal.isAllGood(
         m_upperDetectedSignal,
         m_upperDistanceSignal,
-        m_upperStrengthSignal).isOK();
-    inputs.innerCANrangeConnected = BaseStatusSignal.refreshAll(
+        m_upperStrengthSignal);
+    inputs.innerCANrangeConnected = BaseStatusSignal.isAllGood(
         m_innerDetectedSignal,
         m_innerDistanceSignal,
-        m_innerStrengthSignal).isOK();
+        m_innerStrengthSignal);
     inputs.frontDetected = m_frontDetectedSignal.getValue();
     inputs.upperDetected = m_upperDetectedSignal.getValue();
     inputs.innerDetected = m_innerDetectedSignal.getValue();
