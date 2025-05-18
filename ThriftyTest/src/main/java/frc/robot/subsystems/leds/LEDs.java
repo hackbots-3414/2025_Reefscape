@@ -4,36 +4,41 @@ import java.util.function.BiFunction;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.hardware.CANdle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.PassiveSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.ledStates.BadController;
+import frc.robot.subsystems.leds.ledStates.CoralHeld;
+import frc.robot.subsystems.leds.ledStates.CoralPresent;
 import frc.robot.subsystems.leds.ledStates.Enabled;
 
-public class LEDs extends PassiveSubsystem {
+public class LEDs extends SubsystemBase {
   private final CANdle m_leftCANdle;
   private final CANdle m_rightCANdle;
 
   private final LEDState m_enabled;
+  private final LEDState m_coralPresent;
+  private final LEDState m_coralHeld;
+  private final LEDState m_badController;
 
-  public LEDs() {
+  private final LEDInputs m_inputs;
+
+  public LEDs(LEDInputs inputs) {
     super();
     m_leftCANdle = new CANdle(LEDConstants.kLeftCANdleID);
     m_rightCANdle = new CANdle(LEDConstants.kRightCANdleID);
 
-    m_enabled = new Enabled(this);
-  }
+    m_inputs = inputs;
 
-  protected void passive() {}
+    m_enabled = new Enabled(this);
+    m_coralPresent = new CoralPresent(this);
+    m_coralHeld = new CoralHeld(this);
+    m_badController = new BadController(this);
+  }
 
   @Override
   public void periodic() {
     LEDState state = getActiveState();
     applyState(state);
     SmartDashboard.putString("LEDs/State", state.getClass().getSimpleName());
-    SmartDashboard.putString("LEDs/Left Control", m_leftCANdle.getAppliedControl().getName());
-    SmartDashboard.putString("LEDs/Right Control", m_rightCANdle.getAppliedControl().getName());
-  }
-
-  private LEDState getActiveState() {
-    return m_enabled;
   }
 
   private void applyState(LEDState state) {
@@ -57,5 +62,18 @@ public class LEDs extends PassiveSubsystem {
 
   public <T extends ControlRequest> T rightElevator(BiFunction<Integer, Integer, T> control) {
     return control.apply(LEDConstants.kRightElevatorStart, LEDConstants.kRightElevatorEnd);
+  }
+
+  private LEDState getActiveState() {
+    if (!m_inputs.controllersOk().getAsBoolean()) {
+      return m_badController;
+    }
+    if (m_inputs.coralHeld().getAsBoolean()) {
+      return m_coralHeld;
+    }
+    if (m_inputs.coralPresent().getAsBoolean()) {
+      return m_coralPresent;
+    }
+    return m_enabled;
   }
 }

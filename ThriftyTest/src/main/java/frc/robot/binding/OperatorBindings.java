@@ -66,6 +66,7 @@ public class OperatorBindings implements Binder {
   private final Trigger m_zeroElevator = m_controller.button(Operator.zeroElevator);
 
   public void bind(Superstructure superstructure) {
+    superstructure.addControllerCheck(new Trigger(m_controller::isConnected));
     /* algae intake */
     m_algae.and(m_algaeGround).whileTrue(superstructure.enter(new GroundAlgaeIntake()));
     m_algae.and(m_algaeHighGround).whileTrue(superstructure.enter(new HighGroundAlgaeIntake()));

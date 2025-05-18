@@ -9,7 +9,7 @@ public class LEDConstants {
   public static final double endgameWarning = 30;
   public static final double endgameAlert = 15;
 
-  // TODO: tune all these values
+  // TODO: check all these values
   public static final int kLeftFunnelStart = 8;
   public static final int kLeftFunnelEnd = 88;
   public static final int kLeftElevatorStart = 95;

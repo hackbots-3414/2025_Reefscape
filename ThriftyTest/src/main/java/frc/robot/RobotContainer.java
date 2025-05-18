@@ -17,7 +17,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.leds.LEDs;
+
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.algae.Algae;
 import frc.robot.superstructure.Superstructure;
@@ -33,8 +33,7 @@ public class RobotContainer {
       new Pivot(),
       new Elevator(),
       new Climber(),
-      TunerConstants.createDrivetrain(),
-      new LEDs());
+      TunerConstants.createDrivetrain());
 
   private final Binder m_driver = new DriveBindings();
   private final Binder m_operator = new OperatorBindings();

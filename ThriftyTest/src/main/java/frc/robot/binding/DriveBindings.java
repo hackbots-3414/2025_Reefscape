@@ -29,6 +29,7 @@ public class DriveBindings implements Binder {
   private final Trigger m_processorAlign = m_controller.button(Driver.processor);
 
   public void bind(Superstructure superstructure) {
+    superstructure.addControllerCheck(new Trigger(m_controller::isConnected));
     superstructure.setDrive(superstructure.enter(new TeleopDrive(m_x, m_y, m_rot)));
 
     m_resetHeading.onTrue(superstructure.enter(new HeadingReset()));
