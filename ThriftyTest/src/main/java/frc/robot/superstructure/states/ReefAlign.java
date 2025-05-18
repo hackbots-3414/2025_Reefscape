@@ -37,7 +37,7 @@ public class ReefAlign implements EnterableState {
   public Command build(Subsystems subsystems) {
     return Commands.defer(() -> {
       List<Pose2d> locations = new ArrayList<>();
-      m_locations.forEach(location -> locations.add(FieldUtils.getGlobalPose(location)));
+      m_locations.forEach(location -> locations.add(FieldUtils.getLocalPose(location)));
       Pose2d closest = subsystems.drivetrain().getPose().nearest(locations);
       APTarget target = new APTarget(closest)
         .withEntryAngle(closest.getRotation());

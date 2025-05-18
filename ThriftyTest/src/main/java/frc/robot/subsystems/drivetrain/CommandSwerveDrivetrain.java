@@ -189,7 +189,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
    * returns the current pose, with red side poses flipped
    */
   public Pose2d getBluePose() {
-    return FieldUtils.getGlobalPose(m_estimatedPose);
+    return FieldUtils.getLocalPose(m_estimatedPose);
   }
 
   public void zeroPose() {
@@ -437,5 +437,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         .finallyDo(() -> {
           RobotObserver.getField().getObject("reference").setPoses();
         });
+  }
+
+  public Command seedLocal(Pose2d pose) {
+    return Commands.runOnce(() -> resetPose(FieldUtils.getLocalPose(pose)))
+      .ignoringDisable(true);
   }
 }

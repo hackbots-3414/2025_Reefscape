@@ -16,7 +16,7 @@ public class FieldUtils {
      * <h1>IMPORTANT</h1>
      * This depends on the current Driver Station settinng for alliance. When this function is called, the driver station pose is read.
      */
-    public static Pose2d getGlobalPose(Pose2d localPose) {
+    public static Pose2d getLocalPose(Pose2d localPose) {
         if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
             return FlippingUtil.flipFieldPose(localPose);
         } else {

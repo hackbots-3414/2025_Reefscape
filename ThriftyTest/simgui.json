@@ -20,6 +20,9 @@
       "/SmartDashboard/Elevator/Lazy Zero": "Command",
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/PhotonAlerts": "Alerts",
+      "/SmartDashboard/Prep/Set Center": "Command",
+      "/SmartDashboard/Prep/Set Left": "Command",
+      "/SmartDashboard/Prep/Set Right": "Command",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Test vision": "Command",
       "/SmartDashboard/Test/Drive To Center": "Command",
@@ -37,6 +40,21 @@
         }
       },
       "/SmartDashboard/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Prep/Set Center": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Prep/Set Left": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Prep/Set Right": {
         "window": {
           "visible": true
         }
@@ -231,7 +249,7 @@
             0.14215683937072754,
             0.8500000238418579
           ],
-          "height": 305,
+          "height": 288,
           "series": [
             {
               "color": [

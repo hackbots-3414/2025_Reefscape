@@ -150,6 +150,10 @@ public class Constants {
     public static final Pose2d kIJ = new Pose2d(5.155, 5.194, Rotation2d.fromDegrees(-120));
 
     public static final Pose2d kBarge1 = new Pose2d(7.459, 4.717, Rotation2d.fromDegrees(21.0));
+
+    public static final Pose2d kStartCenter = new Pose2d(7.134, 3.991, Rotation2d.kPi);
+    public static final Pose2d kStartRight = new Pose2d(6.929, 1.883, Rotation2d.fromDegrees(125));
+    public static final Pose2d kStartLeft = new Pose2d(6.985, 6.027, Rotation2d.fromDegrees(-125));
   }
 
   public static final class StateSpaceConstants {
