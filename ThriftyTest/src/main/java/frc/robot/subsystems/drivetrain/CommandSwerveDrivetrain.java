@@ -234,6 +234,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     SmartDashboard.putNumber("Drivetrain/velo", velo);
 
     SmartDashboard.putBoolean("Drivetrain/Aligned", m_aligned);
+    RobotObserver.getField().setRobotPose(m_estimatedPose);
 
     if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
       DriverStation.getAlliance().ifPresent(allianceColor -> {

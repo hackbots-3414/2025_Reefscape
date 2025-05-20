@@ -67,7 +67,8 @@ public class ClimberIOHardware implements ClimberIO {
         m_leftTempSignal,
         m_rightTempSignal,
         m_leftVelocitySignal,
-        m_rightVelocitySignal);
+        m_rightVelocitySignal,
+        m_positionSignal);
   }
 
   public void updateInputs(ClimberIOInputs inputs) {

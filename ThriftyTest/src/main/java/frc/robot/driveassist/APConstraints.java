@@ -38,8 +38,8 @@ public class APConstraints {
    *
    * This is only used at the end of an autopilot action, not the beginning.
    */
-  public APConstraints withJerk(double decceleration) {
-    m_jerk = decceleration;
+  public APConstraints withJerk(double jerk) {
+    m_jerk = jerk;
     return this;
   }
 }

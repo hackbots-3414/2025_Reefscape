@@ -1,5 +1,7 @@
 package frc.robot.superstructure;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -86,4 +88,8 @@ public class Superstructure {
   public Trigger holdingCoral() {
     return m_subsystems.coral().holding();
   }
+
+public Trigger holdingAlgae() {
+  return m_subsystems.algae.holdingAlgae();
+}
 }

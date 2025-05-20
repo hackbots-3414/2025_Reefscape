@@ -72,7 +72,7 @@ public class ElevatorIOHardware implements ElevatorIO {
     m_CANrangeDistanceSignal = m_CANrange.getDistance();
     m_CANrangeStrengthSignal = m_CANrange.getSignalStrength();
 
-    StatusSignalUtil.registerRioSignals(
+    StatusSignalUtil.registerCANivoreSignals(
         m_leftVoltageSignal,
         m_rightVoltageSignal,
         m_leftCurrentSignal,
@@ -82,10 +82,11 @@ public class ElevatorIOHardware implements ElevatorIO {
         m_leftVelocitySignal,
         m_rightVelocitySignal,
         m_leftPositionSignal,
-        m_rightPositionSignal,
-        m_CANrangeDetectedSignal,
-        m_CANrangeDistanceSignal,
-        m_CANrangeStrengthSignal);
+        m_rightPositionSignal);
+    StatusSignalUtil.registerRioSignals(
+      m_CANrangeDetectedSignal,
+      m_CANrangeDistanceSignal,
+      m_CANrangeStrengthSignal);
   }
 
   public void updateInputs(ElevatorIOInputs inputs) {

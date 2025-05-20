@@ -51,7 +51,7 @@ public class DriveConstants {
   private static final APProfile kFastProfile = new APProfile()
       .withPathConstraints(kFastAutopilotPathConstraints)
       .withCorrectionConstraints(kFastAutopilotCorrectionConstraints)
-      .withErrorXY(Centimeters.of(5))
+      .withErrorXY(Centimeters.of(15))
       .withErrorTheta(Degrees.of(5));
 
   public static final Autopilot kFastAutopilot = new Autopilot(kFastProfile);

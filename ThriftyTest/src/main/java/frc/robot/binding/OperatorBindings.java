@@ -19,13 +19,13 @@ import frc.robot.superstructure.states.OpenFunnel;
 import frc.robot.superstructure.states.GroundAlgaeIntake;
 import frc.robot.superstructure.states.HighGroundAlgaeIntake;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
-import frc.robot.superstructure.states.ReefAlign.ReefSide;
+import frc.robot.superstructure.states.DeferredAlign.AlignLocation;
 import frc.robot.superstructure.states.LowerReefAlgaeIntake;
 import frc.robot.superstructure.states.Net;
 import frc.robot.superstructure.states.NetPrep;
 import frc.robot.superstructure.states.Processor;
 import frc.robot.superstructure.states.ProcessorPrep;
-import frc.robot.superstructure.states.ReefAlign;
+import frc.robot.superstructure.states.DeferredAlign;
 import frc.robot.superstructure.states.Stowed;
 
 public class OperatorBindings implements Binder {
@@ -89,8 +89,8 @@ public class OperatorBindings implements Binder {
     bindCoral(m_l4, CoralLevel.L4, superstructure);
 
     /* align */
-    m_left.whileTrue(superstructure.enter(new ReefAlign(ReefSide.Left)));
-    m_right.whileTrue(superstructure.enter(new ReefAlign(ReefSide.Right)));
+    m_left.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Left)));
+    m_right.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Right)));
 
     /* climb */
     m_climb.whileTrue(superstructure.enter(new Climb()));

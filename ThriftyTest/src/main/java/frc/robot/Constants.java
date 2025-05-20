@@ -237,6 +237,10 @@ public class Constants {
     private ScoringLocations(Pose2d value) {
       this.value = value;
     }
+
+    private Pose2d middle(ScoringLocations other) {
+      return value.interpolate(other.value, 0.5);
+    }
   }
 
   public enum ScoringLocationsLeft {
@@ -258,6 +262,27 @@ public class Constants {
 
     private ScoringLocationsRight(Pose2d value) {
       this.value = value;
+    }
+  }
+
+  public enum ScoringLocationsCenter {
+    /** AB */
+    AB(ScoringLocations.A.middle(ScoringLocations.B)),
+    /** CD */
+    CD(ScoringLocations.C.middle(ScoringLocations.D)),
+    /** EF */
+    EF(ScoringLocations.E.middle(ScoringLocations.F)),
+    /** GH */
+    GH(ScoringLocations.G.middle(ScoringLocations.H)),
+    /** IJ */
+    IJ(ScoringLocations.I.middle(ScoringLocations.J)),
+    /** KL */
+    KL(ScoringLocations.K.middle(ScoringLocations.L));
+
+    public Pose2d value;
+
+    private ScoringLocationsCenter(Pose2d pose) {
+      value = pose;
     }
   }
 

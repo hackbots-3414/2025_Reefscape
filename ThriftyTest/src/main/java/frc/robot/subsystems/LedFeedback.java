@@ -21,12 +21,13 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
 import frc.robot.RobotObserver;
 
-public class LedFeedback extends PassiveSubsystem {
+public class LedFeedback extends SubsystemBase {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(LedFeedback.class);
   private static double matchTime = 0;
@@ -73,7 +74,8 @@ public class LedFeedback extends PassiveSubsystem {
     defaultColors();
   }
 
-  public void passive() {
+  @Override
+  public void periodic() {
     matchTime = (DriverStation.getMatchType() == MatchType.None) ? Double.POSITIVE_INFINITY
         : DriverStation.getMatchTime();
     inAuton = DriverStation.isAutonomousEnabled();

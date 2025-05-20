@@ -26,9 +26,13 @@
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/PhotonAlerts": "Alerts",
       "/SmartDashboard/Pivot/Visualization": "Mechanism2d",
+      "/SmartDashboard/Prep/Set Center": "Command",
+      "/SmartDashboard/Prep/Set Left": "Command",
+      "/SmartDashboard/Prep/Set Right": "Command",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Test/Drive To Center": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
+      "/SmartDashboard/Test/L4": "Command",
       "/SmartDashboard/Test?": "Alerts",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
@@ -43,12 +47,72 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Elevator/Lazy Zero": {
         "window": {
           "visible": true
         }
       },
       "/SmartDashboard/Super Field": {
+        "Blue Alliance Left Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Blue Alliance Net": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Blue Alliance Processor": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Blue Alliance Reef": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Blue Alliance Right Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Pathfind Trajectory": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Red Alliance Left Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Red Alliance Net": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Red Alliance Processor": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Red Alliance Reef": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
+        "Red Alliance Right Intake": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
+        },
         "Robot": {
           "arrowColor": [
             1.0,
@@ -65,15 +129,52 @@
           "length": 0.9399999976158142,
           "width": 0.9399999976158142
         },
-        "apriltag": {
+        "alt": {
           "arrows": false,
           "selectable": false,
-          "style": "Hidden"
+          "style": ""
+        },
+        "apriltag": {
+          "arrowColor": [],
+          "arrows": false,
+          "color": [],
+          "length": 0.0,
+          "selectable": false,
+          "style": "Hidden",
+          "width": 0.0
+        },
+        "best": {
+          "arrows": false,
+          "selectable": false,
+          "style": ""
         },
         "bottom": 1347,
         "builtin": "",
+        "cam1": {
+          "arrows": false,
+          "color": [],
+          "length": 0.0,
+          "style": "",
+          "width": 0.0
+        },
+        "cam2": {
+          "arrows": false,
+          "style": ""
+        },
+        "cam3": {
+          "arrows": false,
+          "style": ""
+        },
+        "cam4": {
+          "arrows": false,
+          "color": [],
+          "length": 0.0,
+          "style": "",
+          "width": 0.0
+        },
         "cameras": {
           "arrows": false,
+          "selectable": false,
           "style": "Hidden"
         },
         "height": 8.051901817321777,
@@ -97,6 +198,13 @@
           "width": 1.0
         },
         "right": 2932,
+        "target": {
+          "arrows": false,
+          "color": [],
+          "length": 0.0,
+          "selectable": false,
+          "width": 0.0
+        },
         "visibleTargetPoses": {
           "arrows": false,
           "color": [
@@ -107,6 +215,7 @@
           ],
           "length": 0.5,
           "selectable": false,
+          "style": "",
           "width": 0.5
         },
         "width": 17.54825210571289,
@@ -143,7 +252,7 @@
             0.13333332538604736,
             0.9399999976158142
           ],
-          "height": 304,
+          "height": 0,
           "name": "Stats",
           "series": [
             {
