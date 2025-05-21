@@ -73,10 +73,10 @@ public class Algae extends PassiveSubsystem {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
     m_hasAlgae = getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold;
-    SmartDashboard.putBoolean("Algae/Held", m_hasAlgae);
-    SmartDashboard.putNumber("Algae/Torque", m_inputs.torque);
-    SmartDashboard.putNumber("Algae/Voltage", m_inputs.voltage);
-    SmartDashboard.putNumber("Algae/Temperature", m_inputs.temperature);
+    // SmartDashboard.putBoolean("Algae/Held", m_hasAlgae);
+    // SmartDashboard.putNumber("Algae/Torque", m_inputs.torque);
+    // SmartDashboard.putNumber("Algae/Voltage", m_inputs.voltage);
+    // SmartDashboard.putNumber("Algae/Temperature", m_inputs.temperature);
     m_timer.log();
   }
 

@@ -64,10 +64,10 @@ public class Climber extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
-    SmartDashboard.putBoolean("Climber/Ready", raised().getAsBoolean());
-    SmartDashboard.putBoolean("Climber/Complete", climbed().getAsBoolean());
-    SmartDashboard.putNumber("Climber/Position", m_inputs.position);
-    SmartDashboard.putNumber("Climber/Voltage", m_inputs.leftVoltage);
+    // SmartDashboard.putBoolean("Climber/Ready", raised().getAsBoolean());
+    // SmartDashboard.putBoolean("Climber/Complete", climbed().getAsBoolean());
+    // SmartDashboard.putNumber("Climber/Position", m_inputs.position);
+    // SmartDashboard.putNumber("Climber/Voltage", m_inputs.leftVoltage);
     m_timer.log();
   }
 
