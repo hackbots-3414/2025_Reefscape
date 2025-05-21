@@ -42,8 +42,6 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private final MultiInputFilter m_filter;
 
-  private final VisionNetworkLogger m_networkLogger;
-
   private Pose2d m_lastPose;
 
   public SingleInputPoseEstimator(
@@ -52,7 +50,6 @@ public class SingleInputPoseEstimator implements Runnable {
       CameraIO io,
       Consumer<TimestampedPoseEstimate> updateCallback) {
     m_io = io;
-    m_networkLogger = networkLogger;
     m_inputs = new CameraIOInputs();
     m_reporter = updateCallback;
     m_filter = fitler;
@@ -66,11 +63,13 @@ public class SingleInputPoseEstimator implements Runnable {
   public void refresh(Pose2d robotPose) {
     m_lastPose = robotPose;
     m_io.updateInputs(m_inputs);
-    for (PhotonPipelineResult result : m_inputs.unreadResults) {
-      Set<Integer> tags = result.getTargets().stream()
-          .map(target -> target.getFiducialId())
-          .collect(Collectors.toSet());
-      m_filter.addInput(m_io.getName(), tags);
+    if (VisionConstants.kEnableMultiInputFilter) {
+      for (PhotonPipelineResult result : m_inputs.unreadResults) {
+        Set<Integer> tags = result.getTargets().stream()
+            .map(target -> target.getFiducialId())
+            .collect(Collectors.toSet());
+        m_filter.addInput(m_io.getName(), tags);
+      }
     }
   }
 
@@ -108,12 +107,7 @@ public class SingleInputPoseEstimator implements Runnable {
     Optional<EstimatedRobotPose> est = m_estimator.update(result);
     if (est.isPresent()) {
       Pose3d estimatedPose = est.get().estimatedPose;
-      Pose2d estimatedPose2d = estimatedPose.toPose2d();
-      if (m_filter.verify(estimatedPose2d)) {
-        process(result, estimatedPose, algorithm).ifPresent(m_reporter);
-      } else {
-        m_networkLogger.registerRejectedEstimate(estimatedPose2d);
-      }
+      process(result, estimatedPose, algorithm).ifPresent(m_reporter);
     }
     PhotonTrackedTarget target = targets.get(0);
     int fidId = target.getFiducialId();
@@ -133,26 +127,6 @@ public class SingleInputPoseEstimator implements Runnable {
     Pose3d alt = targetPosition3d
         .plus(alt3d.inverse())
         .plus(m_io.getRobotToCamera().inverse());
-    boolean bestOk = m_filter.verify(best.toPose2d());
-    boolean altOk = m_filter.verify(alt.toPose2d());
-    if (!bestOk) {
-      m_networkLogger.registerRejectedEstimate(best.toPose2d());
-    }
-    if (!altOk) {
-      m_networkLogger.registerRejectedEstimate(alt.toPose2d());
-    }
-    if (bestOk && !altOk) {
-      process(result, best, EstimationAlgorithm.MultiInput);
-      return;
-    }
-    if (altOk && !bestOk) {
-      process(result, alt, EstimationAlgorithm.MultiInput);
-      return;
-    }
-    if (!bestOk && !altOk) {
-      // neither is good
-      return;
-    }
     // final decision maker
     double bestHeading = best.getRotation().getZ();
     double altHeading = alt.getRotation().getZ();

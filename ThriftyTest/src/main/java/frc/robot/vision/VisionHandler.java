@@ -83,6 +83,11 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {
+    if (VisionConstants.kEnableMultiInputFilter) {
+      if (!m_filter.verify(estimate.pose())) {
+        return;
+      }
+    } 
     m_consumer.accept(estimate);
     m_networkLogger.registerValidEstimate(estimate.pose());
     m_logBuilder.addEstimate(estimate);
