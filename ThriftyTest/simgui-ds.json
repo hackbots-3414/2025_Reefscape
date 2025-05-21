@@ -1,7 +1,7 @@
 {
   "System Joysticks": {
     "window": {
-      "visible": false
+      "enabled": false
     }
   },
   "keyboardJoysticks": [

@@ -37,6 +37,7 @@ public class Elevator extends PassiveSubsystem {
   private ElevatorState m_reference = ElevatorState.Stow;
 
   private Trigger m_prefireReq = new Trigger(() -> false);
+  private Trigger m_stay = new Trigger(() -> false);
 
   public Elevator() {
     super();
@@ -93,11 +94,11 @@ public class Elevator extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
-    SmartDashboard.putNumber("Elevator/Position", m_inputs.position);
-    SmartDashboard.putString("Elevator/Reference", m_reference.toString());
-    SmartDashboard.putBoolean("Elevator/Prefire", m_prefireReq.getAsBoolean());
-    SmartDashboard.putBoolean("Elevator/Ready", ready().getAsBoolean());
-    SmartDashboard.putBoolean("Elevator/Unsafe", unsafe().getAsBoolean());
+    // SmartDashboard.putNumber("Elevator/Position", m_inputs.position);
+    // SmartDashboard.putString("Elevator/Reference", m_reference.toString());
+    // SmartDashboard.putBoolean("Elevator/Prefire", m_prefireReq.getAsBoolean());
+    // SmartDashboard.putBoolean("Elevator/Ready", ready().getAsBoolean());
+    // SmartDashboard.putBoolean("Elevator/Unsafe", unsafe().getAsBoolean());
     m_timer.log();
   }
 
@@ -110,6 +111,9 @@ public class Elevator extends PassiveSubsystem {
   }
 
   protected void passive() {
+    if (m_stay.getAsBoolean()) {
+      return;
+    }
     if (m_prefireReq.getAsBoolean()) {
       setPosition(ElevatorState.L2);
     } else {
@@ -149,5 +153,9 @@ public class Elevator extends PassiveSubsystem {
 
   public void setPrefireRequirement(Trigger trigger) {
     m_prefireReq = trigger;
+  }
+
+  public void setStayRequirement(Trigger trigger) {
+    m_stay = trigger;
   }
 }

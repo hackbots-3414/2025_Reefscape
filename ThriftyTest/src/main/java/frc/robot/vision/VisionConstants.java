@@ -19,7 +19,7 @@ import edu.wpi.first.units.measure.Time;
 
 public class VisionConstants {
   protected static final boolean kEnableLogging = false;
-  protected static final boolean kEnableNetworkLogging = true;
+  protected static final boolean kEnableNetworkLogging = false;
   
     protected static final double kRotationCoefficient = Math.PI * 0.5;
     protected static final double kTranslationCoefficient = 0.10;

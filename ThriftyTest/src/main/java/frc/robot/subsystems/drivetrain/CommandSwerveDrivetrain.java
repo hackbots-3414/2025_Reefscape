@@ -228,12 +228,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void periodic() {
     m_timer.reset();
     m_estimatedPose = this.getState().Pose;
-    SmartDashboard.putNumber("Drivetrain/x", m_estimatedPose.getTranslation().getX());
-    SmartDashboard.putNumber("Drivetrain/y", m_estimatedPose.getTranslation().getY());
-    double velo = getVelocity();
-    SmartDashboard.putNumber("Drivetrain/velo", velo);
+    // SmartDashboard.putNumber("Drivetrain/x", m_estimatedPose.getTranslation().getX());
+    // SmartDashboard.putNumber("Drivetrain/y", m_estimatedPose.getTranslation().getY());
+    // double velo = getVelocity();
+    // SmartDashboard.putNumber("Drivetrain/velo", velo);
 
-    SmartDashboard.putBoolean("Drivetrain/Aligned", m_aligned);
+    // SmartDashboard.putBoolean("Drivetrain/Aligned", m_aligned);
     RobotObserver.getField().setRobotPose(m_estimatedPose);
 
     if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
@@ -443,5 +443,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public Command seedLocal(Pose2d pose) {
     return Commands.runOnce(() -> resetPose(FieldUtils.getLocalPose(pose)))
       .ignoringDisable(true);
+  }
+
+  public Command hold() {
+    return run(() -> {});
   }
 }

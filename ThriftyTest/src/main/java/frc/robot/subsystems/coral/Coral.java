@@ -83,11 +83,11 @@ public class Coral extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
-    SmartDashboard.putBoolean("Coral/Front CANrange", m_inputs.frontDetected);
-    SmartDashboard.putBoolean("Coral/Upper CANrange", m_inputs.upperDetected);
-    SmartDashboard.putBoolean("Coral/Inner CANrange", m_inputs.innerDetected);
-    SmartDashboard.putBoolean("Coral/Holding", holding().getAsBoolean());
-    SmartDashboard.putBoolean("Coral/Present", present().getAsBoolean());
+    // SmartDashboard.putBoolean("Coral/Front CANrange", m_inputs.frontDetected);
+    // SmartDashboard.putBoolean("Coral/Upper CANrange", m_inputs.upperDetected);
+    // SmartDashboard.putBoolean("Coral/Inner CANrange", m_inputs.innerDetected);
+    // SmartDashboard.putBoolean("Coral/Holding", holding().getAsBoolean());
+    // SmartDashboard.putBoolean("Coral/Present", present().getAsBoolean());
     m_timer.log();
   }
 

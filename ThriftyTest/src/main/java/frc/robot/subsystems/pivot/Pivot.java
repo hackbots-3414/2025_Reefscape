@@ -54,8 +54,8 @@ public class Pivot extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
-    SmartDashboard.putBoolean("Pivot/Ready", ready().getAsBoolean());
-    SmartDashboard.putString("Pivot/Reference", m_reference.toString());
+    // SmartDashboard.putBoolean("Pivot/Ready", ready().getAsBoolean());
+    // SmartDashboard.putString("Pivot/Reference", m_reference.toString());
     m_timer.log();
   }
 

@@ -94,8 +94,7 @@
           "selectable": false,
           "style": "Hidden"
         },
-        "bottom": 1347,
-        "builtin": "",
+        "bottom": 1638,
         "cameras": {
           "arrows": false,
           "color": [
@@ -126,7 +125,7 @@
           "width": 0.9399999976158142
         },
         "height": 8.051901817321777,
-        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "left": 534,
         "reference": {
           "arrowColor": [
             0.8480392098426819,
@@ -170,7 +169,8 @@
           "style": "Hidden",
           "width": 0.9399999976158142
         },
-        "right": 2932,
+        "right": 3466,
+        "top": 291,
         "visibleTargetPoses": {
           "arrows": false,
           "color": [
@@ -249,7 +249,7 @@
             0.14215683937072754,
             0.8500000238418579
           ],
-          "height": 288,
+          "height": 0,
           "series": [
             {
               "color": [
