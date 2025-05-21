@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Robot;
 import frc.robot.utils.LoopTimer;
@@ -64,7 +65,9 @@ public class VisionHandler implements AutoCloseable {
 
   private void updateEstimators() {
     m_loopTimer.reset();
-    m_filter.clear();
+    if (VisionConstants.kEnableMultiInputFilter || DriverStation.isDisabled()) {
+      m_filter.clear();
+    }
     for (SingleInputPoseEstimator estimator : m_estimators) {
       estimator.refresh(m_poseSupplier.get());
     }
@@ -83,7 +86,7 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {
-    if (VisionConstants.kEnableMultiInputFilter) {
+    if (VisionConstants.kEnableMultiInputFilter || DriverStation.isDisabled()) {
       if (!m_filter.verify(estimate.pose())) {
         return;
       }
