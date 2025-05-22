@@ -23,7 +23,7 @@ public class VisionConstants {
   public static final boolean kEnableMultiInputFilter = false;
   
     protected static final double kRotationCoefficient = Math.PI * 0.5;
-    protected static final double kTranslationCoefficient = 0.10;
+    protected static final double kTranslationCoefficient = 0.06;
 
   protected static final Vector<N3> kBaseStdDevs =
     VecBuilder.fill(kTranslationCoefficient, kTranslationCoefficient, kRotationCoefficient);
