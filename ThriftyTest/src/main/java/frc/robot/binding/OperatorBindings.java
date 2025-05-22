@@ -69,8 +69,8 @@ public class OperatorBindings implements Binder {
     /* algae intake */
     m_algae.and(m_algaeGround).whileTrue(superstructure.enter(new GroundAlgaeIntake()));
     m_algae.and(m_algaeHighGround).whileTrue(superstructure.enter(new HighGroundAlgaeIntake()));
-    m_algae.and(m_algaeLowReef).whileTrue(superstructure.enter(new LowerReefAlgaeIntake()));
-    m_algae.and(m_algaeHighReef).whileTrue(superstructure.enter(new UpperReefAlgaeIntake()));
+    m_algaeLowReef.whileTrue(superstructure.enter(new LowerReefAlgaeIntake()));
+    m_algaeHighReef.whileTrue(superstructure.enter(new UpperReefAlgaeIntake()));
 
     /* algae score */
     m_algae.and(m_processor).whileTrue(superstructure.enter(new ProcessorPrep()));
