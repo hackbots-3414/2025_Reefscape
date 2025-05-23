@@ -6,7 +6,6 @@ package frc.robot.subsystems.pivot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -15,15 +14,18 @@ import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
 import frc.robot.subsystems.pivot.PivotIO.PivotIOInputs;
 import frc.robot.utils.LoopTimer;
+import frc.robot.utils.OnboardLogger;
 
 public class Pivot extends PassiveSubsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Pivot.class);
+  private final OnboardLogger m_ologger;
 
   private final LoopTimer m_timer;
 
   private final PivotIO m_io;
-  private PivotIOInputs m_inputs;
+  private final PivotIOInputs m_inputs;
+  private final PivotIOInputsLogger m_inputsLogger;
 
   private PivotState m_reference;
 
@@ -35,7 +37,11 @@ public class Pivot extends PassiveSubsystem {
       m_io = new PivotIOSim();
     }
     m_inputs = new PivotIOInputs();
+    m_inputsLogger = new PivotIOInputsLogger(m_inputs);
     m_reference = PivotState.Stow;
+    m_ologger = new OnboardLogger("Pivot");
+    m_ologger.registerString("State", () -> m_reference.toString());
+    m_ologger.registerBoolean("Ready", ready());
     m_timer = new LoopTimer("Pivot");
   }
 
@@ -54,8 +60,8 @@ public class Pivot extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
-    SmartDashboard.putBoolean("Pivot/Ready", ready().getAsBoolean());
-    SmartDashboard.putString("Pivot/Reference", m_reference.toString());
+    m_inputsLogger.log();
+    m_ologger.log();
     m_timer.log();
   }
 

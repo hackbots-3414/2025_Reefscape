@@ -23,7 +23,7 @@ public interface CoralIO {
     public double innerDistance = 0.0;
     public double frontStrength = 0.0;
     public double upperStreingth = 0.0;
-    public double innerStrength = 0.0; // INNER STRENGTH!!!
+    public double innerStrength = 0.0;
   }
 
   void setLeftVoltage(double voltage);

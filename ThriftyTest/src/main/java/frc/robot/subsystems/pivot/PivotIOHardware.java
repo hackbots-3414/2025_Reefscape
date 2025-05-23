@@ -53,7 +53,6 @@ public class PivotIOHardware implements PivotIO {
     inputs.voltage = m_voltageSignal.getValueAsDouble();
     inputs.current = m_currentSignal.getValueAsDouble();
     inputs.temperatue = m_tempSignal.getValueAsDouble();
-    inputs.velocityRPS = m_velocitySignal.getValueAsDouble();
     inputs.position = m_positionSignal.getValueAsDouble();
   }
 

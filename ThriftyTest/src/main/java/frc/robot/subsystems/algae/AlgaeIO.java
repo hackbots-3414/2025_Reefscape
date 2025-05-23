@@ -9,7 +9,6 @@ public interface AlgaeIO {
     public double torque = 0.0;
     public double voltage = 0.0;
     public double temperature = 0.0;
-    public double velocityRPS = 0.0;
   }
 
   void setVoltage(double voltage);

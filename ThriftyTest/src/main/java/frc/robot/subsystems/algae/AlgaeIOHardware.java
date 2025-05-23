@@ -50,7 +50,6 @@ public class AlgaeIOHardware implements AlgaeIO {
     inputs.current = m_currentSignal.getValueAsDouble();
     inputs.torque = m_torqueSignal.getValueAsDouble();
     inputs.temperature = m_tempSignal.getValueAsDouble();
-    inputs.velocityRPS = m_velocitySignal.getValueAsDouble();
   }
 
   public void setVoltage(double voltage) {

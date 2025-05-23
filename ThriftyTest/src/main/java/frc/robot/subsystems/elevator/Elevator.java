@@ -20,6 +20,7 @@ import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
 import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 import frc.robot.utils.LoopTimer;
+import frc.robot.utils.OnboardLogger;
 
 public class Elevator extends PassiveSubsystem {
   // we want to have a logger, even if we're not using it... yet
@@ -29,7 +30,10 @@ public class Elevator extends PassiveSubsystem {
   private final LoopTimer m_timer;
 
   private final ElevatorIO m_io;
-  private ElevatorIOInputs m_inputs;
+  private final ElevatorIOInputs m_inputs;
+  private final ElevatorIOInputsLogger m_inputsLogger;
+
+  private final OnboardLogger m_referenceLogger;
 
   private final Debouncer m_debouncer =
       new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
@@ -46,6 +50,9 @@ public class Elevator extends PassiveSubsystem {
       m_io = new ElevatorIOSim();
     }
     m_inputs = new ElevatorIOInputs();
+    m_inputsLogger = new ElevatorIOInputsLogger(m_inputs);
+    m_referenceLogger = new OnboardLogger("Elevator");
+    m_referenceLogger.registerString("State", () -> m_reference.toString());
     SmartDashboard.putData("Elevator/Lazy Zero",
         runOnce(m_io::calibrateZero).ignoringDisable(true).withName("Lazy Zero"));
     m_timer = new LoopTimer("Elevator");
@@ -93,11 +100,8 @@ public class Elevator extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
-    SmartDashboard.putNumber("Elevator/Position", m_inputs.position);
-    SmartDashboard.putString("Elevator/Reference", m_reference.toString());
-    SmartDashboard.putBoolean("Elevator/Prefire", m_prefireReq.getAsBoolean());
-    SmartDashboard.putBoolean("Elevator/Ready", ready().getAsBoolean());
-    SmartDashboard.putBoolean("Elevator/Unsafe", unsafe().getAsBoolean());
+    m_inputsLogger.log();
+    m_referenceLogger.log();
     m_timer.log();
   }
 

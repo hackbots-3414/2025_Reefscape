@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -22,6 +21,7 @@ public class Algae extends PassiveSubsystem {
 
   private final AlgaeIO m_io;
   private AlgaeIOInputs m_inputs;
+  private AlgaeIOInputsLogger m_inputsLogger;
 
   private boolean m_hasAlgae;
 
@@ -35,6 +35,7 @@ public class Algae extends PassiveSubsystem {
       m_io = new AlgaeIOSim();
     }
     m_inputs = new AlgaeIOInputs();
+    m_inputsLogger = new AlgaeIOInputsLogger(m_inputs);
     RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());
     m_timer = new LoopTimer("Algae");
   }
@@ -72,11 +73,8 @@ public class Algae extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
+    m_inputsLogger.log();
     m_hasAlgae = getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold;
-    SmartDashboard.putBoolean("Algae/Held", m_hasAlgae);
-    SmartDashboard.putNumber("Algae/Torque", m_inputs.torque);
-    SmartDashboard.putNumber("Algae/Voltage", m_inputs.voltage);
-    SmartDashboard.putNumber("Algae/Temperature", m_inputs.temperature);
     m_timer.log();
   }
 

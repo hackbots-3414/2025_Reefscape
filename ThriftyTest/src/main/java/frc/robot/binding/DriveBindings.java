@@ -7,7 +7,6 @@ import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.Driver;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.driveassist.APTarget;
-import frc.robot.subsystems.drivetrain.DriveConstants;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Align;
 import frc.robot.superstructure.states.HeadingReset;

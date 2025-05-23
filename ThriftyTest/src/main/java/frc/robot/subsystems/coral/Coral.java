@@ -7,7 +7,6 @@ package frc.robot.subsystems.coral;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -24,8 +23,9 @@ public class Coral extends PassiveSubsystem {
   private final LoopTimer m_timer;
 
   private final CoralIO m_io;
-  private CoralIOInputs m_inputs = new CoralIOInputs();
-  
+  private final CoralIOInputs m_inputs;
+  private final CoralIOInputsLogger m_inputsLogger;
+
   public Coral() {
     super();
     if (Robot.isReal()) {
@@ -33,6 +33,8 @@ public class Coral extends PassiveSubsystem {
     } else {
       m_io = new CoralIOSim();
     }
+    m_inputs = new CoralIOInputs();
+    m_inputsLogger = new CoralIOInputsLogger(m_inputs);
     RobotObserver.setCoralHeldSupplier(holding());
     m_timer = new LoopTimer("Coral");
   }
@@ -83,11 +85,7 @@ public class Coral extends PassiveSubsystem {
   public void periodic() {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
-    SmartDashboard.putBoolean("Coral/Front CANrange", m_inputs.frontDetected);
-    SmartDashboard.putBoolean("Coral/Upper CANrange", m_inputs.upperDetected);
-    SmartDashboard.putBoolean("Coral/Inner CANrange", m_inputs.innerDetected);
-    SmartDashboard.putBoolean("Coral/Holding", holding().getAsBoolean());
-    SmartDashboard.putBoolean("Coral/Present", present().getAsBoolean());
+    m_inputsLogger.log();
     m_timer.log();
   }
 

@@ -8,7 +8,6 @@ public interface PivotIO {
     public double current = 0.0;
     public double voltage = 0.0;
     public double temperatue = 0.0;
-    public double velocityRPS = 0.0;
     public double position = 0.0;
   }
 

@@ -25,6 +25,7 @@
       "/SmartDashboard/Prep/Set Right": "Command",
       "/SmartDashboard/Super Field": "Field2d",
       "/SmartDashboard/Test vision": "Command",
+      "/SmartDashboard/Test/Algae Intake (ground)": "Command",
       "/SmartDashboard/Test/Drive To Center": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
       "/SmartDashboard/Test/L4": "Command",
@@ -188,6 +189,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Test/Algae Intake (ground)": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Test/L4": {
         "window": {
           "visible": true
@@ -202,6 +208,9 @@
     "transitory": {
       "SmartDashboard": {
         "Coral": {
+          "open": true
+        },
+        "Elevator": {
           "open": true
         },
         "Super Field": {
@@ -277,17 +286,6 @@
               "id": "NT:/SmartDashboard/Vision/Loop time (ms)",
               "marker": "None",
               "name": "Vision loop time",
-              "yAxis": 1
-            },
-            {
-              "color": [
-                0.3333333432674408,
-                0.658823549747467,
-                0.4078431725502014,
-                1.0
-              ],
-              "id": "NT:/SmartDashboard/Elevator/Position",
-              "name": "Elevator",
               "yAxis": 1
             }
           ],

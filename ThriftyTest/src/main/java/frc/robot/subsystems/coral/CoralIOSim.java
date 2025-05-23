@@ -34,6 +34,10 @@ public class CoralIOSim implements CoralIO {
     inputs.frontDetected = SmartDashboard.getBoolean("Coral/Front CANrange", false);
     inputs.upperDetected = SmartDashboard.getBoolean("Coral/Upper CANrange", false);
     inputs.innerDetected = SmartDashboard.getBoolean("Coral/Inner CANrange", false);
+    // Without publishing these values, they will never be able to be read.
+    SmartDashboard.putBoolean("Coral/Front CANrange", inputs.frontDetected);
+    SmartDashboard.putBoolean("Coral/Upper CANrange", inputs.upperDetected);
+    SmartDashboard.putBoolean("Coral/Inner CANrange", inputs.innerDetected);
   }
 
   public void setLeftVoltage(double voltage) {

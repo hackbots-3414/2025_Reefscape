@@ -23,6 +23,8 @@ public class ElevatorIOHardware implements ElevatorIO {
 
   private final DynamicMotionMagicVoltage m_control;
 
+  private double m_reference = Double.NaN;
+
   private final StatusSignal<Voltage> m_leftVoltageSignal;
   private final StatusSignal<Voltage> m_rightVoltageSignal;
   private final StatusSignal<Current> m_leftCurrentSignal;
@@ -114,6 +116,8 @@ public class ElevatorIOHardware implements ElevatorIO {
     inputs.rightPosition = m_rightPositionSignal.getValueAsDouble();
     inputs.position = inputs.rightPosition;
 
+    inputs.reference = m_reference;
+
     inputs.zeroCANrangeConnected = BaseStatusSignal.isAllGood(
         m_CANrangeDetectedSignal,
         m_CANrangeDistanceSignal,
@@ -123,8 +127,9 @@ public class ElevatorIOHardware implements ElevatorIO {
     inputs.zeroCANrangeStrength = m_CANrangeStrengthSignal.getValueAsDouble();
   }
 
-  public void setPosition(double position) {
-    m_rightMotor.setControl(m_control.withPosition(position));
+  public void setPosition(double reference) {
+    m_rightMotor.setControl(m_control.withPosition(reference));
+    m_reference = reference;
   }
 
   public void setVoltage(double voltage) {
