@@ -62,13 +62,11 @@ public class SingleInputPoseEstimator implements Runnable {
   public void refresh(Pose2d robotPose) {
     m_lastPose = robotPose;
     m_io.updateInputs(m_inputs);
-    if (VisionConstants.kEnableMultiInputFilter) {
-      for (PhotonPipelineResult result : m_inputs.unreadResults) {
-        Set<Integer> tags = result.getTargets().stream()
-            .map(target -> target.getFiducialId())
-            .collect(Collectors.toSet());
-        m_filter.addInput(m_io.getName(), tags);
-      }
+    for (PhotonPipelineResult result : m_inputs.unreadResults) {
+      Set<Integer> tags = result.getTargets().stream()
+          .map(target -> target.getFiducialId())
+          .collect(Collectors.toSet());
+      m_filter.addInput(m_io.getName(), tags);
     }
   }
 
@@ -93,8 +91,6 @@ public class SingleInputPoseEstimator implements Runnable {
   private void combinedHandleResult(PhotonPipelineResult result) {
     // some prechecks before we do anything
     if (!precheckValidity(result)) {
-      // We don't use the network logger to precheck these ones because this checks for the dumb
-      // stuff like "do we see anything" or "is this from a minute ago?"
       return;
     }
     // we can now assume that we have targets

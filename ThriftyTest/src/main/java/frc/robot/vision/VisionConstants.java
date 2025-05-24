@@ -19,14 +19,12 @@ import edu.wpi.first.units.measure.Time;
 
 public class VisionConstants {
   protected static final boolean kEnableLogging = false;
-  protected static final boolean kEnableNetworkLogging = false;
-  public static final boolean kEnableMultiInputFilter = false;
-  
-    protected static final double kRotationCoefficient = Math.PI * 0.5;
-    protected static final double kTranslationCoefficient = 0.06;
+
+  protected static final double kRotationCoefficient = Math.PI * 0.5;
+  protected static final double kTranslationCoefficient = 0.06;
 
   protected static final Vector<N3> kBaseStdDevs =
-    VecBuilder.fill(kTranslationCoefficient, kTranslationCoefficient, kRotationCoefficient);
+      VecBuilder.fill(kTranslationCoefficient, kTranslationCoefficient, kRotationCoefficient);
 
   protected static final AprilTagFieldLayout kTagLayout =
       AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);

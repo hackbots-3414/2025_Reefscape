@@ -26,7 +26,7 @@ public class VisionHandler implements AutoCloseable {
   private final Notifier m_notifier;
   private final List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
 
-  private final VisionLogBuilder m_logBuilder;
+  private final VisionLogger m_esimateLogger;
 
   private final MultiInputFilter m_filter;
 
@@ -34,7 +34,7 @@ public class VisionHandler implements AutoCloseable {
     m_poseSupplier = poseSupplier;
     m_consumer = callback;
     m_filter = new MultiInputFilter();
-    m_logBuilder = new VisionLogBuilder();
+    m_esimateLogger = new VisionLogger();
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
     m_loopTimer = new LoopTimer("Vision");
@@ -60,9 +60,7 @@ public class VisionHandler implements AutoCloseable {
 
   private void updateEstimators() {
     m_loopTimer.reset();
-    if (VisionConstants.kEnableMultiInputFilter || DriverStation.isDisabled()) {
-      m_filter.clear();
-    }
+    m_filter.clear();
     for (SingleInputPoseEstimator estimator : m_estimators) {
       estimator.refresh(m_poseSupplier.get());
     }
@@ -71,7 +69,7 @@ public class VisionHandler implements AutoCloseable {
       estimator.run();
     }
     // finish logging
-    m_logBuilder.log(m_poseSupplier.get());
+    m_esimateLogger.log();
     m_loopTimer.log();
   }
 
@@ -80,13 +78,13 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {
-    if (VisionConstants.kEnableMultiInputFilter || DriverStation.isDisabled()) {
+    if (DriverStation.isDisabled()) {
       if (!m_filter.verify(estimate.pose())) {
         return;
       }
-    } 
+    }
     m_consumer.accept(estimate);
-    m_logBuilder.addEstimate(estimate);
+    m_esimateLogger.addEstimate(estimate);
   }
 
   @Override

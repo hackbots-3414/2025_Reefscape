@@ -1,96 +1,37 @@
 package frc.robot.vision;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.utils.OnboardLogger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class VisionLogger {
+  private List<Pose2d> m_estimates;
 
-import frc.robot.Robot;
-import frc.robot.vision.VisionLogBuilder.VisionLog;
+  private final OnboardLogger m_logger;
 
-public class VisionLogger implements AutoCloseable {
-    private static VisionLogger instance;
+  public VisionLogger() {
+    m_estimates = new ArrayList<>(20);
+    m_logger = new OnboardLogger("Vision");
+    m_logger.registerPoses("Estimates", () -> {
+      Pose2d[] estimates = new Pose2d[m_estimates.size()];
+      for (int i = 0; i < m_estimates.size(); i++) {
+        estimates[i] = m_estimates.get(i);
+      }
+      return estimates;
+    });
+  }
 
-    private synchronized static VisionLogger getInstance() {
-        if (instance == null) {
-            instance = new VisionLogger();
-        }
-        return instance;
+  public void addEstimate(TimestampedPoseEstimate estimate) {
+    if (VisionConstants.kEnableLogging) {
+      m_estimates.add(estimate.pose());
     }
+  }
 
-    private Logger logger = LoggerFactory.getLogger(VisionLogger.class);
-
-    private final StringBuilder m_builder;
-
-    private FileWriter m_writer;
-    private BufferedWriter m_buffer;
-
-    private VisionLogger() {
-        m_builder = new StringBuilder();
-        String filepath = VisionConstants.kLogPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
-        if (Robot.isSimulation()) {
-            filepath = VisionConstants.kSimLogPath + Long.toHexString(System.currentTimeMillis() / 1000) + ".log";
-        }
-        try {
-            m_writer = new FileWriter(filepath);
-        } catch (IOException e) {
-            logger.error("failed to open vision log file : {}", e.toString());
-            return;
-        }
-        m_buffer = new BufferedWriter(m_writer);
-
-        try {
-            m_buffer.write("time, source, x, y, err\n");
-        } catch (IOException e) {
-            logger.error("failed to write to vision log: {}", e.toString());
-        }
+  public void log() {
+    if (VisionConstants.kEnableLogging) {
+      m_logger.log();
+      m_estimates.clear();
     }
-
-    private synchronized void recordLogs(List<VisionLog > logs) {
-        if (m_buffer == null) {
-            logger.warn("Not saving vision logs! Check your console for more info");
-            return;
-        }
-
-        m_builder.setLength(0);
-
-        for (VisionLog log : logs) {
-            m_builder.append(log.estimate().timestamp());
-            m_builder.append(",");
-            m_builder.append(log.estimate().source());
-            m_builder.append(",");
-            m_builder.append(log.robot().getX());
-            m_builder.append(",");
-            m_builder.append(log.robot().getY());
-            m_builder.append(",");
-            m_builder.append(log.error());
-            m_builder.append(",");
-            m_builder.append(log.estimate().algorithm().toString());
-            m_builder.append("\n");
-        }
-
-        try {
-            m_buffer.write(m_builder.toString());
-            m_buffer.flush();
-        } catch (IOException e) {
-            logger.error("Failed writing to vision log file: {}", e.toString());
-        }
-
-    }
-
-    public static void record(List<VisionLog> logs) {
-        getInstance().recordLogs(logs);
-    }
-
-    @Override
-    public void close() {
-        try {
-            m_buffer.close();
-        } catch (IOException e) {
-            logger.error("failed closing file: {}", e.toString());
-        }
-    }
+  }
 }
