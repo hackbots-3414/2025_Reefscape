@@ -260,36 +260,6 @@
             0.8500000238418579
           ],
           "height": 288,
-          "series": [
-            {
-              "color": [
-                0.41676270961761475,
-                0.24183005094528198,
-                0.6666666269302368,
-                1.0
-              ],
-              "digital": "Analog",
-              "id": "NT:/SmartDashboard/Drivetrain/velo",
-              "marker": "None",
-              "name": "Velocity",
-              "weight": 2.999999523162842
-            },
-            {
-              "color": [
-                0.20608589053153992,
-                0.2450980544090271,
-                0.18983083963394165,
-                1.0
-              ],
-              "digital": "Auto",
-              "digitalBitGap": 34,
-              "digitalBitHeight": 33,
-              "id": "NT:/SmartDashboard/Vision/Loop time (ms)",
-              "marker": "None",
-              "name": "Vision loop time",
-              "yAxis": 1
-            }
-          ],
           "yaxis2": true,
           "yaxis3": true
         }

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utils.LoopTimer;
+import frc.robot.utils.OnboardLogger;
 import frc.robot.utils.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
@@ -22,9 +23,13 @@ public class Robot extends TimedRobot {
 
   private final LoopTimer m_loopTimer;
 
+  private final OnboardLogger m_ologger;
+
   public Robot() {
     m_robotContainer = new RobotContainer();
     m_loopTimer = new LoopTimer("Robot");
+    m_ologger = new OnboardLogger("Robot");
+    m_ologger.registerDouble("Battery Voltage", RobotController::getBatteryVoltage);
   }
 
   @Override
@@ -42,7 +47,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     StatusSignalUtil.refreshAll();
     SmartDashboard.putNumber("Robot/Match Time", DriverStation.getMatchTime());
-    SmartDashboard.putNumber("Robot/Battery Voltage", RobotController.getBatteryVoltage());
+    m_ologger.log();
     m_loopTimer.log();
   }
 
