@@ -265,7 +265,8 @@
         }
       ],
       "window": {
-        "name": "Stats"
+        "name": "Stats",
+        "visible": false
       }
     }
   }
