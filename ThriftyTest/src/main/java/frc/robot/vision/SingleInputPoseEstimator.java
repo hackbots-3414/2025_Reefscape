@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotObserver;
 import frc.robot.vision.CameraIO.CameraIOInputs;
-import frc.robot.vision.TimestampedPoseEstimate.EstimationAlgorithm;
 
 public class SingleInputPoseEstimator implements Runnable {
   private final Logger m_logger = LoggerFactory.getLogger(SingleInputPoseEstimator.class);
@@ -96,13 +95,10 @@ public class SingleInputPoseEstimator implements Runnable {
     // we can now assume that we have targets
     List<PhotonTrackedTarget> targets = result.getTargets();
     // use solvePnP every time if we can
-    EstimationAlgorithm algorithm = (targets.size() > 1) ? EstimationAlgorithm.PnP
-        : EstimationAlgorithm.Trig;
-
     Optional<EstimatedRobotPose> est = m_estimator.update(result);
     if (est.isPresent()) {
       Pose3d estimatedPose = est.get().estimatedPose;
-      process(result, estimatedPose, algorithm).ifPresent(m_reporter);
+      process(result, estimatedPose).ifPresent(m_reporter);
     }
     PhotonTrackedTarget target = targets.get(0);
     int fidId = target.getFiducialId();
@@ -141,7 +137,7 @@ public class SingleInputPoseEstimator implements Runnable {
       estimate = (bestXYErr <= altXYErr) ? best : alt;
     }
 
-    process(result, estimate, EstimationAlgorithm.Heading).ifPresent(m_reporter);
+    process(result, estimate).ifPresent(m_reporter);
   }
 
   private boolean precheckValidity(PhotonPipelineResult result) {
@@ -153,10 +149,7 @@ public class SingleInputPoseEstimator implements Runnable {
     return result.hasTargets();
   }
 
-  private Optional<TimestampedPoseEstimate> process(
-      PhotonPipelineResult result,
-      Pose3d pose,
-      EstimationAlgorithm algorithm) {
+  private Optional<TimestampedPoseEstimate> process(PhotonPipelineResult result, Pose3d pose) {
     double latency = result.metadata.getLatencyMillis() / 1.0e+3;
     double timestamp = Utils.getCurrentTimeSeconds() - latency;
     double ambiguity = getAmbiguity(result);
@@ -168,7 +161,7 @@ public class SingleInputPoseEstimator implements Runnable {
       return Optional.empty();
     }
     return Optional.of(
-        new TimestampedPoseEstimate(flatPose, m_io.getName(), timestamp, stdDevs, algorithm));
+        new TimestampedPoseEstimate(flatPose, timestamp, stdDevs));
   }
 
   private boolean checkValidity(
