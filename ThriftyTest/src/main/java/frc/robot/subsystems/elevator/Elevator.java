@@ -41,6 +41,7 @@ public class Elevator extends PassiveSubsystem {
   private ElevatorState m_reference = ElevatorState.Stow;
 
   private Trigger m_prefireReq = new Trigger(() -> false);
+  private Trigger m_stay = new Trigger(() -> false);
 
   public Elevator() {
     super();
@@ -114,6 +115,9 @@ public class Elevator extends PassiveSubsystem {
   }
 
   protected void passive() {
+    if (m_stay.getAsBoolean()) {
+      return;
+    }
     if (m_prefireReq.getAsBoolean()) {
       setPosition(ElevatorState.L2);
     } else {
@@ -153,5 +157,9 @@ public class Elevator extends PassiveSubsystem {
 
   public void setPrefireRequirement(Trigger trigger) {
     m_prefireReq = trigger;
+  }
+
+  public void setStayRequirement(Trigger trigger) {
+    m_stay = trigger;
   }
 }

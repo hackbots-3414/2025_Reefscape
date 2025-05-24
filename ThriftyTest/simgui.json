@@ -16,6 +16,7 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auton Chooser": "String Chooser",
+      "/SmartDashboard/Climber/Stow": "Command",
       "/SmartDashboard/Command Scheduler": "Scheduler",
       "/SmartDashboard/Elevator/Lazy Zero": "Command",
       "/SmartDashboard/PathPlanner": "Alerts",

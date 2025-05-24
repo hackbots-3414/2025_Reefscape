@@ -55,8 +55,9 @@ public class DeferredAlign implements EnterableState {
       APTarget target = new APTarget(closest)
         .withEntryAngle(closest.getRotation());
       return subsystems.drivetrain().align(DriveConstants.kTightAutopilot, target);
-    }, Set.of(
-        subsystems.drivetrain()));
+    }, Set.of(subsystems.drivetrain()))
+    
+        .andThen(subsystems.drivetrain().hold());
   }
 
   public enum AlignLocation {

@@ -35,7 +35,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -52,6 +51,7 @@ import frc.robot.driveassist.ForceField;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
+import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.TimestampedPoseEstimate;
 
 /**
@@ -61,6 +61,7 @@ import frc.robot.vision.TimestampedPoseEstimate;
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(CommandSwerveDrivetrain.class);
+  private final OnboardLogger m_ologger;
 
   private LoopTimer m_timer;
 
@@ -101,7 +102,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(drivetrainConstants, modules);
-    setup();
+    if (Robot.isSimulation()) {
+      startSimThread();
+    }
+    m_aligned = false;
+    m_ologger = new OnboardLogger("Drivetrain");
+    m_ologger.registerBoolean("Aligned", aligned());
+    m_ologger.registerDouble("Velocity", this::getVelocity);
+    m_ologger.registerPose("Estimated Pose", this::getPose);
+
+    RobotObserver.setVelocitySupplier(this::getVelocity);
+    RobotObserver.setNoElevatorZoneSupplier(dangerZone());
+    RobotObserver.setReefReadySupplier(inReefZone());
+    RobotObserver.setAlginedSupplier(aligned());
+
+    m_forceField = new ForceField(DriveConstants.kMaxTeleopLinearSpeed);
+    m_timer = new LoopTimer("Drivetrain");
+    initializePathPlanner();
   }
 
   public void initializePathPlanner() {
@@ -133,22 +150,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       e.printStackTrace();
       System.exit(1);
     }
-  }
-
-  private void setup() {
-    initializePathPlanner();
-    if (Robot.isSimulation()) {
-      startSimThread();
-    }
-    m_aligned = false;
-
-    RobotObserver.setVelocitySupplier(this::getVelocity);
-    RobotObserver.setNoElevatorZoneSupplier(dangerZone());
-    RobotObserver.setReefReadySupplier(inReefZone());
-    RobotObserver.setAlginedSupplier(aligned());
-
-    m_forceField = new ForceField(DriveConstants.kMaxTeleopLinearSpeed);
-    m_timer = new LoopTimer("Drivetrain");
   }
 
   public void initializeSetpointGenerator(RobotConfig config) {
@@ -228,12 +229,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void periodic() {
     m_timer.reset();
     m_estimatedPose = this.getState().Pose;
-    SmartDashboard.putNumber("Drivetrain/x", m_estimatedPose.getTranslation().getX());
-    SmartDashboard.putNumber("Drivetrain/y", m_estimatedPose.getTranslation().getY());
-    double velo = getVelocity();
-    SmartDashboard.putNumber("Drivetrain/velo", velo);
 
-    SmartDashboard.putBoolean("Drivetrain/Aligned", m_aligned);
     RobotObserver.getField().setRobotPose(m_estimatedPose);
 
     if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
@@ -245,6 +241,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_hasAppliedOperatorPerspective = true;
       });
     }
+    m_ologger.log();
     m_timer.log();
   }
 
@@ -443,5 +440,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public Command seedLocal(Pose2d pose) {
     return Commands.runOnce(() -> resetPose(FieldUtils.getLocalPose(pose)))
       .ignoringDisable(true);
+  }
+
+  public Command hold() {
+    return run(() -> {});
   }
 }

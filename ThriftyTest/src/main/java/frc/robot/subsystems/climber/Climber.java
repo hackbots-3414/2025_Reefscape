@@ -2,7 +2,7 @@ package frc.robot.subsystems.climber;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -37,6 +37,7 @@ public class Climber extends PassiveSubsystem {
     m_ologger.registerBoolean("Raised", raised());
     m_ologger.registerBoolean("Lowered", lowered());
     m_timer = new LoopTimer("Climber");
+    SmartDashboard.putData("Climber/Stow", lower());
   }
 
   /*

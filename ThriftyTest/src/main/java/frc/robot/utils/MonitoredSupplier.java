@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-public class MonitoredSupplier<T> {
+public class MonitoredSupplier<T> implements Supplier<T> {
   private T m_prev;
   
   private final Supplier<T> m_supplier;
@@ -28,5 +28,9 @@ public class MonitoredSupplier<T> {
 
   public static MonitoredSupplier<Boolean> fromBooleanSupplier(BooleanSupplier supplier) {
     return new MonitoredSupplier<Boolean>(supplier::getAsBoolean);
+  }
+
+  public T get() {
+    return m_supplier.get();
   }
 }

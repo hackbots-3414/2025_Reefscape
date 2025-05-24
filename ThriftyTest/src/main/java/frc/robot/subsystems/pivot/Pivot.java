@@ -40,7 +40,7 @@ public class Pivot extends PassiveSubsystem {
     m_inputsLogger = new PivotIOInputsLogger(m_inputs);
     m_reference = PivotState.Stow;
     m_ologger = new OnboardLogger("Pivot");
-    m_ologger.registerString("State", () -> m_reference.toString());
+    m_ologger.registerString("State", m_reference::toString);
     m_ologger.registerBoolean("Ready", ready());
     m_timer = new LoopTimer("Pivot");
   }

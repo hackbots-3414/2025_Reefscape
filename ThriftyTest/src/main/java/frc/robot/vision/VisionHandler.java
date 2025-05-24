@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Robot;
 import frc.robot.utils.LoopTimer;
@@ -27,8 +28,6 @@ public class VisionHandler implements AutoCloseable {
 
   private final VisionLogBuilder m_logBuilder;
 
-  private final VisionNetworkLogger m_networkLogger;
-
   private final MultiInputFilter m_filter;
 
   public VisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
@@ -36,8 +35,6 @@ public class VisionHandler implements AutoCloseable {
     m_consumer = callback;
     m_filter = new MultiInputFilter();
     m_logBuilder = new VisionLogBuilder();
-    m_networkLogger =
-        new VisionNetworkLogger(Robot.isSimulation() || VisionConstants.kEnableNetworkLogging);
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
     m_loopTimer = new LoopTimer("Vision");
@@ -55,7 +52,6 @@ public class VisionHandler implements AutoCloseable {
       }
       SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
           m_filter,
-          m_networkLogger,
           io,
           this::addEstimate);
       m_estimators.add(estimator);
@@ -64,7 +60,9 @@ public class VisionHandler implements AutoCloseable {
 
   private void updateEstimators() {
     m_loopTimer.reset();
-    m_filter.clear();
+    if (VisionConstants.kEnableMultiInputFilter || DriverStation.isDisabled()) {
+      m_filter.clear();
+    }
     for (SingleInputPoseEstimator estimator : m_estimators) {
       estimator.refresh(m_poseSupplier.get());
     }
@@ -74,7 +72,6 @@ public class VisionHandler implements AutoCloseable {
     }
     // finish logging
     m_logBuilder.log(m_poseSupplier.get());
-    m_networkLogger.updateUnread();
     m_loopTimer.log();
   }
 
@@ -83,8 +80,12 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {
+    if (VisionConstants.kEnableMultiInputFilter || DriverStation.isDisabled()) {
+      if (!m_filter.verify(estimate.pose())) {
+        return;
+      }
+    } 
     m_consumer.accept(estimate);
-    m_networkLogger.registerValidEstimate(estimate.pose());
     m_logBuilder.addEstimate(estimate);
   }
 

@@ -5,10 +5,12 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.util.datalog.StructLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 
 /**
@@ -23,12 +25,14 @@ public class OnboardLogger {
   private final ArrayList<Pair<MonitoredSupplier<Double>, DoubleLogEntry>> m_doubleEntries;
   private final ArrayList<Pair<MonitoredSupplier<Boolean>, BooleanLogEntry>> m_booleanEntries;
   private final ArrayList<Pair<MonitoredSupplier<String>, StringLogEntry>> m_stringEntries;
+  private final ArrayList<Pair<MonitoredSupplier<Pose2d>, StructLogEntry<Pose2d>>> m_poseEntries;
 
   public OnboardLogger(String name) {
     m_name = name;
     m_doubleEntries = new ArrayList<>();
     m_booleanEntries = new ArrayList<>();
     m_stringEntries = new ArrayList<>();
+    m_poseEntries = new ArrayList<>();
   }
 
   public void registerDouble(String name, DoubleSupplier supplier) {
@@ -46,6 +50,12 @@ public class OnboardLogger {
     m_stringEntries.add(new Pair<>(new MonitoredSupplier<>(supplier), entry));
   }
 
+  public void registerPose(String name, Supplier<Pose2d> supplier) {
+    StructLogEntry<Pose2d> entry =
+        StructLogEntry.create(dataLog, m_name + "/" + name, Pose2d.struct);
+    m_poseEntries.add(new Pair<>(new MonitoredSupplier<>(supplier), entry));
+  }
+
   public void log() {
     for (Pair<MonitoredSupplier<Double>, DoubleLogEntry> pair : m_doubleEntries) {
       pair.getFirst().ifChanged(d -> pair.getSecond().append(d));
@@ -55,6 +65,9 @@ public class OnboardLogger {
     }
     for (Pair<MonitoredSupplier<String>, StringLogEntry> pair : m_stringEntries) {
       pair.getFirst().ifChanged(s -> pair.getSecond().append(s));
+    }
+    for (Pair<MonitoredSupplier<Pose2d>, StructLogEntry<Pose2d>> pair : m_poseEntries) {
+      pair.getFirst().ifChanged(p -> pair.getSecond().append(p));
     }
   }
 }
