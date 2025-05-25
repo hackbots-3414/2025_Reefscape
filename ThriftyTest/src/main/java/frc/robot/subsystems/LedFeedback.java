@@ -22,9 +22,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.IDConstants;
 import frc.robot.Constants.LedConstants;
+import frc.robot.binding.BindingConstants;
 import frc.robot.RobotObserver;
 
 public class LedFeedback extends SubsystemBase {
@@ -180,24 +180,11 @@ public class LedFeedback extends SubsystemBase {
   }
 
   private boolean badController() {
-    boolean driverConnected = DriverStation.isJoystickConnected(ButtonBindingConstants.driverPort);
+    boolean driverConnected = DriverStation.isJoystickConnected(BindingConstants.driverPort);
     boolean operatorConnected =
-        DriverStation.isJoystickConnected(ButtonBindingConstants.operatorPort);
+        DriverStation.isJoystickConnected(BindingConstants.operatorPort);
 
-    if (!driverConnected || !operatorConnected)
-      return true;
-
-    String driverName =
-        DriverStation.getJoystickName(ButtonBindingConstants.driverPort).toLowerCase();
-    String operatorName =
-        DriverStation.getJoystickName(ButtonBindingConstants.operatorPort).toLowerCase();
-
-    boolean driverOk = driverName.contains(ButtonBindingConstants.dragonReinsName)
-        || driverName.contains(ButtonBindingConstants.driverBackupName);
-
-    boolean operatorOk = operatorName.contains(ButtonBindingConstants.ps5Name);
-
-    return !(driverOk && operatorOk);
+    return driverConnected && operatorConnected;
   }
 
   public void setAll(LED_COLOR color, LED_PATTERN pattern) {

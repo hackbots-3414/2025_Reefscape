@@ -2,9 +2,8 @@ package frc.robot.binding;
 
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.CoralLevel;
-import frc.robot.Constants.ButtonBindingConstants.Operator;
+import frc.robot.binding.BindingConstants.Operator;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Climb;
 import frc.robot.superstructure.states.ClimbRaised;
@@ -30,7 +29,7 @@ import frc.robot.superstructure.states.Stowed;
 
 public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
-      new CommandPS5Controller(ButtonBindingConstants.operatorPort);
+      new CommandPS5Controller(BindingConstants.operatorPort);
 
   private final Trigger m_l1 = m_controller.pov(Operator.L1);
   private final Trigger m_secondaryL1 = m_controller.pov(Operator.secondaryL1);

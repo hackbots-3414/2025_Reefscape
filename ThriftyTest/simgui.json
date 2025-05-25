@@ -208,12 +208,6 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Coral": {
-          "open": true
-        },
-        "Elevator": {
-          "open": true
-        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true

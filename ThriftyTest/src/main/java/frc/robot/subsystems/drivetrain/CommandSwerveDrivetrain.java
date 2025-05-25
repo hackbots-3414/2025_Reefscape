@@ -418,6 +418,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return Commands.sequence(
         runOnce(() -> {
           RobotObserver.getField().getObject("reference").setPose(target.getReference());
+          setAligned(false);
         }),
         run(() -> {
           Translation2d velocities = getVelocityComponents();
