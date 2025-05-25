@@ -22,7 +22,7 @@ public class DeferredAlign implements EnterableState {
   private List<Pose2d> m_locations;
 
   /**
-   * Represents a state where the robot aligns to a reef face
+   * Represents a state where the robot aligns to a nonstatic location and then waits there
    */
   public DeferredAlign(AlignLocation side) {
     switch (side) {
@@ -53,11 +53,11 @@ public class DeferredAlign implements EnterableState {
       m_locations.forEach(location -> locations.add(FieldUtils.getLocalPose(location)));
       Pose2d closest = subsystems.drivetrain().getPose().nearest(locations);
       APTarget target = new APTarget(closest)
-        .withEntryAngle(closest.getRotation());
-      return subsystems.drivetrain().align(DriveConstants.kTightAutopilot, target);
-    }, Set.of(subsystems.drivetrain()))
-    
-        .andThen(subsystems.drivetrain().hold());
+          .withEntryAngle(closest.getRotation());
+      return Commands.sequence(
+          subsystems.drivetrain().align(DriveConstants.kTightAutopilot, target),
+          Commands.idle(subsystems.drivetrain()));
+    }, Set.of(subsystems.drivetrain()));
   }
 
   public enum AlignLocation {
