@@ -29,7 +29,7 @@ import frc.robot.superstructure.states.Stowed;
 
 public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
-      new CommandPS5Controller(BindingConstants.operatorPort);
+      new CommandPS5Controller(BindingConstants.kOperatorPort);
 
   private final Trigger m_l1 = m_controller.pov(Operator.kL1);
   private final Trigger m_secondaryL1 = m_controller.pov(Operator.kSecondaryL1);

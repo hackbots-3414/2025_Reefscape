@@ -181,10 +181,19 @@ public class LedFeedback extends SubsystemBase {
 
   private boolean badController() {
     boolean driverConnected = DriverStation.isJoystickConnected(BindingConstants.kDriverPort);
-    boolean operatorConnected =
-        DriverStation.isJoystickConnected(BindingConstants.operatorPort);
+    boolean operatorConnected = DriverStation.isJoystickConnected(BindingConstants.kOperatorPort);
 
-    return driverConnected && operatorConnected;
+    if (!driverConnected || !operatorConnected)
+        return true;
+
+    String driverName = DriverStation.getJoystickName(BindingConstants.kDriverPort).toLowerCase();
+    String operatorName = DriverStation.getJoystickName(BindingConstants.kOperatorPort).toLowerCase();
+
+    boolean driverOk = driverName.contains(LedConstants.dragonReinsName);
+
+    boolean operatorOk = operatorName.contains(LedConstants.ps5Name);
+
+    return !(driverOk && operatorOk);
   }
 
   public void setAll(LED_COLOR color, LED_PATTERN pattern) {

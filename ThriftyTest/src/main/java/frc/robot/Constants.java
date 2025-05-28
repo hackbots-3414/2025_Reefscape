@@ -190,6 +190,9 @@ public class Constants {
     public static final int elevatorOffset2 = 93; // 94
     public static final int funnelNumLED2 = elevatorOffset2 - funnelOffset2; // 85
     public static final int elevatorNumLED2 = 40; // 40
+
+    public static final String dragonReinsName = "spark";
+    public static final String ps5Name = "dual";
   }
 
   public static class FFConstants {

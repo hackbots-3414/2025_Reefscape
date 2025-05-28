@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.PS5Controller.Button;
 
 public class BindingConstants {
   public static final int kDriverPort = 0;
-  public static final int operatorPort = 1;
+  public static final int kOperatorPort = 1;
 
   public static class Driver {
     public static final int xAxis = 1;
