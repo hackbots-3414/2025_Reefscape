@@ -31,38 +31,38 @@ public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
       new CommandPS5Controller(BindingConstants.operatorPort);
 
-  private final Trigger m_l1 = m_controller.pov(Operator.L1);
-  private final Trigger m_secondaryL1 = m_controller.pov(Operator.secondaryL1);
-  private final Trigger m_l2 = m_controller.pov(Operator.L2);
-  private final Trigger m_l3 = m_controller.pov(Operator.L3);
-  private final Trigger m_l4 = m_controller.pov(Operator.L4);
+  private final Trigger m_l1 = m_controller.pov(Operator.kL1);
+  private final Trigger m_secondaryL1 = m_controller.pov(Operator.kSecondaryL1);
+  private final Trigger m_l2 = m_controller.pov(Operator.kL2);
+  private final Trigger m_l3 = m_controller.pov(Operator.kL3);
+  private final Trigger m_l4 = m_controller.pov(Operator.kL4);
 
-  private final Trigger m_left = m_controller.button(Operator.leftReef);
-  private final Trigger m_right = m_controller.button(Operator.rightReef);
+  private final Trigger m_left = m_controller.button(Operator.kLeftAlign);
+  private final Trigger m_right = m_controller.button(Operator.kRightAlign);
 
-  private final Trigger m_coralIntake = m_controller.button(Operator.intake);
-  private final Trigger m_ejectCoral = m_controller.button(Operator.ejectCoral);
+  private final Trigger m_coralIntake = m_controller.button(Operator.kCoralIntake);
+  private final Trigger m_ejectCoral = m_controller.button(Operator.kEjectCoral);
 
-  private final Trigger m_algae = m_controller.button(Operator.algaeModeButton);
+  private final Trigger m_algae = m_controller.button(Operator.kAlgae);
 
-  private final Trigger m_algaeGround = m_controller.pov(Operator.ground);
-  private final Trigger m_algaeHighGround = m_controller.pov(Operator.highGround);
-  private final Trigger m_algaeLowReef = m_controller.button(Operator.lowAlgae);
-  private final Trigger m_algaeHighReef = m_controller.button(Operator.highAlgae);
+  private final Trigger m_algaeGround = m_controller.pov(Operator.kGroundAlgaeIntake);
+  private final Trigger m_algaeHighGround = m_controller.pov(Operator.kHighGroundAlgaeIntake);
+  private final Trigger m_algaeLowReef = m_controller.button(Operator.kLowerAlgae);
+  private final Trigger m_algaeHighReef = m_controller.button(Operator.kUpperAlgae);
 
-  private final Trigger m_processor = m_controller.pov(Operator.processor);
-  private final Trigger m_net = m_controller.pov(Operator.net);
+  private final Trigger m_processor = m_controller.pov(Operator.kProcessor);
+  private final Trigger m_net = m_controller.pov(Operator.kNet);
 
-  private final Trigger m_climberUp = m_controller.button(Operator.climbUp);
-  private final Trigger m_climb = m_controller.button(Operator.climb);
+  private final Trigger m_raiseClimb = m_controller.button(Operator.kRaiseClimb);
+  private final Trigger m_climb = m_controller.button(Operator.kClimb);
 
-  private final Trigger m_stow = m_controller.button(Operator.stow);
+  private final Trigger m_stow = m_controller.button(Operator.kStow);
 
-  private final Trigger m_funnelLeft = m_controller.button(Operator.leftFunnel);
-  private final Trigger m_funnelRight = m_controller.button(Operator.rightFunnel);
+  private final Trigger m_funnelLeft = m_controller.button(Operator.kLeftFunnel);
+  private final Trigger m_funnelRight = m_controller.button(Operator.kRightFunnel);
   private final Trigger m_funnel = m_funnelLeft.and(m_funnelRight);
 
-  private final Trigger m_zeroElevator = m_controller.button(Operator.zeroElevator);
+  private final Trigger m_zeroElevator = m_controller.button(Operator.kCalibrateElevator);
 
   public void bind(Superstructure superstructure) {
     /* algae intake */
@@ -93,7 +93,7 @@ public class OperatorBindings implements Binder {
 
     /* climb */
     m_climb.whileTrue(superstructure.enter(new Climb()));
-    m_climberUp.whileTrue(superstructure.enter(new ClimbRaised()));
+    m_raiseClimb.whileTrue(superstructure.enter(new ClimbRaised()));
 
     /* misc */
     m_zeroElevator.whileTrue(superstructure.enter(new ElevatorZero()));

@@ -180,7 +180,7 @@ public class LedFeedback extends SubsystemBase {
   }
 
   private boolean badController() {
-    boolean driverConnected = DriverStation.isJoystickConnected(BindingConstants.driverPort);
+    boolean driverConnected = DriverStation.isJoystickConnected(BindingConstants.kDriverPort);
     boolean operatorConnected =
         DriverStation.isJoystickConnected(BindingConstants.operatorPort);
 
