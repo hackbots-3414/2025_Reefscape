@@ -46,8 +46,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     m_loopTimer.reset();
-    CommandScheduler.getInstance().run();
     StatusSignalUtil.refreshAll();
+    CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Robot/Match Time", DriverStation.getMatchTime());
     m_ologger.log();
     m_loopTimer.log();
