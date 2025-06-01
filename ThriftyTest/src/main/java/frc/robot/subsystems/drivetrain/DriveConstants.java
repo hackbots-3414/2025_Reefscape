@@ -38,7 +38,8 @@ public class DriveConstants {
       .withPathConstraints(kTightAutopilotPathConstraints)
       .withCorrectionConstraints(kTightAutopilotCorrectionConstraints)
       .withErrorXY(Centimeters.of(1))
-      .withErrorTheta(Degrees.of(1));
+      .withErrorTheta(Degrees.of(1))
+      .withBeelineRadius(Centimeters.of(10));
 
   public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
 
@@ -54,7 +55,8 @@ public class DriveConstants {
       .withPathConstraints(kFastAutopilotPathConstraints)
       .withCorrectionConstraints(kFastAutopilotCorrectionConstraints)
       .withErrorXY(Centimeters.of(15))
-      .withErrorTheta(Degrees.of(5));
+      .withErrorTheta(Degrees.of(5))
+      .withBeelineRadius(Centimeters.of(10));
 
   public static final Autopilot kFastAutopilot = new Autopilot(kFastProfile);
 
