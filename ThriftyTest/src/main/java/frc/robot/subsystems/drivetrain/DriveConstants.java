@@ -31,7 +31,8 @@ public class DriveConstants {
       .withAcceleration(15.0)
       .withJerk(1.5);
 
-  private static final APConstraints kTightAutopilotCorrectionConstraints = APConstraints.unlimited();
+  private static final APConstraints kTightAutopilotCorrectionConstraints =
+      APConstraints.unlimited();
 
   private static final APProfile kTightProfile = new APProfile()
       .withPathConstraints(kTightAutopilotPathConstraints)
@@ -46,7 +47,8 @@ public class DriveConstants {
           .withAcceleration(20)
           .withJerk(8);
 
-  private static final APConstraints kFastAutopilotCorrectionConstraints = APConstraints.unlimited();
+  private static final APConstraints kFastAutopilotCorrectionConstraints =
+      APConstraints.unlimited();
 
   private static final APProfile kFastProfile = new APProfile()
       .withPathConstraints(kFastAutopilotPathConstraints)
@@ -56,7 +58,7 @@ public class DriveConstants {
 
   public static final Autopilot kFastAutopilot = new Autopilot(kFastProfile);
 
-  protected static final PPHolonomicDriveController k_pathplannerHolonomicDriveController =
+  protected static final PPHolonomicDriveController kPathplannerHolonomicDriveController =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
 
   protected static final double kMaxTeleopLinearSpeed =
