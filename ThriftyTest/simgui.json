@@ -36,21 +36,6 @@
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
-      "/SmartDashboard/Auton Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Command Scheduler": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Prep/Set Center": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Prep/Set Left": {
         "window": {
           "visible": true
@@ -96,8 +81,7 @@
           "selectable": false,
           "style": "Hidden"
         },
-        "bottom": 1347,
-        "builtin": "",
+        "bottom": 1638,
         "cameras": {
           "arrows": false,
           "color": [
@@ -128,7 +112,7 @@
           "width": 0.9399999976158142
         },
         "height": 8.051901817321777,
-        "image": "/Users/rekrab/hackbots/2025_Reefscape/ThriftyTest/2025-field-cropped.png",
+        "left": 534,
         "reference": {
           "arrowColor": [
             0.8480392098426819,
@@ -172,7 +156,8 @@
           "style": "Hidden",
           "width": 0.9399999976158142
         },
-        "right": 2932,
+        "right": 3466,
+        "top": 291,
         "visibleTargetPoses": {
           "arrows": false,
           "color": [
@@ -186,16 +171,6 @@
           "width": 0.5
         },
         "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Test/Algae Intake (ground)": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Test/L4": {
         "window": {
           "visible": true
         }
@@ -227,6 +202,9 @@
   },
   "NetworkTables Info": {
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   },
   "Plot": {
     "Plot <0>": {
