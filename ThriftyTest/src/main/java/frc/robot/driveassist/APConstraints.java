@@ -5,8 +5,8 @@ package frc.robot.driveassist;
  * and decelleration.
  */
 public class APConstraints {
-  protected double m_acceleration;
-  protected double m_jerk;
+  protected double acceleration;
+  protected double jerk;
 
   /** Creates a blank APConstraints */
   public APConstraints() {}
@@ -14,8 +14,8 @@ public class APConstraints {
   /**
    * Creates a new APCosntraints with given acceleration and deceleration */
   public APConstraints(double acceleration, double deceleration) {
-    m_acceleration = acceleration;
-    m_jerk = deceleration;
+    acceleration = acceleration;
+    jerk = deceleration;
   }
 
   /** Unlimited constraints */
@@ -28,7 +28,7 @@ public class APConstraints {
    * acceleration that the autopilot action will use to correct initial velocities.
    */
   public APConstraints withAcceleration(double acceleration) {
-    m_acceleration = acceleration;
+    acceleration = acceleration;
     return this;
   }
 
@@ -39,7 +39,7 @@ public class APConstraints {
    * This is only used at the end of an autopilot action, not the beginning.
    */
   public APConstraints withJerk(double jerk) {
-    m_jerk = jerk;
+    jerk = jerk;
     return this;
   }
 }

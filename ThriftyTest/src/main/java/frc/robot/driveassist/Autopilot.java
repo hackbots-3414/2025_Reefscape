@@ -87,7 +87,7 @@ public class Autopilot {
    *
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
-    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.pathConstraints.m_jerk, 1.0 / 3.0)
+    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.pathConstraints.jerk, 1.0 / 3.0)
         + endVelo;
   }
 
@@ -107,8 +107,8 @@ public class Autopilot {
     double goalI = adjustedGoal.getX();
     // we cap the adjusted I because we'd rather adjust now than overshoot.
     double adjustedI = Math.min(goalI,
-        push(initialI, goalI, m_profile.pathConstraints.m_acceleration));
-    double adjustedU = push(initialU, 0, m_profile.correctionConstraints.m_acceleration);
+        push(initialI, goalI, m_profile.pathConstraints.acceleration));
+    double adjustedU = push(initialU, 0, m_profile.correctionConstraints.acceleration);
     return new Translation2d(adjustedI, adjustedU).rotateBy(angleOffset);
   }
 
