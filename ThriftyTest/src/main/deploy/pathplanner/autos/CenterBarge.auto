@@ -36,27 +36,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "HBarge"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Align Barge"
+            "name": "Align Barge Center"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Net"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BargeIJ"
           }
         },
         {
@@ -79,15 +67,9 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "IJBarge2"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Align Barge"
+            "name": "Align Barge Left"
           }
         },
         {
@@ -97,9 +79,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Barge2Backup"
+            "name": "Align LIntake"
           }
         }
       ]
