@@ -14,29 +14,29 @@ import edu.wpi.first.units.measure.Distance;
  * The target also may have a desired end velocity.
  */
 public class APTarget {
-  protected Pose2d m_reference;
-  protected Optional<Rotation2d> m_entryAngle;
-  protected double m_velocity;
-  protected Optional<Distance> m_rotationRadius;
+  protected Pose2d reference;
+  protected Optional<Rotation2d> entryAngle;
+  protected double velocity;
+  protected Optional<Distance> rotationRadius;
 
   /**
    * Creates a blank autopilot target with reference (0,0) and rotation of zero.
    */
   public APTarget() {
-    m_reference = Pose2d.kZero;
-    m_entryAngle = Optional.empty();
-    m_velocity = 0;
-    m_rotationRadius = Optional.empty();
+    reference = Pose2d.kZero;
+    entryAngle = Optional.empty();
+    velocity = 0;
+    rotationRadius = Optional.empty();
   }
 
   /**
    * Creates a new autopilot target with the given target pose, no entry angle, and no end velocity
    */
   public APTarget(Pose2d pose) {
-    m_reference = pose;
-    m_velocity = 0;
-    m_entryAngle = Optional.empty();
-    m_rotationRadius = Optional.empty();
+    reference = pose;
+    velocity = 0;
+    entryAngle = Optional.empty();
+    rotationRadius = Optional.empty();
   }
 
   /**
@@ -44,7 +44,7 @@ public class APTarget {
    */
   public APTarget withReference(Pose2d reference) {
     APTarget target = this.clone();
-    target.m_reference = reference;
+    target.reference = reference;
     return target;
   }
 
@@ -53,7 +53,7 @@ public class APTarget {
    */
   public APTarget withEntryAngle(Rotation2d entryAngle) {
     APTarget target = this.clone();
-    target.m_entryAngle = Optional.of(entryAngle);
+    target.entryAngle = Optional.of(entryAngle);
     return target;
   }
 
@@ -62,7 +62,7 @@ public class APTarget {
    */
   public APTarget withVelocity(double velocity) {
     APTarget target = this.clone();
-    target.m_velocity = velocity;
+    target.velocity = velocity;
     return target;
   }
 
@@ -75,7 +75,7 @@ public class APTarget {
    */
   public APTarget withRotationRadius(Distance radius) {
     APTarget copy = this.clone();
-    copy.m_rotationRadius = Optional.of(radius);
+    copy.rotationRadius = Optional.of(radius);
     return copy;
   }
 
@@ -83,41 +83,41 @@ public class APTarget {
    * Returns this target's reference pose
    */
   public Pose2d getReference() {
-    return m_reference;
+    return reference;
   }
 
   /**
    * Returns this target's desired entry angle
    */
   public Optional<Rotation2d> getEntryAngle() {
-    return m_entryAngle;
+    return entryAngle;
   }
 
   /**
    * Returns this target's end velocity
    */
   public double getVelocity() {
-    return m_velocity;
+    return velocity;
   }
 
   /**
    * Returns this target's rotation radius
    */
   public Optional<Distance> getRotationRadius() {
-    return m_rotationRadius;
+    return rotationRadius;
   }
 
   /**
    * Flips a target across the field, preserving relative entry angle and rotation.
    */
   public APTarget flip() {
-    Pose2d ref = FlippingUtil.flipFieldPose(m_reference);
+    Pose2d ref = FlippingUtil.flipFieldPose(reference);
     APTarget target = new APTarget(ref);
-    m_entryAngle.ifPresent(rotation -> {
+    entryAngle.ifPresent(rotation -> {
       Rotation2d entry = FlippingUtil.flipFieldRotation(rotation);
-      target.m_entryAngle = Optional.of(entry);
+      target.entryAngle = Optional.of(entry);
     });
-    target.m_rotationRadius = m_rotationRadius;
+    target.rotationRadius = rotationRadius;
     return target;
   }
 
@@ -126,10 +126,10 @@ public class APTarget {
    */
   public APTarget clone() {
     APTarget target = new APTarget();
-    target.m_reference = m_reference;
-    target.m_velocity = m_velocity;
-    target.m_entryAngle = m_entryAngle;
-    target.m_rotationRadius = m_rotationRadius;
+    target.reference = reference;
+    target.velocity = velocity;
+    target.entryAngle = entryAngle;
+    target.rotationRadius = rotationRadius;
     return target;
   }
 }
