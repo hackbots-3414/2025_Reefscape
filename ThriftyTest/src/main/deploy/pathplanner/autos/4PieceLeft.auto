@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartJ"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Align J"
@@ -20,6 +14,12 @@
           "type": "named",
           "data": {
             "name": "L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Recalibrate"
           }
         },
         {
@@ -37,27 +37,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "JIntake"
+                        "name": "Align LIntake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "LIntake Align"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeK"
+                        "name": "Coral Wait"
                       }
                     },
                     {
@@ -79,6 +67,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Recalibrate"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -93,27 +87,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "KIntake"
+                        "name": "Beeline LIntake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "LIntake Align"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeL"
+                        "name": "Coral Wait"
                       }
                     },
                     {
@@ -135,6 +117,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Recalibrate"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -149,27 +137,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "LIntake"
+                        "name": "Beeline LIntake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "LIntake Align"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeA"
+                        "name": "Coral Wait"
                       }
                     },
                     {
@@ -189,11 +165,17 @@
           "data": {
             "name": "L4"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Recalibrate"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
