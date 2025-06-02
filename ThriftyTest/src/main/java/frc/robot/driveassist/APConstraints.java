@@ -13,9 +13,9 @@ public class APConstraints {
 
   /**
    * Creates a new APCosntraints with given acceleration and deceleration */
-  public APConstraints(double acceleration, double deceleration) {
-    acceleration = acceleration;
-    jerk = deceleration;
+  public APConstraints(double acceleration, double jerk) {
+    this.acceleration = acceleration;
+    this.jerk = jerk;
   }
 
   /** Unlimited constraints */
@@ -28,7 +28,7 @@ public class APConstraints {
    * acceleration that the autopilot action will use to correct initial velocities.
    */
   public APConstraints withAcceleration(double acceleration) {
-    acceleration = acceleration;
+    this.acceleration = acceleration;
     return this;
   }
 
@@ -39,7 +39,7 @@ public class APConstraints {
    * This is only used at the end of an autopilot action, not the beginning.
    */
   public APConstraints withJerk(double jerk) {
-    jerk = jerk;
+    this.jerk = jerk;
     return this;
   }
 }
