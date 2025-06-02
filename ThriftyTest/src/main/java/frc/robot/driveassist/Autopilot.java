@@ -87,7 +87,7 @@ public class Autopilot {
    *
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
-    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.pathConstraintsb.m_jerk, 1.0 / 3.0)
+    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.pathConstraints.m_jerk, 1.0 / 3.0)
         + endVelo;
   }
 
@@ -107,8 +107,8 @@ public class Autopilot {
     double goalI = adjustedGoal.getX();
     // we cap the adjusted I because we'd rather adjust now than overshoot.
     double adjustedI = Math.min(goalI,
-        push(initialI, goalI, m_profile.pathConstraintsb.m_acceleration));
-    double adjustedU = push(initialU, 0, m_profile.correctionConstraintsb.m_acceleration);
+        push(initialI, goalI, m_profile.pathConstraints.m_acceleration));
+    double adjustedU = push(initialU, 0, m_profile.correctionConstraints.m_acceleration);
     return new Translation2d(adjustedI, adjustedU).rotateBy(angleOffset);
   }
 
@@ -187,9 +187,9 @@ public class Autopilot {
   public boolean atSetpoint(Pose2d current, APTarget target) {
     Pose2d goal = target.m_reference;
     boolean okXY = Math.hypot(current.getX() - goal.getX(),
-        current.getY() - goal.getY()) <= m_profile.errorXYb.in(Meters);
+        current.getY() - goal.getY()) <= m_profile.errorXY.in(Meters);
     boolean okTheta = Math.abs(current.getRotation().minus(goal.getRotation())
-        .getRadians()) <= m_profile.errorThetab.in(Radians);
+        .getRadians()) <= m_profile.errorTheta.in(Radians);
     return okXY && okTheta;
   }
 }

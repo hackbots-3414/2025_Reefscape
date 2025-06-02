@@ -40,11 +40,10 @@ public class APTarget {
 
   /**
    * Modifies this instance's reference pose and returns itself for easier method chaining.
-   * <i>NOTE:</i> This also sets, if unset, the entry angle to be the angle of the pose.
    */
   public APTarget withReference(Pose2d reference) {
     APTarget target = this.clone();
-    target.m_entryAngle = Optional.of(reference.getRotation());
+    target.m_reference = reference;
     return target;
   }
 

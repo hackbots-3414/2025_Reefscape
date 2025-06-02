@@ -1,6 +1,7 @@
 package frc.robot.binding;
 
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
@@ -35,7 +36,7 @@ public class DriveBindings implements Binder {
 
     m_resetHeading.onTrue(superstructure.enter(new HeadingReset()));
     m_smartAlign.and(superstructure.holdingAlgae()).whileTrue(superstructure.enter(new Align(
-        new APTarget().withReference(FieldConstants.k_processor))));
+        new APTarget(FieldConstants.k_processor).withEntryAngle(Rotation2d.kCW_Pi_2))));
     m_smartAlign.and(superstructure.holdingAlgae().negate()).whileTrue(superstructure.enter(
         new DeferredAlign(AlignLocation.Center)));
     m_leftAlign.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Left)));

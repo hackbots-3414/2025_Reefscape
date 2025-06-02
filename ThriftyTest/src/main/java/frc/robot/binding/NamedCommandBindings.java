@@ -72,6 +72,6 @@ public class NamedCommandBindings implements Binder {
         new Align(new APTarget(FieldConstants.kGH).withEntryAngle(FieldConstants.kGH.getRotation()))
             .allianceRelative()));
     NamedCommands.registerCommand("Align Barge", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kBarge1)).allianceRelative()));
+        new Align(new APTarget(FieldConstants.kBarge)).allianceRelative()));
   }
 }
