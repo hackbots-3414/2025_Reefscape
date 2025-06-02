@@ -176,7 +176,7 @@ public class Autopilot {
     if (target.m_rotationRadius.isEmpty()) {
       return target.m_reference.getRotation();
     }
-    double radius = target.m_rotationRadius.get();
+    double radius = target.m_rotationRadius.get().in(Meters);
     if (radius > dist) {
       return target.m_reference.getRotation();
     } else {

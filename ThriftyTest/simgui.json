@@ -36,6 +36,11 @@
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
+      "/SmartDashboard/Auton Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Prep/Set Left": {
         "window": {
           "visible": true
