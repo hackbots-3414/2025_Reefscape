@@ -14,21 +14,23 @@ import edu.wpi.first.units.measure.Distance;
  * A profile also includes a maximum error, in the XY plane as well as rotation.
  */
 public class APProfile {
-  protected APConstraints m_pathConstraints;
-  protected APConstraints m_correctionConstraints;
-  protected Distance m_errorXY;
-  protected Angle m_errorTheta;
+  protected APConstraints pathConstraints;
+  protected APConstraints correctionConstraints;
+  protected Distance errorXY;
+  protected Angle errorTheta;
+  protected Distance beelineRadius;
 
   public APProfile() {
-    m_errorXY = Meters.of(0);
-    m_errorTheta = Rotations.of(0);
+    errorXY = Meters.of(0);
+    errorTheta = Rotations.of(0);
+    beelineRadius = Meters.of(0);
   }
 
   /**
    * Modifies this profile's tolerated error in the XY plane and returns itself
    */
   public APProfile withErrorXY(Distance errorXY) {
-    m_errorXY = errorXY;
+    this.errorXY = errorXY;
     return this;
   }
 
@@ -36,23 +38,35 @@ public class APProfile {
    * Modifies this profile's tolerated angular error and returns itself
    */
   public APProfile withErrorTheta(Angle errorTheta) {
-    m_errorTheta = errorTheta;
+    this.errorTheta = errorTheta;
     return this;
   }
 
   /**
    * Modifies this profile's path generation constraints and returns itself
    */
-  public APProfile withPathConstraints(APConstraints constraintsI) {
-    m_pathConstraints = constraintsI;
+  public APProfile withPathConstraints(APConstraints pathConstraints) {
+    this.pathConstraints = pathConstraints;
     return this;
   }
 
   /**
    * Modifies this profile's correction constraints and returns itself
    */
-  public APProfile withCorrectionConstraints(APConstraints constraintsU) {
-    m_correctionConstraints = constraintsU;
+  public APProfile withCorrectionConstraints(APConstraints correctionConstraints) {
+    this.correctionConstraints = correctionConstraints;
+    return this;
+  }
+
+  /**
+   * Modifies this profile's beeline radius and returns itself
+   *
+   * The beeline radius is a distance where, under that range, entry angle is no longer respected.
+   * This prevents small overshoots from causing the robot to make a full arc and instaed correct
+   * itself.
+   */
+  public APProfile withBeelineRadius(Distance beelineRadius) {
+    this.beelineRadius = beelineRadius;
     return this;
   }
 
@@ -60,27 +74,34 @@ public class APProfile {
    * Returns the tolerated translation error for this profile
    */
   public Distance getErrorXY() {
-    return m_errorXY;
+    return errorXY;
   }
 
   /**
    * Returns the tolerated angular error for this profile
    */
   public Angle getErrorTheta() {
-    return m_errorTheta;
+    return errorTheta;
   }
 
   /**
    * Returns the path generation constraints for this profile
    */
   public APConstraints getPathConstraints() {
-    return m_pathConstraints;
+    return pathConstraints;
   }
 
   /**
    * Returns the correction constraints for this profile
    */
   public APConstraints getCorrectionConstraints() {
-    return m_correctionConstraints;
+    return correctionConstraints;
+  }
+
+  /**
+   * Returns the beeline radius for this profile
+   */
+  public Distance getBeelineRadius() {
+    return beelineRadius;
   }
 }

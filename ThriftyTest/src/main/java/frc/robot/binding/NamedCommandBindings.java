@@ -1,5 +1,6 @@
 package frc.robot.binding;
 
+import static edu.wpi.first.units.Units.Meters;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
@@ -46,9 +47,9 @@ public class NamedCommandBindings implements Binder {
               .allianceRelative()));
     }
     APTarget lIntake = new APTarget(FieldConstants.kLeftIntake)
-        .withRotationRadius(2.0);
+        .withRotationRadius(Meters.of(2.0));
     APTarget rIntake = new APTarget(FieldConstants.kRightIntake)
-        .withRotationRadius(2.0);
+        .withRotationRadius(Meters.of(2.0));
     NamedCommands.registerCommand("Align LIntake", superstructure.enter(
         new Align(lIntake.withEntryAngle(Rotation2d.kPi))
             .allianceRelative()
@@ -71,7 +72,10 @@ public class NamedCommandBindings implements Binder {
     NamedCommands.registerCommand("Align GH", superstructure.enter(
         new Align(new APTarget(FieldConstants.kGH).withEntryAngle(FieldConstants.kGH.getRotation()))
             .allianceRelative()));
+    APTarget barge = new APTarget(FieldConstants.kBarge)
+        .withEntryAngle(Rotation2d.fromDegrees(-135.0))
+        .withRotationRadius(Meters.of(1.0));
     NamedCommands.registerCommand("Align Barge", superstructure.enter(
-        new Align(new APTarget(FieldConstants.kBarge1)).allianceRelative()));
+        new Align(barge).allianceRelative().fast()));
   }
 }

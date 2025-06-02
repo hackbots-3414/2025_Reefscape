@@ -50,7 +50,7 @@ public class Autopilot {
     }
     Translation2d initial = toTargetCoorinateFrame(velocity, target);
     double disp = offset.getNorm();
-    if (target.m_entryAngle.isEmpty() || disp < 0.1) {
+    if (target.m_entryAngle.isEmpty() || disp < m_profile.beelineRadius.in(Meters)) {
       Translation2d towardsTarget = offset.div(disp);
       Translation2d goal = towardsTarget.times(calculateMaxVelocity(disp, target.m_velocity));
       Translation2d out = correct(initial, goal);
@@ -87,7 +87,7 @@ public class Autopilot {
    *
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
-    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.m_pathConstraints.m_jerk, 1.0 / 3.0)
+    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.pathConstraints.m_jerk, 1.0 / 3.0)
         + endVelo;
   }
 
@@ -107,8 +107,8 @@ public class Autopilot {
     double goalI = adjustedGoal.getX();
     // we cap the adjusted I because we'd rather adjust now than overshoot.
     double adjustedI = Math.min(goalI,
-        push(initialI, goalI, m_profile.m_pathConstraints.m_acceleration));
-    double adjustedU = push(initialU, 0, m_profile.m_correctionConstraints.m_acceleration);
+        push(initialI, goalI, m_profile.pathConstraints.m_acceleration));
+    double adjustedU = push(initialU, 0, m_profile.correctionConstraints.m_acceleration);
     return new Translation2d(adjustedI, adjustedU).rotateBy(angleOffset);
   }
 
@@ -176,7 +176,7 @@ public class Autopilot {
     if (target.m_rotationRadius.isEmpty()) {
       return target.m_reference.getRotation();
     }
-    double radius = target.m_rotationRadius.get();
+    double radius = target.m_rotationRadius.get().in(Meters);
     if (radius > dist) {
       return target.m_reference.getRotation();
     } else {
@@ -187,9 +187,9 @@ public class Autopilot {
   public boolean atSetpoint(Pose2d current, APTarget target) {
     Pose2d goal = target.m_reference;
     boolean okXY = Math.hypot(current.getX() - goal.getX(),
-        current.getY() - goal.getY()) <= m_profile.m_errorXY.in(Meters);
+        current.getY() - goal.getY()) <= m_profile.errorXY.in(Meters);
     boolean okTheta = Math.abs(current.getRotation().minus(goal.getRotation())
-        .getRadians()) <= m_profile.m_errorTheta.in(Radians);
+        .getRadians()) <= m_profile.errorTheta.in(Radians);
     return okXY && okTheta;
   }
 }

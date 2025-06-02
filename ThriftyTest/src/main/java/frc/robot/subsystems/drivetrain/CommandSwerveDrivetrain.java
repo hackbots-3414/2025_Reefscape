@@ -131,7 +131,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                            // starting pose)
           this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speeds, feedforwards) -> driveWithChassisSpeeds(speeds),
-          DriveConstants.k_pathplannerHolonomicDriveController,
+          DriveConstants.kPathplannerHolonomicDriveController,
           config, // The robot configuration
           () -> {
             var alliance = DriverStation.getAlliance();

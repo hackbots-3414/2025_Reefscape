@@ -4,6 +4,7 @@ import java.util.Optional;
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Distance;
 
 /**
  * A class representing the goal end state of an autopilot action
@@ -16,7 +17,7 @@ public class APTarget {
   protected Pose2d m_reference;
   protected Optional<Rotation2d> m_entryAngle;
   protected double m_velocity;
-  protected Optional<Double> m_rotationRadius;
+  protected Optional<Distance> m_rotationRadius;
 
   /**
    * Creates a blank autopilot target with reference (0,0) and rotation of zero.
@@ -40,11 +41,10 @@ public class APTarget {
 
   /**
    * Modifies this instance's reference pose and returns itself for easier method chaining.
-   * <i>NOTE:</i> This also sets, if unset, the entry angle to be the angle of the pose.
    */
   public APTarget withReference(Pose2d reference) {
     APTarget target = this.clone();
-    target.m_entryAngle = Optional.of(reference.getRotation());
+    target.m_reference = reference;
     return target;
   }
 
@@ -73,7 +73,7 @@ public class APTarget {
    * default, rotation goals are always respected, but if autopilot shouldn't reorient the robot
    * until X distance from setpoint, this can be used to make that change.
    */
-  public APTarget withRotationRadius(double radius) {
+  public APTarget withRotationRadius(Distance radius) {
     APTarget copy = this.clone();
     copy.m_rotationRadius = Optional.of(radius);
     return copy;
@@ -103,7 +103,7 @@ public class APTarget {
   /**
    * Returns this target's rotation radius
    */
-  public Optional<Double> getRotationRadius() {
+  public Optional<Distance> getRotationRadius() {
     return m_rotationRadius;
   }
 

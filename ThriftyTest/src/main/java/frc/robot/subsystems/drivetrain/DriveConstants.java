@@ -31,13 +31,15 @@ public class DriveConstants {
       .withAcceleration(15.0)
       .withJerk(1.5);
 
-  private static final APConstraints kTightAutopilotCorrectionConstraints = APConstraints.unlimited();
+  private static final APConstraints kTightAutopilotCorrectionConstraints =
+      APConstraints.unlimited();
 
   private static final APProfile kTightProfile = new APProfile()
       .withPathConstraints(kTightAutopilotPathConstraints)
       .withCorrectionConstraints(kTightAutopilotCorrectionConstraints)
       .withErrorXY(Centimeters.of(1))
-      .withErrorTheta(Degrees.of(1));
+      .withErrorTheta(Degrees.of(1))
+      .withBeelineRadius(Centimeters.of(10));
 
   public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
 
@@ -46,17 +48,19 @@ public class DriveConstants {
           .withAcceleration(20)
           .withJerk(8);
 
-  private static final APConstraints kFastAutopilotCorrectionConstraints = APConstraints.unlimited();
+  private static final APConstraints kFastAutopilotCorrectionConstraints =
+      APConstraints.unlimited();
 
   private static final APProfile kFastProfile = new APProfile()
       .withPathConstraints(kFastAutopilotPathConstraints)
       .withCorrectionConstraints(kFastAutopilotCorrectionConstraints)
       .withErrorXY(Centimeters.of(15))
-      .withErrorTheta(Degrees.of(5));
+      .withErrorTheta(Degrees.of(5))
+      .withBeelineRadius(Centimeters.of(10));
 
   public static final Autopilot kFastAutopilot = new Autopilot(kFastProfile);
 
-  protected static final PPHolonomicDriveController k_pathplannerHolonomicDriveController =
+  protected static final PPHolonomicDriveController kPathplannerHolonomicDriveController =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
 
   protected static final double kMaxTeleopLinearSpeed =
