@@ -1,0 +1,9 @@
+Align E
+L4
+(Recalibrate + Intake) & ((Coral Wait ? Align RIntake) + Align D)
+L4
+(Recalibrate + Intake) & ((Coral Wait ? Beeline RIntake) + Align C)
+L4
+(Recalibrate + Intake) & ((Coral Wait ? Beeline RIntake) + Align B)
+L4
+Recalibrate
