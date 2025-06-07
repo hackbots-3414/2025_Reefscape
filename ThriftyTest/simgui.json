@@ -188,7 +188,7 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Coral": {
+        "Algae": {
           "open": true
         },
         "Super Field": {
@@ -207,9 +207,6 @@
   },
   "NetworkTables Info": {
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {

@@ -44,15 +44,15 @@ public class Autopilot {
    */
   public Transform2d calculate(Pose2d current, Translation2d velocity, APTarget target) {
     Translation2d offset = toTargetCoorinateFrame(
-        target.m_reference.getTranslation().minus(current.getTranslation()), target);
+        target.reference.getTranslation().minus(current.getTranslation()), target);
     if (offset.equals(Translation2d.kZero)) {
-      return new Transform2d(Translation2d.kZero, target.m_reference.getRotation());
+      return new Transform2d(Translation2d.kZero, target.reference.getRotation());
     }
     Translation2d initial = toTargetCoorinateFrame(velocity, target);
     double disp = offset.getNorm();
-    if (target.m_entryAngle.isEmpty() || disp < m_profile.beelineRadius.in(Meters)) {
+    if (target.entryAngle.isEmpty() || disp < m_profile.beelineRadius.in(Meters)) {
       Translation2d towardsTarget = offset.div(disp);
-      Translation2d goal = towardsTarget.times(calculateMaxVelocity(disp, target.m_velocity));
+      Translation2d goal = towardsTarget.times(calculateMaxVelocity(disp, target.velocity));
       Translation2d out = correct(initial, goal);
       Translation2d velo = toGlobalCoordinateFrame(out, target);
       Rotation2d rot = getRotationTarget(current.getRotation(), target, disp);
@@ -70,7 +70,7 @@ public class Autopilot {
    * direction of the target's entry angle, if applicable (otherwise no change to angles).
    */
   private Translation2d toTargetCoorinateFrame(Translation2d coords, APTarget target) {
-    Rotation2d entryAngle = target.m_entryAngle.orElse(Rotation2d.kZero);
+    Rotation2d entryAngle = target.entryAngle.orElse(Rotation2d.kZero);
     return coords.rotateBy(entryAngle.unaryMinus());
   }
 
@@ -78,13 +78,12 @@ public class Autopilot {
    * Turns a translation from a target-relative coordinate frame to a global coordinate frame
    */
   private Translation2d toGlobalCoordinateFrame(Translation2d coords, APTarget target) {
-    Rotation2d entryAngle = target.m_entryAngle.orElse(Rotation2d.kZero);
+    Rotation2d entryAngle = target.entryAngle.orElse(Rotation2d.kZero);
     return coords.rotateBy(entryAngle);
   }
 
   /**
    * Determines the maximum velocity required to travel the given distance and end at rest.
-   *
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
     return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.pathConstraints.jerk, 1.0 / 3.0)
@@ -143,13 +142,13 @@ public class Autopilot {
     double vy = rads * theta.getCos() + theta.getSin();
     return new Translation2d(vx, vy)
         .div(Math.hypot(vx, vy)) // normalize
-        .times(calculateMaxVelocity(dist, target.m_velocity)); // and scale to new length
+        .times(calculateMaxVelocity(dist, target.velocity)); // and scale to new length
   }
 
   /**
    * Using a precomputed integral, returns the length of the path that the swirly method generates.
    *
-   * More specificallu, this calcualtes the arc length of the polar curve r=theta from the given
+   * More specifically, this calcualtes the arc length of the polar curve r=theta from the given
    * angle to zero, then scales it to match.
    */
   private double calculateSwirlyLength(double theta, double radius) {
@@ -173,19 +172,19 @@ public class Autopilot {
   }
 
   private Rotation2d getRotationTarget(Rotation2d current, APTarget target, double dist) {
-    if (target.m_rotationRadius.isEmpty()) {
-      return target.m_reference.getRotation();
+    if (target.rotationRadius.isEmpty()) {
+      return target.reference.getRotation();
     }
-    double radius = target.m_rotationRadius.get().in(Meters);
+    double radius = target.rotationRadius.get().in(Meters);
     if (radius > dist) {
-      return target.m_reference.getRotation();
+      return target.reference.getRotation();
     } else {
       return current;
     }
   }
 
   public boolean atSetpoint(Pose2d current, APTarget target) {
-    Pose2d goal = target.m_reference;
+    Pose2d goal = target.reference;
     boolean okXY = Math.hypot(current.getX() - goal.getX(),
         current.getY() - goal.getY()) <= m_profile.errorXY.in(Meters);
     boolean okTheta = Math.abs(current.getRotation().minus(goal.getRotation())

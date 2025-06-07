@@ -72,10 +72,15 @@ public class NamedCommandBindings implements Binder {
     NamedCommands.registerCommand("Align GH", superstructure.enter(
         new Align(new APTarget(FieldConstants.kGH).withEntryAngle(FieldConstants.kGH.getRotation()))
             .allianceRelative()));
-    APTarget barge = new APTarget(FieldConstants.kBarge)
-        .withEntryAngle(Rotation2d.fromDegrees(-135.0))
-        .withRotationRadius(Meters.of(1.0));
-    NamedCommands.registerCommand("Align Barge", superstructure.enter(
-        new Align(barge).allianceRelative().fast()));
+    APTarget bargeFromCenter = new APTarget(FieldConstants.kBarge)
+        .withEntryAngle(Rotation2d.fromDegrees(55.0))
+        .withRotationRadius(Meters.of(1.5));
+    APTarget bargeFromLeft = new APTarget(FieldConstants.kBarge)
+      .withEntryAngle(Rotation2d.kCW_Pi_2)
+      .withRotationRadius(Meters.of(1.5));
+    NamedCommands.registerCommand("Align Barge Center", superstructure.enter(
+        new Align(bargeFromCenter).allianceRelative().fast()));
+    NamedCommands.registerCommand("Align Barge Left", superstructure.enter(
+          new Align(bargeFromLeft).allianceRelative().fast()));
   }
 }
