@@ -9,7 +9,10 @@ import edu.wpi.first.units.measure.Distance;
 /**
  * A class representing the goal end state of an autopilot action
  * 
- * A target needs a reference Pose2d, but can optionally have a specified entry angle
+ * A target needs a reference Pose2d, but can optionally have a specified entry angle and rotation
+ * radius
+ *
+ * A target may also specify an end velocity.
  *
  * The target also may have a desired end velocity.
  */
@@ -20,7 +23,9 @@ public class APTarget {
   protected Optional<Distance> m_rotationRadius;
 
   /**
-   * Creates a blank autopilot target with reference (0,0) and rotation of zero.
+   * Creates a autopilot target with reference (0,0) and rotation of zero.
+   *
+   * This target has an end velocity of 0, and no specified entry angle.
    */
   public APTarget() {
     m_reference = Pose2d.kZero;
@@ -40,7 +45,7 @@ public class APTarget {
   }
 
   /**
-   * Modifies this instance's reference pose and returns itself for easier method chaining.
+   * Returns a copy of this target with the given reference.
    */
   public APTarget withReference(Pose2d reference) {
     APTarget target = this.clone();
@@ -49,7 +54,7 @@ public class APTarget {
   }
 
   /**
-   * Modifies this instance's entry angle and returns itself for easier method chaining
+   * Returns a copy of this target with the given entry angle.
    */
   public APTarget withEntryAngle(Rotation2d entryAngle) {
     APTarget target = this.clone();
@@ -58,7 +63,7 @@ public class APTarget {
   }
 
   /**
-   * Modifies this instance's end velocity and returns itself for easier method chaining
+   * Returns a copy of this target with the given end velocity.
    */
   public APTarget withVelocity(double velocity) {
     APTarget target = this.clone();
@@ -67,7 +72,7 @@ public class APTarget {
   }
 
   /**
-   * Modifies this instance's rotation radius and returns itself for easier method chaining
+   * Returns a copy of this target with the given rotation radius.
    *
    * Rotation radius is the distance from the target pose that rotation goals are respected. By
    * default, rotation goals are always respected, but if autopilot shouldn't reorient the robot
@@ -80,35 +85,35 @@ public class APTarget {
   }
 
   /**
-   * Returns this target's reference pose
+   * Returns this target's reference pose.
    */
   public Pose2d getReference() {
     return m_reference;
   }
 
   /**
-   * Returns this target's desired entry angle
+   * Returns this target's desired entry angle.
    */
   public Optional<Rotation2d> getEntryAngle() {
     return m_entryAngle;
   }
 
   /**
-   * Returns this target's end velocity
+   * Returns this target's end velocity.
    */
   public double getVelocity() {
     return m_velocity;
   }
 
   /**
-   * Returns this target's rotation radius
+   * Returns this target's rotation radius.
    */
   public Optional<Distance> getRotationRadius() {
     return m_rotationRadius;
   }
 
   /**
-   * Flips a target across the field, preserving relative entry angle and rotation.
+   * Flips a target across the field.
    */
   public APTarget flip() {
     Pose2d ref = FlippingUtil.flipFieldPose(m_reference);

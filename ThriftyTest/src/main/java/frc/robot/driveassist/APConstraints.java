@@ -1,10 +1,12 @@
 package frc.robot.driveassist;
 
 /**
- * A class that holds constrain information for an autopilot action Constraints are max acceleration
- * and decelleration.
+ * A class that holds constrain information for an autopilot action.
+ * 
+ * Constraints are max velocity, acceleration, and jerk.
  */
 public class APConstraints {
+  protected double velocity;
   protected double acceleration;
   protected double jerk;
 
@@ -12,20 +14,43 @@ public class APConstraints {
   public APConstraints() {}
 
   /**
-   * Creates a new APCosntraints with given acceleration and deceleration */
-  public APConstraints(double acceleration, double jerk) {
+   * Creates a new APConstraints with given max velocity, acceleration, and jerk
+   */
+  public APConstraints(double velocity, double acceleration, double jerk) {
+    this.velocity = velocity;
     this.acceleration = acceleration;
     this.jerk = jerk;
   }
 
+  /**
+   * Creates a new APConstraints with a given max acceleration and jerk. Velocity is left unlimited
+   */
+  public APConstraints(double acceleration, double jerk) {
+    this(Double.POSITIVE_INFINITY, acceleration, jerk);
+  }
+
   /** Unlimited constraints */
   public static APConstraints unlimited() {
-    return new APConstraints(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+    return new APConstraints(
+        Double.POSITIVE_INFINITY,
+        Double.POSITIVE_INFINITY,
+        Double.POSITIVE_INFINITY);
+  }
+
+  /**
+   * Modifies this constraint's max velocity and returns itself. This is the maximum velocity that
+   * autopilot will demand.
+   */
+  public APConstraints withVelocity(double velocity) {
+    this.velocity = velocity;
+    return this;
   }
 
   /**
    * Modifies this constraint's max acceleration value and returns itself. This affects the maximum
    * acceleration that the autopilot action will use to correct initial velocities.
+   *
+   * This value is only used for the start of an autopilot action, not the end behavior.
    */
   public APConstraints withAcceleration(double acceleration) {
     this.acceleration = acceleration;

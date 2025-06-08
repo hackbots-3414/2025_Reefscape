@@ -2,8 +2,6 @@ package frc.robot.driveassist;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -13,16 +11,12 @@ import edu.wpi.first.math.geometry.Translation2d;
  * Autopilot is a class that tries to drive a target to a goal in 2 dimensional space.
  *
  * Autopilot is a fast algorithm because it doesn not think ahead. Any and all math is already
- * worked out such that a small amount of computation is necessary on the fly.
+ * worked out such that only a small amount of computation is necessary on the fly.
+ *
  *
  * This means that autopilot is un able to avoid obstacles, because it cannot think ahead.
- *
- * It also is not guarunteed to provide the fastest path - however, it is well tuned such that it
- * gives very close results.
  */
 public class Autopilot {
-  @SuppressWarnings("unused")
-  private static final Logger m_logger = LoggerFactory.getLogger(Autopilot.class);
   private APProfile m_profile;
 
   private final double dt = 0.020;
@@ -38,9 +32,9 @@ public class Autopilot {
   /**
    * Returns the next field relative velocity for the trajectory
    *
-   * @param current The robot's current position
-   * @param velocity The robot's current (field relative) velocity
-   * @param target The target the robot should drive towards
+   * @param current The robot's current position.
+   * @param velocity The robot's current <b>field relative</b> velocity.
+   * @param target The target the robot should drive towards.
    */
   public Transform2d calculate(Pose2d current, Translation2d velocity, APTarget target) {
     Translation2d offset = toTargetCoorinateFrame(
@@ -75,7 +69,7 @@ public class Autopilot {
   }
 
   /**
-   * Turns a translation from a target-relative coordinate frame to a global coordinate frame
+   * Turns a translation from a target-relative coordinate frame to a global coordinate frame.
    */
   private Translation2d toGlobalCoordinateFrame(Translation2d coords, APTarget target) {
     Rotation2d entryAngle = target.m_entryAngle.orElse(Rotation2d.kZero);
@@ -83,17 +77,17 @@ public class Autopilot {
   }
 
   /**
-   * Determines the maximum velocity required to travel the given distance and end at rest.
-   *
+   * Determines the maximum velocity required to travel the given distance and end at the desired
+   * end velocity.
    */
   private double calculateMaxVelocity(double dist, double endVelo) {
-    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.pathConstraints.jerk, 1.0 / 3.0)
+    return Math.pow((4.5 * Math.pow(dist, 2.0)) * m_profile.constraints.jerk, 1.0 / 3.0)
         + endVelo;
   }
 
   /**
    * Attempts to drive the initial translation to the goal translation using the parameters for
-   * acceleration given in the profile
+   * acceleration given in the profile.
    */
   private Translation2d correct(Translation2d initial, Translation2d goal) {
     Rotation2d angleOffset = Rotation2d.kZero;
@@ -103,13 +97,11 @@ public class Autopilot {
     Translation2d adjustedGoal = goal.rotateBy(angleOffset.unaryMinus());
     Translation2d adjustedInitial = initial.rotateBy(angleOffset.unaryMinus());
     double initialI = adjustedInitial.getX();
-    double initialU = adjustedInitial.getY();
     double goalI = adjustedGoal.getX();
     // we cap the adjusted I because we'd rather adjust now than overshoot.
     double adjustedI = Math.min(goalI,
-        push(initialI, goalI, m_profile.pathConstraints.acceleration));
-    double adjustedU = push(initialU, 0, m_profile.correctionConstraints.acceleration);
-    return new Translation2d(adjustedI, adjustedU).rotateBy(angleOffset);
+        push(initialI, goalI, m_profile.constraints.acceleration));
+    return new Translation2d(adjustedI, 0).rotateBy(angleOffset);
   }
 
   /**
@@ -150,13 +142,9 @@ public class Autopilot {
    * Using a precomputed integral, returns the length of the path that the swirly method generates.
    *
    * More specificallu, this calcualtes the arc length of the polar curve r=theta from the given
-   * angle to zero, then scales it to match.
+   * angle to zero, then scales it to match the current state.
    */
   private double calculateSwirlyLength(double theta, double radius) {
-    // Dear other programmer(s):
-    // I will now apologize for what follows.
-    // Please just trust it works. I precomputed the integral and this is what it turns out to be.
-    // Blame Netwon, not me.
     if (theta == 0) {
       return radius;
     }
@@ -172,6 +160,9 @@ public class Autopilot {
     return scaled;
   }
 
+  /**
+   * Returns the correct target heading for the current state
+   */
   private Rotation2d getRotationTarget(Rotation2d current, APTarget target, double dist) {
     if (target.m_rotationRadius.isEmpty()) {
       return target.m_reference.getRotation();
@@ -184,7 +175,10 @@ public class Autopilot {
     }
   }
 
-  public boolean atSetpoint(Pose2d current, APTarget target) {
+  /**
+   * Returns whether the given pose is within tolerance for the target
+   */
+  public boolean atTarget(Pose2d current, APTarget target) {
     Pose2d goal = target.m_reference;
     boolean okXY = Math.hypot(current.getX() - goal.getX(),
         current.getY() - goal.getY()) <= m_profile.errorXY.in(Meters);

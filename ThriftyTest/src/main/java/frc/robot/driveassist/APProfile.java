@@ -6,16 +6,18 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 /**
- * A class representing a profile that completely determines how AP approaches a target.
+ * A class representing a profile that determines how AP approaches a target.
  *
- * A profile includes two APConstraints, one for the direction towards the target, and one for the
- * direction perpendicular to the target.
+ * The constraints property of the profile limits the robot's behavior.
  *
- * A profile also includes a maximum error, in the XY plane as well as rotation.
+ * Acceptable error for the controller (both translational and rotational) are stored here.
+ *
+ * The "beeline radius" determines the distance at which the robot drives directly at the target and
+ * no longer respects entry angle. This is helpful because if the robot overshoots by a small
+ * amount, that error should not cause the robot do completely circle back around.
  */
 public class APProfile {
-  protected APConstraints pathConstraints;
-  protected APConstraints correctionConstraints;
+  protected APConstraints constraints;
   protected Distance errorXY;
   protected Angle errorTheta;
   protected Distance beelineRadius;
@@ -45,16 +47,8 @@ public class APProfile {
   /**
    * Modifies this profile's path generation constraints and returns itself
    */
-  public APProfile withPathConstraints(APConstraints pathConstraints) {
-    this.pathConstraints = pathConstraints;
-    return this;
-  }
-
-  /**
-   * Modifies this profile's correction constraints and returns itself
-   */
-  public APProfile withCorrectionConstraints(APConstraints correctionConstraints) {
-    this.correctionConstraints = correctionConstraints;
+  public APProfile withConstraints(APConstraints constraints) {
+    this.constraints = constraints;
     return this;
   }
 
@@ -87,15 +81,8 @@ public class APProfile {
   /**
    * Returns the path generation constraints for this profile
    */
-  public APConstraints getPathConstraints() {
-    return pathConstraints;
-  }
-
-  /**
-   * Returns the correction constraints for this profile
-   */
-  public APConstraints getCorrectionConstraints() {
-    return correctionConstraints;
+  public APConstraints getConstraints() {
+    return constraints;
   }
 
   /**

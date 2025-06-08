@@ -429,7 +429,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               .withTargetDirection(output.getRotation()));
         }))
         .until(() -> {
-          return autopilot.atSetpoint(m_estimatedPose, target);
+          return autopilot.atTarget(m_estimatedPose, target);
         })
         .finallyDo(this::stop)
         .finallyDo(interrupted -> setAligned(!interrupted))
