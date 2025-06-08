@@ -15,6 +15,7 @@ import frc.robot.superstructure.states.CoralIntake;
 import frc.robot.superstructure.states.CoralScore;
 import frc.robot.superstructure.states.CoralWait;
 import frc.robot.superstructure.states.ElevatorZero;
+import frc.robot.superstructure.states.HighGroundAlgaeIntake;
 import frc.robot.superstructure.states.LowerReefAlgaeIntake;
 import frc.robot.superstructure.states.Net;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
@@ -72,15 +73,32 @@ public class NamedCommandBindings implements Binder {
     NamedCommands.registerCommand("Align GH", superstructure.enter(
         new Align(new APTarget(FieldConstants.kGH).withEntryAngle(FieldConstants.kGH.getRotation()))
             .allianceRelative()));
-    APTarget bargeFromCenter = new APTarget(FieldConstants.kBarge)
+    APTarget bargeFromCenter = new APTarget(FieldConstants.kBargeFromCenter)
         .withEntryAngle(Rotation2d.fromDegrees(55.0))
         .withRotationRadius(Meters.of(1.5));
-    APTarget bargeFromLeft = new APTarget(FieldConstants.kBarge)
-      .withEntryAngle(Rotation2d.kCW_Pi_2)
-      .withRotationRadius(Meters.of(1.5));
+    APTarget bargeFromLeft = new APTarget(FieldConstants.kBargeFromLeft)
+        .withEntryAngle(Rotation2d.fromDegrees(35))
+        .withRotationRadius(Meters.of(1.5));
     NamedCommands.registerCommand("Align Barge Center", superstructure.enter(
         new Align(bargeFromCenter).allianceRelative().fast()));
     NamedCommands.registerCommand("Align Barge Left", superstructure.enter(
-          new Align(bargeFromLeft).allianceRelative().fast()));
+        new Align(bargeFromLeft).allianceRelative().fast()));
+    NamedCommands.registerCommand("Beeline Barge Center", superstructure.enter(
+        new Align(bargeFromCenter.withoutEntryAngle()).allianceRelative().fast()));
+    NamedCommands.registerCommand("Beeline Barge Left", superstructure.enter(
+        new Align(bargeFromLeft.withoutEntryAngle()).allianceRelative().fast()));
+
+    /* Kettering-specific named commands */
+    NamedCommands.registerCommand("High Ground Algae", superstructure.enter(new HighGroundAlgaeIntake()));
+    APTarget inLollipop = new APTarget(FieldConstants.kInLollipop)
+        .withEntryAngle(Rotation2d.kZero)
+        .withRotationRadius(Meters.of(2.0));
+    APTarget outLollipop = new APTarget(FieldConstants.kOutLollipop)
+        .withEntryAngle(Rotation2d.kZero)
+        .withRotationRadius(Meters.of(2.0));
+    NamedCommands.registerCommand("Align Inside Lollipop", superstructure.enter(
+        new Align(inLollipop).allianceRelative()));
+    NamedCommands.registerCommand("Align Outside Lollipop", superstructure.enter(
+        new Align(outLollipop).allianceRelative()));
   }
 }

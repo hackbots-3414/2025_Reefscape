@@ -41,6 +41,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Prep/Set Left": {
         "window": {
           "visible": true

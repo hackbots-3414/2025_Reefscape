@@ -1,5 +1,6 @@
 package frc.robot.binding;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.modifiers.AlgaeElevatorHold;
 import frc.robot.superstructure.modifiers.ElevatorPrep;
@@ -13,6 +14,7 @@ public class RobotBindings implements Binder {
         superstructure.inReefZone().and(superstructure.holdingCoral()));
     /* no elevator movement when in reef and holding algae */
     superstructure.modify(new AlgaeElevatorHold(),
-        superstructure.inReefZone().and(superstructure.holdingAlgae()));
+        superstructure.inReefZone().and(superstructure.holdingAlgae()).or(
+          superstructure.holdingAlgae().and(DriverStation::isAutonomous)));
   }
 }

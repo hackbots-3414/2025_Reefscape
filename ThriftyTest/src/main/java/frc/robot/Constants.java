@@ -39,11 +39,15 @@ public class Constants {
     public static final Pose2d kGH = new Pose2d(5.791, 4.046, Rotation2d.k180deg);
     public static final Pose2d kIJ = new Pose2d(5.155, 5.194, Rotation2d.fromDegrees(-120));
 
-    public static final Pose2d kBarge = new Pose2d(7.459, 4.717, Rotation2d.fromDegrees(21.0));
+    public static final Pose2d kBargeFromCenter = new Pose2d(7.459, 4.717, Rotation2d.fromDegrees(21.0));
+    public static final Pose2d kBargeFromLeft = new Pose2d(7.5, 6.6, Rotation2d.fromDegrees(21.0));
 
     public static final Pose2d kStartCenter = new Pose2d(7.076, 3.991, Rotation2d.kPi);
     public static final Pose2d kStartRight = new Pose2d(7.076, 1.883, Rotation2d.kPi);
     public static final Pose2d kStartLeft = new Pose2d(7.076, 6.027, Rotation2d.kPi);
+
+    public static final Pose2d kOutLollipop = new Pose2d(8.076039, 6.693156, Rotation2d.kZero);
+    public static final Pose2d kInLollipop = new Pose2d(8.076039, 5.614507, Rotation2d.kZero);
   }
 
   public static final class StateSpaceConstants {

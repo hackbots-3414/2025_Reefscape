@@ -58,6 +58,15 @@ public class APTarget {
   }
 
   /**
+   * Returns a copy of this target, without a requested entry angle
+   */
+  public APTarget withoutEntryAngle() {
+    APTarget target = this.clone();
+    target.entryAngle = Optional.empty();
+    return target;
+  }
+
+  /**
    * Modifies this instance's end velocity and returns itself for easier method chaining
    */
   public APTarget withVelocity(double velocity) {
