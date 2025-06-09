@@ -99,6 +99,9 @@ public class Autopilot {
     double initialI = adjustedInitial.getX();
     double goalI = adjustedGoal.getX();
     // we cap the adjusted I because we'd rather adjust now than overshoot.
+    if (goalI > m_profile.constraints.velocity) {
+      goalI = m_profile.constraints.velocity;
+    }
     double adjustedI = Math.min(goalI,
         push(initialI, goalI, m_profile.constraints.acceleration));
     return new Translation2d(adjustedI, 0).rotateBy(angleOffset);

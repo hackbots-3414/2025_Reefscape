@@ -11,7 +11,9 @@ public class APConstraints {
   protected double jerk;
 
   /** Creates a blank APConstraints */
-  public APConstraints() {}
+  public APConstraints() {
+    this.velocity = Double.POSITIVE_INFINITY; // Default to no limit on velocity
+  }
 
   /**
    * Creates a new APConstraints with given max velocity, acceleration, and jerk
@@ -26,7 +28,8 @@ public class APConstraints {
    * Creates a new APConstraints with a given max acceleration and jerk. Velocity is left unlimited
    */
   public APConstraints(double acceleration, double jerk) {
-    this(Double.POSITIVE_INFINITY, acceleration, jerk);
+    this.acceleration = acceleration;
+    this.jerk = jerk;
   }
 
   /** Unlimited constraints */

@@ -188,9 +188,6 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Coral": {
-          "open": true
-        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
@@ -207,9 +204,6 @@
   },
   "NetworkTables Info": {
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {
