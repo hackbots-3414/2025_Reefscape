@@ -1,0 +1,37 @@
+{
+	"name": "Dragon Reins",
+	"components": [
+		{
+			"type": "button",
+			"isYellow": false,
+			"isEllipse": true,
+			"centerPx": [1300, 1300],
+			"sizePx": [300,300],
+			"sourceIndex": 2
+		},
+		{
+			"type": "button",
+			"isYellow": false,
+			"isEllipse": true,
+			"centerPx": [3000,1300],
+			"sizePx": [300,300],
+			"sourceIndex": 1
+		},
+		{
+			"type": "button",
+			"isYellow": true,
+			"isEllipse": false,
+			"centerPx": [1600,600],
+			"sizePx": [200,200],
+			"sourceIndex": 4
+		},
+		{
+			"type": "button",
+			"isYellow": true,
+			"isEllipse": false,
+			"centerPx": [2400, 600],
+			"sizePx": [200,200],
+			"sourceIndex": 3
+		}
+	]
+}
