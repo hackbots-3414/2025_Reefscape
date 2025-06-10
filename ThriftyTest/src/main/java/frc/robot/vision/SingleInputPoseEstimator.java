@@ -23,8 +23,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import static edu.wpi.first.units.Units.Seconds;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotObserver;
 import frc.robot.vision.CameraIO.CameraIOInputs;
@@ -36,12 +37,12 @@ public class SingleInputPoseEstimator implements Runnable {
   private final CameraIOInputs m_inputs;
 
   private final Consumer<TimestampedPoseEstimate> m_reporter;
+  private Pose2d m_lastPose;
 
   private final PhotonPoseEstimator m_estimator;
-
   private final MultiInputFilter m_filter;
 
-  private Pose2d m_lastPose;
+  private final Alert m_disconnectedAlert;
 
   public SingleInputPoseEstimator(
       MultiInputFilter fitler,
@@ -51,6 +52,7 @@ public class SingleInputPoseEstimator implements Runnable {
     m_inputs = new CameraIOInputs();
     m_reporter = updateCallback;
     m_filter = fitler;
+    m_disconnectedAlert = new Alert("Vision/Camera Status", io.getName() + " disconnected", AlertType.kError);
     m_estimator = new PhotonPoseEstimator(
         VisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -61,6 +63,10 @@ public class SingleInputPoseEstimator implements Runnable {
   public void refresh(Pose2d robotPose) {
     m_lastPose = robotPose;
     m_io.updateInputs(m_inputs);
+    m_disconnectedAlert.set(!m_inputs.connected);
+    if (!m_inputs.connected) {
+      return;
+    }
     for (PhotonPipelineResult result : m_inputs.unreadResults) {
       Set<Integer> tags = result.getTargets().stream()
           .map(target -> target.getFiducialId())
@@ -71,11 +77,7 @@ public class SingleInputPoseEstimator implements Runnable {
 
   @Override
   public void run() {
-    // FIXME these should be logged and only an alert should be shown if a camera is bad
-    // Don't use SD for noncritical logging.
-    SmartDashboard.putBoolean("Vision/" + m_io.getName() + " connected", m_inputs.connected);
     if (!m_inputs.connected) {
-      m_logger.error("Unable to read data from {}", m_io.getName());
       return;
     }
     // Pull the latest data from the camera.
@@ -243,6 +245,10 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private double getAmbiguity(PhotonPipelineResult result) {
     return result.getBestTarget().getPoseAmbiguity();
+  }
+
+  public boolean isConnected() {
+    return m_inputs.connected;
   }
 }
 

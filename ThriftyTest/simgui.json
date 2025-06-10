@@ -16,6 +16,7 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auton Chooser": "String Chooser",
+      "/SmartDashboard/Camera Status": "Alerts",
       "/SmartDashboard/Climber/Stow": "Command",
       "/SmartDashboard/Command Scheduler": "Scheduler",
       "/SmartDashboard/Elevator/Lazy Zero": "Command",
@@ -33,6 +34,8 @@
       "/SmartDashboard/Test/LowReefAlgaeIntake": "Command",
       "/SmartDashboard/Test/Upper algae reef": "Command",
       "/SmartDashboard/Test?": "Alerts",
+      "/SmartDashboard/Vision": "Alerts",
+      "/SmartDashboard/Vision/Camera Status": "Alerts",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
@@ -179,6 +182,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Vision/Camera Status": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -188,13 +196,13 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Coral": {
-          "open": true
-        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
           }
+        },
+        "Vision": {
+          "open": true
         },
         "open": true
       },
@@ -207,9 +215,6 @@
   },
   "NetworkTables Info": {
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {

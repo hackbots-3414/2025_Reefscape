@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Robot;
 import frc.robot.utils.LoopTimer;
+import frc.robot.utils.OnboardLogger;
 
 public class VisionHandler implements AutoCloseable {
   @SuppressWarnings("unused")
@@ -25,16 +26,17 @@ public class VisionHandler implements AutoCloseable {
 
   private final Notifier m_notifier;
   private final List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
+  private final MultiInputFilter m_filter;
 
   private final VisionLogger m_esimateLogger;
-
-  private final MultiInputFilter m_filter;
+  private final OnboardLogger m_ologger;
 
   public VisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
     m_poseSupplier = poseSupplier;
     m_consumer = callback;
     m_filter = new MultiInputFilter();
     m_esimateLogger = new VisionLogger();
+    m_ologger = new OnboardLogger("Vision");
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
     m_loopTimer = new LoopTimer("Vision");
@@ -55,6 +57,7 @@ public class VisionHandler implements AutoCloseable {
           io,
           this::addEstimate);
       m_estimators.add(estimator);
+      m_ologger.registerBoolean(cameraName + " connected", estimator::isConnected);
     }
   }
 
@@ -70,6 +73,7 @@ public class VisionHandler implements AutoCloseable {
     }
     // finish logging
     m_esimateLogger.log();
+    m_ologger.log();
     m_loopTimer.log();
   }
 

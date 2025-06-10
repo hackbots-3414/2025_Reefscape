@@ -9,6 +9,7 @@ import org.photonvision.simulation.VisionSystemSim;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotObserver;
 
 public class CameraIOSim implements CameraIO {
@@ -26,17 +27,22 @@ public class CameraIOSim implements CameraIO {
 
   private final Supplier<Pose2d> m_poseSupplier;
 
+  private final String m_name;
+
   public CameraIOSim(String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier) {
-    setup();
+    setupSimProps();
+    m_name = name;
     m_poseSupplier = poseSupplier;
     m_camera = new PhotonCamera(name);
     m_robotToCamera = robotToCamera;
     m_cameraSim = new PhotonCameraSim(m_camera, simProps);
     m_cameraSim.enableDrawWireframe(true);
     simSystem.addCamera(m_cameraSim, m_robotToCamera);
+    SmartDashboard.putBoolean("Vision/" + m_name + " connected", true);
   }
 
   public void updateInputs(CameraIOInputs inputs) {
+    inputs.connected = SmartDashboard.getBoolean("Vision/" + m_name + " connected", true);
     simSystem.update(m_poseSupplier.get());
     inputs.unreadResults = m_camera.getAllUnreadResults();
   }
@@ -49,7 +55,7 @@ public class CameraIOSim implements CameraIO {
     return m_robotToCamera;
   }
 
-  private static void setup() {
+  private static void setupSimProps() {
     if (setupComplete) {
       return;
     }
