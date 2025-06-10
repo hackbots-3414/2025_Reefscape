@@ -3,22 +3,6 @@
 	"components": [
 		{
 			"type": "button",
-			"isYellow": false,
-			"isEllipse": true,
-			"centerPx": [1300, 1300],
-			"sizePx": [300,300],
-			"sourceIndex": 2
-		},
-		{
-			"type": "button",
-			"isYellow": false,
-			"isEllipse": true,
-			"centerPx": [3000,1300],
-			"sizePx": [300,300],
-			"sourceIndex": 1
-		},
-		{
-			"type": "button",
 			"isYellow": true,
 			"isEllipse": false,
 			"centerPx": [1600,600],
@@ -32,6 +16,28 @@
 			"centerPx": [2400, 600],
 			"sizePx": [200,200],
 			"sourceIndex": 3
-		}
+		},
+    {
+      "type": "joystick",
+      "isYellow": false,
+      "centerPx": [1300,1300],
+      "radiusPx": 200,
+      "xSourceIndex": 0,
+      "xSourceInverted": false,
+      "ySourceIndex": 1,
+      "ySourceInverted": false,
+      "buttonSourceIndex": 2
+    },
+    {
+      "type": "joystick",
+      "isYellow": false,
+			"centerPx": [2900,1200],
+      "radiusPx": 200,
+      "xSourceIndex": 3,
+      "ySourceIndex": 2,
+      "xSourceInverted": true,
+      "ySourceInverted": false,
+      "buttonSourceIndex": 1
+    }
 	]
 }

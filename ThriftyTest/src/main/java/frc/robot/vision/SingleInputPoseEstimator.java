@@ -71,6 +71,8 @@ public class SingleInputPoseEstimator implements Runnable {
 
   @Override
   public void run() {
+    // FIXME these should be logged and only an alert should be shown if a camera is bad
+    // Don't use SD for noncritical logging.
     SmartDashboard.putBoolean("Vision/" + m_io.getName() + " connected", m_inputs.connected);
     if (!m_inputs.connected) {
       m_logger.error("Unable to read data from {}", m_io.getName());
