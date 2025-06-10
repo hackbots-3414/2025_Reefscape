@@ -155,21 +155,17 @@ public class Autopilot {
   private double calculateSwirlyLength(double theta, double radius) {
     // Dear other programmer(s):
     // I will now apologize for what follows.
-    // Please just trust it works. I precomputed the integral and this is what it turns out to be.
-    // Blame Netwon, not me.
+    // If you're curious as to how this works, I have this desmos graph that I used to figure this
+    // out:
+    // https://www.desmos.com/calculator/ubzmam6dt0
     if (theta == 0) {
       return radius;
     }
     theta = Math.abs(theta);
     double hypot = Math.hypot(theta, 1);
-    double a = theta / hypot;
-    // u is for unscaled.
-    double u1 = 0.5 * hypot * theta;
-    double u2 = 0.25 * Math.log(1 - a);
-    double u3 = 0.25 * Math.log(1 + a);
-    double u = u1 - u2 + u3;
-    double scaled = radius / theta * u;
-    return scaled;
+    double u1 = radius * 0.5 * hypot;
+    double u2 = radius * 0.5 / theta * Math.log(theta + hypot);
+    return u1 + u2;
   }
 
   private Rotation2d getRotationTarget(Rotation2d current, APTarget target, double dist) {
