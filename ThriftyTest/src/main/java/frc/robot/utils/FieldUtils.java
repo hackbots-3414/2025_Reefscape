@@ -5,30 +5,34 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.driveassist.APTarget;
+import com.therekrab.autopilot.APTarget;
 
 public class FieldUtils {
-    /**
-     * If the driver station reports that we are on the red alliance, flip the given pose.
-     * In other words:
-     * Flips a pose either FROM alliance relative TO field relative or FROM field relative TO alliance relative.
-     * Defaults to blue alliance.
-     * <h1>IMPORTANT</h1>
-     * This depends on the current Driver Station settinng for alliance. When this function is called, the driver station pose is read.
-     */
-    public static Pose2d getLocalPose(Pose2d localPose) {
-        if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
-            return FlippingUtil.flipFieldPose(localPose);
-        } else {
-            return localPose;
-        }
+  /**
+   * If the driver station reports that we are on the red alliance, flip the given pose. In other
+   * words: Flips a pose either FROM alliance relative TO field relative or FROM field relative TO
+   * alliance relative. Defaults to blue alliance.
+   * <h1>IMPORTANT</h1> This depends on the current Driver Station settinng for alliance. When this
+   * function is called, the driver station pose is read.
+   */
+  public static Pose2d getLocalPose(Pose2d localPose) {
+    if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
+      return FlippingUtil.flipFieldPose(localPose);
+    } else {
+      return localPose;
     }
+  }
 
-    public static APTarget flipPose(APTarget target) {
-        if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
-            return target.flip();
-        } else {
-            return target;
-        }
+  public static APTarget flipPose(APTarget target) {
+    if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
+      APTarget flipped = target.withReference(FlippingUtil.flipFieldPose(target.getReference()));
+      // Use a weird thing
+      if (target.getEntryAngle().isPresent()) {
+        flipped = flipped.withEntryAngle(FlippingUtil.flipFieldRotation(target.getEntryAngle().get()));
+      }
+      return flipped;
+    } else {
+      return target;
     }
+  }
 }

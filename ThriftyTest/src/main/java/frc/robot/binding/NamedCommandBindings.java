@@ -7,7 +7,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ScoringLocations;
-import frc.robot.driveassist.APTarget;
+import com.therekrab.autopilot.APTarget;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.AlgaeStow;
 import frc.robot.superstructure.states.Align;

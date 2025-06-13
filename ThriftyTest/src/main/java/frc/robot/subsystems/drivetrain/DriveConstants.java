@@ -14,9 +14,9 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
-import frc.robot.driveassist.APConstraints;
-import frc.robot.driveassist.APProfile;
-import frc.robot.driveassist.Autopilot;
+import com.therekrab.autopilot.APConstraints;
+import com.therekrab.autopilot.APProfile;
+import com.therekrab.autopilot.Autopilot;
 import frc.robot.generated.TunerConstants;
 
 public class DriveConstants {
