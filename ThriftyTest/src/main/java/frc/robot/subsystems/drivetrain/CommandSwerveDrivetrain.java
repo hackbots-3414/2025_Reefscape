@@ -45,8 +45,8 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
-import frc.robot.driveassist.APTarget;
-import frc.robot.driveassist.Autopilot;
+import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot;
 import frc.robot.driveassist.ForceField;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
@@ -429,7 +429,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               .withTargetDirection(output.getRotation()));
         }))
         .until(() -> {
-          return autopilot.atSetpoint(m_estimatedPose, target);
+          return autopilot.atTarget(m_estimatedPose, target);
         })
         .finallyDo(this::stop)
         .finallyDo(interrupted -> setAligned(!interrupted))
