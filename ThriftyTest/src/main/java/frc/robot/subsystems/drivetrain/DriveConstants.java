@@ -14,9 +14,9 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
-import frc.robot.driveassist.APConstraints;
-import frc.robot.driveassist.APProfile;
-import frc.robot.driveassist.Autopilot;
+import com.therekrab.autopilot.APConstraints;
+import com.therekrab.autopilot.APProfile;
+import com.therekrab.autopilot.Autopilot;
 import frc.robot.generated.TunerConstants;
 
 public class DriveConstants {
@@ -31,12 +31,8 @@ public class DriveConstants {
       .withAcceleration(15.0)
       .withJerk(1.5);
 
-  private static final APConstraints kTightAutopilotCorrectionConstraints =
-      APConstraints.unlimited();
-
   private static final APProfile kTightProfile = new APProfile()
-      .withPathConstraints(kTightAutopilotPathConstraints)
-      .withCorrectionConstraints(kTightAutopilotCorrectionConstraints)
+      .withConstraints(kTightAutopilotPathConstraints)
       .withErrorXY(Centimeters.of(1))
       .withErrorTheta(Degrees.of(1))
       .withBeelineRadius(Centimeters.of(10));
@@ -48,12 +44,8 @@ public class DriveConstants {
           .withAcceleration(20)
           .withJerk(8);
 
-  private static final APConstraints kFastAutopilotCorrectionConstraints =
-      APConstraints.unlimited();
-
   private static final APProfile kFastProfile = new APProfile()
-      .withPathConstraints(kFastAutopilotPathConstraints)
-      .withCorrectionConstraints(kFastAutopilotCorrectionConstraints)
+      .withConstraints(kFastAutopilotPathConstraints)
       .withErrorXY(Centimeters.of(15))
       .withErrorTheta(Degrees.of(5))
       .withBeelineRadius(Centimeters.of(10));

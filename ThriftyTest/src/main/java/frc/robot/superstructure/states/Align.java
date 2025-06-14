@@ -3,15 +3,14 @@ package frc.robot.superstructure.states;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.DeferredCommand;
-import frc.robot.driveassist.APTarget;
-import frc.robot.driveassist.Autopilot;
+import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot;
 import frc.robot.subsystems.drivetrain.DriveConstants;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
+import frc.robot.utils.FieldUtils;
 
 public class Align implements EnterableState {
   @SuppressWarnings("unused")
@@ -56,9 +55,7 @@ public class Align implements EnterableState {
 
   private APTarget target() {
     if (m_flip) {
-      if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
-        return m_target.flip();
-      }
+      return FieldUtils.flipTargetConditionally(m_target);
     }
     return m_target;
   }

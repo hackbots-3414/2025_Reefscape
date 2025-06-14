@@ -12,7 +12,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ScoringLocationsCenter;
 import frc.robot.Constants.ScoringLocationsLeft;
 import frc.robot.Constants.ScoringLocationsRight;
-import frc.robot.driveassist.APTarget;
+import com.therekrab.autopilot.APTarget;
 import frc.robot.subsystems.drivetrain.DriveConstants;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;

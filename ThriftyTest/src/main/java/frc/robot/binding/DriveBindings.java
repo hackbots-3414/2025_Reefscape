@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.binding.BindingConstants.Driver;
-import frc.robot.driveassist.APTarget;
+import com.therekrab.autopilot.APTarget;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Align;
 import frc.robot.superstructure.states.DeferredAlign;
