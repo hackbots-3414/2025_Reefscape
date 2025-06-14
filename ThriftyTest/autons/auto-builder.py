@@ -7,10 +7,12 @@ syntax:
     To join commands in a parallel command group, use the & operator.
     To join commands in a race group, use the * operator
     To join commands in a deadline group, use the ? operator
-    To make sure that any nesting is done properly, use parens to explicity define order of operations
+    To make sure that any nesting is done properly, use parens to explicity
+    define order of operations
     Multiple lines in a file are different commands running in sequence
 
-    You can leave comments with the # sign. Anything after the # sign is ignored
+    You can leave comments with the # sign. Anything after the # sign is ignored.
+    Comments MUST BE ON THEIR OWN LINE
 
     Here's a command that runs A and B in parallel, then runs C:
 
