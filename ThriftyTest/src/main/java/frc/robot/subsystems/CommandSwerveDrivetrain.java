@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
+import frc.robot.algaeTracking.AlgaeTracker;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FFConstants;
 import frc.robot.Constants.FieldConstants;
@@ -52,7 +53,6 @@ import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.generated.TestBotTunerConstants;
-import frc.robot.utils.AutonomousUtil;
 import frc.robot.utils.FieldUtils;
 import frc.robot.vision.TimestampedPoseEstimate;
 
@@ -120,7 +120,6 @@ public class CommandSwerveDrivetrain extends TestBotTunerConstants.TunerSwerveDr
     }
 
     private void setup() {
-        AutonomousUtil.initializePathPlanner(this);
         if (Robot.isSimulation()) {
             startSimThread();
         }
@@ -431,5 +430,17 @@ public class CommandSwerveDrivetrain extends TestBotTunerConstants.TunerSwerveDr
                 .withVelocityY(fieldRelative.getY())
                 .withRotationalRate(fieldRelative.getRotation().getRadians())
         );
+    }
+
+    public Command trackAlgae(AlgaeTracker tracker) {
+        return run(() -> {
+            Optional<Rotation2d> towards = tracker.track();
+            towards.ifPresentOrElse(rot -> {
+                applyVelocities(new Transform2d(Translation2d.kZero, rot
+                .div(20.0)));
+            }, () -> {
+                applyVelocities(Transform2d.kZero);
+            });
+        });
     }
 }
