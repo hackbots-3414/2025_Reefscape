@@ -432,15 +432,15 @@ public class CommandSwerveDrivetrain extends TestBotTunerConstants.TunerSwerveDr
         );
     }
 
-    public Command trackAlgae(AlgaeTracker tracker) {
-        return run(() -> {
-            Optional<Rotation2d> towards = tracker.track();
-            towards.ifPresentOrElse(rot -> {
-                applyVelocities(new Transform2d(Translation2d.kZero, rot
-                .div(20.0)));
-            }, () -> {
-                applyVelocities(Transform2d.kZero);
-            });
-        });
+    private final SwerveRequest.RobotCentric driveRRClosedLoop = new SwerveRequest.RobotCentric()
+        .withDriveRequestType(DriveRequestType.Velocity);
+    
+    public void applyRRVelocities(Transform2d robotRelative) {
+        setControl(
+            driveRRClosedLoop
+                .withVelocityX(robotRelative.getX())
+                .withVelocityY(robotRelative.getY())
+                .withRotationalRate(robotRelative.getRotation().getRadians())
+        );
     }
 }

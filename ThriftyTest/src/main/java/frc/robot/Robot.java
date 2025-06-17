@@ -20,8 +20,6 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_robotContainer;
 
-    private final AlgaeTracker m_algaeTracker = new AlgaeTracker("Cam");
-
     public Robot() {
         m_robotContainer = new RobotContainer();
     }
@@ -40,7 +38,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        m_algaeTracker.track();
     }
 
     @Override

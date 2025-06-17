@@ -22,7 +22,7 @@ public class AlgaeTracker {
         camera = new PhotonCamera(cameraName);
     }
 
-    public Optional<Rotation2d> track() {
+    public Optional<AlgaeState> track() {
         List<PhotonPipelineResult> results = camera.getAllUnreadResults();
         if (results.size() == 0) {
             return Optional.empty();
@@ -32,6 +32,11 @@ public class AlgaeTracker {
             return Optional.empty();
         } 
         PhotonTrackedTarget best = singleResult.getBestTarget();
-        return Optional.of(Rotation2d.fromDegrees(-best.getYaw()));
+        return Optional.of(new AlgaeState(Rotation2d.fromDegrees(-best.getYaw()), best.getArea()));
     }
+
+    public record AlgaeState(
+        Rotation2d rot,
+        double size
+    ) {}
 }

@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import frc.robot.Constants.ButtonBindingConstants;
 import frc.robot.Constants.ButtonBindingConstants.DragonReins;
+import frc.robot.algaeTracking.AlgaeTracker;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.TeleopCommand;
+import frc.robot.commands.TrackAlgae;
 import frc.robot.generated.TestBotTunerConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -41,6 +43,7 @@ public class RobotContainer {
         configureDriverBindings();
         configureTesting();
         confiureSimulation();
+        SmartDashboard.putData("follow algae", new TrackAlgae(m_drivetrain, new AlgaeTracker("Cam")));
     }
 
     private void confiureSimulation() {
