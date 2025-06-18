@@ -70,8 +70,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private boolean m_aligned;
 
-  private ForceField m_forceField;
-
   private FieldCentric m_teleopRequest = new FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
       .withDriveRequestType(DriveRequestType.Velocity);
@@ -116,7 +114,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     RobotObserver.setReefReadySupplier(inReefZone());
     RobotObserver.setAlginedSupplier(aligned());
 
-    m_forceField = new ForceField(DriveConstants.kMaxTeleopLinearSpeed);
     m_timer = new LoopTimer("Drivetrain");
     initializePathPlanner();
   }
@@ -180,10 +177,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public Pose2d getPose() {
     return m_estimatedPose;
-  }
-
-  private Pose2d getNearestAntitarget() {
-    return new Pose2d(FFConstants.k_bargeX, m_estimatedPose.getY(), new Rotation2d());
   }
 
   /**
@@ -350,10 +343,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private Trigger dangerZone() {
     return new Trigger(() -> {
-      double distance = getNearestAntitarget()
-          .getTranslation()
-          .minus(m_estimatedPose.getTranslation())
-          .getNorm();
+      double distance = Math.abs(m_estimatedPose.getX() - FFConstants.k_bargeX);
       return distance < FFConstants.k_radius && !DriverStation.isAutonomous();
     });
   }
@@ -390,24 +380,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       if (Math.hypot(vx, vy) > 1e-3 || Math.abs(omega) > 1e-2) {
         setAligned(false);
       }
-
       if (RobotObserver.getFFEnabled()) {
-        Translation2d adjusted = m_forceField.calculate(
-            new Translation2d(vx, vy),
-            m_estimatedPose,
-            getNearestAntitarget());
-
-        setControl(m_teleopRequest
-            .withVelocityX(adjusted.getX())
-            .withVelocityY(adjusted.getY())
-            .withRotationalRate(omega));
-      } else {
-        // no adjustments
-        setControl(m_teleopRequest
-            .withVelocityX(vx)
-            .withVelocityY(vy)
-            .withRotationalRate(omega));
+        vx = ForceField.calculate(vx, FFConstants.k_bargeX - m_estimatedPose.getX()); 
       }
+      setControl(m_teleopRequest
+          .withVelocityX(vx)
+          .withVelocityY(vy)
+          .withRotationalRate(omega));
     });
   }
 
@@ -440,6 +419,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public Command seedLocal(Pose2d pose) {
     return Commands.runOnce(() -> resetPose(FieldUtils.getLocalPose(pose)))
-      .ignoringDisable(true);
+        .ignoringDisable(true);
   }
 }
