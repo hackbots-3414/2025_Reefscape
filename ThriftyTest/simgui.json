@@ -32,9 +32,11 @@
       "/SmartDashboard/Test vision": "Command",
       "/SmartDashboard/Test/Algae Intake (ground)": "Command",
       "/SmartDashboard/Test/Drive To Center": "Command",
+      "/SmartDashboard/Test/Elevator Up": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
       "/SmartDashboard/Test/L4": "Command",
       "/SmartDashboard/Test/LowReefAlgaeIntake": "Command",
+      "/SmartDashboard/Test/Stow": "Command",
       "/SmartDashboard/Test/Upper algae reef": "Command",
       "/SmartDashboard/Test?": "Alerts",
       "/SmartDashboard/Vision": "Alerts",
@@ -192,6 +194,16 @@
           "width": 0.5
         },
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Test/Elevator Up": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Test/Stow": {
         "window": {
           "visible": true
         }
