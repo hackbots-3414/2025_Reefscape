@@ -18,7 +18,7 @@ public class CoralScore implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.sequence(
-        subsystems.elevator().go(m_level).asProxy(),
+        subsystems.elevator().go(m_level),
         subsystems.coral().score(m_level))
 
         .finallyDo(subsystems.elevator()::release)

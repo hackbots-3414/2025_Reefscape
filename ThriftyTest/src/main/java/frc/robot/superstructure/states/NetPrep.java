@@ -15,7 +15,7 @@ public class NetPrep implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(
-        subsystems.elevator().go(ElevatorState.Net).asProxy(),
+        subsystems.elevator().go(ElevatorState.Net),
         subsystems.pivot().go(PivotState.Net))
 
         .finallyDo(subsystems.elevator()::conditionalRelease)

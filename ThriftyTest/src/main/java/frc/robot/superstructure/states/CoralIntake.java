@@ -14,7 +14,7 @@ public class CoralIntake implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.sequence(
-        subsystems.elevator().go(ElevatorState.Stow).asProxy(),
+        subsystems.elevator().go(ElevatorState.Stow),
         subsystems.coral().intake())
 
         .finallyDo(subsystems.elevator()::release)

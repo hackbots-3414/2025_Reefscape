@@ -12,7 +12,7 @@ public class ElevatorZero implements EnterableState {
   public ElevatorZero() {}
 
   public Command build(Subsystems subsystems) {
-    return subsystems.elevator().autoZero().asProxy()
+    return subsystems.elevator().autoZero()
         .withTimeout(ElevatorConstants.kCalibrationTime)
         .finallyDo(subsystems.elevator()::release)
         .unless(subsystems.coral().holding());

@@ -16,7 +16,7 @@ public class AlgaeStow implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(
-        subsystems.elevator().go(ElevatorState.Stow).asProxy(),
+        subsystems.elevator().go(ElevatorState.Stow),
         subsystems.pivot().go(PivotState.Ground))
 
         .onlyIf(subsystems.algae().holdingAlgae());

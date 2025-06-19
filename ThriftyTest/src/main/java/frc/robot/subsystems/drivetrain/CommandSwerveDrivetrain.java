@@ -70,7 +70,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private boolean m_aligned;
 
-  private ForceField m_forceField;
+  private final ForceField m_forceField;
+
+  private boolean m_hasReceivedVisionUpdate;
 
   private FieldCentric m_teleopRequest = new FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
@@ -110,6 +112,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_ologger.registerBoolean("Aligned", aligned());
     m_ologger.registerDouble("Velocity", this::getVelocity);
     m_ologger.registerPose("Estimated Pose", this::getPose);
+    m_ologger.registerBoolean("Received Vision Update", () -> m_hasReceivedVisionUpdate);
 
     RobotObserver.setVelocitySupplier(this::getVelocity);
     RobotObserver.setNoElevatorZoneSupplier(dangerZone());
@@ -242,6 +245,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       });
     }
     m_ologger.log();
+    m_hasReceivedVisionUpdate = false;
     m_timer.log();
   }
 
@@ -314,6 +318,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
+    m_hasReceivedVisionUpdate = true;
     // This should NOT run in simulation!
     if (Robot.isSimulation()) {
       return;

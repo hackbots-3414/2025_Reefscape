@@ -32,7 +32,7 @@ public class DriveBindings implements Binder {
   private final Trigger m_rightAlign = m_controller.button(Driver.kRightAlign);
 
   public void bind(Superstructure superstructure) {
-    superstructure.setDrive(superstructure.enter(new TeleopDrive(m_x, m_y, m_rot)));
+    superstructure.setDrive(superstructure.enterWithoutProxy(new TeleopDrive(m_x, m_y, m_rot)));
 
     m_resetHeading.onTrue(superstructure.enter(new HeadingReset()));
     m_smartAlign.and(superstructure.holdingAlgae()).whileTrue(superstructure.enter(new Align(

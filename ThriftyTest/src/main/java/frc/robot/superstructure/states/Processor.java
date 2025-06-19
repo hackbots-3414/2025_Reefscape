@@ -16,7 +16,7 @@ public class Processor implements EnterableState {
   public Command build(Subsystems subsystems) {
     return Commands.sequence(
         Commands.parallel(
-            subsystems.elevator().go(ElevatorState.Processor).asProxy(),
+            subsystems.elevator().go(ElevatorState.Processor),
             subsystems.pivot().go(PivotState.Processor)),
         subsystems.algae().processorScore())
 

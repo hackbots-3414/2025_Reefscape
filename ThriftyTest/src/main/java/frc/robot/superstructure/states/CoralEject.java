@@ -14,7 +14,7 @@ public class CoralEject implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.sequence(
-        subsystems.elevator().go(ElevatorState.Eject).asProxy(),
+        subsystems.elevator().go(ElevatorState.Eject),
         subsystems.coral().eject())
 
         .finallyDo(subsystems.elevator()::release)

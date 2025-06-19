@@ -15,7 +15,7 @@ public class ProcessorPrep implements EnterableState {
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(
-        subsystems.elevator().go(ElevatorState.Processor).asProxy(),
+        subsystems.elevator().go(ElevatorState.Processor),
         subsystems.pivot().go(PivotState.Processor))
 
         .finallyDo(subsystems.elevator()::conditionalRelease)

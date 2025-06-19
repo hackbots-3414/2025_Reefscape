@@ -17,19 +17,13 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Recalibrate"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Recalibrate"
                 }
               },
               {
@@ -37,15 +31,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "deadline",
                       "data": {
-                        "name": "Align LIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Coral Wait"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Align LIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -67,19 +68,13 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Recalibrate"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Recalibrate"
                 }
               },
               {
@@ -87,15 +82,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "deadline",
                       "data": {
-                        "name": "Beeline LIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Coral Wait"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Beeline LIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -117,19 +119,13 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Recalibrate"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Recalibrate"
                 }
               },
               {
@@ -137,15 +133,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
+                      "type": "deadline",
                       "data": {
-                        "name": "Beeline LIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Coral Wait"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Beeline LIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {

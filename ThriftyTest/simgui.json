@@ -19,7 +19,10 @@
       "/SmartDashboard/Camera Status": "Alerts",
       "/SmartDashboard/Climber/Stow": "Command",
       "/SmartDashboard/Command Scheduler": "Scheduler",
+      "/SmartDashboard/Coral": "Subsystem",
+      "/SmartDashboard/Coral/Subsystem": "Subsystem",
       "/SmartDashboard/Elevator/Lazy Zero": "Command",
+      "/SmartDashboard/Elevator/Subsystem": "Subsystem",
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/PhotonAlerts": "Alerts",
       "/SmartDashboard/Prep/Set Center": "Command",
@@ -40,6 +43,16 @@
     },
     "windows": {
       "/SmartDashboard/Auton Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Coral/Subsystem": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Elevator/Subsystem": {
         "window": {
           "visible": true
         }
@@ -196,6 +209,9 @@
     },
     "transitory": {
       "SmartDashboard": {
+        "Coral": {
+          "open": true
+        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
