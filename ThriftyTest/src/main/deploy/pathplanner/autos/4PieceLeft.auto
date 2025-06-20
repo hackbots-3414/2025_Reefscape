@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartJ"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Align J"
@@ -29,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Recalibrate"
                 }
               },
               {
@@ -37,27 +31,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "deadline",
                       "data": {
-                        "pathName": "JIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "LIntake Align"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeK"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Align LIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -75,6 +64,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L4"
           }
         },
@@ -85,7 +80,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Recalibrate"
                 }
               },
               {
@@ -93,27 +88,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "deadline",
                       "data": {
-                        "pathName": "KIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "LIntake Align"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeL"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Beeline LIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -131,6 +121,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L4"
           }
         },
@@ -141,7 +137,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Recalibrate"
                 }
               },
               {
@@ -149,27 +145,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "deadline",
                       "data": {
-                        "pathName": "LIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "LIntake Align"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Wait"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "IntakeA"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Coral Wait"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Beeline LIntake"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -187,13 +178,25 @@
         {
           "type": "named",
           "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Recalibrate"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
