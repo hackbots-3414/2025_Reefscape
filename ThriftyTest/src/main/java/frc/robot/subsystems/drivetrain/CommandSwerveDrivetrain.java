@@ -73,7 +73,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private boolean m_hasReceivedVisionUpdate;
 
   private FieldCentric m_teleopRequest = new FieldCentric()
-      .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
+      .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
 
   private FieldCentricFacingAngle m_veloRequest = new FieldCentricFacingAngle()
@@ -380,17 +380,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return run(() -> {
       double vx = x.getAsDouble() * DriveConstants.kMaxTeleopLinearSpeed;
       double vy = y.getAsDouble() * DriveConstants.kMaxTeleopLinearSpeed;
+      Translation2d operatorRelative = new Translation2d(vx, vy);
+      Translation2d fieldRelative = operatorRelative.rotateBy(getOperatorForwardDirection());
       double omega = rot.getAsDouble() * DriveConstants.kMaxTeleopAngularSpeed;
 
       if (Math.hypot(vx, vy) > 1e-3 || Math.abs(omega) > 1e-2) {
         setAligned(false);
       }
       if (RobotObserver.getFFEnabled()) {
-        vx = ForceField.calculate(vx, FFConstants.k_bargeX - m_estimatedPose.getX()); 
+        double newX = ForceField.calculate(
+            fieldRelative.getX(),
+            FFConstants.k_bargeX - m_estimatedPose.getX());
+        fieldRelative = new Translation2d(newX, fieldRelative.getY());
       }
       setControl(m_teleopRequest
-          .withVelocityX(vx)
-          .withVelocityY(vy)
+          .withVelocityX(fieldRelative.getX())
+          .withVelocityY(fieldRelative.getY())
           .withRotationalRate(omega));
     });
   }
