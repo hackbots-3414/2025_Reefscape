@@ -6,7 +6,7 @@ import frc.robot.Constants.CoralLevel;
 import frc.robot.binding.BindingConstants.Operator;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Climb;
-import frc.robot.superstructure.states.ClimbRaised;
+import frc.robot.superstructure.states.RaiseClimb;
 import frc.robot.superstructure.states.CompleteCoralIntake;
 import frc.robot.superstructure.states.CompleteCoralScore;
 import frc.robot.superstructure.states.CoralEject;
@@ -25,7 +25,7 @@ import frc.robot.superstructure.states.NetPrep;
 import frc.robot.superstructure.states.Processor;
 import frc.robot.superstructure.states.ProcessorPrep;
 import frc.robot.superstructure.states.DeferredAlign;
-import frc.robot.superstructure.states.Stowed;
+import frc.robot.superstructure.states.Stow;
 
 public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
@@ -93,11 +93,11 @@ public class OperatorBindings implements Binder {
 
     /* climb */
     m_climb.whileTrue(superstructure.enter(new Climb()));
-    m_raiseClimb.whileTrue(superstructure.enter(new ClimbRaised()));
+    m_raiseClimb.whileTrue(superstructure.enter(new RaiseClimb()));
 
     /* misc */
     m_zeroElevator.whileTrue(superstructure.enter(new ElevatorZero()));
-    m_stow.whileTrue(superstructure.enter(new Stowed()));
+    m_stow.whileTrue(superstructure.enter(new Stow()));
     m_funnel.whileTrue(superstructure.enter(new OpenFunnel()));
   }
 

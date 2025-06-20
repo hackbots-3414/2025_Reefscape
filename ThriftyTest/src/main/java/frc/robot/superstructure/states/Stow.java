@@ -7,11 +7,11 @@ import frc.robot.subsystems.pivot.PivotState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class Stowed implements EnterableState {
+public class Stow implements EnterableState {
   /**
    * Stows all the stowables on the robot
    */
-  public Stowed() {}
+  public Stow() {}
 
   public Command build(Subsystems subsystems) {
     return Commands.parallel(
