@@ -97,7 +97,7 @@ public class Superstructure {
   }
 
   public Trigger holdingCoral() {
-    return m_subsystems.coral().holding();
+    return m_subsystems.coral().held();
   }
 
   public Trigger holdingAlgae() {

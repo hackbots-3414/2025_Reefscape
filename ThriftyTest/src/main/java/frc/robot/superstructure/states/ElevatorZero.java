@@ -15,6 +15,6 @@ public class ElevatorZero implements EnterableState {
     return subsystems.elevator().autoZero()
         .withTimeout(ElevatorConstants.kCalibrationTime)
         .finallyDo(subsystems.elevator()::release)
-        .unless(subsystems.coral().holding());
+        .unless(subsystems.coral().held());
   }
 }

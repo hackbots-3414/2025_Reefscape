@@ -14,7 +14,7 @@ public class IntakeComplete implements EnterableState {
   public IntakeComplete() {}
 
   public Command build(Subsystems subsystems) {
-    return Commands.waitUntil(subsystems.coral().holding())
+    return Commands.waitUntil(subsystems.coral().held())
         .onlyWhile(subsystems.coral().present());
   }
 }

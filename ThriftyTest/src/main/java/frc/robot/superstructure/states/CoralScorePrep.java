@@ -18,6 +18,6 @@ public class CoralScorePrep implements EnterableState {
   public Command build(Subsystems subsystems) {
     return subsystems.elevator().go(m_level)
         .finallyDo(subsystems.elevator()::conditionalRelease)
-        .onlyIf(subsystems.coral().holding());
+        .onlyIf(subsystems.coral().held());
   }
 }

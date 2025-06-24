@@ -35,7 +35,7 @@ public class Coral extends PassiveSubsystem {
     }
     m_inputs = new CoralIOInputs();
     m_inputsLogger = new CoralIOInputsLogger(m_inputs);
-    RobotObserver.setCoralHeldSupplier(holding());
+    RobotObserver.setCoralHeldSupplier(held());
     m_timer = new LoopTimer("Coral");
   }
 
@@ -77,7 +77,7 @@ public class Coral extends PassiveSubsystem {
         () -> m_inputs.upperDetected || m_inputs.innerDetected || m_inputs.frontDetected);
   }
 
-  public Trigger holding() {
+  public Trigger held() {
     return new Trigger(() -> m_inputs.frontDetected && !m_inputs.upperDetected);
   }
 
@@ -90,7 +90,7 @@ public class Coral extends PassiveSubsystem {
   }
 
   protected void passive() {
-    if (present().getAsBoolean() && !holding().getAsBoolean()) {
+    if (present().getAsBoolean() && !held().getAsBoolean()) {
       setIntake();
     } else {
       stop();
@@ -103,10 +103,10 @@ public class Coral extends PassiveSubsystem {
   public Command intake() {
     return Commands.sequence(
         runOnce(this::setIntake),
-        Commands.waitUntil(holding()))
+        Commands.waitUntil(held()))
 
         .finallyDo(this::stop)
-        .unless(holding());
+        .unless(held());
   }
 
   public Command score(CoralLevel level) {
@@ -119,9 +119,9 @@ public class Coral extends PassiveSubsystem {
             case L4 -> setL4Score();
           }
         }),
-        Commands.waitUntil(holding().negate()))
+        Commands.waitUntil(held().negate()))
 
-        .onlyIf(holding());
+        .onlyIf(held());
   }
 
   /**
