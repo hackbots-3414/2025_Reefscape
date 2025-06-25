@@ -6,7 +6,7 @@ public enum ElevatorState {
   /** Elevator at ground algae intake height*/
   Ground(0),
   /** Height for ground algae intake */
-  HighGround(12 * ElevatorConstants.kInch),
+  HighGround(2.0), // TODO: Set this value!
   /** Regular "home" position - also intake position */
   Stow(0.31),
   /** A little higher than stow to eject a coral */
