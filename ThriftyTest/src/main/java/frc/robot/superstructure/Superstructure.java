@@ -39,8 +39,6 @@ public class Superstructure {
         leds);
 
     RobotObserver.setFFEnabledSupplier(elevator.unsafe().and(() -> !DriverStation.isAutonomous()));
-    SmartDashboard.putData("Coral/Subsystem", coral);
-    SmartDashboard.putData("Elevator/Subsystem", elevator);
   }
 
   /**
