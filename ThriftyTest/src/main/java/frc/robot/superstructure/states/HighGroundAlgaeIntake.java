@@ -17,7 +17,7 @@ public class HighGroundAlgaeIntake implements EnterableState {
     return Commands.sequence(
         subsystems.elevator().go(ElevatorState.HighGround),
         Commands.parallel(
-            subsystems.pivot().go(PivotState.Ground),
+            subsystems.pivot().go(PivotState.HighGround),
             subsystems.algae().intake()))
 
         .finallyDo(subsystems.elevator()::release)
