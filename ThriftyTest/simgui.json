@@ -41,7 +41,8 @@
       "/SmartDashboard/Test?": "Alerts",
       "/SmartDashboard/Vision": "Alerts",
       "/SmartDashboard/Vision/Camera Status": "Alerts",
-      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/pro": "Command"
     },
     "windows": {
       "/SmartDashboard/Auton Chooser": {
@@ -221,6 +222,9 @@
     },
     "transitory": {
       "SmartDashboard": {
+        "Algae": {
+          "open": true
+        },
         "Coral": {
           "open": true
         },

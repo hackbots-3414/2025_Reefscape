@@ -12,7 +12,9 @@ public enum PivotState {
   /** The angle to score at the net */
   Net(0.342),
   /** The "home" angle for the pivot */
-  Stow(0.343);
+  Stow(0.343),
+  /** The angle for lollipop intake */
+  HighGround(0.15);
 
   private double m_position;
 
