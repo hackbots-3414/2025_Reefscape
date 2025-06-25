@@ -5,7 +5,7 @@ public class ElevatorIOSim implements ElevatorIO {
   private double m_reference = 0;
 
   public void updateInputs(ElevatorIOInputs inputs) {
-    m_position = (m_position + m_reference) / 2.0;
+    m_position = 0.9 * m_position + 0.1 * m_reference;
     inputs.position = m_position;
     inputs.reference = m_reference;
     inputs.zeroCANrangeDetected = m_position < 1e-3;
