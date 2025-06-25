@@ -14,8 +14,8 @@ public class UpperReefAlgaeIntake implements EnterableState {
   public UpperReefAlgaeIntake() {}
 
   public Command build(Subsystems subsystems) {
-    subsystems.elevator().go(ElevatorState.UpperReef),
     return Commands.sequence(
+        subsystems.elevator().go(ElevatorState.UpperReef),
         subsystems.pivot().go(PivotState.ReefIntake),
         subsystems.algae().intake(),
         subsystems.pivot().go(PivotState.ReefExtract))
