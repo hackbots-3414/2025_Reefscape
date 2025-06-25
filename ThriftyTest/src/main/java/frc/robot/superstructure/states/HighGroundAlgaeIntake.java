@@ -14,10 +14,11 @@ public class HighGroundAlgaeIntake implements EnterableState {
   public HighGroundAlgaeIntake() {}
 
   public Command build(Subsystems subsystems) {
-    return Commands.parallel(
+    return Commands.sequence(
         subsystems.elevator().go(ElevatorState.HighGround),
-        subsystems.pivot().go(PivotState.Ground),
-        subsystems.algae().intake())
+        Commands.parallel(
+            subsystems.pivot().go(PivotState.Ground),
+            subsystems.algae().intake()))
 
         .finallyDo(subsystems.elevator()::release)
         .finallyDo(subsystems.pivot()::release)
