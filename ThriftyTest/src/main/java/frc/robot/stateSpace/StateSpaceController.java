@@ -24,7 +24,7 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
 
     private final String m_name;
 
-    private boolean isAtSetpoint = false;
+    private boolean m_atSetpoint;
 
     private final Notifier m_notifier;
 
@@ -38,6 +38,8 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
         m_outputSupplier = outputSupplier;
         m_inputConsumer = inputConsumer;
 
+        m_atSetpoint = false;
+
         m_tolerance = config.getTolerance();
 
         m_name = config.getName();
@@ -46,11 +48,11 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
         m_loop.reset(initialState);
         
         // setup the notifier!
-        m_notifier = new Notifier(this::periodic);
+        m_notifier = new Notifier(this::update);
         m_notifier.startPeriodic(StateSpaceConstants.k_dt);
     }
 
-    private void periodic() {
+    private void update() {
         // Correct our Kalman Filter's state vector estimate with the latest data
         Vector<Outputs> lastMeasurement = m_outputSupplier.get();
         m_loop.correct(lastMeasurement);
@@ -66,10 +68,10 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
         // Send new readings to SmartDashboard for logging purposes
         for (int row = 0; row < lastMeasurement.getNumRows(); row++) {
             double measurement = lastMeasurement.get(row);
-            SmartDashboard.putNumber(m_name + " (" + row + ")", measurement);
+            SmartDashboard.putNumber("statespace - " + m_name + "/" + row, measurement);
         }
 
-        isAtSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) < m_tolerance;
+        m_atSetpoint = Math.abs(lastMeasurement.get(0) - getReference()) < m_tolerance;
     }
 
     /**
@@ -85,8 +87,8 @@ public class StateSpaceController<States extends Num, Inputs extends Num, Output
         return m_loop.getNextR(0);
     }
 
-    public boolean isAtSetpoint() {
-        return isAtSetpoint;
+    public boolean isM_atSetpoint() {
+        return m_atSetpoint;
     }
 
     @Override
