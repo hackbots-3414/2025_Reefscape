@@ -6,12 +6,12 @@
    </encoder>
  </appender>
 
- <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-   <file>robot.log</file>
-   <encoder>
-     <pattern>%date{mm:ss.SSS} [%thread] %-5level %logger{20} - %message %n</pattern>
-   </encoder>
- </appender>
+ <!-- <appender name="FILE" class="ch.qos.logback.core.FileAppender"> -->
+ <!--   <file>robot.log</file> -->
+ <!--   <encoder> -->
+ <!--     <pattern>%date{mm:ss.SSS} [%thread] %-5level %logger{20} - %message %n</pattern> -->
+ <!--   </encoder> -->
+ <!-- </appender> -->
 
  <logger name="frc.robot.commands" level="INFO"/>
  <logger name="frc.robot.subsystems" level="INFO"/>
@@ -24,7 +24,7 @@
  <root level="WARN">
    <appender-ref ref="STDOUT"/>
    <!-- <appender-ref ref="FILE"/> -->
-   <!-- Uncomment the above line to allow logging to a file -->
+   <!-- Uncomment the above line and the FILE appender to allow logging to a file -->
  </root>
 
 </configuration>
