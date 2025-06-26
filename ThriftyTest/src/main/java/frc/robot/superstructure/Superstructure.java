@@ -46,7 +46,9 @@ public class Superstructure {
    * run as a proxied command.
    */
   public Command enter(EnterableState state) {
-    return enterWithoutProxy(state).asProxy();
+    return state.build(m_subsystems)
+        .withName(state.getClass().getSimpleName())
+        .asProxy();
   }
 
   /**

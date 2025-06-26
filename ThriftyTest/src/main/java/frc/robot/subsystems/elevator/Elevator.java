@@ -33,7 +33,7 @@ public class Elevator extends PassiveSubsystem {
   private final ElevatorIOInputs m_inputs;
   private final ElevatorIOInputsLogger m_inputsLogger;
 
-  private final OnboardLogger m_referenceLogger;
+  private final OnboardLogger m_ologger;
 
   private final Debouncer m_debouncer =
       new Debouncer(ElevatorConstants.kRangeDebounceTime.in(Seconds));
@@ -52,8 +52,8 @@ public class Elevator extends PassiveSubsystem {
     }
     m_inputs = new ElevatorIOInputs();
     m_inputsLogger = new ElevatorIOInputsLogger(m_inputs);
-    m_referenceLogger = new OnboardLogger("Elevator");
-    m_referenceLogger.registerString("State", () -> m_reference.toString());
+    m_ologger = new OnboardLogger("Elevator");
+    m_ologger.registerString("State", () -> m_reference.toString());
     SmartDashboard.putData("Elevator/Lazy Zero",
         runOnce(m_io::calibrateZero).ignoringDisable(true).withName("Lazy Zero"));
     m_timer = new LoopTimer("Elevator");
@@ -102,7 +102,7 @@ public class Elevator extends PassiveSubsystem {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
     m_inputsLogger.log();
-    m_referenceLogger.log();
+    m_ologger.log();
     m_timer.log();
   }
 
@@ -129,7 +129,7 @@ public class Elevator extends PassiveSubsystem {
     return Commands.sequence(
         runOnce(() -> setPosition(state)),
         Commands.waitUntil(ready()))
-        .withName(state.toString());
+        .withName("Elevator(" + state.toString() + ")");
   }
 
   public Command go(CoralLevel level) {

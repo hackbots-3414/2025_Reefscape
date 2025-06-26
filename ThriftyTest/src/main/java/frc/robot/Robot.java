@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -18,6 +21,7 @@ import frc.robot.utils.OnboardLogger;
 import frc.robot.utils.StatusSignalUtil;
 
 public class Robot extends TimedRobot {
+  private final Logger m_logger = LoggerFactory.getLogger(Robot.class);
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -41,6 +45,19 @@ public class Robot extends TimedRobot {
     m_robotContainer.enablePDPSwitch();
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     LiveWindow.disableAllTelemetry();
+    CommandScheduler.getInstance().onCommandInitialize(command -> {
+      m_logger.trace("Starting: {}", command.getName());
+    });
+    CommandScheduler.getInstance().onCommandFinish(command -> {
+      m_logger.trace("Ended: {}", command.getName());
+    });
+    CommandScheduler.getInstance().onCommandInterrupt((dead, reason) -> {
+      reason.ifPresentOrElse(killer -> {
+        m_logger.trace("Killed by {}: {}", killer.getName(), dead.getName());
+      }, () -> {
+        m_logger.trace("Cancelled: {}", dead.getName());
+      });
+    });
   }
 
   @Override
