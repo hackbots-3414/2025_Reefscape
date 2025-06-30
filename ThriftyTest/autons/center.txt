@@ -1,0 +1,9 @@
+Align H
+L4
+Align GH + Lower Algae
+Align Barge Center
+Net
+Upper Algae & Align IJ
+Align Barge Left
+Net
+Align LIntake
