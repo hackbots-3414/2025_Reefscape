@@ -45,19 +45,21 @@ public class Robot extends TimedRobot {
     m_robotContainer.enablePDPSwitch();
     SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
     LiveWindow.disableAllTelemetry();
-    CommandScheduler.getInstance().onCommandInitialize(command -> {
-      m_logger.trace("Starting: {}", command.getName());
-    });
-    CommandScheduler.getInstance().onCommandFinish(command -> {
-      m_logger.trace("Ended: {}", command.getName());
-    });
-    CommandScheduler.getInstance().onCommandInterrupt((dead, reason) -> {
-      reason.ifPresentOrElse(killer -> {
-        m_logger.trace("Killed by {}: {}", killer.getName(), dead.getName());
-      }, () -> {
-        m_logger.trace("Cancelled: {}", dead.getName());
+    if (isSimulation()) {
+      CommandScheduler.getInstance().onCommandInitialize(command -> {
+        m_logger.trace("Starting: {}", command.getName());
       });
-    });
+      CommandScheduler.getInstance().onCommandFinish(command -> {
+        m_logger.trace("Ended: {}", command.getName());
+      });
+      CommandScheduler.getInstance().onCommandInterrupt((dead, reason) -> {
+        reason.ifPresentOrElse(killer -> {
+          m_logger.trace("Killed by {}: {}", killer.getName(), dead.getName());
+        }, () -> {
+          m_logger.trace("Cancelled: {}", dead.getName());
+        });
+      });
+    }
   }
 
   @Override
