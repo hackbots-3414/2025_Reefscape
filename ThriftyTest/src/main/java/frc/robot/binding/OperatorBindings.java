@@ -103,7 +103,8 @@ public class OperatorBindings implements Binder {
 
   private void bindCoral(Trigger trigger, CoralLevel level, Superstructure superstructure) {
     trigger.and(m_algae.negate()).whileTrue(superstructure.enter(new CoralScorePrep(level)));
-    trigger.and(m_algae.negate()).and(superstructure.aligned()).onTrue(superstructure.enter(new CoralScore(level)));
+    trigger.and(m_algae.negate()).and(superstructure.aligned())
+        .onTrue(superstructure.enter(new CoralScore(level)));
     trigger.and(m_algae.negate()).onFalse(superstructure.enter(new CompleteCoralScore(level)));
   }
 }
