@@ -16,7 +16,7 @@ import frc.robot.vision.CameraIO;
 public class CameraIOAprilTagSim implements CameraIO {
   private static boolean setupComplete;
 
-  private static final VisionSystemSim simSystem = new VisionSystemSim("main");
+  private static final VisionSystemSim simSystem = new VisionSystemSim("localization");
 
   private static final SimCameraProperties simProps = new SimCameraProperties();
 
@@ -50,10 +50,6 @@ public class CameraIOAprilTagSim implements CameraIO {
 
   public String getName() {
     return m_camera.getName();
-  }
-
-  public Transform3d getRobotToCamera() {
-    return m_robotToCamera;
   }
 
   private static void setupSimProps() {

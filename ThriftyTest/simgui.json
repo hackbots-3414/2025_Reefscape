@@ -42,8 +42,10 @@
       "/SmartDashboard/Test?": "Alerts",
       "/SmartDashboard/Vision": "Alerts",
       "/SmartDashboard/Vision/Camera Status": "Alerts",
+      "/SmartDashboard/VisionSystemSim-localization/Sim Field": "Field2d",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
       "/SmartDashboard/VisionSystemSim-test/Sim Field": "Field2d",
+      "/SmartDashboard/VisionSystemSim-tracking/Sim Field": "Field2d",
       "/SmartDashboard/pro": "Command"
     },
     "windows": {
@@ -101,6 +103,12 @@
           "length": 0.9399999976158142,
           "style": "Box/Image",
           "width": 0.9399999976158142
+        },
+        "Tracked Object": {
+          "arrows": false,
+          "image": "/Users/rekrab/hackbots/2025_Reefscape/resources/algae.jpg",
+          "length": 0.800000011920929,
+          "width": 0.800000011920929
         },
         "apriltag": {
           "arrows": false,
@@ -202,11 +210,6 @@
         }
       },
       "/SmartDashboard/Test/Follow Algae": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Vision/Camera Status": {
         "window": {
           "visible": true
         }

@@ -49,11 +49,13 @@ public class AprilTagVisionHandler implements AutoCloseable {
       if (Robot.isSimulation()) {
         io = new CameraIOAprilTagSim(cameraName, robotToCamera, m_poseSupplier);
       } else {
-        io = new CameraIOHardware(cameraName, robotToCamera);
+        io = new CameraIOHardware(cameraName);
       }
       SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
           m_filter,
           io,
+          cameraName,
+          robotToCamera,
           this::addEstimate);
       m_estimators.add(estimator);
     }

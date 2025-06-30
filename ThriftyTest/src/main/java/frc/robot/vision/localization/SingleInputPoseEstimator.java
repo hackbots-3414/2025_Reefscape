@@ -45,20 +45,27 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private final Alert m_disconnectedAlert;
 
+  private final String m_name;
+  private final Transform3d m_robotToCamera;
+
   public SingleInputPoseEstimator(
       MultiInputFilter fitler,
       CameraIO io,
+      String name,
+      Transform3d robotToCamera,
       Consumer<TimestampedPoseEstimate> updateCallback) {
     m_io = io;
+    m_name = name;
     m_inputs = new CameraIOInputs();
-    m_inputsLogger = new CameraIOInputsLogger(m_inputs, io.getName());
+    m_inputsLogger = new CameraIOInputsLogger(m_inputs, name);
     m_reporter = updateCallback;
+    m_robotToCamera = robotToCamera;
     m_filter = fitler;
-    m_disconnectedAlert = new Alert("Vision/Camera Status", io.getName() + " disconnected", AlertType.kError);
+    m_disconnectedAlert = new Alert("Vision/Camera Status", name + " disconnected", AlertType.kError);
     m_estimator = new PhotonPoseEstimator(
         AprilTagVisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-        m_io.getRobotToCamera());
+        m_robotToCamera);
     m_estimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
   }
 
@@ -74,7 +81,7 @@ public class SingleInputPoseEstimator implements Runnable {
       Set<Integer> tags = result.getTargets().stream()
           .map(target -> target.getFiducialId())
           .collect(Collectors.toSet());
-      m_filter.addInput(m_io.getName(), tags);
+      m_filter.addInput(m_name, tags);
     }
   }
 
@@ -121,10 +128,10 @@ public class SingleInputPoseEstimator implements Runnable {
     Transform3d alt3d = target.getAlternateCameraToTarget();
     Pose3d best = targetPosition3d
         .plus(best3d.inverse())
-        .plus(m_io.getRobotToCamera().inverse());
+        .plus(m_robotToCamera.inverse());
     Pose3d alt = targetPosition3d
         .plus(alt3d.inverse())
-        .plus(m_io.getRobotToCamera().inverse());
+        .plus(m_robotToCamera.inverse());
     // final decision maker
     double bestHeading = best.getRotation().getZ();
     double altHeading = alt.getRotation().getZ();
@@ -150,7 +157,7 @@ public class SingleInputPoseEstimator implements Runnable {
   private boolean precheckValidity(PhotonPipelineResult result) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     if (latency > AprilTagVisionConstants.kLatencyThreshold) {
-      m_logger.warn("({}) Refused old vision data, latency of {}", m_io.getName(), latency);
+      m_logger.warn("({}) Refused old vision data, latency of {}", m_name, latency);
       return false;
     }
     return result.hasTargets();
