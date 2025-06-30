@@ -34,6 +34,7 @@
       "/SmartDashboard/Test/Drive To Center": "Command",
       "/SmartDashboard/Test/Elevator Up": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
+      "/SmartDashboard/Test/Follow Algae": "Command",
       "/SmartDashboard/Test/L4": "Command",
       "/SmartDashboard/Test/LowReefAlgaeIntake": "Command",
       "/SmartDashboard/Test/Stow": "Command",
@@ -42,6 +43,7 @@
       "/SmartDashboard/Vision": "Alerts",
       "/SmartDashboard/Vision/Camera Status": "Alerts",
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d",
+      "/SmartDashboard/VisionSystemSim-test/Sim Field": "Field2d",
       "/SmartDashboard/pro": "Command"
     },
     "windows": {
@@ -66,6 +68,11 @@
         }
       },
       "/SmartDashboard/Super Field": {
+        "Algae": {
+          "image": "/Users/rekrab/hackbots/2025_Reefscape/resources/algae.jpg",
+          "length": 0.800000011920929,
+          "width": 0.800000011920929
+        },
         "FF": {
           "arrows": false,
           "length": 1.5,
@@ -193,6 +200,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Test/Follow Algae": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -205,6 +217,9 @@
         "Algae": {
           "open": true
         },
+        "Algae Tracking": {
+          "open": true
+        },
         "Coral": {
           "open": true
         },
@@ -212,9 +227,6 @@
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
           }
-        },
-        "Vision": {
-          "open": true
         },
         "open": true
       },

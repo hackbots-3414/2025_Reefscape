@@ -1,7 +1,6 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
+import com.pathplanner.lib.auto.AutoBuilder; import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -21,6 +20,7 @@ import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.algae.Algae;
 import frc.robot.superstructure.Superstructure;
+import frc.robot.vision.AlgaeTracker;
 
 public class RobotContainer {
   private final PowerDistribution m_pdp = new PowerDistribution(1, ModuleType.kRev);
@@ -42,6 +42,8 @@ public class RobotContainer {
   private final Binder m_namedCommands = new NamedCommandBindings();
   private final Binder m_dashboard = new DashboardBindings();
 
+  private final Runnable m_algaeTracker;
+
   public RobotContainer() {
     m_driver.bind(m_superstructure);
     m_operator.bind(m_superstructure);
@@ -50,6 +52,7 @@ public class RobotContainer {
     m_dashboard.bind(m_superstructure);
 
     m_superstructure.buildVision().startThread();
+    m_algaeTracker = m_superstructure.buildAlgaeTracker();
 
     if (Robot.isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
@@ -65,5 +68,9 @@ public class RobotContainer {
 
   public void enablePDPSwitch() {
     m_pdp.setSwitchableChannel(true);
+  }
+
+  public void updateAlgaeTracking() {
+    m_algaeTracker.run();
   }
 }

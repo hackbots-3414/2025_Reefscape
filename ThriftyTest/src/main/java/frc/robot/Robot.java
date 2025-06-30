@@ -68,6 +68,7 @@ public class Robot extends TimedRobot {
     StatusSignalUtil.refreshAll();
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Robot/Match Time", DriverStation.getMatchTime());
+    m_robotContainer.updateAlgaeTracking();
     m_ologger.log();
     m_loopTimer.log();
   }

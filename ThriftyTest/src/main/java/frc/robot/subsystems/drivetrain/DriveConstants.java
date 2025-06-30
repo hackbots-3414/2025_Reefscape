@@ -8,12 +8,15 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
 import com.therekrab.autopilot.APConstraints;
 import com.therekrab.autopilot.APProfile;
 import com.therekrab.autopilot.Autopilot;
@@ -70,5 +73,8 @@ public class DriveConstants {
 
   protected static final double k_closedLoopOverrideToleranceTranslation = 0.05;
   protected static final double k_closedLoopOverrideToleranceRotation = 0.05;
+
+  protected static final Time kObjectTimeout = Seconds.of(0.5);
+  protected static final LinearVelocity kObjectTrackSpeed = MetersPerSecond.of(2);
 }
 

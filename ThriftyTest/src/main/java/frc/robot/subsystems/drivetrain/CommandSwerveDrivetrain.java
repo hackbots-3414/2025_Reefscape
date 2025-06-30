@@ -1,8 +1,10 @@
 package frc.robot.subsystems.drivetrain;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
@@ -18,12 +20,14 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
+import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -53,6 +57,8 @@ import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.TimestampedPoseEstimate;
+import frc.robot.vision.AlgaeTracker.ObjectTrackingStatus;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -76,6 +82,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
 
+  private RobotCentric m_trackingRequest = new RobotCentric()
+    .withDriveRequestType(DriveRequestType.Velocity);
+
   private FieldCentricFacingAngle m_veloRequest = new FieldCentricFacingAngle()
       .withHeadingPID(DriveConstants.HeadingPID.kP, 0, 0)
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
@@ -89,6 +98,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
+
+  /* last known object tracking input */
+  private Optional<ObjectTrackingStatus> m_objectStatus = Optional.empty();
 
   private Pose2d m_estimatedPose = new Pose2d();
 
@@ -239,6 +251,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     m_ologger.log();
     m_hasReceivedVisionUpdate = false;
+    // Expire old algae tracking data
+    if (m_objectStatus.isPresent()
+        && m_objectStatus.get().isExpired(DriveConstants.kObjectTimeout)) {
+      m_objectStatus = Optional.empty();
+    }
     m_timer.log();
   }
 
@@ -320,6 +337,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         estimate.pose(),
         estimate.timestamp(),
         estimate.stdDevs());
+  }
+
+  public void addObjectTrackingData(ObjectTrackingStatus status) {
+    m_objectStatus = Optional.of(status);
   }
 
   public Command sysIdQuasistaticTranslation(SysIdRoutine.Direction direction) {
@@ -430,5 +451,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public Command seedLocal(Pose2d pose) {
     return Commands.runOnce(() -> resetPose(FieldUtils.getLocalPose(pose)))
         .ignoringDisable(true);
+  }
+
+  public Command followObject() {
+    return run(new Runnable() {
+      private final PIDController controller = new PIDController(8, 0, 0);
+
+      @Override
+      public void run() {
+        m_objectStatus.ifPresentOrElse(status -> {
+          double output = this.controller.calculate(status.yaw().getRadians(), 0);
+          double speed = DriveConstants.kObjectTrackSpeed.in(MetersPerSecond);
+          double vx = speed * status.yaw().getCos();
+          double vy = speed * status.yaw().getSin();
+          setControl(m_trackingRequest
+              .withRotationalRate(output)
+              .withVelocityX(vx)
+              .withVelocityY(vy));
+        }, () -> stop());
+      }
+    });
   }
 }

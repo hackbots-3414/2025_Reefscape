@@ -8,6 +8,7 @@ import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.Superstructure.Subsystems;
 import frc.robot.superstructure.states.SeedPose;
 import frc.robot.superstructure.states.Stow;
+import frc.robot.superstructure.states.TrackAlgae;
 
 public class DashboardBindings implements Binder {
   public void bind(Superstructure superstructure) {
@@ -21,5 +22,7 @@ public class DashboardBindings implements Binder {
         return subsystems.elevator().go(ElevatorState.L4);
       }
     }));
+
+    SmartDashboard.putData("Test/Follow Algae", superstructure.enter(new TrackAlgae()));
   }
 }
