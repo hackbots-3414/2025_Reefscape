@@ -47,10 +47,13 @@ public class AlgaeTracker implements Runnable {
     visionSim.addVisionTargets(targetSim);
 
     cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
-
     cameraProp.setFPS(24);
+    cameraProp.setAvgLatencyMs(17);
+    cameraProp.setLatencyStdDevMs(8);
+    cameraProp.setCalibError(0.75, 0.05);
 
     simCamera = new PhotonCameraSim(camera, cameraProp);
+    simCamera.enableDrawWireframe(true);
 
     visionSim.addCamera(simCamera, Transform3d.kZero);
 
