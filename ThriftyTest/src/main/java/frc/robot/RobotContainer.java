@@ -1,6 +1,7 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder; import edu.wpi.first.wpilibj.DriverStation;
+import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -13,14 +14,13 @@ import frc.robot.binding.NamedCommandBindings;
 import frc.robot.binding.OperatorBindings;
 import frc.robot.binding.RobotBindings;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.LedFeedback;
+import frc.robot.subsystems.algae.Algae;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.pivot.Pivot;
-import frc.robot.subsystems.algae.Algae;
 import frc.robot.superstructure.Superstructure;
-import frc.robot.vision.AlgaeTracker;
 
 public class RobotContainer {
   private final PowerDistribution m_pdp = new PowerDistribution(1, ModuleType.kRev);

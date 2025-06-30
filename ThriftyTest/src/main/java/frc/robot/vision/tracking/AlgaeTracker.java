@@ -1,4 +1,4 @@
-package frc.robot.vision;
+package frc.robot.vision.tracking;
 
 import static edu.wpi.first.units.Units.Seconds;
 import java.util.List;
@@ -20,7 +20,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotObserver;
 
 public class AlgaeTracker implements Runnable {

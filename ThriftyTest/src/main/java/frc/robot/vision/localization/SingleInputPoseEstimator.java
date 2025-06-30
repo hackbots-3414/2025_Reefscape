@@ -1,5 +1,6 @@
-package frc.robot.vision;
+package frc.robot.vision.localization;
 
+import static edu.wpi.first.units.Units.Seconds;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -12,9 +13,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -22,12 +21,12 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotObserver;
+import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
 
 public class SingleInputPoseEstimator implements Runnable {
@@ -54,7 +53,7 @@ public class SingleInputPoseEstimator implements Runnable {
     m_filter = fitler;
     m_disconnectedAlert = new Alert("Vision/Camera Status", io.getName() + " disconnected", AlertType.kError);
     m_estimator = new PhotonPoseEstimator(
-        VisionConstants.kTagLayout,
+        AprilTagVisionConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
         m_io.getRobotToCamera());
     m_estimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
@@ -106,7 +105,7 @@ public class SingleInputPoseEstimator implements Runnable {
     }
     PhotonTrackedTarget target = targets.get(0);
     int fidId = target.getFiducialId();
-    Optional<Pose3d> targetPosition = VisionConstants.kTagLayout
+    Optional<Pose3d> targetPosition = AprilTagVisionConstants.kTagLayout
         .getTagPose(fidId);
     if (targetPosition.isEmpty()) {
       m_logger.error("Tag {} detected not in field layout", fidId);
@@ -135,7 +134,7 @@ public class SingleInputPoseEstimator implements Runnable {
     double altXYErr = altDiff.getTranslation().getNorm();
     Pose3d estimate;
 
-    if (Math.abs(bestRotErr - altRotErr) >= VisionConstants.kHeadingThreshold) {
+    if (Math.abs(bestRotErr - altRotErr) >= AprilTagVisionConstants.kHeadingThreshold) {
       estimate = (bestRotErr <= altRotErr) ? best : alt;
     } else {
       estimate = (bestXYErr <= altXYErr) ? best : alt;
@@ -146,7 +145,7 @@ public class SingleInputPoseEstimator implements Runnable {
 
   private boolean precheckValidity(PhotonPipelineResult result) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
-    if (latency > VisionConstants.kLatencyThreshold) {
+    if (latency > AprilTagVisionConstants.kLatencyThreshold) {
       m_logger.warn("({}) Refused old vision data, latency of {}", m_io.getName(), latency);
       return false;
     }
@@ -171,7 +170,7 @@ public class SingleInputPoseEstimator implements Runnable {
   private boolean checkValidity(
       Pose3d pose,
       double ambiguity) {
-    if (ambiguity >= VisionConstants.kAmbiguityThreshold) {
+    if (ambiguity >= AprilTagVisionConstants.kAmbiguityThreshold) {
       return false;
     }
     return !isOutsideField(pose);
@@ -181,13 +180,13 @@ public class SingleInputPoseEstimator implements Runnable {
     double x = pose.getX();
     double y = pose.getY();
     double z = pose.getZ();
-    double xMax = VisionConstants.kXYMargin.magnitude()
+    double xMax = AprilTagVisionConstants.kXYMargin.magnitude()
         + FieldConstants.kFieldLength.magnitude();
-    double yMax = VisionConstants.kXYMargin.magnitude()
+    double yMax = AprilTagVisionConstants.kXYMargin.magnitude()
         + FieldConstants.kFieldWidth.magnitude();
-    double xyMin = -VisionConstants.kXYMargin.magnitude();
-    double zMax = VisionConstants.kZMargin.magnitude();
-    double zMin = -VisionConstants.kZMargin.magnitude();
+    double xyMin = -AprilTagVisionConstants.kXYMargin.magnitude();
+    double zMax = AprilTagVisionConstants.kZMargin.magnitude();
+    double zMin = -AprilTagVisionConstants.kZMargin.magnitude();
     return x < xyMin
         || x > xMax
         || y < xyMin
@@ -199,7 +198,7 @@ public class SingleInputPoseEstimator implements Runnable {
   private Matrix<N3, N1> calculateStdDevs(PhotonPipelineResult result, Pose2d pose) {
     double latency = result.metadata.getLatencyMillis() * 1e-3;
     double multiplier = calculateStdDevMultiplier(result, latency, pose);
-    return VisionConstants.kBaseStdDevs.times(multiplier);
+    return AprilTagVisionConstants.kBaseStdDevs.times(multiplier);
   }
 
   private double calculateStdDevMultiplier(
@@ -216,24 +215,24 @@ public class SingleInputPoseEstimator implements Runnable {
     averageTagDistance /= result.getTargets().size();
     // calculate tag distance factor
     double distanceFactor = Math.max(1,
-        VisionConstants.kDistanceMultiplier
-            * (averageTagDistance - VisionConstants.kNoisyDistance));
+        AprilTagVisionConstants.kDistanceMultiplier
+            * (averageTagDistance - AprilTagVisionConstants.kNoisyDistance));
     // calculate an (average) ambiguity real quick:
     double ambiguity = getAmbiguity(result);
     // ambiguity factor
     double ambiguityFactor = Math.max(1,
-        VisionConstants.kAmbiguityMultiplier * ambiguity
-            + VisionConstants.kAmbiguityShifter);
+        AprilTagVisionConstants.kAmbiguityMultiplier * ambiguity
+            + AprilTagVisionConstants.kAmbiguityShifter);
     // tag divisor
     double tags = result.getTargets().size();
-    double tagDivisor = 1 + (tags - 1) * VisionConstants.kTargetMultiplier;
+    double tagDivisor = 1 + (tags - 1) * AprilTagVisionConstants.kTargetMultiplier;
     // distance from last pose
     double poseDifferenceError = Math.max(0,
         m_lastPose.minus(pose).getTranslation().getNorm()
-            - VisionConstants.kDifferenceThreshold * RobotObserver.getVelocity());
+            - AprilTagVisionConstants.kDifferenceThreshold * RobotObserver.getVelocity());
     double diffMultiplier = Math.max(1,
-        poseDifferenceError * VisionConstants.kDifferenceMultiplier);
-    double timeMultiplier = Math.max(1, latency * VisionConstants.kLatencyMultiplier);
+        poseDifferenceError * AprilTagVisionConstants.kDifferenceMultiplier);
+    double timeMultiplier = Math.max(1, latency * AprilTagVisionConstants.kLatencyMultiplier);
     // final calculation
     double stdDevMultiplier = ambiguityFactor
         * distanceFactor

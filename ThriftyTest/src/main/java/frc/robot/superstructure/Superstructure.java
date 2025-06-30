@@ -12,7 +12,7 @@ import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.vision.AlgaeTracker;
-import frc.robot.vision.VisionHandler;
+import frc.robot.vision.localization.AprilTagVisionHandler;
 
 public class Superstructure {
   private final Subsystems m_subsystems;
@@ -72,8 +72,8 @@ public class Superstructure {
     m_subsystems.drivetrain().setDefaultCommand(driveCommand);
   }
 
-  public VisionHandler buildVision() {
-    return new VisionHandler(
+  public AprilTagVisionHandler buildVision() {
+    return new AprilTagVisionHandler(
         m_subsystems.drivetrain()::getPose,
         m_subsystems.drivetrain()::addPoseEstimate);
   }

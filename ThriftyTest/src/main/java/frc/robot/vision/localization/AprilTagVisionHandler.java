@@ -1,4 +1,4 @@
-package frc.robot.vision;
+package frc.robot.vision.localization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,12 @@ import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Robot;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
+import frc.robot.vision.CameraIO;
+import frc.robot.vision.CameraIOHardware;
 
-public class VisionHandler implements AutoCloseable {
+public class AprilTagVisionHandler implements AutoCloseable {
   @SuppressWarnings("unused")
-  private final Logger m_logger = LoggerFactory.getLogger(VisionHandler.class);
+  private final Logger m_logger = LoggerFactory.getLogger(AprilTagVisionHandler.class);
 
   private final LoopTimer m_loopTimer;
 
@@ -28,14 +30,14 @@ public class VisionHandler implements AutoCloseable {
   private final List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
   private final MultiInputFilter m_filter;
 
-  private final VisionLogger m_esimateLogger;
+  private final AprilTagVisionLogger m_esimateLogger;
   private final OnboardLogger m_ologger;
 
-  public VisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
+  public AprilTagVisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
     m_poseSupplier = poseSupplier;
     m_consumer = callback;
     m_filter = new MultiInputFilter();
-    m_esimateLogger = new VisionLogger();
+    m_esimateLogger = new AprilTagVisionLogger();
     m_ologger = new OnboardLogger("Vision");
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
@@ -43,12 +45,12 @@ public class VisionHandler implements AutoCloseable {
   }
 
   private void setupCameras() {
-    for (Map.Entry<String, Transform3d> entry : VisionConstants.kCameras.entrySet()) {
+    for (Map.Entry<String, Transform3d> entry : AprilTagVisionConstants.kCameras.entrySet()) {
       String cameraName = entry.getKey();
       Transform3d robotToCamera = entry.getValue();
       CameraIO io;
       if (Robot.isSimulation()) {
-        io = new CameraIOSim(cameraName, robotToCamera, m_poseSupplier);
+        io = new CameraIOAprilTagSim(cameraName, robotToCamera, m_poseSupplier);
       } else {
         io = new CameraIOHardware(cameraName, robotToCamera);
       }
@@ -78,7 +80,7 @@ public class VisionHandler implements AutoCloseable {
   }
 
   public void startThread() {
-    m_notifier.startPeriodic(VisionConstants.kPeriodic);
+    m_notifier.startPeriodic(AprilTagVisionConstants.kPeriodic);
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {

@@ -1,15 +1,12 @@
-package frc.robot.vision;
+package frc.robot.vision.localization;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Map.Entry;
-
 import org.slf4j.Logger;
-
 import org.slf4j.LoggerFactory;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,7 +23,7 @@ public class MultiInputFilter {
    * the known camera horizontal field of view.
    */
   private boolean verifyTarget(Pose2d source, int tag) {
-    Optional<Pose3d> tagPose = VisionConstants.kTagLayout.getTagPose(tag);
+    Optional<Pose3d> tagPose = AprilTagVisionConstants.kTagLayout.getTagPose(tag);
     if (tagPose.isEmpty()) {
       return false;
     }
@@ -36,7 +33,7 @@ public class MultiInputFilter {
     Rotation2d sourceAngle = new Rotation2d(sourceRelative.getX(), sourceRelative.getY());
     Rotation2d tagAngle = new Rotation2d(tagRelative.getX(), tagRelative.getY());
     boolean sourceAngleOk =
-        Math.abs(sourceAngle.getRadians()) <= VisionConstants.kHorizontalFov.getRadians() / 2.0;
+        Math.abs(sourceAngle.getRadians()) <= AprilTagVisionConstants.kHorizontalFov.getRadians() / 2.0;
     boolean tagAngleOk = Math.abs(tagAngle.getRadians()) <= Math.PI / 2.0;
     return sourceAngleOk && tagAngleOk;
   }
@@ -69,11 +66,11 @@ public class MultiInputFilter {
     for (Entry<String, Set<Integer>> entry : m_tags.entrySet()) {
       String sourceName = entry.getKey();
       Set<Integer> tags = entry.getValue();
-      if (!VisionConstants.kCameras.containsKey(sourceName)) {
+      if (!AprilTagVisionConstants.kCameras.containsKey(sourceName)) {
         m_logger.warn("Detected target not on field layout, ignoring");
         continue;
       }
-      Transform3d offset = VisionConstants.kCameras.get(sourceName);
+      Transform3d offset = AprilTagVisionConstants.kCameras.get(sourceName);
       Transform2d offset2d = new Transform2d(
           offset.getX(),
           offset.getY(),

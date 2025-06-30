@@ -1,4 +1,4 @@
-package frc.robot.vision;
+package frc.robot.vision.localization;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 import java.util.function.Supplier;
@@ -11,8 +11,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotObserver;
+import frc.robot.vision.CameraIO;
 
-public class CameraIOSim implements CameraIO {
+public class CameraIOAprilTagSim implements CameraIO {
   private static boolean setupComplete;
 
   private static final VisionSystemSim simSystem = new VisionSystemSim("main");
@@ -29,7 +30,7 @@ public class CameraIOSim implements CameraIO {
 
   private final String m_name;
 
-  public CameraIOSim(String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier) {
+  public CameraIOAprilTagSim(String name, Transform3d robotToCamera, Supplier<Pose2d> poseSupplier) {
     setupSimProps();
     m_name = name;
     m_poseSupplier = poseSupplier;
@@ -60,14 +61,14 @@ public class CameraIOSim implements CameraIO {
       return;
     }
     setupComplete = true;
-    simSystem.addAprilTags(VisionConstants.kTagLayout);
+    simSystem.addAprilTags(AprilTagVisionConstants.kTagLayout);
     simProps.setCalibration(
-        VisionConstants.kResWidth,
-        VisionConstants.kResHeight,
-        VisionConstants.kFOV);
-    simProps.setAvgLatencyMs(VisionConstants.kAvgLatency.in(Milliseconds));
-    simProps.setLatencyStdDevMs(VisionConstants.kLatencyStdDev.in(Milliseconds));
-    simProps.setCalibError(VisionConstants.kAvgErr, VisionConstants.kErrStdDevs);
+        AprilTagVisionConstants.kResWidth,
+        AprilTagVisionConstants.kResHeight,
+        AprilTagVisionConstants.kFOV);
+    simProps.setAvgLatencyMs(AprilTagVisionConstants.kAvgLatency.in(Milliseconds));
+    simProps.setLatencyStdDevMs(AprilTagVisionConstants.kLatencyStdDev.in(Milliseconds));
+    simProps.setCalibError(AprilTagVisionConstants.kAvgErr, AprilTagVisionConstants.kErrStdDevs);
     RobotObserver.setField(simField);
   }
 }

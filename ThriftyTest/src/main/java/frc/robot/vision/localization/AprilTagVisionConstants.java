@@ -1,4 +1,4 @@
-package frc.robot.vision;
+package frc.robot.vision.localization;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Milliseconds;
@@ -18,7 +18,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.Robot;
 
-public class VisionConstants {
+public class AprilTagVisionConstants {
   protected static final boolean kEnableLogging = Robot.isSimulation();
 
   protected static final double kRotationCoefficient = Math.PI * 0.5;

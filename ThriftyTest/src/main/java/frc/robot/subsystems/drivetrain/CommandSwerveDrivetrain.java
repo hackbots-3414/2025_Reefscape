@@ -56,9 +56,8 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
-import frc.robot.vision.TimestampedPoseEstimate;
+import frc.robot.vision.localization.TimestampedPoseEstimate;
 import frc.robot.vision.AlgaeTracker.ObjectTrackingStatus;
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
