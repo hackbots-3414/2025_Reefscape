@@ -205,6 +205,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Vision/Camera Status": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -214,19 +219,16 @@
     },
     "transitory": {
       "SmartDashboard": {
-        "Algae": {
-          "open": true
-        },
         "Algae Tracking": {
-          "open": true
-        },
-        "Coral": {
           "open": true
         },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
           }
+        },
+        "Vision": {
+          "open": true
         },
         "open": true
       },

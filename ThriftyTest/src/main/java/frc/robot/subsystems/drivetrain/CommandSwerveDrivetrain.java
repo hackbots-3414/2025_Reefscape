@@ -57,7 +57,7 @@ import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
-import frc.robot.vision.AlgaeTracker.ObjectTrackingStatus;
+import frc.robot.vision.tracking.AlgaeTracker.ObjectTrackingStatus;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily

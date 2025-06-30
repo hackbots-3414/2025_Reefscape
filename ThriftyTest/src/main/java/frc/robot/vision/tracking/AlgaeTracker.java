@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotObserver;
 
 public class AlgaeTracker implements Runnable {
+  @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(AlgaeTracker.class);
 
   private final PhotonCamera camera = new PhotonCamera("camera");

@@ -28,12 +28,14 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotObserver;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
+import frc.robot.vision.CameraIOInputsLogger;
 
 public class SingleInputPoseEstimator implements Runnable {
   private final Logger m_logger = LoggerFactory.getLogger(SingleInputPoseEstimator.class);
 
   private final CameraIO m_io;
   private final CameraIOInputs m_inputs;
+  private final CameraIOInputsLogger m_inputsLogger;
 
   private final Consumer<TimestampedPoseEstimate> m_reporter;
   private Pose2d m_lastPose;
@@ -49,6 +51,7 @@ public class SingleInputPoseEstimator implements Runnable {
       Consumer<TimestampedPoseEstimate> updateCallback) {
     m_io = io;
     m_inputs = new CameraIOInputs();
+    m_inputsLogger = new CameraIOInputsLogger(m_inputs, io.getName());
     m_reporter = updateCallback;
     m_filter = fitler;
     m_disconnectedAlert = new Alert("Vision/Camera Status", io.getName() + " disconnected", AlertType.kError);
@@ -62,6 +65,7 @@ public class SingleInputPoseEstimator implements Runnable {
   public void refresh(Pose2d robotPose) {
     m_lastPose = robotPose;
     m_io.updateInputs(m_inputs);
+    m_inputsLogger.log();
     m_disconnectedAlert.set(!m_inputs.connected);
     if (!m_inputs.connected) {
       return;

@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Robot;
 import frc.robot.utils.LoopTimer;
-import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIOHardware;
 
@@ -31,14 +30,12 @@ public class AprilTagVisionHandler implements AutoCloseable {
   private final MultiInputFilter m_filter;
 
   private final AprilTagVisionLogger m_esimateLogger;
-  private final OnboardLogger m_ologger;
 
   public AprilTagVisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
     m_poseSupplier = poseSupplier;
     m_consumer = callback;
     m_filter = new MultiInputFilter();
     m_esimateLogger = new AprilTagVisionLogger();
-    m_ologger = new OnboardLogger("Vision");
     setupCameras();
     m_notifier = new Notifier(this::updateEstimators);
     m_loopTimer = new LoopTimer("Vision");
@@ -59,7 +56,6 @@ public class AprilTagVisionHandler implements AutoCloseable {
           io,
           this::addEstimate);
       m_estimators.add(estimator);
-      m_ologger.registerBoolean(cameraName + " connected", estimator::isConnected);
     }
   }
 
@@ -75,7 +71,6 @@ public class AprilTagVisionHandler implements AutoCloseable {
     }
     // finish logging
     m_esimateLogger.log();
-    m_ologger.log();
     m_loopTimer.log();
   }
 

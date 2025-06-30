@@ -11,7 +11,7 @@ import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
-import frc.robot.vision.AlgaeTracker;
+import frc.robot.vision.tracking.AlgaeTracker;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 
 public class Superstructure {
