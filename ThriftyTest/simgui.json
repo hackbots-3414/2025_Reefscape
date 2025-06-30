@@ -50,12 +50,7 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Coral/Subsystem": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Elevator/Subsystem": {
+      "/SmartDashboard/Command Scheduler": {
         "window": {
           "visible": true
         }
@@ -195,21 +190,6 @@
           "width": 0.5
         },
         "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Test/Elevator Up": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Test/Stow": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Vision/Camera Status": {
         "window": {
           "visible": true
         }
