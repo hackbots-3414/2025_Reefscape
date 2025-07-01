@@ -20,7 +20,7 @@
  <logger name="frc.robot.driveassist.Autopilot" level="DEBUG"/>
  <logger name="frc.robot.superstructure.states.Test" level="DEBUG"/>
  <logger name="frc.robot.Robot" level="INFO"/>
- <logger name="frc.robot.vision.AlgaeTracker" level="DEBUG"/>
+ <logger name="frc.robot.vision.tracking.AlgaeTracker" level="DEBUG"/>
 
  <root level="WARN">
    <appender-ref ref="STDOUT"/>

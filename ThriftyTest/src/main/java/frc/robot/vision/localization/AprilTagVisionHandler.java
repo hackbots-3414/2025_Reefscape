@@ -42,7 +42,7 @@ public class AprilTagVisionHandler implements AutoCloseable {
   }
 
   private void setupCameras() {
-    for (Map.Entry<String, Transform3d> entry : AprilTagVisionConstants.kCameras.entrySet()) {
+    for (Map.Entry<String, Transform3d> entry : LocalizationConstants.kCameras.entrySet()) {
       String cameraName = entry.getKey();
       Transform3d robotToCamera = entry.getValue();
       CameraIO io;
@@ -77,7 +77,7 @@ public class AprilTagVisionHandler implements AutoCloseable {
   }
 
   public void startThread() {
-    m_notifier.startPeriodic(AprilTagVisionConstants.kPeriodic);
+    m_notifier.startPeriodic(LocalizationConstants.kPeriodic);
   }
 
   private void addEstimate(TimestampedPoseEstimate estimate) {

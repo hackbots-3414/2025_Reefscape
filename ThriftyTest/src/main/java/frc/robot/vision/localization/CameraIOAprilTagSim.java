@@ -57,14 +57,14 @@ public class CameraIOAprilTagSim implements CameraIO {
       return;
     }
     setupComplete = true;
-    simSystem.addAprilTags(AprilTagVisionConstants.kTagLayout);
+    simSystem.addAprilTags(LocalizationConstants.kTagLayout);
     simProps.setCalibration(
-        AprilTagVisionConstants.kResWidth,
-        AprilTagVisionConstants.kResHeight,
-        AprilTagVisionConstants.kFOV);
-    simProps.setAvgLatencyMs(AprilTagVisionConstants.kAvgLatency.in(Milliseconds));
-    simProps.setLatencyStdDevMs(AprilTagVisionConstants.kLatencyStdDev.in(Milliseconds));
-    simProps.setCalibError(AprilTagVisionConstants.kAvgErr, AprilTagVisionConstants.kErrStdDevs);
+        LocalizationConstants.kResWidth,
+        LocalizationConstants.kResHeight,
+        LocalizationConstants.kFOV);
+    simProps.setAvgLatencyMs(LocalizationConstants.kAvgLatency.in(Milliseconds));
+    simProps.setLatencyStdDevMs(LocalizationConstants.kLatencyStdDev.in(Milliseconds));
+    simProps.setCalibError(LocalizationConstants.kAvgErr, LocalizationConstants.kErrStdDevs);
     RobotObserver.setField(simField);
   }
 }

@@ -37,6 +37,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -82,7 +83,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       .withDriveRequestType(DriveRequestType.Velocity);
 
   private RobotCentric m_trackingRequest = new RobotCentric()
-    .withDriveRequestType(DriveRequestType.Velocity);
+      .withDriveRequestType(DriveRequestType.Velocity);
 
   private FieldCentricFacingAngle m_veloRequest = new FieldCentricFacingAngle()
       .withHeadingPID(DriveConstants.HeadingPID.kP, 0, 0)
@@ -251,8 +252,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_ologger.log();
     m_hasReceivedVisionUpdate = false;
     // Expire old algae tracking data
-    if (m_objectStatus.isPresent()
-        && m_objectStatus.get().isExpired(DriveConstants.kObjectTimeout)) {
+    if (m_objectStatus.isPresent() && m_objectStatus.get().isExpired()) {
       m_objectStatus = Optional.empty();
     }
     m_timer.log();
@@ -454,13 +454,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public Command followObject() {
     return run(new Runnable() {
-      private final PIDController controller = new PIDController(8, 0, 0);
+      private final PIDController thetaController = new PIDController(8, 0, 0);
+      private final PIDController driveController = new PIDController(1, 0, 0);
 
       @Override
       public void run() {
         m_objectStatus.ifPresentOrElse(status -> {
-          double output = this.controller.calculate(status.yaw().getRadians(), 0);
+          double output = -this.thetaController.calculate(status.yaw().getRadians(), 0);
           double speed = DriveConstants.kObjectTrackSpeed.in(MetersPerSecond);
+          if (status.pose().isPresent()) {
+            double distance = m_estimatedPose
+                .relativeTo(status.pose().get())
+                .getTranslation()
+                .getNorm();
+            speed = Math.min(
+                DriveConstants.kMaxObjectTrackingSpeed.in(MetersPerSecond),
+                -this.driveController.calculate(distance, 0));
+          }
+          /*
+           * we invert the calculation because it outputs a negative number, because measurement >
+           * ref, so err < 0
+           */
           double vx = speed * status.yaw().getCos();
           double vy = speed * status.yaw().getSin();
           setControl(m_trackingRequest

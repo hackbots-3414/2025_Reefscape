@@ -23,13 +23,13 @@ public class AprilTagVisionLogger {
   }
 
   public void addEstimate(TimestampedPoseEstimate estimate) {
-    if (AprilTagVisionConstants.kEnableLogging) {
+    if (LocalizationConstants.kEnableLogging) {
       m_estimates.add(estimate.pose());
     }
   }
 
   public void log() {
-    if (AprilTagVisionConstants.kEnableLogging) {
+    if (LocalizationConstants.kEnableLogging) {
       m_logger.log();
       m_estimates.clear();
     }

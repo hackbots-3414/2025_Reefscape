@@ -18,7 +18,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import frc.robot.Robot;
 
-public class AprilTagVisionConstants {
+public class LocalizationConstants {
   protected static final boolean kEnableLogging = Robot.isSimulation();
 
   protected static final double kRotationCoefficient = Math.PI * 0.5;

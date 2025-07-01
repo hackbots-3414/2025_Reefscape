@@ -1,5 +1,6 @@
 package frc.robot.vision.tracking;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import java.util.function.Supplier;
 import org.photonvision.PhotonCamera;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotObserver;
+import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.CameraIO;
 
 public class CameraIOTrackingSim implements CameraIO {
@@ -22,6 +24,9 @@ public class CameraIOTrackingSim implements CameraIO {
   private final PhotonCamera m_camera;
 
   private final Supplier<Pose2d> m_robotPose;
+
+  private final static Transform3d offset =
+      new Transform3d(0, 0, TrackingConstants.kGroundAlgaeHeight.in(Meters), Rotation3d.kZero);
 
   // simulation stuff only happens once
   private static final VisionSystemSim visionSim = new VisionSystemSim("tracking");
@@ -64,7 +69,8 @@ public class CameraIOTrackingSim implements CameraIO {
   public void updateInputs(CameraIOInputs inputs) {
     inputs.connected = SmartDashboard.getBoolean("Vision/" + m_name + " connected", true);
 
-    targetSim.setPose(new Pose3d(RobotObserver.getField().getObject("Tracked Object").getPose()));
+    targetSim.setPose(
+        new Pose3d(RobotObserver.getField().getObject("Tracked Object").getPose()).plus(offset));
     visionSim.update(m_robotPose.get());
 
     inputs.unreadResults = m_camera.getAllUnreadResults();
