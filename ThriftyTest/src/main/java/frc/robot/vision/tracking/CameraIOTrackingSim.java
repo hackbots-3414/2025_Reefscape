@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotObserver;
-import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.CameraIO;
 
 public class CameraIOTrackingSim implements CameraIO {
