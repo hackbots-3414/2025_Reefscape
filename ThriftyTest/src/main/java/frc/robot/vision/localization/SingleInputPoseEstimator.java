@@ -61,7 +61,8 @@ public class SingleInputPoseEstimator implements Runnable {
     m_reporter = updateCallback;
     m_robotToCamera = robotToCamera;
     m_filter = fitler;
-    m_disconnectedAlert = new Alert("Vision/Camera Status", name + " disconnected", AlertType.kError);
+    m_disconnectedAlert =
+        new Alert("Vision/Camera Status", name + " disconnected", AlertType.kError);
     m_estimator = new PhotonPoseEstimator(
         LocalizationConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -160,7 +161,10 @@ public class SingleInputPoseEstimator implements Runnable {
       m_logger.warn("({}) Refused old vision data, latency of {}", m_name, latency);
       return false;
     }
-    return result.hasTargets();
+    // Ensure we only accept reef-focused estimates
+    return result.hasTargets()
+        && (!LocalizationConstants.kEnableReefFilter
+            || LocalizationConstants.kReefIds.contains(result.getBestTarget().getFiducialId()));
   }
 
   private Optional<TimestampedPoseEstimate> process(PhotonPipelineResult result, Pose3d pose) {

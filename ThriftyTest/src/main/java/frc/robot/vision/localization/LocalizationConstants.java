@@ -98,7 +98,8 @@ public class LocalizationConstants {
   protected static final double kAvgErr = 0.08;
   protected static final double kErrStdDevs = 0.02;
 
-  // reef tag ids (single tag only)
+  public static final boolean kEnableReefFilter = false;
+
   protected static final Set<Integer> kReefIds = Set.of(
       6, 7, 8, 9, 10, 11, // red tags
       17, 18, 19, 20, 21, 22 // blue tags
