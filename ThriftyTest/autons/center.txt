@@ -1,6 +1,6 @@
 Align H
 L4
-Align GH & Lower Algae
+Align GH & Upper Algae
 Align Barge Center
 Net
 Upper Algae & Align IJ
