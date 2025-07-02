@@ -9,6 +9,8 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 
 class TrackingConstants {
+  public static final boolean kEnabled = true;
+
   protected static final String kCameraName = "camera";
   /* it is very important that the robot's position be ON THE GROUND (z = 0) */
   protected static final Transform3d kRobotToCamera = new Transform3d(0, 0, 0.3, Rotation3d.kZero);
@@ -30,5 +32,8 @@ class TrackingConstants {
    */
   protected static final Distance kGroundAlgaeHeight = Inches.of(8.125);
   protected static final Distance kLollipopAlgaeHeight = Inches.of(14.0625);
-  public static final Time kExpirationTime = Milliseconds.of(300);
+
+  protected static final boolean kDistanceEstimationEnabled = true;
+
+  protected static final Time kExpirationTime = Milliseconds.of(300);
 }

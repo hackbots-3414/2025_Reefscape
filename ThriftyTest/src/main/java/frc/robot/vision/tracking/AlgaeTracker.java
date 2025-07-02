@@ -28,6 +28,8 @@ import frc.robot.vision.CameraIOInputsLogger;
 
 public class AlgaeTracker implements Runnable {
 
+  public static final boolean enabled = TrackingConstants.kEnabled;
+
   public record ObjectTrackingStatus(Rotation2d yaw, double time, Optional<Pose2d> pose) {
     public boolean isExpired() {
       return Timer.getTimestamp() - time() >= TrackingConstants.kExpirationTime.in(Seconds);
@@ -93,6 +95,9 @@ public class AlgaeTracker implements Runnable {
   }
 
   private Optional<Double> estimateDistance(PhotonTrackedTarget target) {
+    if (!TrackingConstants.kDistanceEstimationEnabled) {
+      return Optional.empty();
+    }
     if (target.pitch < 0) {
       return estimateDistance(target.pitch, TrackingConstants.kGroundAlgaeHeight);
     }

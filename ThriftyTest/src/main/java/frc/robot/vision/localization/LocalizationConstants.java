@@ -37,12 +37,9 @@ public class LocalizationConstants {
   protected static final String kSimLogPath = "logs/vision";
 
   private static final double kCameraHeight = 0.190;
-
   private static final double kTightPitch = -Units.degreesToRadians(22.5);
   private static final double kWidePitch = -Units.degreesToRadians(25.0);
-
   private static final double kTightYaw = Units.degreesToRadians(37.0); // this doesn't seem
-                                                                        // right
   private static final double kWideYaw = Units.degreesToRadians(-7.0);
 
   @SuppressWarnings("unused")
@@ -78,7 +75,7 @@ public class LocalizationConstants {
 
   // Some configuration variables:
   protected static final double kDistanceMultiplier = 5.0;
-  protected static final double kNoisyDistance = 4.0;
+  protected static final double kNoisyDistance = 0.8;
   protected static final double kAmbiguityMultiplier = 0.4;
   protected static final double kAmbiguityShifter = 0.2;
   protected static final double kTargetMultiplier = 80;

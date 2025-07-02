@@ -68,10 +68,16 @@ public class Superstructure {
     modifier.modify(m_subsystems, trigger);
   }
 
+  /**
+   * Sets the provided command to be a default command for the drivetrain
+   */
   public void setDrive(Command driveCommand) {
     m_subsystems.drivetrain().setDefaultCommand(driveCommand);
   }
 
+  /**
+   * Returns an <code>AprilTagVisionHandler</code>.
+   */
   public AprilTagVisionHandler buildVision() {
     return new AprilTagVisionHandler(
         m_subsystems.drivetrain()::getPose,
@@ -104,9 +110,19 @@ public class Superstructure {
     return m_subsystems.algae.holdingAlgae();
   }
 
+  /**
+   * Returns a runnable that can be used for tracking algae
+   *
+   * If algae tracking is disabled, then this Runnable does nothing.
+   */
   public Runnable buildAlgaeTracker() {
-    return new AlgaeTracker(
-        m_subsystems.drivetrain()::getPose,
-        m_subsystems.drivetrain()::addObjectTrackingData);
+    if (AlgaeTracker.enabled) {
+      return new AlgaeTracker(
+          m_subsystems.drivetrain()::getPose,
+          m_subsystems.drivetrain()::addObjectTrackingData);
+    } else {
+      return () -> {
+      };
+    }
   }
 }
