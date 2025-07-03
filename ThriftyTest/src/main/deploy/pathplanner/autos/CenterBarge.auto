@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "StartH"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Align H"
@@ -35,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AlgaeLower"
+                  "name": "Lower Algae"
                 }
               }
             ]
@@ -50,7 +44,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Align Barge"
+            "name": "Beeline Barge Center"
           }
         },
         {
@@ -72,7 +66,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AlgaeUpper"
+                  "name": "Upper Algae"
                 }
               },
               {
@@ -93,7 +87,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Align Barge"
+            "name": "Beeline Barge Center"
           }
         },
         {
@@ -111,7 +105,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

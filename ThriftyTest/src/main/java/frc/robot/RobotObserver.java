@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.ReefClipLocations;
 
 public class RobotObserver {
     private static RobotObserver m_instance;
@@ -17,17 +16,6 @@ public class RobotObserver {
             m_instance = new RobotObserver();
         }
         return m_instance;
-    }
-
-    /* Pose2d to watch the pose of the robot and associated methods */
-    private Supplier<Pose2d> m_poseSupplier;
-
-    public static void setPoseSupplier(Supplier<Pose2d> poseSupplier) {
-        getInstance().m_poseSupplier = poseSupplier;
-    }
-
-    public static Pose2d getPose() {
-        return getInstance().m_poseSupplier.get();
     }
 
     /* the velocity of the robot */
@@ -54,51 +42,10 @@ public class RobotObserver {
         return getInstance().m_field;
     }
 
-    /* Keeps track of the latest time an april tag was seen */
-    private Supplier<Boolean> m_visionValidSupplier;
-
-    public static void setVisionValidSupplier(Supplier<Boolean> visionValidSupplier) {
-        getInstance().m_visionValidSupplier = visionValidSupplier;
-    }
-
-    public static boolean getVisionValid() {
-        return getInstance().m_visionValidSupplier.get();
-    }
-
-    private Supplier<Double> m_elevatorHeightSupplier;
-
-    public static void setElevatorHeightSupplier(Supplier<Double> visionValidSupplier) {
-        getInstance().m_elevatorHeightSupplier = visionValidSupplier;
-    }
-
-    public static double getElevatorHeightSupplier() {
-        return getInstance().m_elevatorHeightSupplier.get();
-    }
-
-    private boolean m_reefMode = false;
-
-    public static void setReefMode(boolean enabled) {
-        getInstance().m_reefMode = enabled;
-    }
-
-    public static boolean getReefMode() {
-        return getInstance().m_reefMode;
-    }
-
-    private ReefClipLocations m_reefClipLocation = ReefClipLocations.LEFT;
-
-    public static void setReefClipLocation(ReefClipLocations reefClipLocation) {
-        getInstance().m_reefClipLocation = reefClipLocation;
-    }
-
-    public static ReefClipLocations getReefClipLocation() {
-        return getInstance().m_reefClipLocation;
-    }
-
     private BooleanSupplier m_coralPieceHeldSupplier;
     private BooleanSupplier m_algaeHeldSupplier;
 
-    public static void setPieceHeldSupplier(BooleanSupplier pieceHeldSupplier) {
+    public static void setCoralHeldSupplier(BooleanSupplier pieceHeldSupplier) {
         getInstance().m_coralPieceHeldSupplier = pieceHeldSupplier;
     }
     
@@ -172,4 +119,5 @@ public class RobotObserver {
     public static boolean getAligned() {
         return getInstance().m_alignedSupplier.getAsBoolean();
     }
+
 }

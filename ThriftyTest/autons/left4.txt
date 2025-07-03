@@ -1,0 +1,12 @@
+Align J
+L4
+Recalibrate & ((Coral Wait ? Align LIntake) + Align K)
+Intake
+L4
+Recalibrate & ((Coral Wait ? Beeline LIntake) + Align L)
+Intake
+L4
+Recalibrate & ((Coral Wait ? Beeline LIntake) + Align A)
+Intake
+L4
+Recalibrate
