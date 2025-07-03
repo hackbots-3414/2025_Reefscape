@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import java.io.IOException;
@@ -89,6 +90,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       .withHeadingPID(DriveConstants.HeadingPID.kP, 0, 0)
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
+      // .withMaxAbsRotationalRate(RotationsPerSecond.of(0)); // Set max rotational rate, use if too fast
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
