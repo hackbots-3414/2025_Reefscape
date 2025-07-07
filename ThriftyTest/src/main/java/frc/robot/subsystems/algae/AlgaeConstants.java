@@ -15,7 +15,7 @@ public final class AlgaeConstants {
   protected static final double kHoldVoltage = 2.7;
 
   protected static final double kTorqueCurrentThreshold = 75;
-  protected static final double kSupplyCurrentLimit = 25.0;
+  protected static final double kSupplyCurrentLimit = 40.0;
 
   protected static final double kProcessorScoreTime = 2.0;
   protected static final double kNetScoreTime = 0.4;
