@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -75,6 +77,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private double m_lastSimTime;
 
   private boolean m_aligned;
+
+  private Trigger m_tippyTrigger = new Trigger(() -> false);
 
   private boolean m_hasReceivedVisionUpdate;
 
@@ -420,6 +424,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     });
   }
 
+  public void setTippyTrigger(Trigger tippyTrigger) {
+    m_tippyTrigger = tippyTrigger;
+  }
+
+  private AngularVelocity getMaxRotationalRate() {
+    if (m_tippyTrigger.getAsBoolean()) {
+      return DriveConstants.kMaxTippyAngularSpeed;
+    } else {
+      return DriveConstants.kMaxAngularSpeed;
+    }
+  }
+
   /**
    * Drives to a certain point on the field
    */
@@ -435,7 +451,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           setControl(m_veloRequest
               .withVelocityX(output.getX())
               .withVelocityY(output.getY())
-              .withTargetDirection(output.getRotation()));
+              .withTargetDirection(output.getRotation())
+              .withMaxAbsRotationalRate(getMaxRotationalRate()));
         }))
         .until(() -> {
           return autopilot.atTarget(m_estimatedPose, target);

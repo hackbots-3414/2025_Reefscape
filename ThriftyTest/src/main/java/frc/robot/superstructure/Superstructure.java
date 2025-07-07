@@ -38,6 +38,8 @@ public class Superstructure {
         drivetrain,
         leds);
 
+    drivetrain.setTippyTrigger(tippy());
+
     RobotObserver.setFFEnabledSupplier(elevator.unsafe().and(() -> !DriverStation.isAutonomous()));
   }
 
@@ -108,6 +110,10 @@ public class Superstructure {
 
   public Trigger holdingAlgae() {
     return m_subsystems.algae.holdingAlgae();
+  }
+
+  public Trigger tippy() {
+    return m_subsystems.elevator.unsafe().or(m_subsystems.algae.holdingAlgae());
   }
 
   /**

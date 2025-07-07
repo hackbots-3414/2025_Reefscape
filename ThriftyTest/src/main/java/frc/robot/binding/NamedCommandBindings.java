@@ -79,12 +79,12 @@ public class NamedCommandBindings implements Binder {
         .withEntryAngle(Rotation2d.fromDegrees(35.0))
         .withRotationRadius(Meters.of(1.5));
     NamedCommands.registerCommand("Align Barge Center", superstructure.enter(
-        new Align(bargeFromCenter).allianceRelative().fast()));
+        new Align(bargeFromCenter).allianceRelative().slow()));
     NamedCommands.registerCommand("Align Barge Left", superstructure.enter(
-        new Align(bargeFromLeft).allianceRelative().fast()));
+        new Align(bargeFromLeft).allianceRelative().slow()));
     NamedCommands.registerCommand("Beeline Barge Center", superstructure.enter(
-          new Align(bargeFromCenter.withoutEntryAngle()).allianceRelative().fast()));
+          new Align(bargeFromCenter.withoutEntryAngle()).allianceRelative().slow()));
     NamedCommands.registerCommand("Beeline Barge Left", superstructure.enter(
-          new Align(bargeFromLeft.withoutEntryAngle()).allianceRelative().fast()));
+          new Align(bargeFromLeft.withoutEntryAngle()).allianceRelative().slow()));
   }
 }
