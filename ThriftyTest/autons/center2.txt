@@ -1,0 +1,12 @@
+Align H
+L4
+Align Inside Lollipop & High Ground Algae
+Beeline Barge Center
+Net
+Align Outside Lollipop & High Ground Algae
+Beeline Barge Left
+Net
+Align IJ & High Ground Algae
+Align Barge Left
+Net
+Beeline LIntake
