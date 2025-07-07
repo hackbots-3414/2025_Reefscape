@@ -36,6 +36,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -77,6 +78,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private boolean m_aligned;
 
+  private Trigger m_tippyTrigger = new Trigger(() -> false);
+
   private boolean m_hasReceivedVisionUpdate;
 
   private FieldCentric m_teleopRequest = new FieldCentric()
@@ -90,7 +93,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       .withHeadingPID(DriveConstants.HeadingPID.kP, 0, 0)
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
       .withDriveRequestType(DriveRequestType.Velocity);
-      // .withMaxAbsRotationalRate(RotationsPerSecond.of(0)); // Set max rotational rate, use if too fast
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -422,6 +424,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     });
   }
 
+  public void setTippyTrigger(Trigger tippyTrigger) {
+    m_tippyTrigger = tippyTrigger;
+  }
+
+  private AngularVelocity getMaxRotationalRate() {
+    if (m_tippyTrigger.getAsBoolean()) {
+      return DriveConstants.kMaxTippyAngularSpeed;
+    } else {
+      return DriveConstants.kMaxAngularSpeed;
+    }
+  }
+
   /**
    * Drives to a certain point on the field
    */
@@ -437,7 +451,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           setControl(m_veloRequest
               .withVelocityX(output.getX())
               .withVelocityY(output.getY())
-              .withTargetDirection(output.getRotation()));
+              .withTargetDirection(output.getRotation())
+              .withMaxAbsRotationalRate(getMaxRotationalRate()));
         }))
         .until(() -> {
           return autopilot.atTarget(m_estimatedPose, target);

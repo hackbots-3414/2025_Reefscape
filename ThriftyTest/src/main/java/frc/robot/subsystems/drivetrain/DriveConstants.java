@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -27,28 +28,40 @@ public class DriveConstants {
     protected static final double kP = 8.0;
   }
 
-  private static final APConstraints kTightAutopilotPathConstraints = new APConstraints()
+  private static final APConstraints kTightAutopilotAPConstraints = new APConstraints()
       .withAcceleration(15.0)
       .withJerk(1.5);
 
-  private static final APProfile kTightProfile = new APProfile(kTightAutopilotPathConstraints)
+  private static final APProfile kTightProfile = new APProfile(kTightAutopilotAPConstraints)
       .withErrorXY(Centimeters.of(1))
       .withErrorTheta(Degrees.of(1))
       .withBeelineRadius(Centimeters.of(10));
 
   public static final Autopilot kTightAutopilot = new Autopilot(kTightProfile);
 
-  private static final APConstraints kFastAutopilotPathConstraints =
+  private static final APConstraints kFastAPConstraints =
       new APConstraints()
           .withAcceleration(20)
           .withJerk(8);
 
-  private static final APProfile kFastProfile = new APProfile(kFastAutopilotPathConstraints)
+  private static final APProfile kFastProfile = new APProfile(kFastAPConstraints)
       .withErrorXY(Centimeters.of(15))
       .withErrorTheta(Degrees.of(5))
       .withBeelineRadius(Centimeters.of(10));
 
   public static final Autopilot kFastAutopilot = new Autopilot(kFastProfile);
+
+  private static final APConstraints kSlowAPConstraints = new APConstraints()
+      .withAcceleration(3)
+      .withJerk(1.5)
+      .withVelocity(3);
+
+  private static final APProfile kSlowProfile = new APProfile(kSlowAPConstraints)
+      .withErrorXY(Inches.of(2))
+      .withErrorTheta(Degrees.of(3))
+      .withBeelineRadius(Centimeters.of(20));
+
+  public static final Autopilot kSlowAutopilot = new Autopilot(kSlowProfile);
 
   protected static final PPHolonomicDriveController kPathplannerHolonomicDriveController =
       new PPHolonomicDriveController(kTranslationPID, kRotationPID);
@@ -62,6 +75,7 @@ public class DriveConstants {
   protected static final LinearAcceleration kMaxLinearAcceleration =
       MetersPerSecondPerSecond.of(3);
   protected static final AngularVelocity kMaxAngularSpeed = RotationsPerSecond.of(2);
+  protected static final AngularVelocity kMaxTippyAngularSpeed = RotationsPerSecond.of(0.5);
   protected static final AngularAcceleration kMaxAngularAcceleration =
       RotationsPerSecondPerSecond.of(2);
 

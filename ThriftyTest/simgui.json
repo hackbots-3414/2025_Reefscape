@@ -54,21 +54,6 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Command Scheduler": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Prep/Set Left": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Prep/Set Right": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Super Field": {
         "Algae": {
           "image": "../resources/algae.jpg",
@@ -208,11 +193,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/Test/Follow Algae": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },
@@ -222,6 +202,9 @@
     },
     "transitory": {
       "SmartDashboard": {
+        "Algae": {
+          "open": true
+        },
         "Algae Tracking": {
           "open": true
         },
@@ -241,9 +224,6 @@
         }
       }
     }
-  },
-  "NetworkTables Info": {
-    "visible": true
   },
   "Plot": {
     "Plot <0>": {
@@ -297,7 +277,7 @@
             0.05999999865889549,
             0.9399999976158142
           ],
-          "height": 288,
+          "height": 0,
           "series": [
             {
               "color": [
@@ -319,7 +299,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

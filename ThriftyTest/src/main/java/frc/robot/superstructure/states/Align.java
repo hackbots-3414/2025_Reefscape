@@ -53,6 +53,11 @@ public class Align implements EnterableState {
     return this;
   }
 
+  public Align slow() {
+    m_autopilot = DriveConstants.kSlowAutopilot;
+    return this;
+  }
+
   private APTarget target() {
     if (m_flip) {
       return FieldUtils.flipTargetConditionally(m_target);
