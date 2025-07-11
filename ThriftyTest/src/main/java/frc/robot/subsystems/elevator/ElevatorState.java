@@ -18,9 +18,9 @@ public enum ElevatorState {
   /** Secondary L1 height for when a coral is already present */
   SecondaryL1(ElevatorState.L1.position() + 8 * ElevatorConstants.kInch),
   /** L2 height */
-  L2(4.016 + 3 * ElevatorConstants.kInch),
+  L2(4.016 + 4 * ElevatorConstants.kInch),
   /** L3 height */
-  L3(7.257 - 4 * ElevatorConstants.kInch),
+  L3(7.257 - 5 * ElevatorConstants.kInch),
   /** L4 height */
   L4(9.757 + 0.3 * ElevatorConstants.kInch),
   /** Height to score net */

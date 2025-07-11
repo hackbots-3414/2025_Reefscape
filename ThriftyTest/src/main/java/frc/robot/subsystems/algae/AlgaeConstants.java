@@ -12,10 +12,11 @@ public final class AlgaeConstants {
   protected static final double kIntakeVoltage = 12;
   protected static final double kNetEjectVoltage = -3.0;
   protected static final double kProcessorEjectVoltage = -3.2;
-  protected static final double kHoldVoltage = 2.7;
+  protected static final double kHoldVoltage = 6.0;
 
   protected static final double kTorqueCurrentThreshold = 75;
   protected static final double kSupplyCurrentLimit = 40.0;
+  protected static final double kStatorCurrentLimit = 120.0;
 
   protected static final double kProcessorScoreTime = 2.0;
   protected static final double kNetScoreTime = 0.4;
@@ -27,6 +28,8 @@ public final class AlgaeConstants {
 
       .withCurrentLimits(new CurrentLimitsConfigs()
           .withSupplyCurrentLimitEnable(true)
-          .withSupplyCurrentLimit(kSupplyCurrentLimit));
+          .withSupplyCurrentLimit(kSupplyCurrentLimit)
+          .withStatorCurrentLimit(kStatorCurrentLimit)
+          .withStatorCurrentLimitEnable(true));
 }
 

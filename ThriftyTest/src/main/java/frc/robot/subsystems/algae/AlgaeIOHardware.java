@@ -19,6 +19,7 @@ public class AlgaeIOHardware implements AlgaeIO {
   private final StatusSignal<Current> m_torqueSignal;
   private final StatusSignal<Temperature> m_tempSignal;
   private final StatusSignal<AngularVelocity> m_velocitySignal;
+  private final StatusSignal<Current> m_statorSignal;
 
   public AlgaeIOHardware() {
     m_motor = new TalonFX(AlgaeConstants.kMotorID);
@@ -30,13 +31,15 @@ public class AlgaeIOHardware implements AlgaeIO {
     m_torqueSignal = m_motor.getTorqueCurrent();
     m_tempSignal = m_motor.getDeviceTemp();
     m_velocitySignal = m_motor.getVelocity();
+    m_statorSignal = m_motor.getStatorCurrent();
 
     StatusSignalUtil.registerRioSignals(
         m_voltageSignal,
         m_currentSignal,
         m_torqueSignal,
         m_tempSignal,
-        m_velocitySignal);
+        m_velocitySignal,
+        m_statorSignal);
   }
 
   public void updateInputs(AlgaeIOInputs inputs) {
@@ -50,6 +53,7 @@ public class AlgaeIOHardware implements AlgaeIO {
     inputs.current = m_currentSignal.getValueAsDouble();
     inputs.torque = m_torqueSignal.getValueAsDouble();
     inputs.temperature = m_tempSignal.getValueAsDouble();
+    inputs.stator = m_statorSignal.getValueAsDouble();
   }
 
   public void setVoltage(double voltage) {
