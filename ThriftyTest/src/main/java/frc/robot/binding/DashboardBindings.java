@@ -6,6 +6,7 @@ import frc.robot.subsystems.elevator.ElevatorState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.Superstructure.Subsystems;
+import frc.robot.superstructure.states.SeedAngle;
 import frc.robot.superstructure.states.SeedPose;
 import frc.robot.superstructure.states.Stow;
 import frc.robot.superstructure.states.TrackAlgae;
@@ -15,6 +16,7 @@ public class DashboardBindings implements Binder {
     SmartDashboard.putData("Prep/Set Center", superstructure.enter(SeedPose.center()));
     SmartDashboard.putData("Prep/Set Left", superstructure.enter(SeedPose.left()));
     SmartDashboard.putData("Prep/Set Right", superstructure.enter(SeedPose.right()));
+    SmartDashboard.putData("Prep/Set Angle", superstructure.enter(SeedAngle.reverse()));
 
     SmartDashboard.putData("Test/Stow", superstructure.enter(new Stow()));
     SmartDashboard.putData("Test/Elevator Up", superstructure.enter(new EnterableState() {

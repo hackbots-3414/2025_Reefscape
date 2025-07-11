@@ -54,6 +54,16 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Prep/Set Left": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Prep/Set Right": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
         "Algae": {
           "image": "../resources/algae.jpg",
@@ -224,6 +234,9 @@
         }
       }
     }
+  },
+  "NetworkTables Info": {
+    "visible": true
   },
   "Plot": {
     "Plot <0>": {

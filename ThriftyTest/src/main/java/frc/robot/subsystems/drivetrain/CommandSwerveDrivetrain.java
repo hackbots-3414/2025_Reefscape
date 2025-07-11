@@ -25,6 +25,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -217,6 +218,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   private void setPose(Pose2d pose) {
     resetPose(pose);
+  }
+
+  public Command setLocalHeading(Rotation2d heading) {
+    return Commands.runOnce(() -> resetRotation(FieldUtils.getLocalRotation(heading))).ignoringDisable(true);
   }
 
   private ChassisSpeeds getRobotRelativeSpeeds() {
