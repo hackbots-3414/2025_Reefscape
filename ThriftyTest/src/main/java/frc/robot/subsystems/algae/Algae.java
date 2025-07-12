@@ -120,9 +120,7 @@ public class Algae extends PassiveSubsystem {
         Commands.waitSeconds(AlgaeConstants.kNetScoreTime))
 
         .finallyDo(this::keep)
-        .finallyDo((interrupted) -> {
-          resetDebouncer();
-        })
+        .finallyDo(this::resetDebouncer)
         .onlyIf(holdingAlgae());
   }
 
