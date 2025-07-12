@@ -1,8 +1,11 @@
 package frc.robot.subsystems.algae;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import frc.robot.utils.SuperDebouncer.DebounceType;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -12,10 +15,14 @@ import frc.robot.RobotObserver;
 import frc.robot.subsystems.PassiveSubsystem;
 import frc.robot.subsystems.algae.AlgaeIO.AlgaeIOInputs;
 import frc.robot.utils.LoopTimer;
+import frc.robot.utils.OnboardLogger;
+import frc.robot.utils.SuperDebouncer;
 
 public class Algae extends PassiveSubsystem {
   @SuppressWarnings("unused")
   private final Logger m_logger = LoggerFactory.getLogger(Algae.class);
+
+  private final OnboardLogger m_ologger;
 
   private final LoopTimer m_timer;
 
@@ -24,6 +31,7 @@ public class Algae extends PassiveSubsystem {
   private AlgaeIOInputsLogger m_inputsLogger;
 
   private boolean m_hasAlgae;
+  private SuperDebouncer m_debouncer = new SuperDebouncer(AlgaeConstants.kAlgaeDebounceTime.in(Seconds), DebounceType.kFalling);
 
   private MedianFilter m_filter = new MedianFilter(10);
 
@@ -34,8 +42,12 @@ public class Algae extends PassiveSubsystem {
     } else {
       m_io = new AlgaeIOSim();
     }
+    resetDebouncer();
     m_inputs = new AlgaeIOInputs();
     m_inputsLogger = new AlgaeIOInputsLogger(m_inputs);
+    m_ologger = new OnboardLogger("Algae");
+    m_ologger.registerBoolean("Holding", holdingAlgae());
+    
     RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());
     m_timer = new LoopTimer("Algae");
   }
@@ -74,7 +86,8 @@ public class Algae extends PassiveSubsystem {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
     m_inputsLogger.log();
-    m_hasAlgae = getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold;
+    m_hasAlgae = m_debouncer.calculate(getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold);
+    m_ologger.log();
     m_timer.log();
   }
 
@@ -94,6 +107,10 @@ public class Algae extends PassiveSubsystem {
         .unless(holdingAlgae());
   }
 
+  private void resetDebouncer() {
+    m_debouncer.overrideTimer();
+  }
+
   /**
    * Ejects an algae with the correct conditions for a net score
    */
@@ -103,6 +120,9 @@ public class Algae extends PassiveSubsystem {
         Commands.waitSeconds(AlgaeConstants.kNetScoreTime))
 
         .finallyDo(this::keep)
+        .finallyDo((interrupted) -> {
+          resetDebouncer();
+        })
         .onlyIf(holdingAlgae());
   }
 
