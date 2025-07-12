@@ -20,7 +20,7 @@ public enum ElevatorState {
   /** L2 height */
   L2(4.016 + 4 * ElevatorConstants.kInch),
   /** L3 height */
-  L3(7.257 - 5 * ElevatorConstants.kInch),
+  L3(7.257 - 4 * ElevatorConstants.kInch),
   /** L4 height */
   L4(9.757 + 0.3 * ElevatorConstants.kInch),
   /** Height to score net */
@@ -28,7 +28,7 @@ public enum ElevatorState {
   /** Height to intake algae from lower reef */
   LowerReef(2.0),
   /** Height to intake algae from upper reef */
-  UpperReef(4.5);
+  UpperReef(4.5 - 1.5 * ElevatorConstants.kInch);
 
   private final double m_position;
 

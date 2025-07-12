@@ -29,7 +29,7 @@ public class CoralConstants {
   protected static final double kL1LeftEjectVoltage = 2;
   protected static final double kL1RightEjectVoltage = 4;
 
-  protected static final double kSupplyCurrentLimit = 20.0;
+  protected static final double kSupplyCurrentLimit = 25.0;
 
   protected static final InvertedValue kInvertRight = InvertedValue.Clockwise_Positive;
 
