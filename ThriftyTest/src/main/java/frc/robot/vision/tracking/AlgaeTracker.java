@@ -21,12 +21,15 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Robot;
+import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
 import frc.robot.vision.CameraIOHardware;
 import frc.robot.vision.CameraIOInputsLogger;
 
 public class AlgaeTracker implements Runnable {
+
+  private final OnboardLogger m_ologger = new OnboardLogger("Tracking");
 
   public static final boolean enabled = TrackingConstants.kEnabled;
 
@@ -47,6 +50,8 @@ public class AlgaeTracker implements Runnable {
 
   private final Supplier<Pose2d> m_robotPose;
 
+  private Pose2d m_lastSeenAlgae = Pose2d.kZero;
+
   public AlgaeTracker(Supplier<Pose2d> robotPose, Consumer<ObjectTrackingStatus> action) {
     if (Robot.isSimulation()) {
       m_io = new CameraIOTrackingSim(
@@ -59,6 +64,7 @@ public class AlgaeTracker implements Runnable {
     m_action = action;
     m_robotPose = robotPose;
     m_inputsLogger = new CameraIOInputsLogger(m_inputs, TrackingConstants.kCameraName);
+    m_ologger.registerPose("Last Seen", () -> m_lastSeenAlgae);
   }
 
   public void run() {
@@ -77,21 +83,30 @@ public class AlgaeTracker implements Runnable {
       Optional<Double> estimatedDistance = estimateDistance(target);
 
       estimatedDistance.ifPresentOrElse(dist -> {
-        Transform2d robotOffset =
-            new Transform2d(new Translation2d(yaw.getCos(), yaw.getSin()).times(dist), Rotation2d.kZero);
-        Pose2d algae = m_robotPose.get().transformBy(robotOffset);
+        // Determine camera-relative position of algae
+        Transform2d cameraOffset =
+            new Transform2d(yaw.getCos(), yaw.getSin(), Rotation2d.kZero).times(dist);
+        // Determine robot-relative position of algae
+        Pose2d robot = m_robotPose.get();
+        Pose2d camera = robot
+            .transformBy(new Transform2d(
+                TrackingConstants.kRobotToCamera.getTranslation().toTranslation2d(),
+                TrackingConstants.kRobotToCamera.getRotation().toRotation2d()));
+        Pose2d algae = camera.transformBy(cameraOffset);
+        m_lastSeenAlgae = algae;
         m_action.accept(new ObjectTrackingStatus(
-              yaw,
-              Timer.getTimestamp(),
-              Optional.of(algae)));
+            algae.relativeTo(robot).getTranslation().getAngle(),
+            Timer.getTimestamp(),
+            Optional.of(algae)));
       }, () -> {
         m_action.accept(new ObjectTrackingStatus(
-              yaw,
-              Timer.getTimestamp(),
-              Optional.empty()));
+            yaw,
+            Timer.getTimestamp(),
+            Optional.empty()));
       });
 
     });
+    m_ologger.log();
   }
 
   private Optional<Double> estimateDistance(PhotonTrackedTarget target) {

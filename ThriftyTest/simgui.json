@@ -25,6 +25,7 @@
       "/SmartDashboard/Elevator/Subsystem": "Subsystem",
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/PhotonAlerts": "Alerts",
+      "/SmartDashboard/Prep/Set Angle": "Command",
       "/SmartDashboard/Prep/Set Center": "Command",
       "/SmartDashboard/Prep/Set Left": "Command",
       "/SmartDashboard/Prep/Set Right": "Command",
@@ -50,16 +51,6 @@
     },
     "windows": {
       "/SmartDashboard/Auton Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Prep/Set Left": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Prep/Set Right": {
         "window": {
           "visible": true
         }
@@ -200,6 +191,11 @@
           "width": 0.5
         },
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Test/Follow Algae": {
         "window": {
           "visible": true
         }

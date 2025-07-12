@@ -1,7 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import java.io.IOException;
@@ -25,7 +24,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -40,7 +38,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -128,6 +125,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_ologger.registerDouble("Velocity", this::getVelocity);
     m_ologger.registerPose("Estimated Pose", this::getPose);
     m_ologger.registerBoolean("Received Vision Update", () -> m_hasReceivedVisionUpdate);
+    m_ologger.registerBoolean("Valid Object Estimate", seesAlgae());
 
     RobotObserver.setVelocitySupplier(this::getVelocity);
     RobotObserver.setNoElevatorZoneSupplier(dangerZone());
@@ -221,7 +219,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public Command setLocalHeading(Rotation2d heading) {
-    return Commands.runOnce(() -> resetRotation(FieldUtils.getLocalRotation(heading))).ignoringDisable(true);
+    return Commands.runOnce(() -> resetRotation(FieldUtils.getLocalRotation(heading)))
+        .ignoringDisable(true);
   }
 
   private ChassisSpeeds getRobotRelativeSpeeds() {
@@ -402,6 +401,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     });
   }
 
+  public Trigger seesAlgae() {
+    return new Trigger(() -> m_objectStatus.isPresent());
+  }
+
   /**
    * Drives the robot from given x, y, and rotatational velocity suppliers.
    */
@@ -441,6 +444,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
   }
 
+  private void setVelocity(Transform2d goal) {
+    setControl(m_veloRequest
+        .withVelocityX(goal.getX())
+        .withVelocityY(goal.getY())
+        .withTargetDirection(goal.getRotation())
+        .withMaxAbsRotationalRate(getMaxRotationalRate()));
+  }
+
   /**
    * Drives to a certain point on the field
    */
@@ -453,11 +464,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         run(() -> {
           Translation2d velocities = getVelocityComponents();
           Transform2d output = autopilot.calculate(m_estimatedPose, velocities, target);
-          setControl(m_veloRequest
-              .withVelocityX(output.getX())
-              .withVelocityY(output.getY())
-              .withTargetDirection(output.getRotation())
-              .withMaxAbsRotationalRate(getMaxRotationalRate()));
+          setVelocity(output);
         }))
         .until(() -> {
           return autopilot.atTarget(m_estimatedPose, target);
@@ -477,34 +484,37 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public Command followObject() {
     return run(new Runnable() {
       private final PIDController thetaController = new PIDController(8, 0, 0);
-      private final PIDController driveController = new PIDController(1, 0, 0);
 
       @Override
       public void run() {
-        m_objectStatus.ifPresentOrElse(status -> {
-          double output = -this.thetaController.calculate(status.yaw().getRadians(), 0);
+        if (m_objectStatus.isEmpty()) {
+          stop();
+          return;
+        }
+        ObjectTrackingStatus status = m_objectStatus.get();
+        if (status.pose().isEmpty()) {
+          // Drive towards algae.
+          // We invert the yaw because the input is actually the angle is from the robot to the
+          // target, so turning in that direction is good. (basically our input is funny).
+          double rotationalRate = thetaController.calculate(-status.yaw().getRadians(), 0);
           double speed = DriveConstants.kObjectTrackSpeed.in(MetersPerSecond);
-          if (status.pose().isPresent()) {
-            double distance = m_estimatedPose
-                .relativeTo(status.pose().get())
-                .getTranslation()
-                .getNorm();
-            speed = Math.min(
-                DriveConstants.kMaxObjectTrackingSpeed.in(MetersPerSecond),
-                -this.driveController.calculate(distance, 0));
-          }
-          /*
-           * we invert the calculation because it outputs a negative number, because measurement >
-           * ref, so err < 0
-           */
           double vx = speed * status.yaw().getCos();
           double vy = speed * status.yaw().getSin();
           setControl(m_trackingRequest
-              .withRotationalRate(output)
+              .withRotationalRate(rotationalRate)
               .withVelocityX(vx)
               .withVelocityY(vy));
-        }, () -> stop());
+          return;
+        }
+        // If we have a pose estimate, for algae, use Autopilot to go there.
+        APTarget target = new APTarget(status.pose().get()
+            .transformBy(new Transform2d(Translation2d.kZero, status.yaw())));
+        Transform2d output = DriveConstants.kTightAutopilot.calculate(
+            m_estimatedPose,
+            getVelocityComponents(),
+            target);
+        setVelocity(output);
       }
-    });
+    }).onlyWhile(seesAlgae());
   }
 }
