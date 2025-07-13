@@ -494,6 +494,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         ObjectTrackingStatus status = m_objectStatus.get();
         if (status.pose().isEmpty()) {
           // Drive towards algae.
+          
           // We invert the yaw because the input is actually the angle is from the robot to the
           // target, so turning in that direction is good. (basically our input is funny).
           double rotationalRate = thetaController.calculate(-status.yaw().getRadians(), 0);
@@ -508,7 +509,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         // If we have a pose estimate, for algae, use Autopilot to go there.
         APTarget target = new APTarget(status.pose().get()
-            .transformBy(new Transform2d(Translation2d.kZero, status.yaw())));
+            .transformBy(new Transform2d(Translation2d.kZero, status.yaw()))
+            .transformBy(DriveConstants.kAlgaeOffset));
         Transform2d output = DriveConstants.kTightAutopilot.calculate(
             m_estimatedPose,
             getVelocityComponents(),

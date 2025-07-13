@@ -28,7 +28,6 @@ import frc.robot.vision.CameraIOHardware;
 import frc.robot.vision.CameraIOInputsLogger;
 
 public class AlgaeTracker implements Runnable {
-
   private final OnboardLogger m_ologger = new OnboardLogger("Tracking");
 
   public static final boolean enabled = TrackingConstants.kEnabled;

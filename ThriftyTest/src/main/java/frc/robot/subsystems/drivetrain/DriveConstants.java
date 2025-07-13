@@ -14,6 +14,9 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.therekrab.autopilot.APConstraints;
 import com.therekrab.autopilot.APProfile;
 import com.therekrab.autopilot.Autopilot;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -87,5 +90,7 @@ public class DriveConstants {
 
   protected static final LinearVelocity kObjectTrackSpeed = MetersPerSecond.of(2);
   protected static final LinearVelocity kMaxObjectTrackingSpeed = MetersPerSecond.of(4);
+  protected static final Transform2d kAlgaeOffset = new Transform2d(
+      new Translation2d(-0.5, 0), Rotation2d.kZero);
 }
 
