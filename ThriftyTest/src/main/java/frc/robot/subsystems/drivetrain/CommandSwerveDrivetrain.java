@@ -494,9 +494,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         ObjectTrackingStatus status = m_objectStatus.get();
         if (status.pose().isEmpty()) {
           // Drive towards algae.
-          
+
           // We invert the yaw because the input is actually the angle is from the robot to the
-          // target, so turning in that direction is good. (basically our input is funny).
+          // target, so turning in that direction is good. (basically our input is reverse
+          // coordinate system).
           double rotationalRate = thetaController.calculate(-status.yaw().getRadians(), 0);
           double speed = DriveConstants.kObjectTrackSpeed.in(MetersPerSecond);
           double vx = speed * status.yaw().getCos();
