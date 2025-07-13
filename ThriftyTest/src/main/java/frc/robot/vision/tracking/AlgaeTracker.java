@@ -67,45 +67,49 @@ public class AlgaeTracker implements Runnable {
     m_ologger.registerPose("Last Seen", () -> m_lastSeenAlgae);
   }
 
+  private void addResult(PhotonPipelineResult result) {
+    if (!result.hasTargets()) {
+      return;
+    }
+    PhotonTrackedTarget target = result.getBestTarget();
+    Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().yaw);
+
+    Optional<Double> estimatedDistance = estimateDistance(target);
+
+    if (estimatedDistance.isEmpty()) {
+      m_action.accept(new ObjectTrackingStatus(
+          yaw,
+          Timer.getTimestamp(),
+          Optional.empty()));
+      return;
+    }
+
+    double dist = estimatedDistance.get();
+    // Determine camera-relative position of algae
+    Transform2d cameraOffset = new Transform2d(
+        yaw.getCos(),
+        yaw.getSin(),
+        Rotation2d.kZero).times(dist);
+    // Determine robot-relative position of algae
+    Pose2d robot = m_robotPose.get();
+    Pose2d camera = robot.transformBy(new Transform2d(
+        TrackingConstants.kRobotToCamera.getTranslation().toTranslation2d(),
+        TrackingConstants.kRobotToCamera.getRotation().toRotation2d()));
+    Pose2d algae = camera.transformBy(cameraOffset);
+    m_lastSeenAlgae = algae;
+    m_action.accept(new ObjectTrackingStatus(
+        algae.relativeTo(robot).getTranslation().getAngle(),
+        Timer.getTimestamp(),
+        Optional.of(algae)));
+  }
+
   public void run() {
     m_io.updateInputs(m_inputs);
     m_inputsLogger.log();
 
     List<PhotonPipelineResult> results = m_inputs.unreadResults;
 
-    results.forEach(result -> {
-      if (!result.hasTargets()) {
-        return;
-      }
-      PhotonTrackedTarget target = result.getBestTarget();
-      Rotation2d yaw = Rotation2d.fromDegrees(-result.getBestTarget().yaw);
-
-      Optional<Double> estimatedDistance = estimateDistance(target);
-
-      estimatedDistance.ifPresentOrElse(dist -> {
-        // Determine camera-relative position of algae
-        Transform2d cameraOffset =
-            new Transform2d(yaw.getCos(), yaw.getSin(), Rotation2d.kZero).times(dist);
-        // Determine robot-relative position of algae
-        Pose2d robot = m_robotPose.get();
-        Pose2d camera = robot
-            .transformBy(new Transform2d(
-                TrackingConstants.kRobotToCamera.getTranslation().toTranslation2d(),
-                TrackingConstants.kRobotToCamera.getRotation().toRotation2d()));
-        Pose2d algae = camera.transformBy(cameraOffset);
-        m_lastSeenAlgae = algae;
-        m_action.accept(new ObjectTrackingStatus(
-            algae.relativeTo(robot).getTranslation().getAngle(),
-            Timer.getTimestamp(),
-            Optional.of(algae)));
-      }, () -> {
-        m_action.accept(new ObjectTrackingStatus(
-            yaw,
-            Timer.getTimestamp(),
-            Optional.empty()));
-      });
-
-    });
+    results.forEach(this::addResult);
     m_ologger.log();
   }
 
