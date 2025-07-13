@@ -55,6 +55,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Super Field": {
         "Algae": {
           "image": "../resources/algae.jpg",

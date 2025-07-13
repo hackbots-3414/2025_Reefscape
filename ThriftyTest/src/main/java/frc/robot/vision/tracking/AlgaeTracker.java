@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
@@ -32,9 +31,20 @@ public class AlgaeTracker implements Runnable {
 
   public static final boolean enabled = TrackingConstants.kEnabled;
 
-  public record ObjectTrackingStatus(Rotation2d yaw, double time, Optional<Pose2d> pose) {
+  public record ObjectTrackingStatus(
+      Rotation2d yaw,
+      double time,
+      Optional<Pose2d> pose,
+      Optional<Double> distance) {
     public boolean isExpired() {
       return Timer.getTimestamp() - time() >= TrackingConstants.kExpirationTime.in(Seconds);
+    }
+
+    public boolean isWithin(Distance cutoff) {
+      if (distance.isEmpty()) {
+        return true;
+      }
+      return distance().get() <= cutoff.in(Meters);
     }
   }
 
@@ -79,6 +89,7 @@ public class AlgaeTracker implements Runnable {
       m_action.accept(new ObjectTrackingStatus(
           yaw,
           Timer.getTimestamp(),
+          Optional.empty(),
           Optional.empty()));
       return;
     }
@@ -99,7 +110,8 @@ public class AlgaeTracker implements Runnable {
     m_action.accept(new ObjectTrackingStatus(
         algae.relativeTo(robot).getTranslation().getAngle(),
         Timer.getTimestamp(),
-        Optional.of(algae)));
+        Optional.of(algae),
+        Optional.of(algae.relativeTo(robot).getTranslation().getNorm())));
   }
 
   public void run() {

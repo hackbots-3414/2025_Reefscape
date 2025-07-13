@@ -48,6 +48,9 @@ public class Constants {
     public static final Pose2d kStartLeft = new Pose2d(7.076, 6.6, Rotation2d.kPi);
 
     public static final Rotation2d kStartHeading = Rotation2d.kPi; // facing our alliance
+                                                                   
+    public static final Pose2d kInsideSteal = new Pose2d(7.642, 1.226, Rotation2d.kZero);
+    public static final Pose2d kOutsideSteal = new Pose2d(7.642, 2.4, Rotation2d.kZero);
   }
 
   public static final class StateSpaceConstants {

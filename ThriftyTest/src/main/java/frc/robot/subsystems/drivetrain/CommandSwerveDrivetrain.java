@@ -36,6 +36,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -77,6 +79,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private boolean m_aligned;
 
   private Trigger m_tippyTrigger = new Trigger(() -> false);
+  private Trigger m_slowTrigger = new Trigger(() -> false);
 
   private boolean m_hasReceivedVisionUpdate;
 
@@ -402,7 +405,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public Trigger seesAlgae() {
-    return new Trigger(() -> m_objectStatus.isPresent());
+    return new Trigger(() -> m_objectStatus.isPresent()
+        && m_objectStatus.get().isWithin(DriveConstants.kObjectDistanceLimit));
   }
 
   /**
@@ -436,6 +440,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_tippyTrigger = tippyTrigger;
   }
 
+  public void setSlowTrigger(Trigger slowTrigger) {
+    m_slowTrigger = slowTrigger;
+  }
+
   private AngularVelocity getMaxRotationalRate() {
     if (m_tippyTrigger.getAsBoolean()) {
       return DriveConstants.kMaxTippyAngularSpeed;
@@ -444,7 +452,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
   }
 
+  private LinearVelocity getMaxSpeed() {
+    if (m_slowTrigger.getAsBoolean()) {
+      return DriveConstants.kMaxTippySpeed;
+    }
+    return DriveConstants.kMaxLinearSpeed;
+  }
+
   private void setVelocity(Transform2d goal) {
+    double norm = goal.getTranslation().getNorm();
+    double max = getMaxSpeed().in(MetersPerSecond);
+    if (norm > max) {
+      goal = goal.times(max / norm);
+    }
     setControl(m_veloRequest
         .withVelocityX(goal.getX())
         .withVelocityY(goal.getY())
@@ -493,7 +513,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         ObjectTrackingStatus status = m_objectStatus.get();
         if (status.pose().isEmpty()) {
-          // Drive towards algae.
+          // Drive towards algae, based on camera location. NOT OPTIMAL.
 
           // We invert the yaw because the input is actually the angle is from the robot to the
           // target, so turning in that direction is good. (basically our input is reverse
