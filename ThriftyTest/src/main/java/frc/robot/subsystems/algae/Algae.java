@@ -31,7 +31,8 @@ public class Algae extends PassiveSubsystem {
   private AlgaeIOInputsLogger m_inputsLogger;
 
   private boolean m_hasAlgae;
-  private SuperDebouncer m_debouncer = new SuperDebouncer(AlgaeConstants.kAlgaeDebounceTime.in(Seconds), DebounceType.kFalling);
+  private SuperDebouncer m_debouncer =
+      new SuperDebouncer(AlgaeConstants.kAlgaeDebounceTime.in(Seconds), DebounceType.kFalling);
 
   private MedianFilter m_filter = new MedianFilter(10);
 
@@ -42,12 +43,12 @@ public class Algae extends PassiveSubsystem {
     } else {
       m_io = new AlgaeIOSim();
     }
-    resetDebouncer();
+    resetDebouncer(false);
     m_inputs = new AlgaeIOInputs();
     m_inputsLogger = new AlgaeIOInputsLogger(m_inputs);
     m_ologger = new OnboardLogger("Algae");
     m_ologger.registerBoolean("Holding", holdingAlgae());
-    
+
     RobotObserver.setAlgaePieceHeldSupplier(this.holdingAlgae());
     m_timer = new LoopTimer("Algae");
   }
@@ -86,7 +87,8 @@ public class Algae extends PassiveSubsystem {
     m_timer.reset();
     m_io.updateInputs(m_inputs);
     m_inputsLogger.log();
-    m_hasAlgae = m_debouncer.calculate(getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold);
+    m_hasAlgae =
+        m_debouncer.calculate(getTorqueCurrent() >= AlgaeConstants.kTorqueCurrentThreshold);
     m_ologger.log();
     m_timer.log();
   }
@@ -107,7 +109,13 @@ public class Algae extends PassiveSubsystem {
         .unless(holdingAlgae());
   }
 
-  private void resetDebouncer() {
+  /**
+   * Resets the debouncer to be willing to accept any new inputs as accurate
+   */
+  private void resetDebouncer(boolean ignore) {
+    if (ignore) {
+      return;
+    }
     m_debouncer.overrideTimer();
   }
 
@@ -133,6 +141,19 @@ public class Algae extends PassiveSubsystem {
         Commands.waitSeconds(AlgaeConstants.kProcessorScoreTime))
 
         .finallyDo(this::keep)
+        .finallyDo(this::resetDebouncer)
         .onlyIf(holdingAlgae());
   }
+
+  /** Ejects an algae fast */
+  public Command eject() {
+    return Commands.sequence(
+        runOnce(() -> setVoltage(AlgaeConstants.kManualEjectVoltage)),
+        Commands.waitSeconds(AlgaeConstants.kManualEjectTime))
+
+        .finallyDo(this::keep)
+        .finallyDo(this::resetDebouncer)
+        .onlyIf(holdingAlgae());
+  }
+
 }

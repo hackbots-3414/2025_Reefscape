@@ -51,6 +51,9 @@ public class Constants {
                                                                    
     public static final Pose2d kInsideSteal = new Pose2d(7.642, 1.226, Rotation2d.kZero);
     public static final Pose2d kOutsideSteal = new Pose2d(7.642, 2.4, Rotation2d.kZero);
+
+    public static final Pose2d kInsideShoot = new Pose2d(6, 1.2, Rotation2d.kPi);
+    public static final Pose2d kOutsideShoot = new Pose2d(6, 2.4, Rotation2d.kPi);
   }
 
   public static final class StateSpaceConstants {

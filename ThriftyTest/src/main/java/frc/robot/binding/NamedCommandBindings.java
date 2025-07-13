@@ -2,15 +2,12 @@ package frc.robot.binding;
 
 import static edu.wpi.first.units.Units.Meters;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.therekrab.autopilot.APTarget;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralLevel;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ScoringLocations;
-import frc.robot.subsystems.drivetrain.DriveConstants;
-import com.therekrab.autopilot.APTarget;
-import com.therekrab.autopilot.Autopilot;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.AlgaeStow;
 import frc.robot.superstructure.states.Align;
@@ -20,6 +17,7 @@ import frc.robot.superstructure.states.ElevatorZero;
 import frc.robot.superstructure.states.HighGroundAlgaeIntake;
 import frc.robot.superstructure.states.IntakeComplete;
 import frc.robot.superstructure.states.LowerReefAlgaeIntake;
+import frc.robot.superstructure.states.ManualAlgaeEject;
 import frc.robot.superstructure.states.Net;
 import frc.robot.superstructure.states.TrackAlgae;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
@@ -44,6 +42,7 @@ public class NamedCommandBindings implements Binder {
     NamedCommands.registerCommand("Net", superstructure.enter(new Net()));
     NamedCommands.registerCommand("Algae Stow", superstructure.enter(new AlgaeStow()));
     NamedCommands.registerCommand("Lollipop", superstructure.enter(new HighGroundAlgaeIntake()));
+    NamedCommands.registerCommand("Eject Algae", superstructure.enter(new ManualAlgaeEject()));
 
     /* steal hehe */
     NamedCommands.registerCommand("Track", superstructure.enter(new TrackAlgae()));
@@ -109,13 +108,25 @@ public class NamedCommandBindings implements Binder {
 
     // Steal!
     APTarget insideSteal = new APTarget(FieldConstants.kInsideSteal)
-      .withRotationRadius(Meters.of(1));
+        .withRotationRadius(Meters.of(1));
     APTarget outsideSteal = new APTarget(FieldConstants.kOutsideSteal)
-      .withRotationRadius(Meters.of(1));
+        .withRotationRadius(Meters.of(1));
     NamedCommands.registerCommand("Prepare Steal Inside",
         superstructure.enter(new Align(insideSteal).allianceRelative()));
     NamedCommands.registerCommand("Prepare Steal Outside",
         superstructure.enter(new Align(outsideSteal).allianceRelative()));
+
+    // Shoot!
+    APTarget outsideShoot = new APTarget(FieldConstants.kOutsideShoot)
+        .withRotationRadius(Meters.of(0.5));
+    APTarget insideShoot = new APTarget(FieldConstants.kInsideShoot)
+        .withRotationRadius(Meters.of(0.5));
+    NamedCommands.registerCommand("Shoot Outside",
+        superstructure.enter(new Align(outsideShoot).allianceRelative())
+            .onlyIf(superstructure.holdingAlgae()));
+    NamedCommands.registerCommand("Shoot Inside",
+        superstructure.enter(new Align(insideShoot).allianceRelative())
+            .onlyIf(superstructure.holdingAlgae()));
   }
 
 }
