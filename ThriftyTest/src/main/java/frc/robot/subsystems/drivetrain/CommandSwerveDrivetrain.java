@@ -349,9 +349,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void addObjectTrackingData(ObjectTrackingStatus status) {
-    if (status.distance().isPresent() && status.distance().get() < 0.2) {
-      return;
-    }
     m_objectStatus = Optional.of(status);
   }
 
