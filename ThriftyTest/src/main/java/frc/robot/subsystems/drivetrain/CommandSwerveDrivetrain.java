@@ -36,7 +36,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -529,7 +528,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           return;
         }
         // If we have a pose estimate, for algae, use Autopilot to go there.
-        APTarget target = new APTarget(status.pose().get()
+        APTarget target = new APTarget(status.pose().get().toPose2d()
             .transformBy(new Transform2d(Translation2d.kZero, status.yaw()))
             .transformBy(DriveConstants.kAlgaeOffset));
         Transform2d output = DriveConstants.kTightAutopilot.calculate(

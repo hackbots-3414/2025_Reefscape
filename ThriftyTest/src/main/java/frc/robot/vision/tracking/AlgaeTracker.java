@@ -14,8 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,7 +38,7 @@ public class AlgaeTracker implements Runnable {
   public record ObjectTrackingStatus(
       Rotation2d yaw,
       double time,
-      Optional<Pose2d> pose,
+      Optional<Pose3d> pose,
       Optional<Double> distance) {
     public boolean isExpired() {
       return Timer.getTimestamp() - time() >= TrackingConstants.kExpirationTime.in(Seconds);
@@ -59,7 +63,7 @@ public class AlgaeTracker implements Runnable {
 
   private final Supplier<Pose2d> m_robotPose;
 
-  private Pose2d m_lastSeenAlgae = Pose2d.kZero;
+  private Pose3d m_lastSeenAlgae = Pose3d.kZero;
 
   public AlgaeTracker(Supplier<Pose2d> robotPose, Consumer<ObjectTrackingStatus> action) {
     if (Robot.isSimulation()) {
@@ -73,7 +77,8 @@ public class AlgaeTracker implements Runnable {
     m_action = action;
     m_robotPose = robotPose;
     m_inputsLogger = new CameraIOInputsLogger(m_inputs, TrackingConstants.kCameraName);
-    m_ologger.registerPose("Last Seen", () -> m_lastSeenAlgae);
+    m_ologger.registerPose3d("Last Seen", () -> m_lastSeenAlgae);
+    m_ologger.registerPose("seen last", () -> m_lastSeenAlgae.toPose2d());
   }
 
   private void addResult(PhotonPipelineResult result) {
@@ -96,22 +101,22 @@ public class AlgaeTracker implements Runnable {
 
     double dist = estimatedDistance.get();
     // Determine camera-relative position of algae
-    Transform2d cameraOffset = new Transform2d(
+    Transform3d cameraOffset = new Transform3d(
         yaw.getCos(),
         yaw.getSin(),
-        Rotation2d.kZero).times(dist);
+        getAlgaeHeight(target).in(Meters),
+        Rotation3d.kZero).times(dist);
     // Determine robot-relative position of algae
     Pose2d robot = m_robotPose.get();
-    Pose2d camera = robot.transformBy(new Transform2d(
-        TrackingConstants.kRobotToCamera.getTranslation().toTranslation2d(),
-        TrackingConstants.kRobotToCamera.getRotation().toRotation2d()));
-    Pose2d algae = camera.transformBy(cameraOffset);
+    Pose3d camera = new Pose3d(robot).transformBy(TrackingConstants.kRobotToCamera);
+    Pose3d algae = camera.transformBy(cameraOffset);
+    Translation2d relative = algae.toPose2d().relativeTo(robot).getTranslation();
     m_lastSeenAlgae = algae;
     m_action.accept(new ObjectTrackingStatus(
-        algae.relativeTo(robot).getTranslation().getAngle(),
+        relative.getAngle(),
         Timer.getTimestamp(),
         Optional.of(algae),
-        Optional.of(algae.relativeTo(robot).getTranslation().getNorm())));
+        Optional.of(relative.getNorm())));
   }
 
   public void run() {
@@ -122,6 +127,13 @@ public class AlgaeTracker implements Runnable {
 
     results.forEach(this::addResult);
     m_ologger.log();
+  }
+
+  private Distance getAlgaeHeight(PhotonTrackedTarget target) {
+    if (target.pitch >= 0) {
+      return TrackingConstants.kLollipopAlgaeHeight;
+    }
+    return TrackingConstants.kGroundAlgaeHeight;
   }
 
   private Optional<Double> estimateDistance(PhotonTrackedTarget target) {
