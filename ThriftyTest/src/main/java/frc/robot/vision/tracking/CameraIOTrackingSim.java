@@ -3,6 +3,9 @@ package frc.robot.vision.tracking;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import java.util.function.Supplier;
+
+import javax.sound.midi.Track;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.estimation.TargetModel;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -30,7 +33,7 @@ public class CameraIOTrackingSim implements CameraIO {
   // simulation stuff only happens once
   private static final VisionSystemSim visionSim = new VisionSystemSim("tracking");
   private static final TargetModel targetModel = new TargetModel(0.5);
-  private static final Pose3d initialTargetPose = new Pose3d(2, 2, 0, Rotation3d.kZero);
+  private static final Pose3d initialTargetPose = new Pose3d(2, 2, TrackingConstants.kLollipopAlgaeHeight.in(Meters), Rotation3d.kZero);
   private static final VisionTargetSim targetSim =
       new VisionTargetSim(initialTargetPose, targetModel);
   private static final SimCameraProperties simProps = new SimCameraProperties()
