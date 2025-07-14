@@ -5,20 +5,22 @@ import static edu.wpi.first.units.Units.Milliseconds;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 
 class TrackingConstants {
   public static final boolean kEnabled = true;
 
-  protected static final String kCameraName = "camera";
+  protected static final String kCameraName = "algaeman";
   /* it is very important that the robot's position be ON THE GROUND (z = 0) */
-  protected static final Transform3d kRobotToCamera = new Transform3d(0, 0, 0.3, Rotation3d.kZero);
+  // protected static final Transform3d kRobotToCamera = new Transform3d(Units.inchesToMeters(9), Units.inchesToMeters(10), Units.inchesToMeters(11), Rotation3d.kZero);
+  protected static final Transform3d kRobotToCamera = new Transform3d(Units.inchesToMeters(8.304 + 0.75), Units.inchesToMeters(9.75), Units.inchesToMeters(11), Rotation3d.kZero);
 
   /* simulation */
-  protected static final double kFPS = 14;
-  protected static final int kResWidth = 640;
-  protected static final int kResHeight = 480;
+  protected static final double kFPS = 30;
+  protected static final int kResWidth = 320;
+  protected static final int kResHeight = 320;
   protected static final Rotation2d kFOVDiag = Rotation2d.fromDegrees(100);
 
   protected static final double kCalibError = 0.5;

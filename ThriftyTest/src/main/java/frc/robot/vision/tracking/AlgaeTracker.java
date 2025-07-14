@@ -23,7 +23,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.RobotObserver;
 import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
@@ -112,11 +114,12 @@ public class AlgaeTracker implements Runnable {
     Pose3d algae = camera.transformBy(cameraOffset);
     Translation2d relative = algae.toPose2d().relativeTo(robot).getTranslation();
     m_lastSeenAlgae = algae;
+    double distance = relative.getNorm();
     m_action.accept(new ObjectTrackingStatus(
         relative.getAngle(),
         Timer.getTimestamp(),
         Optional.of(algae),
-        Optional.of(relative.getNorm())));
+        Optional.of(distance)));
   }
 
   public void run() {
@@ -127,6 +130,7 @@ public class AlgaeTracker implements Runnable {
 
     results.forEach(this::addResult);
     m_ologger.log();
+    RobotObserver.getField().getObject("Algae").setPose(m_lastSeenAlgae.toPose2d());
   }
 
   private Distance getAlgaeHeight(PhotonTrackedTarget target) {

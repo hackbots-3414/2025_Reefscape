@@ -78,7 +78,7 @@ public class DriveConstants {
   protected static final double k_closedLoopOverrideToleranceTranslation = 0.05;
   protected static final double k_closedLoopOverrideToleranceRotation = 0.05;
 
-  public static final Distance kObjectDistanceLimit = Meters.of(2);
+  public static final Distance kObjectDistanceLimit = Meters.of(3);
   protected static final LinearVelocity kObjectTrackSpeed = MetersPerSecond.of(2);
   protected static final LinearVelocity kMaxObjectTrackingSpeed = MetersPerSecond.of(4);
   protected static final Transform2d kAlgaeOffset = new Transform2d(
