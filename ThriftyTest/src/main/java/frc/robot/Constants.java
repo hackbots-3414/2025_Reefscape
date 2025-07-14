@@ -44,8 +44,10 @@ public class Constants {
     public static final Pose2d kBargeFromLeft = new Pose2d(7.5, 6.6, Rotation2d.fromDegrees(21));
 
     public static final Pose2d kStartCenter = new Pose2d(7.076, 3.991, Rotation2d.kPi);
-    public static final Pose2d kStartRight = new Pose2d(7.076, 1.883, Rotation2d.kPi);
-    public static final Pose2d kStartLeft = new Pose2d(7.076, 6.027, Rotation2d.kPi);
+    public static final Pose2d kStartRight = new Pose2d(7.076, 1.2, Rotation2d.kPi);
+    public static final Pose2d kStartLeft = new Pose2d(7.076, 6.6, Rotation2d.kPi);
+
+    public static final Rotation2d kStartHeading = Rotation2d.kPi; // facing our alliance
   }
 
   public static final class StateSpaceConstants {

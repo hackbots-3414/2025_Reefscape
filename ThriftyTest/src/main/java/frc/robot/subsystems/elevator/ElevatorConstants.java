@@ -50,7 +50,7 @@ public final class ElevatorConstants {
 
   protected static final double kZeroVoltage = -4.0;
 
-  protected static final double kUnsafeRange = ElevatorState.L2.position() + 2 * kInch;
+  protected static final double kUnsafeRange = ElevatorState.UpperReef.position();
 
   protected static final double kTolerance = 0.06;
 

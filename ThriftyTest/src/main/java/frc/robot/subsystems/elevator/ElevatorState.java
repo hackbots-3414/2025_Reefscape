@@ -18,7 +18,7 @@ public enum ElevatorState {
   /** Secondary L1 height for when a coral is already present */
   SecondaryL1(ElevatorState.L1.position() + 8 * ElevatorConstants.kInch),
   /** L2 height */
-  L2(4.016 + 3 * ElevatorConstants.kInch),
+  L2(4.016 + 4 * ElevatorConstants.kInch),
   /** L3 height */
   L3(7.257 - 4 * ElevatorConstants.kInch),
   /** L4 height */
@@ -28,7 +28,7 @@ public enum ElevatorState {
   /** Height to intake algae from lower reef */
   LowerReef(2.0),
   /** Height to intake algae from upper reef */
-  UpperReef(4.5);
+  UpperReef(4.5 - 1.5 * ElevatorConstants.kInch);
 
   private final double m_position;
 

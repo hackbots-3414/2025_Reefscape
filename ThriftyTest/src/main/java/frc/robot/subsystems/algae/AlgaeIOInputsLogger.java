@@ -12,6 +12,8 @@ public class AlgaeIOInputsLogger {
     log.registerDouble("Current", () -> inputs.current);
     log.registerDouble("Torque", () -> inputs.torque);
     log.registerDouble("Voltage", () -> inputs.voltage);
+    log.registerDouble("Temperature", () -> inputs.temperature);
+    log.registerDouble("Stator Current", () -> inputs.stator);
   }
 
   public void log() {

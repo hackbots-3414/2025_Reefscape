@@ -110,8 +110,8 @@ public class Elevator extends PassiveSubsystem {
    * Whether or not the elevator is above the "safe" range
    */
   public Trigger unsafe() {
-    return new Trigger(() -> m_inputs.position > ElevatorConstants.kUnsafeRange
-        || m_reference.position() > ElevatorConstants.kUnsafeRange);
+    return new Trigger(() -> m_inputs.position >= ElevatorConstants.kUnsafeRange
+        || m_reference.position() >= ElevatorConstants.kUnsafeRange);
   }
 
   protected void passive() {

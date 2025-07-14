@@ -25,7 +25,7 @@ public final class ClimberConstants {
 
   protected static final double kStowPosition = -0.25;
   protected static final double kClimbPosition = -0.110;
-  protected static final double kClimbReadyTolerance = -0.001;
+  protected static final double kClimbReadyTolerance = -0.004;
 
   protected static final double kFunnelOpenTime = 1.5;
 
