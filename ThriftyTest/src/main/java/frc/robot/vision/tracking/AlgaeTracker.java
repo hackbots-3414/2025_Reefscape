@@ -17,40 +17,29 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.RobotObserver;
-import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
 import frc.robot.vision.CameraIOHardware;
 import frc.robot.vision.CameraIOInputsLogger;
 
 public class AlgaeTracker implements Runnable {
-  private final OnboardLogger m_ologger = new OnboardLogger("Tracking");
-
   public static final boolean enabled = TrackingConstants.kEnabled;
 
   public record ObjectTrackingStatus(
       Rotation2d yaw,
       double time,
-      Optional<Pose3d> pose,
-      Optional<Double> distance) {
+      Optional<Pose3d> pose) {
     public boolean isExpired() {
       return Timer.getTimestamp() - time() >= TrackingConstants.kExpirationTime.in(Seconds);
     }
-
-    public boolean isWithin(Distance cutoff) {
-      if (distance.isEmpty()) {
-        return true;
-      }
-      return distance().get() <= cutoff.in(Meters);
+    public boolean isOkay() {
+      return !isExpired();
     }
   }
 
@@ -65,8 +54,6 @@ public class AlgaeTracker implements Runnable {
 
   private final Supplier<Pose2d> m_robotPose;
 
-  private Pose3d m_lastSeenAlgae = Pose3d.kZero;
-
   public AlgaeTracker(Supplier<Pose2d> robotPose, Consumer<ObjectTrackingStatus> action) {
     if (Robot.isSimulation()) {
       m_io = new CameraIOTrackingSim(
@@ -79,8 +66,6 @@ public class AlgaeTracker implements Runnable {
     m_action = action;
     m_robotPose = robotPose;
     m_inputsLogger = new CameraIOInputsLogger(m_inputs, TrackingConstants.kCameraName);
-    m_ologger.registerPose3d("Last Seen", () -> m_lastSeenAlgae);
-    m_ologger.registerPose("seen last", () -> m_lastSeenAlgae.toPose2d());
   }
 
   private void addResult(PhotonPipelineResult result) {
@@ -96,7 +81,6 @@ public class AlgaeTracker implements Runnable {
       m_action.accept(new ObjectTrackingStatus(
           yaw,
           Timer.getTimestamp(),
-          Optional.empty(),
           Optional.empty()));
       return;
     }
@@ -106,20 +90,17 @@ public class AlgaeTracker implements Runnable {
     Transform3d cameraOffset = new Transform3d(
         yaw.getCos(),
         yaw.getSin(),
-        getAlgaeHeight(target).in(Meters),
+        getAlgaeHeight(target).minus(TrackingConstants.kRobotToCamera.getMeasureZ()).in(Meters),
         Rotation3d.kZero).times(dist);
     // Determine robot-relative position of algae
     Pose2d robot = m_robotPose.get();
     Pose3d camera = new Pose3d(robot).transformBy(TrackingConstants.kRobotToCamera);
     Pose3d algae = camera.transformBy(cameraOffset);
     Translation2d relative = algae.toPose2d().relativeTo(robot).getTranslation();
-    m_lastSeenAlgae = algae;
-    double distance = relative.getNorm();
     m_action.accept(new ObjectTrackingStatus(
         relative.getAngle(),
         Timer.getTimestamp(),
-        Optional.of(algae),
-        Optional.of(distance)));
+        Optional.of(algae)));
   }
 
   public void run() {
@@ -129,8 +110,6 @@ public class AlgaeTracker implements Runnable {
     List<PhotonPipelineResult> results = m_inputs.unreadResults;
 
     results.forEach(this::addResult);
-    m_ologger.log();
-    RobotObserver.getField().getObject("Algae").setPose(m_lastSeenAlgae.toPose2d());
   }
 
   private Distance getAlgaeHeight(PhotonTrackedTarget target) {

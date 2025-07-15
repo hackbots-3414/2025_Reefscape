@@ -4,8 +4,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import java.util.function.Supplier;
 
-import javax.sound.midi.Track;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.estimation.TargetModel;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -26,7 +24,7 @@ public class CameraIOTrackingSim implements CameraIO {
   private final PhotonCamera m_camera;
 
   private final Supplier<Pose2d> m_robotPose;
-
+  
   private final static Transform3d offset =
       new Transform3d(0, 0, TrackingConstants.kGroundAlgaeHeight.in(Meters), Rotation3d.kZero);
 
