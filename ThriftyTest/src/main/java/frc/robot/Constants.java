@@ -49,8 +49,15 @@ public class Constants {
 
     public static final Rotation2d kStartHeading = Rotation2d.kPi; // facing our alliance
                                                                    
-    public static final Pose2d kInsideSteal = new Pose2d(7.642, 1.226, Rotation2d.kZero);
-    public static final Pose2d kOutsideSteal = new Pose2d(7.642, 2.4, Rotation2d.kZero);
+    public static final Pose2d kInsideStealPrep = new Pose2d(7.642, 1.226, Rotation2d.kZero);
+    public static final Pose2d kOutsideStealPrep = new Pose2d(7.642, 2.4, Rotation2d.kZero);
+    public static final Pose2d kInsideSteal = new Pose2d(8, 1.226, Rotation2d.kZero);
+    public static final Pose2d kOutsideSteal = new Pose2d(8, 2.4, Rotation2d.kZero);
+
+    public static final Pose2d kOutsideLollipopPrep = new Pose2d(7.642, 6.7, Rotation2d.kZero);
+    public static final Pose2d kInsideLollipopPrep = new Pose2d(7.642, 5.5, Rotation2d.kZero);
+    public static final Pose2d kOutsideLollipop = new Pose2d(8, 6.7, Rotation2d.kZero);
+    public static final Pose2d kInsideLollipop = new Pose2d(8, 5.5, Rotation2d.kZero);
 
     public static final Pose2d kInsideShoot = new Pose2d(6, 1.2, Rotation2d.kPi);
     public static final Pose2d kOutsideShoot = new Pose2d(6, 2.4, Rotation2d.kPi);

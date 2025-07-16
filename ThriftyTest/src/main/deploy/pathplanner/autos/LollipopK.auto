@@ -30,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Prepare Steal Inside"
+                  "name": "Prepare Lollipop Inside"
                 }
               },
               {
@@ -46,7 +46,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Steal Inside"
+                        "name": "Lollipop Inside"
                       }
                     }
                   ]
@@ -81,7 +81,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Prepare Steal Outside"
+                  "name": "Prepare Lollipop Outside"
                 }
               },
               {
@@ -97,7 +97,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Steal Outside"
+                        "name": "Lollipop Outside"
                       }
                     }
                   ]

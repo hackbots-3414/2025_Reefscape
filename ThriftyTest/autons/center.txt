@@ -6,4 +6,7 @@ Net
 Upper Algae & Align IJ
 Align Barge Left
 Net
-Align LIntake
+Prep Lollipop Outside
+Lollipop ? Lollipop Outside
+Beeline Barge Left
+Net

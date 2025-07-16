@@ -107,14 +107,35 @@ public class NamedCommandBindings implements Binder {
         .onlyIf(superstructure.holdingAlgae()));
 
     // Steal!
-    APTarget insideSteal = new APTarget(FieldConstants.kInsideSteal)
+    APTarget insideStealPrep = new APTarget(FieldConstants.kInsideStealPrep)
         .withRotationRadius(Meters.of(1));
-    APTarget outsideSteal = new APTarget(FieldConstants.kOutsideSteal)
+    APTarget outsideStealPrep = new APTarget(FieldConstants.kOutsideStealPrep)
         .withRotationRadius(Meters.of(1));
+    APTarget outsideSteal = new APTarget(FieldConstants.kOutsideSteal);
+    APTarget insideSteal = new APTarget(FieldConstants.kInsideSteal);
+    APTarget insideLollipopPrep = new APTarget(FieldConstants.kInsideLollipop)
+        .withRotationRadius(Meters.of(1));
+    APTarget outsideLollipopPrep = new APTarget(FieldConstants.kOutsideLollipopPrep)
+        .withRotationRadius(Meters.of(1));
+    APTarget insideLollipop = new APTarget(FieldConstants.kInsideLollipop);
+    APTarget outsideLollipop = new APTarget(FieldConstants.kOutsideLollipop);
     NamedCommands.registerCommand("Prepare Steal Inside",
-        superstructure.enter(new Align(insideSteal).allianceRelative()));
+        superstructure.enter(new Align(insideStealPrep).allianceRelative()));
     NamedCommands.registerCommand("Prepare Steal Outside",
+        superstructure.enter(new Align(outsideStealPrep).allianceRelative()));
+    NamedCommands.registerCommand("Steal Inside",
+        superstructure.enter(new Align(insideSteal).allianceRelative()));
+    NamedCommands.registerCommand("Steal Outside",
         superstructure.enter(new Align(outsideSteal).allianceRelative()));
+    
+    NamedCommands.registerCommand("Prepare Lollipop Inside",
+        superstructure.enter(new Align(insideLollipopPrep).allianceRelative()));
+    NamedCommands.registerCommand("Prepare Lollipop Outside",
+        superstructure.enter(new Align(outsideLollipopPrep).allianceRelative()));
+    NamedCommands.registerCommand("Lollipop Inside",
+        superstructure.enter(new Align(insideLollipop).allianceRelative()));
+    NamedCommands.registerCommand("Lollipop Outside",
+        superstructure.enter(new Align(outsideLollipop).allianceRelative()));
 
     // Shoot!
     APTarget outsideShoot = new APTarget(FieldConstants.kOutsideShoot)

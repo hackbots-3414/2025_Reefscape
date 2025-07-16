@@ -29,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Lower Algae"
+                  "name": "Upper Algae"
                 }
               }
             ]
@@ -81,7 +81,38 @@
         {
           "type": "named",
           "data": {
-            "name": "Align LIntake"
+            "name": "Prepare Lollipop Outside"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lollipop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lollipop Outside"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Beeline Barge Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Net"
           }
         }
       ]

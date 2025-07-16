@@ -6,6 +6,7 @@ import frc.robot.subsystems.elevator.ElevatorState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.Superstructure.Subsystems;
+import frc.robot.superstructure.states.ManualAlgaeEject;
 import frc.robot.superstructure.states.SeedAngle;
 import frc.robot.superstructure.states.SeedPose;
 import frc.robot.superstructure.states.Stow;
@@ -24,6 +25,7 @@ public class DashboardBindings implements Binder {
         return subsystems.elevator().go(ElevatorState.L4);
       }
     }));
+    SmartDashboard.putData("Test/FIRE!!!", superstructure.enter(new ManualAlgaeEject()));
 
     SmartDashboard.putData("Test/Follow Algae", superstructure.enter(new TrackAlgae()));
   }
