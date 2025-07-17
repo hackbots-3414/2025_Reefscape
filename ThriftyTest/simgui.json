@@ -35,6 +35,7 @@
       "/SmartDashboard/Test/Drive To Center": "Command",
       "/SmartDashboard/Test/Elevator Up": "Command",
       "/SmartDashboard/Test/Enter test state": "Command",
+      "/SmartDashboard/Test/FIRE!!!": "Command",
       "/SmartDashboard/Test/Follow Algae": "Command",
       "/SmartDashboard/Test/L4": "Command",
       "/SmartDashboard/Test/LowReefAlgaeIntake": "Command",
@@ -200,11 +201,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/Test/Follow Algae": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },
@@ -214,6 +210,9 @@
     },
     "transitory": {
       "SmartDashboard": {
+        "Algae": {
+          "open": true
+        },
         "Algae Tracking": {
           "open": true
         },

@@ -31,7 +31,7 @@ public class BindingConstants {
 
     public static final int kSecondaryL1 = 14;
 
-    public static final int kEjectCoral = Button.kL2.value;
+    public static final int kEjectCoral = Button.kL1.value;
 
     public static final int kLeftAlign = Button.kSquare.value;
     public static final int kRightAlign = Button.kCircle.value;
@@ -49,7 +49,7 @@ public class BindingConstants {
 
     public static final int kStow = Button.kPS.value;
 
-    public static final int kCoralIntake = Button.kL1.value;
+    public static final int kCoralIntake = Button.kR1.value;
 
     public static final int kCalibrateElevator = 15;
 

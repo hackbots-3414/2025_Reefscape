@@ -28,7 +28,7 @@ public enum ElevatorState {
   /** Height to intake algae from lower reef */
   LowerReef(2.0),
   /** Height to intake algae from upper reef */
-  UpperReef(4.5 - 1.5 * ElevatorConstants.kInch);
+  UpperReef(4.5 - 3 * ElevatorConstants.kInch);
 
   private final double m_position;
 
