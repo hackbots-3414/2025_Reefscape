@@ -135,6 +135,6 @@ public class AlgaeTracker implements Runnable {
 
   private Optional<Double> estimateDistance(double pitch, Distance targetHeight) {
     double diff = TrackingConstants.kRobotToCamera.getZ() - targetHeight.in(Meters);
-    return Optional.of(Math.abs(0.5 * diff / Math.sin(Units.degreesToRadians(pitch))));
+    return Optional.of(Math.abs(diff / Math.sin(Units.degreesToRadians(pitch))));
   }
 }
