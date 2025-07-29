@@ -52,6 +52,7 @@ import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
+import com.therekrab.autopilot.Autopilot.APResult;
 import frc.robot.driveassist.ForceField;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
@@ -462,16 +463,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return DriveConstants.kMaxLinearSpeed;
   }
 
-  private void setVelocity(Transform2d goal) {
-    double norm = goal.getTranslation().getNorm();
+  private void setVelocity(APResult goal) {
+    double norm = Math.hypot(goal.vx().in(MetersPerSecond), goal.vy().in(MetersPerSecond));
     double max = getMaxSpeed().in(MetersPerSecond);
     if (norm > max) {
-      goal = goal.times(max / norm);
+      goal = new APResult(goal.vx().times(max / norm), goal.vy().times(max / norm), goal.targetAngle());
     }
     setControl(m_veloRequest
-        .withVelocityX(goal.getX())
-        .withVelocityY(goal.getY())
-        .withTargetDirection(goal.getRotation())
+        .withVelocityX(goal.vx())
+        .withVelocityY(goal.vy())
+        .withTargetDirection(goal.targetAngle())
         .withMaxAbsRotationalRate(getMaxRotationalRate()));
   }
 
@@ -486,7 +487,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }),
         run(() -> {
           Translation2d velocities = getVelocityComponents();
-          Transform2d output = autopilot.calculate(m_estimatedPose, velocities, target);
+          APResult output = autopilot.calculate(m_estimatedPose, velocities, target);
           setVelocity(output);
         }))
         .until(() -> {
@@ -519,7 +520,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           new APTarget(m_lastAlgae.toPose2d()
               .transformBy(new Transform2d(Translation2d.kZero, angle))
               .transformBy(DriveConstants.kAlgaeOffset));
-      Transform2d output = DriveConstants.kTightAutopilot.calculate(
+      APResult output = DriveConstants.kTightAutopilot.calculate(
           m_estimatedPose,
           getVelocityComponents(),
           target);
