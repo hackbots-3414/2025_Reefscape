@@ -26,7 +26,6 @@ import frc.robot.superstructure.states.Processor;
 import frc.robot.superstructure.states.ProcessorPrep;
 import frc.robot.superstructure.states.DeferredAlign;
 import frc.robot.superstructure.states.Stow;
-import frc.robot.superstructure.states.TrackAlgae;
 
 public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
@@ -44,10 +43,7 @@ public class OperatorBindings implements Binder {
   private final Trigger m_coralIntake = m_controller.button(Operator.kCoralIntake);
   private final Trigger m_ejectCoral = m_controller.button(Operator.kEjectCoral);
 
-  private final Trigger m_untrackedAlgae = m_controller.button(Operator.kAlgae);
-  private final Trigger m_trackAlgae = m_controller.button(Operator.kTrackAlgae);
-
-  private final Trigger m_algae = m_untrackedAlgae.or(m_trackAlgae);
+  private final Trigger m_algae = m_controller.button(Operator.kAlgae);
 
   private final Trigger m_algaeGround = m_controller.pov(Operator.kGroundAlgaeIntake);
   private final Trigger m_algaeHighGround = m_controller.pov(Operator.kHighGroundAlgaeIntake);
@@ -55,7 +51,8 @@ public class OperatorBindings implements Binder {
   private final Trigger m_algaeHighReef = m_controller.button(Operator.kUpperAlgae);
 
   private final Trigger m_processor = m_controller.pov(Operator.kProcessor);
-  private final Trigger m_net = m_controller.pov(Operator.kNet);
+  private final Trigger m_netPrep = m_controller.pov(Operator.kNetPrep);
+  private final Trigger m_netScore = m_controller.button(Operator.kScoreNet);
 
   private final Trigger m_raiseClimb = m_controller.button(Operator.kRaiseClimb);
   private final Trigger m_climb = m_controller.button(Operator.kClimb);
@@ -70,7 +67,6 @@ public class OperatorBindings implements Binder {
 
   public void bind(Superstructure superstructure) {
     /* algae tracking */
-    m_trackAlgae.whileTrue(superstructure.enter(new TrackAlgae()));
 
     /* algae intake */
     m_algae.and(m_algaeGround).whileTrue(superstructure.enter(new GroundAlgaeIntake()));
@@ -81,8 +77,8 @@ public class OperatorBindings implements Binder {
     /* algae score */
     m_algae.and(m_processor).whileTrue(superstructure.enter(new ProcessorPrep()));
     m_algae.and(m_processor).onFalse(superstructure.enter(new Processor()));
-    m_algae.and(m_net).whileTrue(superstructure.enter(new NetPrep()));
-    m_algae.and(m_net).onFalse(superstructure.enter(new Net()));
+    m_algae.and(m_netPrep).whileTrue(superstructure.enter(new NetPrep()));
+    m_netScore.onTrue(superstructure.enter(new Net()));
 
     /* coral intake & score */
     m_coralIntake.whileTrue(superstructure.enter(new CoralIntake()));
