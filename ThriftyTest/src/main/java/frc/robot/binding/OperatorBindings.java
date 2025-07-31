@@ -77,7 +77,9 @@ public class OperatorBindings implements Binder {
     /* algae score */
     m_algae.and(m_processor).whileTrue(superstructure.enter(new ProcessorPrep()));
     m_algae.and(m_processor).onFalse(superstructure.enter(new Processor()));
-    m_algae.and(m_netPrep).whileTrue(superstructure.enter(new NetPrep()));
+    m_algae.and(m_netPrep)
+        .whileTrue(superstructure.enter(new NetPrep()))
+        .onFalse(superstructure.enter(new Stow()));
     m_netScore.onTrue(superstructure.enter(new Net()));
 
     /* coral intake & score */
