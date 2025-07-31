@@ -41,7 +41,7 @@ public class BindingConstants {
     public static final int kGroundAlgaeIntake = 180;
     public static final int kProcessor = 90;
     public static final int kHighGroundAlgaeIntake = 270;
-    public static final int kNet = 0;
+    public static final int kNetPrep = 0;
     public static final int kAlgae = Button.kR2.value;
 
     public static final int kRaiseClimb = Button.kCreate.value;
@@ -55,7 +55,7 @@ public class BindingConstants {
 
     public static final int kRightFunnel = 11;
     public static final int kLeftFunnel = 12;
-    public static final int kTrackAlgae = Button.kL2.value;
+    public static final int kScoreNet = Button.kL2.value;
   }
 }
 
