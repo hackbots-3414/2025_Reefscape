@@ -10,7 +10,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 
 class TrackingConstants {
-  public static final boolean kEnabled = true;
+  public static final boolean kEnabled = false;
 
   protected static final String kCameraName = "algaeman";
   /* it is very important that the robot's position be ON THE GROUND (z = 0) */
