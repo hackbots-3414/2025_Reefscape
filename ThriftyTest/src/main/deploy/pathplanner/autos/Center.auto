@@ -44,6 +44,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Net Prep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Net"
           }
         },
@@ -75,6 +81,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Net Prep"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Net"
           }
         },
@@ -91,7 +103,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Lollipop"
+                  "name": "Lollipop Intake"
                 }
               },
               {
@@ -107,6 +119,12 @@
           "type": "named",
           "data": {
             "name": "Beeline Barge Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Net Prep"
           }
         },
         {

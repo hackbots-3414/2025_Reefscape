@@ -43,7 +43,7 @@ public class NamedCommandBindings implements Binder {
     NamedCommands.registerCommand("Net", superstructure.enter(new Net()));
     NamedCommands.registerCommand("Net Prep", superstructure.enter(new NetPrep()));
     NamedCommands.registerCommand("Algae Stow", superstructure.enter(new AlgaeStow()));
-    NamedCommands.registerCommand("Lollipop", superstructure.enter(new HighGroundAlgaeIntake()));
+    NamedCommands.registerCommand("Lollipop Intake", superstructure.enter(new HighGroundAlgaeIntake()));
     NamedCommands.registerCommand("Eject Algae", superstructure.enter(new ManualAlgaeEject()));
 
     /* steal hehe */
