@@ -19,6 +19,7 @@ import frc.robot.superstructure.states.IntakeComplete;
 import frc.robot.superstructure.states.LowerReefAlgaeIntake;
 import frc.robot.superstructure.states.ManualAlgaeEject;
 import frc.robot.superstructure.states.Net;
+import frc.robot.superstructure.states.NetPrep;
 import frc.robot.superstructure.states.TrackAlgae;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
 
@@ -40,6 +41,7 @@ public class NamedCommandBindings implements Binder {
     NamedCommands.registerCommand("Lower Algae", superstructure.enter(new LowerReefAlgaeIntake()));
     NamedCommands.registerCommand("Upper Algae", superstructure.enter(new UpperReefAlgaeIntake()));
     NamedCommands.registerCommand("Net", superstructure.enter(new Net()));
+    NamedCommands.registerCommand("Net Prep", superstructure.enter(new NetPrep()));
     NamedCommands.registerCommand("Algae Stow", superstructure.enter(new AlgaeStow()));
     NamedCommands.registerCommand("Lollipop", superstructure.enter(new HighGroundAlgaeIntake()));
     NamedCommands.registerCommand("Eject Algae", superstructure.enter(new ManualAlgaeEject()));
