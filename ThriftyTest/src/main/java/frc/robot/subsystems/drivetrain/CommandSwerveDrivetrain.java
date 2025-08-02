@@ -467,7 +467,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     double norm = Math.hypot(goal.vx().in(MetersPerSecond), goal.vy().in(MetersPerSecond));
     double max = getMaxSpeed().in(MetersPerSecond);
     if (norm > max) {
-      goal = new APResult(goal.vx().times(max / norm), goal.vy().times(max / norm), goal.targetAngle());
+      goal = new APResult(goal.vx().times(max / norm), goal.vy().times(max / norm),
+          goal.targetAngle());
     }
     setControl(m_veloRequest
         .withVelocityX(goal.vx())
@@ -476,10 +477,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         .withMaxAbsRotationalRate(getMaxRotationalRate()));
   }
 
-  /**
-   * Drives to a certain point on the field
-   */
-  public Command align(Autopilot autopilot, APTarget target) {
+  public Command alignEndless(Autopilot autopilot, APTarget target) {
     return Commands.sequence(
         runOnce(() -> {
           RobotObserver.getField().getObject("reference").setPose(target.getReference());
@@ -489,15 +487,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           Translation2d velocities = getVelocityComponents();
           APResult output = autopilot.calculate(m_estimatedPose, velocities, target);
           setVelocity(output);
+
+          setAligned(autopilot.atTarget(m_estimatedPose, target));
         }))
-        .until(() -> {
-          return autopilot.atTarget(m_estimatedPose, target);
-        })
         .finallyDo(this::stop)
-        .finallyDo(interrupted -> setAligned(!interrupted))
         .finallyDo(() -> {
           RobotObserver.getField().getObject("reference").setPoses();
         });
+  }
+
+  /**
+   * Drives to a certain point on the field
+   */
+  public Command align(Autopilot autopilot, APTarget target) {
+    return alignEndless(autopilot, target).until(() -> autopilot.atTarget(m_estimatedPose, target));
   }
 
   public Command seedLocal(Pose2d pose) {
