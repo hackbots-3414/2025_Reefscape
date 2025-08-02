@@ -121,18 +121,18 @@ public class NamedCommandBindings implements Binder {
         .withRotationRadius(Meters.of(1));
     APTarget insideLollipop = new APTarget(FieldConstants.kInsideLollipop);
     APTarget outsideLollipop = new APTarget(FieldConstants.kOutsideLollipop);
-    NamedCommands.registerCommand("Prepare Steal Inside",
+    NamedCommands.registerCommand("Prep Steal Inside",
         superstructure.enter(new Align(insideStealPrep).allianceRelative()));
-    NamedCommands.registerCommand("Prepare Steal Outside",
+    NamedCommands.registerCommand("Prep Steal Outside",
         superstructure.enter(new Align(outsideStealPrep).allianceRelative()));
     NamedCommands.registerCommand("Steal Inside",
         superstructure.enter(new Align(insideSteal).allianceRelative()));
     NamedCommands.registerCommand("Steal Outside",
         superstructure.enter(new Align(outsideSteal).allianceRelative()));
     
-    NamedCommands.registerCommand("Prepare Lollipop Inside",
+    NamedCommands.registerCommand("Prep Lollipop Inside",
         superstructure.enter(new Align(insideLollipopPrep).allianceRelative()));
-    NamedCommands.registerCommand("Prepare Lollipop Outside",
+    NamedCommands.registerCommand("Prep Lollipop Outside",
         superstructure.enter(new Align(outsideLollipopPrep).allianceRelative()));
     NamedCommands.registerCommand("Lollipop Inside",
         superstructure.enter(new Align(insideLollipop).allianceRelative()));

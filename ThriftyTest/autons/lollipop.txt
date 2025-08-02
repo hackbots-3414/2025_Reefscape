@@ -1,0 +1,8 @@
+Align G + L4
+Prep Lollipop Inside + (Lollipop Intake ? Lollipop Inside)
+Beeline Barge Center
+Net Prep + Net
+Prep Lollipop Outside + (Lollipop Intake ? Lollipop Outside)
+Beeline Barge Left
+Net Prep + Net
+Beeline LIntake
