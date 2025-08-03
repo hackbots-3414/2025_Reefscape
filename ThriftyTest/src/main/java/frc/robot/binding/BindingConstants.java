@@ -49,8 +49,6 @@ public class BindingConstants {
 
     public static final int kStow = Button.kPS.value;
 
-    public static final int kCoralIntake = Button.kR1.value;
-
     public static final int kCalibrateElevator = 15;
 
     public static final int kRightFunnel = 11;

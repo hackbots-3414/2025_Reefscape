@@ -7,10 +7,8 @@ import frc.robot.binding.BindingConstants.Operator;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Climb;
 import frc.robot.superstructure.states.RaiseClimb;
-import frc.robot.superstructure.states.CompleteCoralIntake;
 import frc.robot.superstructure.states.CompleteCoralScore;
 import frc.robot.superstructure.states.CoralEject;
-import frc.robot.superstructure.states.CoralIntake;
 import frc.robot.superstructure.states.CoralScore;
 import frc.robot.superstructure.states.CoralScorePrep;
 import frc.robot.superstructure.states.ElevatorZero;
@@ -40,7 +38,6 @@ public class OperatorBindings implements Binder {
   private final Trigger m_left = m_controller.button(Operator.kLeftAlign);
   private final Trigger m_right = m_controller.button(Operator.kRightAlign);
 
-  private final Trigger m_coralIntake = m_controller.button(Operator.kCoralIntake);
   private final Trigger m_ejectCoral = m_controller.button(Operator.kEjectCoral);
 
   private final Trigger m_algae = m_controller.button(Operator.kAlgae);
@@ -83,8 +80,6 @@ public class OperatorBindings implements Binder {
     m_netScore.onTrue(superstructure.enter(new Net()));
 
     /* coral intake & score */
-    m_coralIntake.whileTrue(superstructure.enter(new CoralIntake()));
-    m_coralIntake.onFalse(superstructure.enter(new CompleteCoralIntake()));
     m_ejectCoral.whileTrue(superstructure.enter(new CoralEject()));
     bindCoral(m_l1.and(m_secondaryL1.negate()), CoralLevel.L1, superstructure);
     bindCoral(m_l1.and(m_secondaryL1), CoralLevel.SecondaryL1, superstructure);
