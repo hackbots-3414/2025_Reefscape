@@ -98,11 +98,12 @@ public class LocalizationConstants {
   protected static final double kAvgErr = 0.08;
   protected static final double kErrStdDevs = 0.02;
 
-  public static final boolean kEnableReefFilter = true;
+  public static final boolean kEnableTagFilter = true;
 
-  protected static final Set<Integer> kReefIds = Set.of(
-      6, 7, 8, 9, 10, 11, // red tags
-      17, 18, 19, 20, 21, 22 // blue tags
+  protected static final Set<Integer> kApprovedTagIds = Set.of(
+      6, 7, 8, 9, 10, 11, // red reef tags
+      17, 18, 19, 20, 21, 22, // blue reef tags
+      3, 16 // processor tags are okay as well.
   );
 }
 

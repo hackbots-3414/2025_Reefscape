@@ -477,7 +477,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         .withMaxAbsRotationalRate(getMaxRotationalRate()));
   }
 
-  public Command alignEndless(Autopilot autopilot, APTarget target) {
+  public Command align(Autopilot autopilot, APTarget target) {
     return Commands.sequence(
         runOnce(() -> {
           RobotObserver.getField().getObject("reference").setPose(target.getReference());
@@ -490,17 +490,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
           setAligned(autopilot.atTarget(m_estimatedPose, target));
         }))
+        .until(() -> {
+          return autopilot.atTarget(m_estimatedPose, target);
+        })
         .finallyDo(this::stop)
         .finallyDo(() -> {
           RobotObserver.getField().getObject("reference").setPoses();
         });
-  }
-
-  /**
-   * Drives to a certain point on the field
-   */
-  public Command align(Autopilot autopilot, APTarget target) {
-    return alignEndless(autopilot, target).until(() -> autopilot.atTarget(m_estimatedPose, target));
   }
 
   public Command seedLocal(Pose2d pose) {

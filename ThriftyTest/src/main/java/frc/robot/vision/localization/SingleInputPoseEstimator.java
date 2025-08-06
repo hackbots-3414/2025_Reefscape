@@ -163,8 +163,8 @@ public class SingleInputPoseEstimator implements Runnable {
     }
     // Ensure we only accept reef-focused estimates
     return result.hasTargets()
-        && (!LocalizationConstants.kEnableReefFilter
-            || LocalizationConstants.kReefIds.contains(result.getBestTarget().getFiducialId()));
+        && (!LocalizationConstants.kEnableTagFilter
+            || LocalizationConstants.kApprovedTagIds.contains(result.getBestTarget().getFiducialId()));
   }
 
   private Optional<TimestampedPoseEstimate> process(PhotonPipelineResult result, Pose3d pose) {

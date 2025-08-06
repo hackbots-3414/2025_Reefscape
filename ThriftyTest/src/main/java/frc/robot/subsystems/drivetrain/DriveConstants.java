@@ -24,8 +24,6 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import frc.robot.generated.TunerConstants;
 
 public class DriveConstants {
-  public static final boolean kEnableEndlessAlignment = true;
-
   protected static final PIDConstants kTranslationPID = new PIDConstants(2, 0.0, 0.0);
   protected static final PIDConstants kRotationPID = new PIDConstants(1.5, 0.0, 0.0);
 

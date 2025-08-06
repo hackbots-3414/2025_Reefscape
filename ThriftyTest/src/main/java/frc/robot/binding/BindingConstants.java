@@ -21,7 +21,7 @@ public class BindingConstants {
     public static final int kLeftAlign = 4;
 
     public static final double deadband = 0.01;
-    public static final boolean kEnableSmartButton = false;
+    public static final boolean kEnableSmartButton = true;
   }
 
   public static class Operator {
