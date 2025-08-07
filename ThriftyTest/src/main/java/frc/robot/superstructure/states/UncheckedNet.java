@@ -7,11 +7,11 @@ import frc.robot.subsystems.pivot.PivotState;
 import frc.robot.superstructure.EnterableState;
 import frc.robot.superstructure.Superstructure.Subsystems;
 
-public class Net implements EnterableState {
+public class UncheckedNet implements EnterableState {
   /**
    * A state that scores an algae in the net
    */
-  public Net() {}
+  public UncheckedNet() {}
 
   public Command build(Subsystems subsystems) {
     return Commands.sequence(
@@ -23,7 +23,6 @@ public class Net implements EnterableState {
         .finallyDo(subsystems.elevator()::release)
         .finallyDo(subsystems.pivot()::release)
         .finallyDo(subsystems.algae()::release)
-        .onlyIf(subsystems.elevator().ready(ElevatorState.Net))
         .onlyIf(subsystems.algae().holdingAlgae());
   }
 }

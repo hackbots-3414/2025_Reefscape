@@ -18,12 +18,14 @@ import frc.robot.superstructure.states.HighGroundAlgaeIntake;
 import frc.robot.superstructure.states.UpperReefAlgaeIntake;
 import frc.robot.superstructure.states.DeferredAlign.AlignLocation;
 import frc.robot.superstructure.states.LowerReefAlgaeIntake;
-import frc.robot.superstructure.states.Net;
+import frc.robot.superstructure.states.UncheckedNet;
 import frc.robot.superstructure.states.NetPrep;
 import frc.robot.superstructure.states.Processor;
 import frc.robot.superstructure.states.ProcessorPrep;
+import frc.robot.superstructure.states.CheckedNet;
 import frc.robot.superstructure.states.DeferredAlign;
 import frc.robot.superstructure.states.Stow;
+import frc.robot.superstructure.states.StowTemp;
 
 public class OperatorBindings implements Binder {
   private final CommandPS5Controller m_controller =
@@ -76,8 +78,8 @@ public class OperatorBindings implements Binder {
     m_algae.and(m_processor).onFalse(superstructure.enter(new Processor()));
     m_algae.and(m_netPrep)
         .whileTrue(superstructure.enter(new NetPrep()))
-        .onFalse(superstructure.enter(new Stow()));
-    m_netScore.onTrue(superstructure.enter(new Net()));
+        .onFalse(superstructure.enter(new StowTemp()));
+    m_netScore.onTrue(superstructure.enter(new CheckedNet()));
 
     /* coral intake & score */
     m_ejectCoral.whileTrue(superstructure.enter(new CoralEject()));
