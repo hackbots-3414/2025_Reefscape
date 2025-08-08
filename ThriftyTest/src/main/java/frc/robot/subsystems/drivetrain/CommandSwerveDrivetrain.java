@@ -484,8 +484,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           setAligned(false);
         }),
         run(() -> {
-          Translation2d velocities = getVelocityComponents();
-          APResult output = autopilot.calculate(m_estimatedPose, velocities, target);
+          ChassisSpeeds robotRelatiSpeeds = getRobotRelativeSpeeds();
+          APResult output = autopilot.calculate(m_estimatedPose, robotRelatiSpeeds, target);
           setVelocity(output);
 
           setAligned(autopilot.atTarget(m_estimatedPose, target));
@@ -521,7 +521,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               .transformBy(DriveConstants.kAlgaeOffset));
       APResult output = DriveConstants.kTightAutopilot.calculate(
           m_estimatedPose,
-          getVelocityComponents(),
+          getRobotRelativeSpeeds(),
           target);
       setVelocity(output);
     }).onlyWhile(seesAlgae());
