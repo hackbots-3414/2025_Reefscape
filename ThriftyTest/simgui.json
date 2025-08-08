@@ -216,12 +216,14 @@
         "Algae Tracking": {
           "open": true
         },
+        "Prep": {
+          "open": true
+        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
           }
-        },
-        "open": true
+        }
       },
       "photonvision": {
         "cam1": {

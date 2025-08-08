@@ -58,6 +58,7 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
+import frc.robot.utils.PoseEstimators;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 import frc.robot.vision.tracking.SimplePoseFilter;
 import frc.robot.vision.tracking.AlgaeTracker.ObjectTrackingStatus;
@@ -101,12 +102,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
 
-  /* last known object tracking input */
+  /* last known object tracking input, if tracking is enabled */
   private Optional<Pose3d> m_algae = Optional.empty();
   private final SimplePoseFilter m_algaeSmoother = new SimplePoseFilter();
   private Pose3d m_lastAlgae = Pose3d.kZero;
 
   private Pose2d m_estimatedPose = new Pose2d();
+
+  private final PoseEstimators poseEstimators;
 
   private SwerveSetpointGenerator setpointGenerator;
   private SwerveSetpoint previousSetpoint;
@@ -136,6 +139,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     RobotObserver.setAlginedSupplier(aligned());
 
     m_timer = new LoopTimer("Drivetrain");
+    poseEstimators = new PoseEstimators(
+        getKinematics(),
+        Rotation2d.kZero,
+        getState().ModulePositions);
     initializePathPlanner();
   }
 
@@ -145,8 +152,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       config = RobotConfig.fromGUISettings();
       AutoBuilder.configure(
           this::getPose, // Robot pose supplier
-          this::resetPose, // Method to reset odometry (will be called if your auto has a
-                           // starting pose)
+          this::setPose, // Method to reset odometry (will be called if your auto has a
+                         // starting pose)
           this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speeds, feedforwards) -> driveWithChassisSpeeds(speeds),
           DriveConstants.kPathplannerHolonomicDriveController,
@@ -218,6 +225,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   private void setPose(Pose2d pose) {
+    poseEstimators.resetPose(pose);
     resetPose(pose);
   }
 
@@ -247,7 +255,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   @Override
   public void periodic() {
     m_timer.reset();
-    m_estimatedPose = this.getState().Pose;
+    poseEstimators.update(getState().Pose.getRotation(), getState().ModulePositions);
+    if (Robot.isReal()) {
+      resetRotation(poseEstimators.getReefPose().getRotation());
+    }
+    m_estimatedPose = getState().Pose;
 
     RobotObserver.getField().setRobotPose(m_estimatedPose);
 
@@ -269,6 +281,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       RobotObserver.getField().getObject("Algae").setPoses();
     }
     m_ologger.log();
+    poseEstimators.log();
     m_hasReceivedVisionUpdate = false;
     m_timer.log();
   }
@@ -343,6 +356,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
     m_hasReceivedVisionUpdate = true;
+    poseEstimators.addPoseEstimate(estimate);
     // This should NOT run in simulation!
     if (Robot.isSimulation()) {
       return;
@@ -504,7 +518,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public Command seedLocal(Pose2d pose) {
-    return Commands.runOnce(() -> resetPose(FieldUtils.getLocalPose(pose)))
+    return Commands.runOnce(() -> setPose(FieldUtils.getLocalPose(pose)))
         .ignoringDisable(true);
   }
 

@@ -8,5 +8,6 @@ import edu.wpi.first.math.numbers.N3;
 public record TimestampedPoseEstimate(
     Pose2d pose,
     double timestamp,
-    Matrix<N3, N1> stdDevs) {
+    Matrix<N3, N1> stdDevs,
+    boolean isReefOnly) {
 }
