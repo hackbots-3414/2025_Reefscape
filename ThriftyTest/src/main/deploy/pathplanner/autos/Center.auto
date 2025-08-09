@@ -17,19 +17,19 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Align GH"
+                  "name": "Upper Algae"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Upper Algae"
+                  "name": "Align GH"
                 }
               }
             ]
@@ -48,20 +48,20 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Net Prep"
+                  "name": "Net"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Net"
+                  "name": "Net Prep"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {

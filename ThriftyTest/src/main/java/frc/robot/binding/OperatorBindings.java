@@ -6,6 +6,7 @@ import frc.robot.Constants.CoralLevel;
 import frc.robot.binding.BindingConstants.Operator;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Climb;
+import frc.robot.superstructure.states.ClimbStowed;
 import frc.robot.superstructure.states.RaiseClimb;
 import frc.robot.superstructure.states.CompleteCoralScore;
 import frc.robot.superstructure.states.CoralEject;
@@ -32,29 +33,29 @@ public class OperatorBindings implements Binder {
       new CommandPS5Controller(BindingConstants.kOperatorPort);
 
   private final Trigger m_l1 = m_controller.pov(Operator.kL1);
-  private final Trigger m_secondaryL1 = m_controller.pov(Operator.kSecondaryL1);
   private final Trigger m_l2 = m_controller.pov(Operator.kL2);
   private final Trigger m_l3 = m_controller.pov(Operator.kL3);
   private final Trigger m_l4 = m_controller.pov(Operator.kL4);
-
+  
   private final Trigger m_left = m_controller.button(Operator.kLeftAlign);
   private final Trigger m_right = m_controller.button(Operator.kRightAlign);
-
+  
   private final Trigger m_ejectCoral = m_controller.button(Operator.kEjectCoral);
-
+  
   private final Trigger m_algae = m_controller.button(Operator.kAlgae);
-
+  
   private final Trigger m_algaeGround = m_controller.pov(Operator.kGroundAlgaeIntake);
   private final Trigger m_algaeHighGround = m_controller.pov(Operator.kHighGroundAlgaeIntake);
   private final Trigger m_algaeLowReef = m_controller.button(Operator.kLowerAlgae);
   private final Trigger m_algaeHighReef = m_controller.button(Operator.kUpperAlgae);
-
+  
   private final Trigger m_processor = m_controller.pov(Operator.kProcessor);
   private final Trigger m_netPrep = m_controller.pov(Operator.kNetPrep);
   private final Trigger m_netScore = m_controller.button(Operator.kScoreNet);
-
+  
   private final Trigger m_raiseClimb = m_controller.button(Operator.kRaiseClimb);
   private final Trigger m_climb = m_controller.button(Operator.kClimb);
+  private final Trigger m_stowClimb = m_controller.button(Operator.kStowClimb);
 
   private final Trigger m_stow = m_controller.button(Operator.kStow);
 
@@ -83,8 +84,7 @@ public class OperatorBindings implements Binder {
 
     /* coral intake & score */
     m_ejectCoral.whileTrue(superstructure.enter(new CoralEject()));
-    bindCoral(m_l1.and(m_secondaryL1.negate()), CoralLevel.L1, superstructure);
-    bindCoral(m_l1.and(m_secondaryL1), CoralLevel.SecondaryL1, superstructure);
+    bindCoral(m_l1, CoralLevel.L1, superstructure);
     bindCoral(m_l2, CoralLevel.L2, superstructure);
     bindCoral(m_l3, CoralLevel.L3, superstructure);
     bindCoral(m_l4, CoralLevel.L4, superstructure);
@@ -96,6 +96,7 @@ public class OperatorBindings implements Binder {
     /* climb */
     m_climb.whileTrue(superstructure.enter(new Climb()));
     m_raiseClimb.whileTrue(superstructure.enter(new RaiseClimb()));
+    m_stowClimb.whileTrue(superstructure.enter(new ClimbStowed()));
 
     /* misc */
     m_zeroElevator.whileTrue(superstructure.enter(new ElevatorZero()));

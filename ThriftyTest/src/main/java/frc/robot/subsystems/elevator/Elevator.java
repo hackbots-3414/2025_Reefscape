@@ -54,6 +54,7 @@ public class Elevator extends PassiveSubsystem {
     m_inputsLogger = new ElevatorIOInputsLogger(m_inputs);
     m_ologger = new OnboardLogger("Elevator");
     m_ologger.registerString("State", () -> m_reference.toString());
+    SmartDashboard.putData("Elevator/Force Net", unsafeNet());
     SmartDashboard.putData("Elevator/Lazy Zero",
         runOnce(m_io::calibrateZero).ignoringDisable(true).withName("Lazy Zero"));
     m_timer = new LoopTimer("Elevator");
@@ -153,6 +154,12 @@ public class Elevator extends PassiveSubsystem {
           }
         })
         .withName("Autozero");
+  }
+
+  private Command unsafeNet() {
+    return Commands.sequence(
+      runOnce(() -> m_io.setPosition(ElevatorState.Net.position())),
+      Commands.idle());
   }
 
   public void setPrefireRequirement(Trigger trigger) {

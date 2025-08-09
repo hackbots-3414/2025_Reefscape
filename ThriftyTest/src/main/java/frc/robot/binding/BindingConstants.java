@@ -30,7 +30,7 @@ public class BindingConstants {
     public static final int kL3 = 90;
     public static final int kL4 = 0;
 
-    public static final int kSecondaryL1 = 14;
+    public static final int kStowClimb = 14;
 
     public static final int kEjectCoral = Button.kL1.value;
 
