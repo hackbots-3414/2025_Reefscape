@@ -55,6 +55,7 @@ public class BindingConstants {
     public static final int kRightFunnel = 11;
     public static final int kLeftFunnel = 12;
     public static final int kScoreNet = Button.kL2.value;
+    public static final int kCoralScore = Button.kR1.value;
   }
 }
 

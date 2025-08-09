@@ -22,6 +22,7 @@ import frc.robot.superstructure.states.UncheckedNet;
 import frc.robot.superstructure.states.NetPrep;
 import frc.robot.superstructure.states.Processor;
 import frc.robot.superstructure.states.ProcessorPrep;
+import frc.robot.superstructure.states.AutoSelectCoralScore;
 import frc.robot.superstructure.states.CheckedNet;
 import frc.robot.superstructure.states.DeferredAlign;
 import frc.robot.superstructure.states.Stow;
@@ -62,6 +63,8 @@ public class OperatorBindings implements Binder {
   private final Trigger m_funnelRight = m_controller.button(Operator.kRightFunnel);
   private final Trigger m_funnel = m_funnelLeft.and(m_funnelRight);
 
+  private final Trigger m_coralScore = m_controller.button(Operator.kCoralScore);
+
   private final Trigger m_zeroElevator = m_controller.button(Operator.kCalibrateElevator);
 
   public void bind(Superstructure superstructure) {
@@ -88,6 +91,7 @@ public class OperatorBindings implements Binder {
     bindCoral(m_l2, CoralLevel.L2, superstructure);
     bindCoral(m_l3, CoralLevel.L3, superstructure);
     bindCoral(m_l4, CoralLevel.L4, superstructure);
+    m_coralScore.onTrue(superstructure.enter(new AutoSelectCoralScore()));
 
     /* align */
     m_left.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Left)));
@@ -104,10 +108,10 @@ public class OperatorBindings implements Binder {
   }
 
   private void bindCoral(Trigger trigger, CoralLevel level, Superstructure superstructure) {
-    trigger.and(m_algae.negate()).whileTrue(superstructure.enter(new CoralScorePrep(level)));
-    trigger.and(m_algae.negate()).and(superstructure.aligned())
-        .onTrue(superstructure.enter(new CoralScore(level)));
-    trigger.and(m_algae.negate()).onFalse(superstructure.enter(new CompleteCoralScore(level)));
+    trigger.and(m_algae.negate()).onTrue(superstructure.enter(new CoralScorePrep(level)));
+    // trigger.and(m_algae.negate()).and(superstructure.aligned())
+    //     .onTrue(superstructure.enter(new CoralScore(level)));
+    // trigger.and(m_algae.negate()).onFalse(superstructure.enter(new CompleteCoralScore(level)));
   }
 }
 

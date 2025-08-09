@@ -162,4 +162,8 @@ public class Elevator extends PassiveSubsystem {
   public void setStayRequirement(Trigger trigger) {
     m_stay = trigger;
   }
+
+  public ElevatorState getElevatorState() {
+    return m_reference;
+  }
 }
