@@ -9,13 +9,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 
-class TrackingConstants {
+public class TrackingConstants {
   public static final boolean kEnabled = false;
 
-  protected static final String kCameraName = "algaeman";
+  public static final String kCameraName = "algaeman";
   /* it is very important that the robot's position be ON THE GROUND (z = 0) */
   // protected static final Transform3d kRobotToCamera = new Transform3d(Units.inchesToMeters(9), Units.inchesToMeters(10), Units.inchesToMeters(11), Rotation3d.kZero);
-  protected static final Transform3d kRobotToCamera = new Transform3d(Units.inchesToMeters(8.304 + 0.75), Units.inchesToMeters(9.75), Units.inchesToMeters(11), Rotation3d.kZero);
+  public static final Transform3d kRobotToCamera = new Transform3d(Units.inchesToMeters(8.304 + 0.75), Units.inchesToMeters(9.75), Units.inchesToMeters(11), Rotation3d.kZero);
 
   /* simulation */
   protected static final double kFPS = 30;

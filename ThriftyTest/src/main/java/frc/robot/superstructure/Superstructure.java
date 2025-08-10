@@ -3,6 +3,7 @@ package frc.robot.superstructure;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import frc.robot.subsystems.LedFeedback;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
@@ -12,6 +13,10 @@ import frc.robot.subsystems.coral.Coral;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.vision.tracking.AlgaeTracker;
+import frc.robot.vision.tracking.CameraIOTrackingSim;
+import frc.robot.vision.tracking.TrackingConstants;
+import frc.robot.vision.CameraIO;
+import frc.robot.vision.CameraIOHardware;
 import frc.robot.vision.localization.AprilTagVisionHandler;
 
 public class Superstructure {
@@ -84,7 +89,8 @@ public class Superstructure {
   public AprilTagVisionHandler buildVision() {
     return new AprilTagVisionHandler(
         m_subsystems.drivetrain()::getPose,
-        m_subsystems.drivetrain()::addPoseEstimate);
+        m_subsystems.drivetrain()::addPoseEstimate,
+        m_subsystems.drivetrain().getCameraIOFactory());
   }
 
   public static record Subsystems(
@@ -124,7 +130,17 @@ public class Superstructure {
    */
   public Runnable buildAlgaeTracker() {
     if (AlgaeTracker.enabled) {
+      CameraIO io;
+      if (Robot.isSimulation()) {
+        io = new CameraIOTrackingSim(
+            TrackingConstants.kCameraName,
+            TrackingConstants.kRobotToCamera,
+            m_subsystems.drivetrain()::getPose);
+      } else {
+        io = new CameraIOHardware(TrackingConstants.kCameraName);
+      }
       return new AlgaeTracker(
+          io,
           m_subsystems.drivetrain()::getPose,
           m_subsystems.drivetrain()::addObjectTrackingData);
     } else {

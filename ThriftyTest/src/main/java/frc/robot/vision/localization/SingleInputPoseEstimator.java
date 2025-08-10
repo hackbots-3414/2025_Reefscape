@@ -13,7 +13,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -71,6 +70,7 @@ public class SingleInputPoseEstimator implements Runnable {
     m_estimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
   }
 
+  /** Updates this estimator with the latest results */
   public void refresh(Pose2d robotPose) {
     m_lastPose = robotPose;
     m_io.updateInputs(m_inputs);

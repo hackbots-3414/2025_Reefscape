@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
 import frc.robot.utils.PoseEstimators;
+import frc.robot.vision.CameraIOFactory;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
 import frc.robot.vision.tracking.SimplePoseFilter;
 import frc.robot.vision.tracking.AlgaeTracker.ObjectTrackingStatus;
@@ -261,7 +263,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void periodic() {
     m_timer.reset();
     poseEstimators.update(getState().RawHeading, getState().ModulePositions);
-    m_estimatedPose = getState().Pose;
+    m_estimatedPose = poseEstimators.getReefPose();
 
     RobotObserver.getField().setRobotPose(m_estimatedPose);
 
@@ -490,6 +492,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         .withVelocityY(goal.vy())
         .withTargetDirection(goal.targetAngle())
         .withMaxAbsRotationalRate(getMaxRotationalRate()));
+  }
+
+  public CameraIOFactory getCameraIOFactory() {
+    Supplier<Pose2d> poseSupplier;
+    if (Robot.isReal()) {
+      poseSupplier = poseEstimators::getReefPose;
+    } else {
+      poseSupplier = () -> getState().Pose;
+    }
+    return new CameraIOFactory(poseSupplier);
   }
 
   public Command align(Autopilot autopilot, APTarget target) {

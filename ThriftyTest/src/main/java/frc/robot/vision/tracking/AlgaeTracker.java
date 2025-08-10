@@ -22,10 +22,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Robot;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIO.CameraIOInputs;
-import frc.robot.vision.CameraIOHardware;
 import frc.robot.vision.CameraIOInputsLogger;
 
 public class AlgaeTracker implements Runnable {
@@ -38,6 +36,7 @@ public class AlgaeTracker implements Runnable {
     public boolean isExpired() {
       return Timer.getTimestamp() - time() >= TrackingConstants.kExpirationTime.in(Seconds);
     }
+
     public boolean isOkay() {
       return !isExpired();
     }
@@ -54,15 +53,9 @@ public class AlgaeTracker implements Runnable {
 
   private final Supplier<Pose2d> m_robotPose;
 
-  public AlgaeTracker(Supplier<Pose2d> robotPose, Consumer<ObjectTrackingStatus> action) {
-    if (Robot.isSimulation()) {
-      m_io = new CameraIOTrackingSim(
-          TrackingConstants.kCameraName,
-          TrackingConstants.kRobotToCamera,
-          robotPose);
-    } else {
-      m_io = new CameraIOHardware(TrackingConstants.kCameraName);
-    }
+  public AlgaeTracker(
+      CameraIO io, Supplier<Pose2d> robotPose, Consumer<ObjectTrackingStatus> action) {
+    m_io = io;
     m_action = action;
     m_robotPose = robotPose;
     m_inputsLogger = new CameraIOInputsLogger(m_inputs, TrackingConstants.kCameraName);

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Robot;
 import frc.robot.utils.LoopTimer;
 import frc.robot.vision.CameraIO;
-import frc.robot.vision.CameraIOHardware;
+import frc.robot.vision.CameraIOFactory;
 
 public class AprilTagVisionHandler implements AutoCloseable {
   @SuppressWarnings("unused")
@@ -25,13 +25,19 @@ public class AprilTagVisionHandler implements AutoCloseable {
   private final Supplier<Pose2d> m_poseSupplier;
   private final Consumer<TimestampedPoseEstimate> m_consumer;
 
+  private final CameraIOFactory m_factory;
+
   private final Notifier m_notifier;
   private final List<SingleInputPoseEstimator> m_estimators = new ArrayList<>();
   private final MultiInputFilter m_filter;
 
   private final AprilTagVisionLogger m_esimateLogger;
 
-  public AprilTagVisionHandler(Supplier<Pose2d> poseSupplier, Consumer<TimestampedPoseEstimate> callback) {
+  public AprilTagVisionHandler(
+      Supplier<Pose2d> poseSupplier,
+      Consumer<TimestampedPoseEstimate> callback,
+      CameraIOFactory factory) {
+    m_factory = factory;
     m_poseSupplier = poseSupplier;
     m_consumer = callback;
     m_filter = new MultiInputFilter();
@@ -46,10 +52,11 @@ public class AprilTagVisionHandler implements AutoCloseable {
       String cameraName = entry.getKey();
       Transform3d robotToCamera = entry.getValue();
       CameraIO io;
+      // This needs to move into a factory, I believe.
       if (Robot.isSimulation()) {
-        io = new CameraIOAprilTagSim(cameraName, robotToCamera, m_poseSupplier);
+        io = m_factory.aprilTagSim(cameraName, robotToCamera);
       } else {
-        io = new CameraIOHardware(cameraName);
+        io = m_factory.hardware(cameraName);
       }
       SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
           m_filter,
