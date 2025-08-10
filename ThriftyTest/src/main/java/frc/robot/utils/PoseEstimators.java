@@ -15,10 +15,6 @@ public class PoseEstimators {
   private final SwerveDrivePoseEstimator reefEstimator;
   private final SwerveDrivePoseEstimator odometryEstimator;
 
-  /**
-   * Each estimator needs to be fully independent. 
-   */
-
   private final OnboardLogger logger = new OnboardLogger("Poses");
 
   public PoseEstimators(
@@ -29,7 +25,8 @@ public class PoseEstimators {
         new SwerveDrivePoseEstimator(kinematics, gyroAngle, modulePositions, Pose2d.kZero);
     reefEstimator =
         new SwerveDrivePoseEstimator(kinematics, gyroAngle, modulePositions, Pose2d.kZero);
-    odometryEstimator = new SwerveDrivePoseEstimator(kinematics, gyroAngle, modulePositions, Pose2d.kZero);
+    odometryEstimator =
+        new SwerveDrivePoseEstimator(kinematics, gyroAngle, modulePositions, Pose2d.kZero);
     logger.registerPose("Pure Odometry", odometryEstimator::getEstimatedPosition);
     logger.registerPose("Full-field", globalEstimator::getEstimatedPosition);
     logger.registerPose("Reef only", reefEstimator::getEstimatedPosition);
@@ -42,6 +39,7 @@ public class PoseEstimators {
     globalEstimator.update(gyroAngle, wheelPositions);
     reefEstimator.update(gyroAngle, wheelPositions);
     odometryEstimator.update(gyroAngle, wheelPositions);
+    logger.log();
   }
 
   public void resetPose(Pose2d pose) {
@@ -61,10 +59,6 @@ public class PoseEstimators {
     if (estimate.isReefOnly()) {
       reefEstimator.addVisionMeasurement(estimate.pose(), estimate.timestamp(), estimate.stdDevs());
     }
-  }
-
-  public void log() {
-    logger.log();
   }
 
   public Pose2d getOdometryPose() {

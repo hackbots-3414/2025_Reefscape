@@ -24,6 +24,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.RobotObserver;
 import frc.robot.vision.CameraIO;
@@ -162,14 +163,12 @@ public class SingleInputPoseEstimator implements Runnable {
       return false;
     }
     // Ensure we only accept reef-focused estimates
-    return result.hasTargets()
-        && (!LocalizationConstants.kEnableTagFilter
-            || LocalizationConstants.kApprovedTagIds.contains(result.getBestTarget().getFiducialId()));
+    return result.hasTargets();
   }
 
   private Optional<TimestampedPoseEstimate> process(PhotonPipelineResult result, Pose3d pose) {
     double latency = result.metadata.getLatencyMillis() / 1.0e+3;
-    double timestamp = Utils.getCurrentTimeSeconds() - latency;
+    double timestamp = Timer.getFPGATimestamp() - latency;
     double ambiguity = getAmbiguity(result);
     Pose2d flatPose = pose.toPose2d();
     Matrix<N3, N1> stdDevs = calculateStdDevs(result, flatPose);

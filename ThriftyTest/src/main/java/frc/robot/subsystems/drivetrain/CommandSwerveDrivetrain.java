@@ -224,13 +224,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return Commands.runOnce(() -> setOperatorPerspectiveForward(getPose().getRotation()));
   }
 
+  private void setRotation(Rotation2d rotation) {
+    poseEstimators.resetRotation(rotation);
+    resetRotation(rotation);
+  }
+
   private void setPose(Pose2d pose) {
     poseEstimators.resetPose(pose);
     resetPose(pose);
   }
 
   public Command setLocalHeading(Rotation2d heading) {
-    return Commands.runOnce(() -> resetRotation(FieldUtils.getLocalRotation(heading)))
+    return Commands.runOnce(() -> setRotation(FieldUtils.getLocalRotation(heading)))
         .ignoringDisable(true);
   }
 
@@ -255,10 +260,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   @Override
   public void periodic() {
     m_timer.reset();
-    poseEstimators.update(getState().Pose.getRotation(), getState().ModulePositions);
-    if (Robot.isReal()) {
-      resetRotation(poseEstimators.getReefPose().getRotation());
-    }
+    poseEstimators.update(getState().RawHeading, getState().ModulePositions);
     m_estimatedPose = getState().Pose;
 
     RobotObserver.getField().setRobotPose(m_estimatedPose);
@@ -281,7 +283,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       RobotObserver.getField().getObject("Algae").setPoses();
     }
     m_ologger.log();
-    poseEstimators.log();
     m_hasReceivedVisionUpdate = false;
     m_timer.log();
   }

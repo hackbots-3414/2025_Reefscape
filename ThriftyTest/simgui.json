@@ -21,6 +21,7 @@
       "/SmartDashboard/Command Scheduler": "Scheduler",
       "/SmartDashboard/Coral": "Subsystem",
       "/SmartDashboard/Coral/Subsystem": "Subsystem",
+      "/SmartDashboard/Elevator/Force Net": "Command",
       "/SmartDashboard/Elevator/Lazy Zero": "Command",
       "/SmartDashboard/Elevator/Subsystem": "Subsystem",
       "/SmartDashboard/PathPlanner": "Alerts",
@@ -57,6 +58,11 @@
         }
       },
       "/SmartDashboard/Command Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Prep/Set Center": {
         "window": {
           "visible": true
         }
@@ -216,14 +222,12 @@
         "Algae Tracking": {
           "open": true
         },
-        "Prep": {
-          "open": true
-        },
         "Super Field": {
           "double[]##v_/SmartDashboard/Super Field/tag relative": {
             "open": true
           }
-        }
+        },
+        "open": true
       },
       "photonvision": {
         "cam1": {
