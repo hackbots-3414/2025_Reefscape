@@ -1,1 +1,125 @@
-{"version":"2025.0","command":{"type":"sequential","data":{"commands":[{"type":"named","data":{"name":"Align H"}},{"type":"named","data":{"name":"L4"}},{"type":"parallel","data":{"commands":[{"type":"named","data":{"name":"Align GH"}},{"type":"named","data":{"name":"Upper Algae"}}]}},{"type":"named","data":{"name":"Align Barge Center"}},{"type":"named","data":{"name":"Net Prep"}},{"type":"named","data":{"name":"Net"}},{"type":"parallel","data":{"commands":[{"type":"named","data":{"name":"Upper Algae"}},{"type":"named","data":{"name":"Align IJ"}}]}},{"type":"named","data":{"name":"Align Barge Left"}},{"type":"named","data":{"name":"Net Prep"}},{"type":"named","data":{"name":"Net"}},{"type":"named","data":{"name":"Prep Lollipop Outside"}},{"type":"deadline","data":{"commands":[{"type":"named","data":{"name":"Lollipop Intake"}},{"type":"named","data":{"name":"Lollipop Outside"}}]}},{"type":"named","data":{"name":"Beeline Barge Left"}},{"type":"named","data":{"name":"Net Prep"}},{"type":"named","data":{"name":"Net"}}]}},"resetOdom":false,"folder":null,"choreoAuto":false}
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Align H"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Upper Algae"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Align GH"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Barge Center"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net Prep"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Upper Algae"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Align IJ"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align Barge Left"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net Prep"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stow"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align LIntake"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -161,7 +161,10 @@ public class SingleInputPoseEstimator implements Runnable {
       m_logger.warn("({}) Refused old vision data, latency of {}", m_name, latency);
       return false;
     }
-    return result.hasTargets();
+    // Ensure we only accept reef-focused estimates
+    return result.hasTargets()
+        && (!LocalizationConstants.kEnableTagFilter
+            || LocalizationConstants.kApprovedTagIds.contains(result.getBestTarget().getFiducialId()));
   }
 
   private Optional<TimestampedPoseEstimate> process(PhotonPipelineResult result, Pose3d pose) {
@@ -180,7 +183,7 @@ public class SingleInputPoseEstimator implements Runnable {
   }
 
   private boolean usesReef(PhotonPipelineResult result) {
-    return LocalizationConstants.kReefIds.contains(result.getBestTarget().getFiducialId());
+    return LocalizationConstants.kApprovedTagIds.contains(result.getBestTarget().getFiducialId());
   }
 
   private boolean checkValidity(

@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
     m_loopTimer = new LoopTimer("Robot");
     m_ologger = new OnboardLogger("Robot");
     m_ologger.registerDouble("Battery Voltage", RobotController::getBatteryVoltage);
+    m_ologger.registerBoolean("FMS Connected", DriverStation::isFMSAttached);
   }
 
   @Override

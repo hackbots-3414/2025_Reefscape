@@ -2,7 +2,6 @@ package frc.robot.subsystems.climber;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -90,14 +89,14 @@ public class Climber extends PassiveSubsystem {
   }
 
   protected void passive() {
-    if (DriverStation.isFMSAttached() && DriverStation.isTeleop()
-        && DriverStation.getMatchTime() < 40) {
-      if (raised().getAsBoolean()) {
-        setUp();
-      } else {
-        stop();
-      }
-    }
+    // if (DriverStation.isFMSAttached() && DriverStation.isTeleop()
+    //     && DriverStation.getMatchTime() < 40) {
+    //   if (!raised().getAsBoolean()) {
+    //     setUp();
+    //   } else {
+    //     stop();
+    //   }
+    // }
   }
 
   /**

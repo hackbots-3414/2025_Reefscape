@@ -40,8 +40,8 @@ public class Constants {
     public static final Pose2d kIJ = new Pose2d(5.155, 5.194, Rotation2d.fromDegrees(-120));
 
     public static final Pose2d kBargeFromCenter =
-        new Pose2d(7.459, 4.717, Rotation2d.fromDegrees(21.0));
-    public static final Pose2d kBargeFromLeft = new Pose2d(7.5, 6.6, Rotation2d.fromDegrees(21));
+        new Pose2d(7.4, 4.717, Rotation2d.fromDegrees(21.0));
+    public static final Pose2d kBargeFromLeft = new Pose2d(7.4, 6.6, Rotation2d.fromDegrees(21));
 
     public static final Pose2d kStartCenter = new Pose2d(7.076, 3.991, Rotation2d.kPi);
     public static final Pose2d kStartRight = new Pose2d(7.076, 1.2, Rotation2d.kPi);

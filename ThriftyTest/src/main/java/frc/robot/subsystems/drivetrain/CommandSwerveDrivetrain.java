@@ -491,30 +491,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         .withMaxAbsRotationalRate(getMaxRotationalRate()));
   }
 
-  public Command alignEndless(Autopilot autopilot, APTarget target) {
+  public Command align(Autopilot autopilot, APTarget target) {
     return Commands.sequence(
         runOnce(() -> {
           RobotObserver.getField().getObject("reference").setPose(target.getReference());
           setAligned(false);
         }),
         run(() -> {
-          Translation2d velocities = getVelocityComponents();
-          APResult output = autopilot.calculate(m_estimatedPose, velocities, target);
+          ChassisSpeeds robotRelatiSpeeds = getRobotRelativeSpeeds();
+          APResult output = autopilot.calculate(m_estimatedPose, robotRelatiSpeeds, target);
           setVelocity(output);
 
           setAligned(autopilot.atTarget(m_estimatedPose, target));
         }))
+        .until(() -> {
+          return autopilot.atTarget(m_estimatedPose, target);
+        })
         .finallyDo(this::stop)
         .finallyDo(() -> {
           RobotObserver.getField().getObject("reference").setPoses();
         });
-  }
-
-  /**
-   * Drives to a certain point on the field
-   */
-  public Command align(Autopilot autopilot, APTarget target) {
-    return alignEndless(autopilot, target).until(() -> autopilot.atTarget(m_estimatedPose, target));
   }
 
   public Command seedLocal(Pose2d pose) {
@@ -539,7 +535,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
               .transformBy(DriveConstants.kAlgaeOffset));
       APResult output = DriveConstants.kTightAutopilot.calculate(
           m_estimatedPose,
-          getVelocityComponents(),
+          getRobotRelativeSpeeds(),
           target);
       setVelocity(output);
     }).onlyWhile(seesAlgae());

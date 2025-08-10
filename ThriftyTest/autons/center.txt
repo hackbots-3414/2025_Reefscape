@@ -1,12 +1,10 @@
 Align H
 L4
-Align GH & Upper Algae
+Upper Algae ? Align GH
 Align Barge Center
 Net Prep + Net
-Upper Algae & Align IJ
+Upper Algae ? Align IJ
 Align Barge Left
 Net Prep + Net
-Prep Lollipop Outside
-Lollipop Intake ? Lollipop Outside
-Beeline Barge Left
-Net Prep + Net
+Stow
+Align LIntake

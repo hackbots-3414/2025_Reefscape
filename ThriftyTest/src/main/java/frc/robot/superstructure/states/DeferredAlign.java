@@ -54,11 +54,7 @@ public class DeferredAlign implements EnterableState {
       Pose2d closest = subsystems.drivetrain().getPose().nearest(locations);
       APTarget target = new APTarget(closest)
           .withEntryAngle(closest.getRotation());
-      if (DriveConstants.kEnableEndlessAlignment) {
-        return subsystems.drivetrain().alignEndless(DriveConstants.kTightAutopilot, target);
-      } else {
-        return subsystems.drivetrain().align(DriveConstants.kTightAutopilot, target);
-      }
+      return subsystems.drivetrain().align(DriveConstants.kTightAutopilot, target);
     }, Set.of(subsystems.drivetrain()));
   }
 
