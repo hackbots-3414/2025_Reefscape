@@ -100,10 +100,10 @@ public class LocalizationConstants {
 
   public static final boolean kEnableTagFilter = true;
 
+  // Add tags 3 + 16 for processor tags
   protected static final Set<Integer> kApprovedTagIds = Set.of(
       6, 7, 8, 9, 10, 11, // red reef tags
-      17, 18, 19, 20, 21, 22, // blue reef tags
-      3, 16 // processor tags are okay as well.
+      17, 18, 19, 20, 21, 22 // blue reef tags
   );
 }
 
