@@ -14,10 +14,14 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.vision.tracking.AlgaeTracker;
 import frc.robot.vision.tracking.CameraIOTrackingSim;
+import frc.robot.vision.tracking.CameraIOTrackingSimFactory;
 import frc.robot.vision.tracking.TrackingConstants;
 import frc.robot.vision.CameraIO;
+import frc.robot.vision.CameraIOFactory;
 import frc.robot.vision.CameraIOHardware;
+import frc.robot.vision.CameraIOHardwareFactory;
 import frc.robot.vision.localization.AprilTagVisionHandler;
+import frc.robot.vision.localization.CameraIOAprilTagSimFactory;
 
 public class Superstructure {
   private final Subsystems m_subsystems;
@@ -87,10 +91,16 @@ public class Superstructure {
    * Returns an <code>AprilTagVisionHandler</code>.
    */
   public AprilTagVisionHandler buildVision() {
+    CameraIOFactory factory;
+    if (Robot.isReal()) {
+      factory = new CameraIOHardwareFactory();
+    } else {
+      factory = new CameraIOAprilTagSimFactory(m_subsystems.drivetrain()::getRawPose);
+    }
     return new AprilTagVisionHandler(
         m_subsystems.drivetrain()::getPose,
         m_subsystems.drivetrain()::addPoseEstimate,
-        m_subsystems.drivetrain().getCameraIOFactory());
+        factory);
   }
 
   public static record Subsystems(
@@ -130,17 +140,14 @@ public class Superstructure {
    */
   public Runnable buildAlgaeTracker() {
     if (AlgaeTracker.enabled) {
-      CameraIO io;
-      if (Robot.isSimulation()) {
-        io = new CameraIOTrackingSim(
-            TrackingConstants.kCameraName,
-            TrackingConstants.kRobotToCamera,
-            m_subsystems.drivetrain()::getPose);
+      CameraIOFactory factory;
+      if (Robot.isReal()) {
+        factory = new CameraIOHardwareFactory();
       } else {
-        io = new CameraIOHardware(TrackingConstants.kCameraName);
+        factory = new CameraIOTrackingSimFactory(m_subsystems.drivetrain()::getRawPose);
       }
       return new AlgaeTracker(
-          io,
+          factory,
           m_subsystems.drivetrain()::getPose,
           m_subsystems.drivetrain()::addObjectTrackingData);
     } else {

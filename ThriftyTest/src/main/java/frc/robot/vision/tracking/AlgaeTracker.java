@@ -23,6 +23,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.vision.CameraIO;
+import frc.robot.vision.CameraIOFactory;
 import frc.robot.vision.CameraIO.CameraIOInputs;
 import frc.robot.vision.CameraIOInputsLogger;
 
@@ -54,8 +55,8 @@ public class AlgaeTracker implements Runnable {
   private final Supplier<Pose2d> m_robotPose;
 
   public AlgaeTracker(
-      CameraIO io, Supplier<Pose2d> robotPose, Consumer<ObjectTrackingStatus> action) {
-    m_io = io;
+      CameraIOFactory factory, Supplier<Pose2d> robotPose, Consumer<ObjectTrackingStatus> action) {
+    m_io = factory.create(TrackingConstants.kCameraName);
     m_action = action;
     m_robotPose = robotPose;
     m_inputsLogger = new CameraIOInputsLogger(m_inputs, TrackingConstants.kCameraName);

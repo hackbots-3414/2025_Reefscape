@@ -75,4 +75,8 @@ public class CameraIOTrackingSim implements CameraIO {
 
     inputs.unreadResults = m_camera.getAllUnreadResults();
   }
+
+  public String getName() {
+    return m_name;
+  }
 }

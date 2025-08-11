@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
-import frc.robot.Robot;
 import frc.robot.utils.LoopTimer;
 import frc.robot.vision.CameraIO;
 import frc.robot.vision.CameraIOFactory;
@@ -51,17 +50,10 @@ public class AprilTagVisionHandler implements AutoCloseable {
     for (Map.Entry<String, Transform3d> entry : LocalizationConstants.kCameras.entrySet()) {
       String cameraName = entry.getKey();
       Transform3d robotToCamera = entry.getValue();
-      CameraIO io;
-      // This needs to move into a factory, I believe.
-      if (Robot.isSimulation()) {
-        io = m_factory.aprilTagSim(cameraName, robotToCamera);
-      } else {
-        io = m_factory.hardware(cameraName);
-      }
+      CameraIO io = m_factory.create(cameraName);
       SingleInputPoseEstimator estimator = new SingleInputPoseEstimator(
           m_filter,
           io,
-          cameraName,
           robotToCamera,
           this::addEstimate);
       m_estimators.add(estimator);

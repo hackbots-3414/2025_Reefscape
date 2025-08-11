@@ -38,10 +38,10 @@ public class SingleInputPoseEstimator implements Runnable {
   private final CameraIOInputsLogger m_inputsLogger;
 
   private final Consumer<TimestampedPoseEstimate> m_reporter;
-  private Pose2d m_lastPose;
+  private Pose2d m_lastPose; // Don't love this
 
   private final PhotonPoseEstimator m_estimator;
-  private final MultiInputFilter m_filter;
+  private final MultiInputFilter m_filter; // This is kinda wonky
 
   private final Alert m_disconnectedAlert;
 
@@ -51,18 +51,17 @@ public class SingleInputPoseEstimator implements Runnable {
   public SingleInputPoseEstimator(
       MultiInputFilter fitler,
       CameraIO io,
-      String name,
       Transform3d robotToCamera,
       Consumer<TimestampedPoseEstimate> updateCallback) {
     m_io = io;
-    m_name = name;
+    m_name = io.getName();
     m_inputs = new CameraIOInputs();
-    m_inputsLogger = new CameraIOInputsLogger(m_inputs, name);
+    m_inputsLogger = new CameraIOInputsLogger(m_inputs, m_name);
     m_reporter = updateCallback;
     m_robotToCamera = robotToCamera;
     m_filter = fitler;
     m_disconnectedAlert =
-        new Alert("Vision/Camera Status", name + " disconnected", AlertType.kError);
+        new Alert("Vision/Camera Status", m_name + " disconnected", AlertType.kError);
     m_estimator = new PhotonPoseEstimator(
         LocalizationConstants.kTagLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,

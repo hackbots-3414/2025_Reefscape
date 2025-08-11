@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Volts;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,9 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+import com.therekrab.autopilot.APTarget;
+import com.therekrab.autopilot.Autopilot;
+import com.therekrab.autopilot.Autopilot.APResult;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -51,19 +53,15 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SimConstants;
 import frc.robot.Robot;
 import frc.robot.RobotObserver;
-import com.therekrab.autopilot.APTarget;
-import com.therekrab.autopilot.Autopilot;
-import com.therekrab.autopilot.Autopilot.APResult;
 import frc.robot.driveassist.ForceField;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
 import frc.robot.utils.PoseEstimators;
-import frc.robot.vision.CameraIOFactory;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
-import frc.robot.vision.tracking.SimplePoseFilter;
 import frc.robot.vision.tracking.AlgaeTracker.ObjectTrackingStatus;
+import frc.robot.vision.tracking.SimplePoseFilter;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements Subsystem so it can easily
@@ -130,7 +128,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_ologger = new OnboardLogger("Drivetrain");
     m_ologger.registerBoolean("Aligned", aligned());
     m_ologger.registerDouble("Velocity", this::getVelocity);
-    m_ologger.registerPose("Estimated Pose", this::getPose);
     m_ologger.registerBoolean("Received Vision Update", () -> m_hasReceivedVisionUpdate);
     m_ologger.registerBoolean("Valid Object Estimate", seesAlgae());
     m_ologger.registerPose3d("Last Algae", () -> m_lastAlgae);
@@ -205,8 +202,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return velo.getNorm();
   }
 
+  /** Returns the robot's pose estimate, with vision updates only from reef tags */
   public Pose2d getPose() {
     return m_estimatedPose;
+  }
+
+  /** Returns the robot's pose estimate, unaffected by any vision updates */
+  public Pose2d getRawPose() {
+    return poseEstimators.getOdometryPose();
   }
 
   /**
@@ -360,14 +363,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void addPoseEstimate(TimestampedPoseEstimate estimate) {
     m_hasReceivedVisionUpdate = true;
     poseEstimators.addPoseEstimate(estimate);
-    // This should NOT run in simulation!
-    if (Robot.isSimulation()) {
-      return;
-    }
-    addVisionMeasurement(
-        estimate.pose(),
-        estimate.timestamp(),
-        estimate.stdDevs());
   }
 
   public void addObjectTrackingData(ObjectTrackingStatus status) {
@@ -492,16 +487,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         .withVelocityY(goal.vy())
         .withTargetDirection(goal.targetAngle())
         .withMaxAbsRotationalRate(getMaxRotationalRate()));
-  }
-
-  public CameraIOFactory getCameraIOFactory() {
-    Supplier<Pose2d> poseSupplier;
-    if (Robot.isReal()) {
-      poseSupplier = poseEstimators::getReefPose;
-    } else {
-      poseSupplier = () -> getState().Pose;
-    }
-    return new CameraIOFactory(poseSupplier);
   }
 
   public Command align(Autopilot autopilot, APTarget target) {
