@@ -1,7 +1,6 @@
 package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import java.io.IOException;
@@ -21,16 +20,14 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
-import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.FlippingUtil;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -38,9 +35,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,12 +52,14 @@ import frc.robot.Robot;
 import frc.robot.RobotObserver;
 import com.therekrab.autopilot.APTarget;
 import com.therekrab.autopilot.Autopilot;
+import com.therekrab.autopilot.Autopilot.APResult;
 import frc.robot.driveassist.ForceField;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.LoopTimer;
 import frc.robot.utils.OnboardLogger;
 import frc.robot.vision.localization.TimestampedPoseEstimate;
+import frc.robot.vision.tracking.SimplePoseFilter;
 import frc.robot.vision.tracking.AlgaeTracker.ObjectTrackingStatus;
 
 /**
@@ -80,14 +79,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private boolean m_aligned;
 
   private Trigger m_tippyTrigger = new Trigger(() -> false);
+  private Trigger m_slowTrigger = new Trigger(() -> false);
 
   private boolean m_hasReceivedVisionUpdate;
 
   private FieldCentric m_teleopRequest = new FieldCentric()
       .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
-      .withDriveRequestType(DriveRequestType.Velocity);
-
-  private RobotCentric m_trackingRequest = new RobotCentric()
       .withDriveRequestType(DriveRequestType.Velocity);
 
   private FieldCentricFacingAngle m_veloRequest = new FieldCentricFacingAngle()
@@ -105,7 +102,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private boolean m_hasAppliedOperatorPerspective = false;
 
   /* last known object tracking input */
-  private Optional<ObjectTrackingStatus> m_objectStatus = Optional.empty();
+  private Optional<Pose3d> m_algae = Optional.empty();
+  private final SimplePoseFilter m_algaeSmoother = new SimplePoseFilter();
+  private Pose3d m_lastAlgae = Pose3d.kZero;
 
   private Pose2d m_estimatedPose = new Pose2d();
 
@@ -128,6 +127,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_ologger.registerDouble("Velocity", this::getVelocity);
     m_ologger.registerPose("Estimated Pose", this::getPose);
     m_ologger.registerBoolean("Received Vision Update", () -> m_hasReceivedVisionUpdate);
+    m_ologger.registerBoolean("Valid Object Estimate", seesAlgae());
+    m_ologger.registerPose3d("Last Algae", () -> m_lastAlgae);
 
     RobotObserver.setVelocitySupplier(this::getVelocity);
     RobotObserver.setNoElevatorZoneSupplier(dangerZone());
@@ -221,7 +222,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public Command setLocalHeading(Rotation2d heading) {
-    return Commands.runOnce(() -> resetRotation(FieldUtils.getLocalRotation(heading))).ignoringDisable(true);
+    return Commands.runOnce(() -> resetRotation(FieldUtils.getLocalRotation(heading)))
+        .ignoringDisable(true);
   }
 
   private ChassisSpeeds getRobotRelativeSpeeds() {
@@ -258,12 +260,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_hasAppliedOperatorPerspective = true;
       });
     }
+    // Update algae state
+    m_algae = m_algaeSmoother.calculate();
+    if (m_algae.isPresent()) {
+      m_lastAlgae = m_algae.get();
+      RobotObserver.getField().getObject("Algae").setPose(m_lastAlgae.toPose2d());
+    } else {
+      RobotObserver.getField().getObject("Algae").setPoses();
+    }
     m_ologger.log();
     m_hasReceivedVisionUpdate = false;
-    // Expire old algae tracking data
-    if (m_objectStatus.isPresent() && m_objectStatus.get().isExpired()) {
-      m_objectStatus = Optional.empty();
-    }
     m_timer.log();
   }
 
@@ -348,7 +354,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void addObjectTrackingData(ObjectTrackingStatus status) {
-    m_objectStatus = Optional.of(status);
+    m_algaeSmoother.add(status);
   }
 
   public Command sysIdQuasistaticTranslation(SysIdRoutine.Direction direction) {
@@ -402,6 +408,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     });
   }
 
+  public Trigger seesAlgae() {
+    // TODO: ensure distance is below threshold
+    return new Trigger(() -> m_algae.isPresent());
+  }
+
   /**
    * Drives the robot from given x, y, and rotatational velocity suppliers.
    */
@@ -433,6 +444,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     m_tippyTrigger = tippyTrigger;
   }
 
+  public void setSlowTrigger(Trigger slowTrigger) {
+    m_slowTrigger = slowTrigger;
+  }
+
   private AngularVelocity getMaxRotationalRate() {
     if (m_tippyTrigger.getAsBoolean()) {
       return DriveConstants.kMaxTippyAngularSpeed;
@@ -441,9 +456,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
   }
 
-  /**
-   * Drives to a certain point on the field
-   */
+  private LinearVelocity getMaxSpeed() {
+    if (m_slowTrigger.getAsBoolean()) {
+      return DriveConstants.kMaxTippySpeed;
+    }
+    return DriveConstants.kMaxLinearSpeed;
+  }
+
+  private void setVelocity(APResult goal) {
+    double norm = Math.hypot(goal.vx().in(MetersPerSecond), goal.vy().in(MetersPerSecond));
+    double max = getMaxSpeed().in(MetersPerSecond);
+    if (norm > max) {
+      goal = new APResult(goal.vx().times(max / norm), goal.vy().times(max / norm),
+          goal.targetAngle());
+    }
+    setControl(m_veloRequest
+        .withVelocityX(goal.vx())
+        .withVelocityY(goal.vy())
+        .withTargetDirection(goal.targetAngle())
+        .withMaxAbsRotationalRate(getMaxRotationalRate()));
+  }
+
   public Command align(Autopilot autopilot, APTarget target) {
     return Commands.sequence(
         runOnce(() -> {
@@ -451,19 +484,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           setAligned(false);
         }),
         run(() -> {
-          Translation2d velocities = getVelocityComponents();
-          Transform2d output = autopilot.calculate(m_estimatedPose, velocities, target);
-          setControl(m_veloRequest
-              .withVelocityX(output.getX())
-              .withVelocityY(output.getY())
-              .withTargetDirection(output.getRotation())
-              .withMaxAbsRotationalRate(getMaxRotationalRate()));
+          ChassisSpeeds robotRelatiSpeeds = getRobotRelativeSpeeds();
+          APResult output = autopilot.calculate(m_estimatedPose, robotRelatiSpeeds, target);
+          setVelocity(output);
+
+          setAligned(autopilot.atTarget(m_estimatedPose, target));
         }))
         .until(() -> {
           return autopilot.atTarget(m_estimatedPose, target);
         })
         .finallyDo(this::stop)
-        .finallyDo(interrupted -> setAligned(!interrupted))
         .finallyDo(() -> {
           RobotObserver.getField().getObject("reference").setPoses();
         });
@@ -475,36 +505,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public Command followObject() {
-    return run(new Runnable() {
-      private final PIDController thetaController = new PIDController(8, 0, 0);
-      private final PIDController driveController = new PIDController(1, 0, 0);
-
-      @Override
-      public void run() {
-        m_objectStatus.ifPresentOrElse(status -> {
-          double output = -this.thetaController.calculate(status.yaw().getRadians(), 0);
-          double speed = DriveConstants.kObjectTrackSpeed.in(MetersPerSecond);
-          if (status.pose().isPresent()) {
-            double distance = m_estimatedPose
-                .relativeTo(status.pose().get())
-                .getTranslation()
-                .getNorm();
-            speed = Math.min(
-                DriveConstants.kMaxObjectTrackingSpeed.in(MetersPerSecond),
-                -this.driveController.calculate(distance, 0));
-          }
-          /*
-           * we invert the calculation because it outputs a negative number, because measurement >
-           * ref, so err < 0
-           */
-          double vx = speed * status.yaw().getCos();
-          double vy = speed * status.yaw().getSin();
-          setControl(m_trackingRequest
-              .withRotationalRate(output)
-              .withVelocityX(vx)
-              .withVelocityY(vy));
-        }, () -> stop());
+    return run(() -> {
+      if (m_algae.isEmpty()) {
+        stop();
+        return;
       }
-    });
+      // If we have a pose estimate, for algae, use Autopilot to go there.
+      // APTarget target = new APTarget(algae.transformBy(DriveConstants.kAlgaeOffset));
+      Rotation2d angle = m_lastAlgae.toPose2d().getTranslation()
+          .minus(m_estimatedPose.getTranslation())
+          .getAngle();
+      APTarget target =
+          new APTarget(m_lastAlgae.toPose2d()
+              .transformBy(new Transform2d(Translation2d.kZero, angle))
+              .transformBy(DriveConstants.kAlgaeOffset));
+      APResult output = DriveConstants.kTightAutopilot.calculate(
+          m_estimatedPose,
+          getRobotRelativeSpeeds(),
+          target);
+      setVelocity(output);
+    }).onlyWhile(seesAlgae());
   }
 }

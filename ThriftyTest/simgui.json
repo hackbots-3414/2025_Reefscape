@@ -11,9 +11,7 @@
       "/SmartDashboard/Prep/Set Left": "Command",
       "/SmartDashboard/Prep/Set Right": "Command",
       "/SmartDashboard/Super Field": "Field2d",
-      "/SmartDashboard/Test/Follow Algae": "Command",
-      "/SmartDashboard/Vision/Camera Status": "Alerts",
-      "/SmartDashboard/VisionSystemSim-localization/Sim Field": "Field2d"
+      "/SmartDashboard/Vision/Camera Status": "Alerts"
     },
     "windows": {
       "/SmartDashboard/Super Field": {

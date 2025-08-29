@@ -18,6 +18,7 @@ public class Superstructure {
     m_subsystems = new Subsystems(drivetrain);
 
     drivetrain.setTippyTrigger(tippy());
+    drivetrain.setSlowTrigger(new Trigger(() -> false));
 
     RobotObserver.setFFEnabledSupplier(() -> false);
   }

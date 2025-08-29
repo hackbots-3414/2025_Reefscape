@@ -1,12 +1,13 @@
 package frc.robot.binding;
 
 import java.util.function.DoubleSupplier;
-import edu.wpi.first.math.geometry.Rotation2d;
+import com.therekrab.autopilot.APTarget;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.binding.BindingConstants.Driver;
-import com.therekrab.autopilot.APTarget;
 import frc.robot.superstructure.Superstructure;
 import frc.robot.superstructure.states.Align;
 import frc.robot.superstructure.states.DeferredAlign;
@@ -35,10 +36,18 @@ public class DriveBindings implements Binder {
     superstructure.setDrive(superstructure.enterWithoutProxy(new TeleopDrive(m_x, m_y, m_rot)));
 
     m_resetHeading.onTrue(superstructure.enter(new HeadingReset()));
-    // m_smartAlign.and(superstructure.holdingAlgae()).whileTrue(superstructure.enter(new Align(
-    //     new APTarget(FieldConstants.k_processor).withEntryAngle(Rotation2d.kCW_Pi_2))));
-    m_smartAlign.and(superstructure.holdingAlgae().negate()).whileTrue(superstructure.enter(
-        new DeferredAlign(AlignLocation.Center)));
+
+    Command smartWithAlgae;
+    if (Driver.kEnableSmartButton) {
+      smartWithAlgae = superstructure.enter(new Align(new APTarget(FieldConstants.k_processor)));
+    } else {
+      smartWithAlgae = Commands.none();
+    }
+    m_smartAlign.whileTrue(Commands.either(
+        smartWithAlgae,
+        superstructure.enter(new DeferredAlign(AlignLocation.Center)),
+        superstructure.holdingAlgae()));
+
     m_leftAlign.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Left)));
     m_rightAlign.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Right)));
   }
