@@ -1,0 +1,18 @@
+package frc.robot.binding;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.superstructure.Superstructure;
+import frc.robot.superstructure.states.SeedAngle;
+import frc.robot.superstructure.states.SeedPose;
+import frc.robot.superstructure.states.TrackAlgae;
+
+public class DashboardBindings implements Binder {
+  public void bind(Superstructure superstructure) {
+    SmartDashboard.putData("Prep/Set Center", superstructure.enter(SeedPose.center()));
+    SmartDashboard.putData("Prep/Set Left", superstructure.enter(SeedPose.left()));
+    SmartDashboard.putData("Prep/Set Right", superstructure.enter(SeedPose.right()));
+    SmartDashboard.putData("Prep/Set Angle", superstructure.enter(SeedAngle.reverse()));
+
+    SmartDashboard.putData("Test/Follow Algae", superstructure.enter(new TrackAlgae()));
+  }
+}

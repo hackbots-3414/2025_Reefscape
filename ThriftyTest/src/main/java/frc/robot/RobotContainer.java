@@ -1,90 +1,58 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import com.pathplanner.lib.auto.AutoBuilder;
 
-import java.util.function.Supplier;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import frc.robot.Constants.ButtonBindingConstants;
-import frc.robot.Constants.ButtonBindingConstants.DragonReins;
-import frc.robot.algaeTracking.AlgaeTracker;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.TeleopCommand;
-import frc.robot.commands.TrackAlgae;
-import frc.robot.generated.TestBotTunerConstants;
+import frc.robot.binding.Binder;
+import frc.robot.binding.DashboardBindings;
+import frc.robot.binding.DriveBindings;
+import frc.robot.binding.RobotBindings;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.superstructure.Superstructure;
 
 public class RobotContainer {
-    private final Logger m_logger = LoggerFactory.getLogger(RobotContainer.class);
+  private final PowerDistribution m_pdp = new PowerDistribution(1, ModuleType.kRev);
 
-    private final Telemetry m_telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+  private SendableChooser<Command> m_autoChooser;
 
-    public final CommandSwerveDrivetrain m_drivetrain = TestBotTunerConstants.createDrivetrain();
+  private final Superstructure m_superstructure = new Superstructure(TunerConstants.createDrivetrain());
 
-    private final PowerDistribution pdp = new PowerDistribution(1, ModuleType.kRev);
+  private final Binder m_driver = new DriveBindings();
+  private final Binder m_robot = new RobotBindings();
+  private final Binder m_dashboard = new DashboardBindings();
 
-    public RobotContainer() {
-        configureDriverBindings();
-        configureTesting();
-        confiureSimulation();
-        SmartDashboard.putData("follow algae", new TrackAlgae(m_drivetrain, new AlgaeTracker("Cam")));
+  private final Runnable m_algaeTracker;
+
+  public RobotContainer() {
+    m_driver.bind(m_superstructure);
+    m_robot.bind(m_superstructure);
+    m_dashboard.bind(m_superstructure);
+
+    m_superstructure.buildVision().startThread();
+    m_algaeTracker = m_superstructure.buildAlgaeTracker();
+
+    if (Robot.isSimulation()) {
+      DriverStation.silenceJoystickConnectionWarning(true);
     }
 
-    private void confiureSimulation() {
-        DriverStation.silenceJoystickConnectionWarning(true);
-    }
+    m_autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auton Chooser", m_autoChooser);
+  }
 
-    public void enablePDPSwitch() {
-        pdp.setSwitchableChannel(true);
-    }
+  public Command getAutonomousCommand() {
+    return m_autoChooser.getSelected();
+  }
 
-    private void configureTesting() {
-    }
+  public void enablePDPSwitch() {
+    m_pdp.setSwitchableChannel(true);
+  }
 
-    // ********** BINDINGS **********
-
-    private void configureDriverBindings() {
-        CommandPS5Controller controller = new CommandPS5Controller(ButtonBindingConstants.driverPort);
-
-        double flipX;
-        double flipY;
-        double flipR;
-
-        flipX = DragonReins.flipX ? -1.0 : 1.0;
-        flipY = DragonReins.flipY ? -1.0 : 1.0;
-        flipR = DragonReins.flipRot ? -1.0 : 1.0;
-
-        Supplier<Double> xSup = () -> controller.getRawAxis(DragonReins.xAxis) * flipX;
-        Supplier<Double> ySup = () -> controller.getRawAxis(DragonReins.yAxis) * flipY;
-        Supplier<Double> rSup = () -> controller.getRawAxis(DragonReins.rotAxis) * flipR;
-
-        m_drivetrain.setDefaultCommand(
-            new TeleopCommand(m_drivetrain, xSup, ySup, rSup)
-        );
-
-        controller.button(DragonReins.resetHeading).onTrue(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
-        controller.button(DragonReins.resetHeading).onFalse(m_drivetrain.runOnce(() -> m_drivetrain.resetHeading()));
-    }
-
-    private SendableChooser<Command> autoChooser = new SendableChooser<>();
-
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
+  public void updateAlgaeTracking() {
+    m_algaeTracker.run();
+  }
 }

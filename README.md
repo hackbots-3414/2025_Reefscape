@@ -1,5 +1,6 @@
-# 2025 Reefscape (DO NOT MERGE)
-Hackbots code for the 2025 FRC Reefscape game.
+# 2025_Reefscape TESTBOT
+
+Hackbots code for the 2025 FRC Reefscape season's TESTBOT. This code should be updated with logical updates from `main`, but should NEVER be merged back in. This is a robot that can test features.
 
 ## DriveTrain CAN IDs:
 |Device|ID|
