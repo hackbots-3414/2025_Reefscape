@@ -17,6 +17,7 @@ public final class AlgaeConstants {
   protected static final double kNetEjectVoltage = -3.0;
   protected static final double kProcessorEjectVoltage = -3.2;
   protected static final double kHoldVoltage = 6.0;
+  protected static final double kManualEjectVoltage = -6.0;
 
   protected static final double kTorqueCurrentThreshold = 75; // We should consider 40-55 range as well.
   protected static final Time kAlgaeDebounceTime = Seconds.of(0.8);
@@ -26,6 +27,7 @@ public final class AlgaeConstants {
 
   protected static final double kProcessorScoreTime = 2.0;
   protected static final double kNetScoreTime = 0.4;
+  protected static final double kManualEjectTime = 0.3;
 
   protected static final TalonFXConfiguration kMotorConfig = new TalonFXConfiguration()
       .withMotorOutput(new MotorOutputConfigs()

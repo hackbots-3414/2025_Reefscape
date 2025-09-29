@@ -90,14 +90,14 @@ public class Climber extends PassiveSubsystem {
   }
 
   protected void passive() {
-    if (DriverStation.isFMSAttached() && DriverStation.isTeleop()
-        && DriverStation.getMatchTime() < 40) {
-      if (raised().getAsBoolean()) {
-        setUp();
-      } else {
-        stop();
-      }
-    }
+    // if (DriverStation.isFMSAttached() && DriverStation.isTeleop()
+    //     && DriverStation.getMatchTime() < 40) {
+    //   if (!raised().getAsBoolean()) {
+    //     setUp();
+    //   } else {
+    //     stop();
+    //   }
+    // }
   }
 
   /**

@@ -6,6 +6,7 @@ import frc.robot.superstructure.Superstructure.Subsystems;
 
 public class TrackAlgae implements EnterableState {
   public Command build(Subsystems subsystems) {
-    return subsystems.drivetrain().followObject();
+    return subsystems.drivetrain().followObject()
+    .until(subsystems.algae().holdingAlgae());
   }
 }

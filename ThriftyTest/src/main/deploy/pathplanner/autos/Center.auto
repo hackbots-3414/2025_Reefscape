@@ -17,19 +17,19 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Align GH"
+                  "name": "Upper Algae"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Lower Algae"
+                  "name": "Align GH"
                 }
               }
             ]
@@ -42,13 +42,26 @@
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "Net"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net Prep"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -73,9 +86,28 @@
           }
         },
         {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net Prep"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Net"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "Net"
+            "name": "Stow"
           }
         },
         {

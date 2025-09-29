@@ -1,9 +1,10 @@
 Align H
 L4
-Align GH & Upper Algae
+Upper Algae ? Align GH
 Align Barge Center
-Net
-Upper Algae & Align IJ
+Net Prep + Net
+Upper Algae ? Align IJ
 Align Barge Left
-Net
+Net Prep + Net
+Stow
 Align LIntake

@@ -39,6 +39,7 @@ public class Superstructure {
         leds);
 
     drivetrain.setTippyTrigger(tippy());
+    drivetrain.setSlowTrigger(elevator.unsafe());
 
     RobotObserver.setFFEnabledSupplier(elevator.unsafe().and(() -> !DriverStation.isAutonomous()));
   }
