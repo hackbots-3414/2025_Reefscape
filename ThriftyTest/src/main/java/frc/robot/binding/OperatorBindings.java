@@ -94,8 +94,8 @@ public class OperatorBindings implements Binder {
     m_coralScore.onTrue(superstructure.enter(new AutoSelectCoralScore()));
 
     /* align */
-    m_left.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Left)));
-    m_right.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Right)));
+    // m_left.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Left)));
+    // m_right.whileTrue(superstructure.enter(new DeferredAlign(AlignLocation.Right)));
 
     /* climb */
     m_climb.whileTrue(superstructure.enter(new Climb()));
@@ -111,7 +111,7 @@ public class OperatorBindings implements Binder {
   private void bindCoral(Trigger trigger, CoralLevel level, Superstructure superstructure) {
     trigger.and(m_algae.negate())
         .whileTrue(superstructure.enter(new CoralScorePrep(level)))
-        .onFalse(superstructure.enter(new StowTemp()));
+        .onFalse(superstructure.enter(new CompleteCoralScore(level)));
     // trigger.and(m_algae.negate()).and(superstructure.aligned())
     //     .onTrue(superstructure.enter(new CoralScore(level)));
     // trigger.and(m_algae.negate()).onFalse(superstructure.enter(new CompleteCoralScore(level)));

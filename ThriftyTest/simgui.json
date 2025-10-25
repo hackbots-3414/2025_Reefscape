@@ -21,6 +21,7 @@
       "/SmartDashboard/Command Scheduler": "Scheduler",
       "/SmartDashboard/Coral": "Subsystem",
       "/SmartDashboard/Coral/Subsystem": "Subsystem",
+      "/SmartDashboard/Elevator/Force Net": "Command",
       "/SmartDashboard/Elevator/Lazy Zero": "Command",
       "/SmartDashboard/Elevator/Subsystem": "Subsystem",
       "/SmartDashboard/PathPlanner": "Alerts",
